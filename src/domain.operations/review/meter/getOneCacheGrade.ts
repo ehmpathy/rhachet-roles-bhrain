@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import type { ReviewRunMeter } from '@src/domain.objects/Reviewer/ReviewRunMeter';
 import type { LaneOrdinal } from '@src/domain.operations/review/meter/getAllLaneOrdinals';
 import { getAllRunsMetered } from '@src/domain.operations/review/meter/getAllRunsMetered';
@@ -31,9 +33,25 @@ import { getAllRunsMetered } from '@src/domain.operations/review/meter/getAllRun
  *         on, so it must not hide behind a peer run's first round.
  */
 export type CacheGrade =
-  | { kind: 'warm' }
+  /**
+   * `via` names where the cache it had to hit came from: `prior` — a prior round of its
+   * lane within reach; `meet` — only a peer that warmed its head this round. a zero
+   * under each wants a different hunt: a prefix that broke between rounds, or a read
+   * that met another replica than the poke's
+   *
+   * `dir` = the latest repeat run of the bucket, so a zero's hint names the one run whose
+   * prefix pair (`--of run --at <dir>`) shows where the prefix broke. any repeat in a
+   * zero bucket read naught, so the latest is the one a driver most likely just ran
+   */
+  | { kind: 'warm'; via: 'prior'; dir: string }
+  | { kind: 'warm'; via: 'meet' }
   | { kind: 'cold'; cause: 'first' }
-  | { kind: 'cold'; cause: 'lapsed'; minutes: number };
+  | { kind: 'cold'; cause: 'lapsed'; minutes: number }
+  /**
+   * `poke` = every measured run is a prime's poke (`meet: 'poke'`). a poke writes the head
+   * for its peers to read; it never had a read owed, so its zero is by design, never a miss
+   */
+  | { kind: 'cold'; cause: 'poke' };
 
 /**
  * .what = grades a bucket's cache opportunity from its runs' lane ordinals
@@ -52,11 +70,24 @@ export const getOneCacheGrade = (input: {
   const metered = getAllRunsMetered({ runs: input.runs });
   if (metered.length === 0) return null;
 
-  // one repeat within reach makes the whole bucket warm
-  const anyRepeat = metered.some((run) =>
-    isReviewerRepeat({ run, ordinals: input.ordinals }),
+  // a bucket of pokes alone wrote the head and owed no read, so its zero is by design
+  if (metered.every((run) => run.meet === 'poke'))
+    return { kind: 'cold', cause: 'poke' };
+
+  // one repeat within reach, or one warm meet, makes the whole bucket warm. a meet
+  // outranks a prior: a peer wrote THIS round's head seconds before, so a zero after it
+  // is a read that met another replica, whatever the prior round sent — a broken prefix
+  // between rounds cannot explain it
+  const anyMetWarm = metered.some(
+    (run) => input.ordinals.get(run.dir)?.metWarm === true,
   );
-  if (anyRepeat) return { kind: 'warm' };
+  if (anyMetWarm) return { kind: 'warm', via: 'meet' };
+  const repeats = metered.filter((run) =>
+    isReviewerRepeatOfPrior({ run, ordinals: input.ordinals }),
+  );
+  const repeatLatest = getOneRunLatest({ runs: repeats });
+  if (repeatLatest)
+    return { kind: 'warm', via: 'prior', dir: repeatLatest.dir };
 
   // cold: name the lapse where any run followed one, else it is a first round
   const lapses = metered
@@ -67,11 +98,25 @@ export const getOneCacheGrade = (input: {
 };
 
 /**
- * .what = whether a run had a prior run of its lane within the cache reach (ordinal > 1)
+ * .what = the run minted last, or null where there is none
+ * .why = a run dir's name leads with its iso mint stamp, so its basename sorts by time
+ */
+const getOneRunLatest = (input: {
+  runs: ReviewRunMeter[];
+}): ReviewRunMeter | null =>
+  [...input.runs].sort((a, b) =>
+    path.basename(b.dir).localeCompare(path.basename(a.dir)),
+  )[0] ?? null;
+
+/**
+ * .what = whether a run had a prior round of its lane within the cache reach (ordinal > 1)
  * .why = a run whose ordinal is unknown is treated as a repeat, for the same reason
  *        `warm` is the conservative grade: an unplaced run must not buy a zero an excuse
+ *
+ * .note = a warm-met run is warm too, by the second test above, for the same reason its
+ *         prefix pair grades `missed`: the head was in cache, so a zero is a miss
  */
-const isReviewerRepeat = (input: {
+const isReviewerRepeatOfPrior = (input: {
   run: ReviewRunMeter;
   ordinals: Map<string, LaneOrdinal>;
 }): boolean => {

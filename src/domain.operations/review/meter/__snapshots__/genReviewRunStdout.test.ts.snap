@@ -4,6 +4,8 @@ exports[`genReviewRunStdout given: [case1] a run the census can vouch for when: 
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -27,13 +29,13 @@ exports[`genReviewRunStdout given: [case1] a run the census can vouch for when: 
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -41,6 +43,8 @@ exports[`genReviewRunStdout given: [case2] a run the census CANNOT vouch for whe
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -64,13 +68,13 @@ exports[`genReviewRunStdout given: [case2] a run the census CANNOT vouch for whe
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       ├─ conversation              0 chars    0.0%  per round
       └─ 🟡 UNATTRIBUTED — scaffold may hide an input with no row of its own
          ├─ check FIRST: many small targets? then it is real tag overhead
@@ -81,6 +85,8 @@ exports[`genReviewRunStdout given: [case3] a run whose prompt predates the grade
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -104,13 +110,13 @@ exports[`genReviewRunStdout given: [case3] a run whose prompt predates the grade
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -118,6 +124,8 @@ exports[`genReviewRunStdout given: [case4] a run that compiled no prompt at all 
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -139,6 +147,8 @@ exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be pa
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: —  🟡 UNPARSED — see the defect below
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: unknown
    │  ├─ cost: —  🟡 unknown, not $0 — the brain may have charged
    │  └─ defect: 💥 MalfunctionError: failed to parse metrics.realized.json: Unexpected token h in JSON at position 2
@@ -159,6 +169,8 @@ exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be pa
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -182,13 +194,13 @@ exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be pa
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -196,6 +208,8 @@ exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be pa
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: —  🟡 UNPARSED — see the defect below
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: unknown
    │  ├─ cost: —  🟡 unknown, not $0 — the brain may have charged
    │  └─ defect: 💥 MalfunctionError: review log artifact is present but unparseable: metrics.realized.json
@@ -217,6 +231,8 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -240,13 +256,13 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -254,6 +270,8 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -277,13 +295,13 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -291,6 +309,8 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -314,13 +334,13 @@ exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -328,6 +348,8 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -349,13 +371,13 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              10.0k chars   10.0%  cacheable
-      ├─ rules                 20.0k chars   20.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles           70.0k chars   70.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -363,6 +385,8 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -386,13 +410,13 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -400,6 +424,8 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -421,13 +447,13 @@ exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass a
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;
 
@@ -435,6 +461,8 @@ exports[`genReviewRunStdout given: [case9] a refused run whose targets are split
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: metered
    │  └─ cost: $0.040200
    │
@@ -466,6 +494,8 @@ exports[`genReviewRunStdout given: [case11] the two unmetered grades on the leve
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: refused
    │  └─ cost: $0  (refused at validation — nil cost is a FACT)
    │
@@ -484,6 +514,8 @@ exports[`genReviewRunStdout given: [case11] the two unmetered grades on the leve
 "🦉 review cost — one run
    ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
    │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ brain: (no brain — unrecorded)
+   │  ├─ meet: (no meet — unrecorded or unreadable)
    │  ├─ grade: unknown
    │  └─ cost: —  🟡 unknown, not $0 — the brain may have charged
    │
@@ -505,12 +537,12 @@ exports[`genReviewRunStdout given: [case11] the two unmetered grades on the leve
       ├─ instructions              0 chars    0.0%  cacheable
       ├─ outputFormat              0 chars    0.0%  cacheable
       ├─ scaffold              40.0k chars   40.0%  cacheable
-      ├─ rules                 60.0k chars   60.0%  cacheable
-      ├─ refs                      0 chars    0.0%  cacheable
       ├─ targetFiles               0 chars    0.0%  cacheable
       ├─ targetDiffs               0 chars    0.0%
       │  ├─ additions              0 chars    0.0%  cacheable
       │  ├─ deletions              0 chars    0.0%  cacheable
       │  └─ mutations              0 chars    0.0%  per round
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
       └─ conversation              0 chars    0.0%  per round"
 `;

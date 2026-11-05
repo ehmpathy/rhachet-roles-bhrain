@@ -4,13 +4,15 @@ import * as path from 'path';
  * .what = one review lane — the reviewer slug, the prompt head, and the brain it ran
  *         with, within the log root its runs land in
  * .why = a lane is the unit a prompt cache is shared over, and a cached prefix is the
- *        model plus the system prompt. the head is the system prompt, and the system
- *        prompt is the affinity key (rule.require.name-the-shared-prefix-as-the-cache-anchor);
- *        the brain names the model tier the run asked for — so two runs can share a
- *        prefix only where they share a slug, a head, AND a brain. a slug whose rubric, briefs,
- *        or focus changed has a new head, and so a new prefix: it starts a new lane. the
- *        log root is part of the lane because two worktrees of one repo share slug
- *        names, and the grove fold reads them all.
+ *        model plus the system prompt. the head is the system prompt, the slot a replica
+ *        pin WOULD key on, were one sent — none is (`setOnePrefixPoke`); the
+ *        brain names the model tier the run asked for — so two runs can share a prefix
+ *        only where they share a slug, a head span, AND a brain. the head is keyed on its
+ *        span ahead of the corpus (`getOneReviewRunHead`), so a repaired file parts the
+ *        prefix but keeps the lane; new instructions, goal, or output contract start a new
+ *        lane (the rubric and refs ride the tail, so they part no lane). the log
+ *        root is part of the lane because two worktrees of one repo share slug names, and
+ *        the grove fold reads them all.
  *
  * 🔴 .note = a shared lane is NECESSARY for a shared cache, never SUFFICIENT. a brain
  *     slug names a tier, not a host: a router brain (`openrouter/*`) walks its hosts

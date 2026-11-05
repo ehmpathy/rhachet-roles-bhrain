@@ -1,7 +1,7 @@
 import { sleep } from 'iso-time';
 
+import type { ReviewPrefixPrimeOutcome } from '@src/domain.objects/Reviewer/ReviewPrefixPrimeOutcome';
 import { asReviewPrimeFaultLine } from '@src/domain.operations/review/prime/asReviewPrimeFaultLine';
-import type { ReviewPrefixPrimeOutcome } from '@src/domain.operations/review/prime/ReviewPrefixPrimeOutcome';
 import { asWatermarkFaultOrThrow } from '@src/domain.operations/review/watermark/asWatermarkFaultOrThrow';
 
 import { getOneGatherOfLeader } from './getOneGatherOfLeader';

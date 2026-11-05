@@ -6,8 +6,9 @@ import type { ReviewPrefixRollup } from '@src/domain.operations/review/meter/Rev
  *        (rule.forbid.duplicate-format-tree-operations)
  *
  * .note = a glyph marks only a nonzero count that asks for action: 🔴 on a miss (the
- *         prompt held and the cache served none), 🟡 on an over-reach (the instrument
- *         is off). a zero count carries no glyph. `unmeasured` renders only when
+ *         prompt held and the cache served none), 🟡 on a lapse (a real loss only a
+ *         shorter pause prevents, the same 🟡 the `cold (lapsed Nm)` grade wears), 🟡 on
+ *         an over-reach (the instrument is off). a zero count carries no glyph. `unmeasured` renders only when
  *         nonzero, so the counts on the row always sum to the pairs considered
  */
 export const asPrefixVerdictRollupHuman = (input: {
@@ -23,6 +24,7 @@ export const asPrefixVerdictRollupHuman = (input: {
   const counts = [
     `${input.rollup.served} served`,
     `${input.rollup.missed > 0 ? '🔴 ' : ''}${input.rollup.missed} missed`,
+    `${input.rollup.lapsed > 0 ? '🟡 ' : ''}${input.rollup.lapsed} lapsed`,
     `${input.rollup.selfCached} self-cached`,
     `${input.rollup.overReach > 0 ? '🟡 ' : ''}${input.rollup.overReach} over-reach`,
     `${input.rollup.unshared} unshared`,

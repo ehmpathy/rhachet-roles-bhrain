@@ -17,7 +17,7 @@ import type { ReviewRunawayEvidence } from '@src/domain.operations/review/withOu
 
 type ReviewRunMetricsRealizedTotals = Omit<
   ReviewRunMetricsRealized,
-  'compiled' | 'supply' | 'runaways'
+  'compiled' | 'supply' | 'runaways' | 'meet'
 >;
 
 /**

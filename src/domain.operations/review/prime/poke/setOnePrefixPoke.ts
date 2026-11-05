@@ -1,6 +1,7 @@
 import { asIsoPriceHuman } from 'iso-price';
 import type { BrainChoice, ContextBrain } from 'rhachet';
-import { genArtifactGitFile } from 'rhachet-artifact-git';
+import type { Artifact } from 'rhachet-artifact';
+import type { GitFile } from 'rhachet-artifact-git';
 import { z } from 'zod';
 
 import type { ReviewRunMetricsRealized } from '@src/domain.objects/Reviewer/ReviewRunMetricsRealized';
@@ -12,7 +13,6 @@ import { ReviewTimeoutError } from '@src/domain.operations/review/ReviewTimeoutE
 import { withDeadline } from '@src/domain.operations/review/withDeadline';
 import { withTransientBrainRetry } from '@src/domain.operations/review/withTransientBrainRetry';
 
-import { asPrefixPokeHeadPath } from './asPrefixPokeHeadPath';
 import { getOneMsOfPokeWait } from './getOneMsOfPokeWait';
 
 /**
@@ -41,21 +41,25 @@ this is a cache poke, not a review. review no file here.
 reply with exactly: {"ack":"ack"}`;
 
 /**
- * .what = why the poke's head rides as a file (its path: `asPrefixPokeHeadPath`, one per head)
- * .why = the head must reach the brain as the SYSTEM prompt — the replica affinity
- *        key derives from the system prompt, and a cache lives per replica
+ * .what = why the poke takes its head as a brief the caller already wrote
+ * .why = the head must reach the brain as the SYSTEM prompt, byte for byte the review's,
+ *        so the poke writes the very prefix the review reads
  *        (rule.require.name-the-shared-prefix-as-the-cache-anchor). `role.briefs`
  *        is the only door to that slot, and a brief is a FILE.
  *
- * .note = the digest hashes the brief's TEXT, never its path, so the poke's own path
- *         costs the pin naught, and the poke never writes into a review run's log dir,
- *         which is that run's record.
+ * .note = the caller hands the head artifact a run already holds (`setPromptHeadArtifact`):
+ *         a lane prime hands the lane's own head, a partition prime the head of its own run.
+ *         so the poke writes no file of its own — no cache dir that grows a head per round,
+ *         no second copy of a corpus beside the first
  *
- *         ✅ verified against the adapter's own readme: *"the key is coarse on
- *         purpose. it covers the model and the system prompt only — not the
- *         prompt, the episode, or the tool defs."* so neither this path nor the
- *         poke's own `schemaOfPokeAck` (which differs from the review's schema)
- *         can part the two pins.
+ * .note = the system prompt is the brief's TEXT, never its path, so the brief's path parts
+ *         naught from the review's
+ *
+ * 🔴 .note = no replica pin rides the poke. `rhachet-brains-openrouter@0.1.4` sends no
+ *         affinity key and no `cache_control` (grep of its dist: 0 matches), so the poke
+ *         and the pour it serves meet one replica by chance, not by key. a pin keyed on
+ *         the model and the system prompt is owed by that repo (radio task openrouter
+ *         #34). an adapter readme that claims a pin describes a version not installed
  */
 
 /**
@@ -92,9 +96,8 @@ const DELAYS_OF_TRANSIENT_POKE_RETRY = [{ seconds: 3 }];
  *        `brain.choice.ask` already returns `size.tokens.cache.get` and
  *        `cost.cash.total`, the whole measurement a poke row carries.
  *
- * .note = it is a `set`: a poke mutates two states — it writes the head brief to
- *         disk, and writes the prefix into the provider's cache. the measurement it
- *         returns reports that mutation.
+ * .note = it is a `set`: a poke writes the prefix into the provider's cache. the
+ *         measurement it returns reports that mutation.
  *
  * .note = it lives in `review/prime/poke/`, beside its fault predicates: only a prime
  *         sends it — the lane prime and the partition prime, before a pour — so it
@@ -102,9 +105,8 @@ const DELAYS_OF_TRANSIENT_POKE_RETRY = [{ seconds: 3 }];
  */
 export const setOnePrefixPoke = async (
   input: {
-    cwd: string;
-    reviewer: string;
-    head: string;
+    /** the head, as the brief its run already wrote — the system prompt the poke sends */
+    headBrief: Artifact<typeof GitFile>;
     tail: string;
     /**
      * the time this poke may wait; null takes `MS_OF_POKE_TIMEOUT`. a caller may only
@@ -131,17 +133,6 @@ export const setOnePrefixPoke = async (
    */
   faultsSwallowed: { error: unknown }[];
 }> => {
-  // the head rides as a brief, which is the system slot the affinity pin derives from.
-  // one file per head, so two primes of one reviewer never overwrite each other's head
-  const headBrief = genArtifactGitFile({
-    uri: asPrefixPokeHeadPath({
-      cwd: input.cwd,
-      reviewer: input.reviewer,
-      head: input.head,
-    }),
-  });
-  await headBrief.set({ content: input.head });
-
   // the wedge bound — the declared default, or a caller's shorter bound, never a longer one
   const msOfTimeout = getOneMsOfPokeWait({
     msOfCaller: input.msOfTimeout,
@@ -166,9 +157,9 @@ export const setOnePrefixPoke = async (
           operation: async () =>
             await context.brain.brain.choice.ask({
               // the shared constructor, never a literal — it is the ONE place the
-              // review's brief list and this one are held equal, and the pin this
-              // poke pays for is derived from that list (`asRoleOfSharedPrefix`)
-              role: asRoleOfSharedPrefix({ prefix: headBrief }),
+              // review's brief list and this one are held equal, and the prefix this
+              // poke pays to warm is that list's text (`asRoleOfSharedPrefix`)
+              role: asRoleOfSharedPrefix({ prefix: input.headBrief }),
               prompt: `${input.tail}${ASK_OF_POKE}`,
               schema: { output: schemaOfPokeAck },
             }),

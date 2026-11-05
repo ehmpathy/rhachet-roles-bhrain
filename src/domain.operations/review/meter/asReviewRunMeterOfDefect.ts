@@ -23,6 +23,8 @@ export const asReviewRunMeterOfDefect = (input: {
   head: null,
   brain: null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   // the render names the class once in its own header, so the body carries none
   defect: asDefectBodySansClassLabels({ error: input.error }),
   grade: 'unknown',

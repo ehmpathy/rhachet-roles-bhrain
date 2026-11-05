@@ -83,15 +83,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rules/rule.no-magic-numbers.md
-
-# rule: no-magic-numbers
-forbid unexplained numeric literals; name them as constants
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -204,5 +195,19 @@ index 938d79886f812068cbd8b5923cc8974f83086ee0..cd6b309f4bd9623f9372226cee7bc072
  };
 </target.diff>
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.no-magic-numbers.md
+
+# rule: no-magic-numbers
+forbid unexplained numeric literals; name them as constants
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;

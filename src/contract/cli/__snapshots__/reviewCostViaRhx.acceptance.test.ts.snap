@@ -10,8 +10,8 @@ exports[`reviewCostViaRhx.acceptance given: [case1] a human who asks the publish
 
   the axis
     --of run     ONE review invocation — its cost AND what its prompt was made of
-    --of tree    this worktree's review history, rolled up by reviewer, level, stone, round
-    --of grove   every tree on this machine, rolled up by tree, route, stone, reviewer
+    --of tree    this worktree's review history, rolled up by reviewer, level, provider, brain, meet, stone, round
+    --of grove   every tree on this machine, rolled up by tree, route, stone, reviewer, provider, brain, meet
 
   inputs
     --of <breadth>  required, one of run | tree | grove
@@ -34,10 +34,15 @@ exports[`reviewCostViaRhx.acceptance given: [case1] a human who asks the publish
     unknown   got past validation, metrics absent; reads absent, never $0.00
 
   a 0.0% cache rate names its cause
-    cold (first round)  no prior prompt to share; no act owed
+    cold (first round)  no prior prompt of its lane (one reviewer on one brain) to share;
+                        no act owed
     cold (lapsed Nm)    the prefix aged past the 66-minute reach — a real loss;
                         a shorter pause between rounds holds it
-    warm               a repeat within the reach, yet the cache was not read
+    warm (prior)        a repeat within the reach, yet the cache was not read;
+                        a prefix broke — --of run --at names the input past the seam
+    warm (meet)         the meet's poke warmed the head this round, and the read met none;
+                        no pin rides the ask, so it likely reached another replica
+    poke                the poke writes the head its peers read; no read owed
 
   by level
     read from the guard as it stands now, so a promoted lane re-files its past runs.
@@ -56,16 +61,42 @@ exports[`reviewCostViaRhx.acceptance given: [case1] a human who asks the publish
     rate's denominator, so a brain that does bill one is not undercounted
 
   prefix rows — did the cache serve what two rounds shared
-    expected   the longest prefix this round shares with its prior round, in tok est.
+    expected   the longest prefix this round shares with its prior round, in tok est. —
+               or, where the round met a warm peer, the head that peer wrote, if longer;
+               the row names which
     cache.get  what the cache served; reach = cache.get / expected
     breaks in  head · tail · whole
-    served       the cache read up to the shared prefix
-    missed       a prefix was shared, the cache served none — the ttl or the pin
+               head  = the instructions or a shared target changed — a repair round's
+                       usual shape; the meet, not the prior, carries the cache then
+               tail  = the head held; the lane's rubric, refs, or conversation moved
+               whole = the prompt matched its prior's from end to end
+    served       the cache read up to the expected prefix
+    missed       a prefix was there to read, the cache served none — within the reach of
+                 the prior's last send, or after a warm meet
+    lapsed       a prefix was shared, the cache served none, and the round came past the
+                 66-minute reach of its prior's last send, with no warm meet —
+                 the clock, never the layout
     self-cached  the cache read came from the run's own turns
-    over-reach   the cache read past the shared prefix — the instrument is off
-    unshared     no prefix shared — the prompt layout broke
+    over-reach   the cache read past the expected prefix — the estimate is off, or the
+                 cache held bytes no record names
+    unshared     no prefix shared — the prompt layout broke, or the round switched brains
     unmeasured   a prompt or a meter is absent
     --of run shows the pair; tree and grove count verdicts. pairs never cross trees
+
+  meet — what a run's level meet did, before it poured
+    primed             this lane sent the poke that warmed the head its peers share
+    awaited            the head was warm when this lane poured — a peer released it warm
+    solo · cold · faulted · timeout · expired
+                       no warm head was there to read; the run poured cold
+    skipped.partition  a partition lane primed its own common prefix; no level meet ran
+    skipped.lone       a lone run, with no guard pour to meet
+    poke               the poke's own run, filed as poke.<reviewer>
+    primed and awaited are warm: a zero cache read after one is a miss, never the clock.
+    --of run names the meet; tree and grove count runs, spend, and cache rate by meet
+
+  by brain
+    each brain row hangs its prefix verdicts, keyed by the round's brain; a cache is per
+    model, so a pair whose rounds rode two brains reads unshared, never missed
 
   which input bought this — answered at all three breadths
     --of run     per run, exact, plus the directories each target came from
@@ -192,6 +223,54 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
         }
       }
     ],
+    "byBrain": [
+      {
+        "key": "(no brain — unrecorded)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byMeet": [
+      {
+        "key": "(no meet — unrecorded or unreadable)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
     "byStone": [
       {
         "key": "(no guard identity — a hand or review.by run)",
@@ -297,11 +376,13 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
       "pairs": 0,
       "served": 0,
       "missed": 0,
+      "lapsed": 0,
       "selfCached": 0,
       "overReach": 0,
       "unshared": 0,
       "unmeasured": 0
     },
+    "byBrain": [],
     "pairs": []
   },
   "seam": {
@@ -323,8 +404,10 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
 exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the skill advertises when: [t1] the consumer pipes it to a json reader then: the json document a consumer receives is snapped 1`] = `
 {
   "prefix": {
+    "byBrain": [],
     "pairs": [],
     "verdicts": {
+      "lapsed": 0,
       "missed": 0,
       "overReach": 0,
       "pairs": 0,
@@ -335,6 +418,30 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
     },
   },
   "report": {
+    "byBrain": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no brain — unrecorded)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
     "byLevel": [
       {
         "cacheGrade": {
@@ -344,6 +451,30 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
         "cacheHitRate": 0.2,
         "cost": "USD 0.250_000",
         "key": "(no level — guard unread)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byMeet": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no meet — unrecorded or unreadable)",
         "runs": {
           "accounted": 1,
           "metered": 1,

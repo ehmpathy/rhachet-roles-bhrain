@@ -1,0 +1,19 @@
+{
+  "key": "094545f2577b3c49",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "feat: a replica affinity pin keyed on the model and the system prompt",
+  "description": "# feat: a replica affinity pin keyed on the model and the system prompt, so a shared prefix meets the replica that cached it\n\n## .what\n\n`rhachet-brains-openrouter@0.1.4` sends no affinity key and no `cache_control` on an ask. each ask goes to the cheapest qualified host, and which replica serves it is arbitrary. so two asks that share a long system prompt, seconds apart, meet one cache by chance.\n\ngrep of the installed dist for `affinity`, `session_id`, `cache_control`, `sha256`: 0 matches.\n\n- `dist/domain.operations/atom/genBrainAtom.js:149-165` — the ask body, no pin and no session key\n- `dist/infra/cast/asOpenRouterMessages.js:12-26` — the system message, no `cache_control` part\n- `dist/domain.operations/atom/getOneFloorCompletion.js:26-33` — the host choice, cheapest first, with no affinity\n\n## .why it matters\n\n`rhachet-roles-bhrain` now leads every review prompt with the corpus a guard level shares (instructions, output format, target files), carried as the system prompt. nine lanes over one corpus compute one byte-identical system prompt, and a prime poke writes it to the cache before the lanes pour. without a pin, each lane lands on whatever replica is free, so the read is likely, not certain. measured with no pin: ~39% of lanes met the primed replica over one six-lane level.\n\n## .the shape of the fix\n\n- derive a key from the model slug and the system prompt only — never the user prompt, the episode, or the tool defs, so asks that share a system prompt share a key\n- send it as openrouter's session / affinity field on every ask (and on the host choice, so the floor prefers the host that served the key last, where it still qualifies)\n- for providers behind openrouter that honor `cache_control`, mark the system message ephemeral\n- keep the key coarse: a replica holds many prefixes, and a per-request key pins perfectly and shares naught\n\n## .how to verify\n\ntwo asks on one model with one 50k-char system prompt, two seconds apart: the second reports `cache.get` near the system prompt's tokens, on every run.\n\n## .source\n\nfound in `ehmpathy/rhachet-roles-bhrain` route `.behavior/v2026_11_01.fix-review-input-cacheability` (cause C2).",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 41,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "34"
+}

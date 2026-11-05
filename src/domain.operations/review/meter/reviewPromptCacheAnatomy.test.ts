@@ -21,7 +21,7 @@ const costSpecFixture: BrainSpec['cost']['cash'] = {
   },
 };
 
-/** a rubric large enough to be worth a cache — the static head of every round */
+/** a rubric large enough to be worth a cache — it opens the tail, which only this lane sends */
 const rulesFixture = [
   {
     path: '.agent/rule.forbid.failhide.md',
@@ -33,7 +33,7 @@ const rulesFixture = [
   },
 ];
 
-/** the target corpus — the variable tail, which changes as the driver repairs */
+/** the target corpus — it rides the head, and changes as the driver repairs */
 const targetsAtRound = (input: { revision: string }) => [
   {
     path: 'src/domain.operations/setRecord.ts',
@@ -106,6 +106,11 @@ const genPromptForRound = (input: {
  *            demands it sit inside the head
  *          - the head was not separable at all, so it could not ride as a brief
  *            and no replica pin was derivable. case4 clamps the split
+ *          - the lane's rubric sat above the corpus every lane of its level
+ *            shares, so nine lanes over one corpus parted at the rubric and each
+ *            paid the corpus in full. case2 and case4 now demand the corpus lead
+ *            and the rubric trail (`compileReviewPrompt.layout.integration.test.ts` holds the
+ *            byte-identical-head clamp and the content-equality one)
  * .note = `prompt` is what the wire carries in order — the head as the system
  *         message, the tail as the user message. so a prefix measured over the
  *         concatenation is the prefix a replica actually sees.
@@ -133,26 +138,43 @@ describe('reviewPromptCacheAnatomy', () => {
           later: roundTwo,
         });
 
+        then('the prefix survives every instruction, into the target', () => {
+          // the round a conversation first appears is the round that used to
+          // break earliest: an instruction item was appended only when a
+          // conversation existed, and that item sat above every block. every
+          // instruction item is unconditional now, so the prefix reaches the
+          // target whether or not a conversation is present.
+          const headOfTarget = roundTwo.indexOf('## target');
+          expect(headOfTarget).toBeGreaterThan(0);
+          expect(overlap.sharedBytes).toBeGreaterThan(headOfTarget);
+        });
+
         then(
-          'the prefix survives the whole rubric, not merely the head',
+          '🔴 the prefix parts inside the revised target, ahead of the rubric — the stated trade',
           () => {
-            // the round a conversation first appears is the round that used to
-            // break earliest: an instruction item was appended only when a
-            // conversation existed, and that item sat ABOVE `## rules`. so the
-            // prompt diverged before the largest static block the cache had to
-            // offer. every instruction item is unconditional now, so the rubric
-            // is reached whether or not a conversation is present.
-            const headOfRulesSection = roundTwo.indexOf('## rules');
-            expect(headOfRulesSection).toBeGreaterThan(0);
-            expect(overlap.sharedBytes).toBeGreaterThan(headOfRulesSection);
+            // this fixture revises its ONE target every round, the worst case. the
+            // rubric now trails the corpus every lane of a level shares, so a round
+            // whose target moved parts the prefix ahead of the rubric. that is the
+            // trade `asPromptHead` states: the rubric (~7% of a heavy prompt)
+            // gives up its cross-round reuse, so the corpus (~88%) can be read by
+            // every peer lane of the round
+            expect(overlap.sharedBytes).toBeLessThan(
+              roundTwo.indexOf('## rules'),
+            );
           },
         );
 
-        then('so a majority of round 2 could be served from round 1', () => {
-          // was under 10% against the prior layout; the conversation is the first
-          // byte that may differ, and it sits below every static block
-          expect(overlap.sharedShare!).toBeGreaterThan(0.5);
-        });
+        then(
+          '🔴 a floor still holds: over a quarter of round 2 reads from round 1, even in the worst case',
+          () => {
+            // the prior clamp here was a MAJORITY (> 0.5). fulcrum F1, ruled yes by the
+            // director, moved the rubric behind the corpus and gave up that majority on
+            // this one-target worst case (79.1% → 33.9%, snapped in [t2]). the floor is
+            // re-pinned at the new measured level with headroom, not deleted, so a
+            // further regression past it still fails here
+            expect(overlap.sharedShare!).toBeGreaterThan(0.25);
+          },
+        );
       });
 
       when('[t1] round 2 is compared to round 3', () => {
@@ -164,14 +186,14 @@ describe('reviewPromptCacheAnatomy', () => {
         then(
           'the prefix reaches into the target, ahead of the exchange',
           () => {
-            // the target now LEADS the tail, so the prefix runs through it and
-            // parts only where the target itself was revised. this fixture
-            // holds ONE target and revises it every round, the worst case for
-            // any order — case5 measures the realistic shape, where a lane
-            // holds many targets and the driver repairs a few. what matters
-            // here is the DIRECTION: the prefix now stops inside the target
-            // rather than inside the conversation, so the bytes the
-            // conversation used to gate are reachable at all.
+            // the target leads every lane block, so the prefix runs through it and
+            // parts only where the target itself was revised. this fixture holds
+            // ONE target and revises it every round, the worst case for any order
+            // — case5 measures the realistic shape, where a lane holds many
+            // targets and the driver repairs a few. what matters here is the
+            // DIRECTION: the prefix stops inside the target rather than inside the
+            // conversation, so the bytes the conversation used to gate are
+            // reachable at all.
             const headOfTarget = roundThree.indexOf('## target');
             const headOfConversation = roundThree.indexOf(
               '## prior conversation',
@@ -183,9 +205,10 @@ describe('reviewPromptCacheAnatomy', () => {
         );
 
         then(
-          'a majority of the prompt is cacheable between adjacent rounds',
+          '🔴 a floor still holds: over a quarter of round 3 reads from round 2, even in the worst case',
           () => {
-            expect(overlap.sharedShare!).toBeGreaterThan(0.5);
+            // the re-pinned twin of [t0]'s floor (was > 0.5; 70.5% → 30.2% under F1)
+            expect(overlap.sharedShare!).toBeGreaterThan(0.25);
           },
         );
       });
@@ -215,22 +238,23 @@ describe('reviewPromptCacheAnatomy', () => {
               totalBytes: Buffer.byteLength(roundTwo, 'utf-8'),
             };
 
-            // the layout the figures describe: static blocks first, then the
-            // target, then the conversation, and the prefix past the rubric
+            // the layout the figures describe: the blocks a level shares first,
+            // the target last among them, then the lane's rubric, then the
+            // conversation, and the prefix into the target
             expect(sectionOffsets.outputFormat).toBeGreaterThan(0);
-            expect(sectionOffsets.rules).toBeGreaterThan(
+            expect(sectionOffsets.target).toBeGreaterThan(
               sectionOffsets.outputFormat,
             );
-            expect(sectionOffsets.target).toBeGreaterThan(sectionOffsets.rules);
+            expect(sectionOffsets.rules).toBeGreaterThan(sectionOffsets.target);
             expect(sectionOffsets.conversation).toBeGreaterThan(
-              sectionOffsets.target,
+              sectionOffsets.rules,
             );
             expect(sectionOffsets.totalBytes).toBeGreaterThan(
               sectionOffsets.conversation,
             );
-            expect(oneToTwo.sharedBytes).toBeGreaterThan(sectionOffsets.rules);
+            expect(oneToTwo.sharedBytes).toBeGreaterThan(sectionOffsets.target);
             expect(twoToThree.sharedBytes).toBeGreaterThan(
-              sectionOffsets.rules,
+              sectionOffsets.target,
             );
 
             expect({
@@ -267,15 +291,31 @@ describe('reviewPromptCacheAnatomy', () => {
     when('[t0] the two lanes are compared', () => {
       const shared = getOneSharedPrefixByteCount({ a: laneA, b: laneB });
 
-      then('they share every block that precedes the rubric', () => {
+      then('🔴 they share every block through the target corpus', () => {
         // the nine L1 lanes read the SAME target corpus but carry DIFFERENT
-        // rubrics, and the rubric sits ABOVE the target. so no lane can reuse
-        // another lane's prefix past its own rules — the divergence lands at the
-        // rubric, never before it and never after it.
+        // rubrics. the corpus leads, and each lane's rubric trails it, so each
+        // lane reads its peers' prefix through the whole corpus — the divergence
+        // lands inside the rubric, never ahead of it. against the prior layout,
+        // whose rubric sat above the target, this parted lanes at the rubric and
+        // each lane paid the corpus in full
         const headOfRulesSection = laneA.indexOf('## rules');
-        expect(shared).toBeGreaterThan(0);
+        // a marker absent reads -1 and would pass every `toBeLessThan` below
+        expect(laneA.indexOf('## target')).toBeGreaterThan(0);
+        expect(laneA.indexOf('## target')).toBeLessThan(headOfRulesSection);
         expect(shared).toBeGreaterThanOrEqual(headOfRulesSection);
-        expect(shared).toBeLessThan(laneA.indexOf('## target'));
+        expect(shared).toBeLessThan(laneA.indexOf('</rules>'));
+      });
+
+      then('the cross-lane share is snapped, so a claim can cite it', () => {
+        // the gain the move was taken for, beside the cross-round cost `[case1]`
+        // and `[case6]` snap. one target here, so the corpus is small; on a real
+        // level the corpus is ~88% of the prompt and this share follows it
+        expect({
+          sharedBytes: shared,
+          sharedShareOfLaneA: `${((shared / laneA.length) * 100).toFixed(1)}%`,
+          rulesAt: laneA.indexOf('## rules'),
+          totalBytes: laneA.length,
+        }).toMatchSnapshot();
       });
 
       then('so the grove-wide boilerplate is inside every lane prefix', () => {
@@ -305,17 +345,17 @@ describe('reviewPromptCacheAnatomy', () => {
       });
 
       then('and it rides in the static head, never the variable tail', () => {
-        expect(compiled.promptHeadStatic).toContain('## output format');
-        expect(compiled.promptTailVariable).not.toContain('## output format');
+        expect(compiled.promptHead).toContain('## output format');
+        expect(compiled.promptTail).not.toContain('## output format');
       });
 
       then('and it is not trivial in size', () => {
         // ~1.5kb of unconditionally static boilerplate — the size is what makes
         // its position worth a rule rather than a preference
         const headOfOutputFormat = prompt.indexOf('## output format');
-        const headOfRules = prompt.indexOf('## rules');
+        const headOfTarget = prompt.indexOf('## target');
         const blockBytes = Buffer.byteLength(
-          prompt.slice(headOfOutputFormat, headOfRules),
+          prompt.slice(headOfOutputFormat, headOfTarget),
           'utf-8',
         );
         expect(blockBytes).toBeGreaterThan(1_000);
@@ -363,21 +403,27 @@ describe('reviewPromptCacheAnatomy', () => {
         });
 
       /**
-       * .what = the same prompt with its two tail blocks swapped back
-       * .why = the counterfactual. the tail now ships as `target ++
-       *        conversation`, so this reassembles the conversation-first
-       *        layout the compiler used to emit — the loser of the
-       *        measurement, kept so the margin stays checkable rather than a
-       *        figure quoted in a comment.
+       * .what = the same prompt with the conversation moved back ahead of the target
+       * .why = the counterfactual. the prompt ships as `preamble ++ target ++ rubric
+       *        ++ conversation`, so this reassembles the conversation-first layout
+       *        the compiler once emitted — `preamble ++ rubric ++ conversation ++
+       *        target` — the loser of the measurement, kept so the margin stays
+       *        checkable rather than a figure quoted in a comment.
        *
        * .note = a MEASUREMENT of a layout, never a proposal of one. the real
        *         compiler is untouched; this reassembles its own output.
        */
-      const asTailConversationFirst = (input: { tail: string }): string => {
-        const headOfConversation = input.tail.indexOf('## prior conversation');
-        const targetPart = input.tail.slice(0, headOfConversation);
-        const conversationPart = input.tail.slice(headOfConversation);
-        return `${conversationPart}${targetPart}`;
+      const asPromptConversationFirst = (input: { prompt: string }): string => {
+        const headOfTarget = input.prompt.indexOf('## target');
+        const headOfRules = input.prompt.indexOf('## rules');
+        const headOfConversation = input.prompt.indexOf(
+          '## prior conversation',
+        );
+        const preamble = input.prompt.slice(0, headOfTarget);
+        const targetPart = input.prompt.slice(headOfTarget, headOfRules);
+        const rubricPart = input.prompt.slice(headOfRules, headOfConversation);
+        const conversationPart = input.prompt.slice(headOfConversation);
+        return `${preamble}${rubricPart}${conversationPart}${targetPart}`;
       };
 
       const roundTwo = compileCorpusRound({ round: 2, revision: 'v2' });
@@ -410,8 +456,12 @@ describe('reviewPromptCacheAnatomy', () => {
       when(
         '[t1] the prior order is measured — conversation, then target',
         () => {
-          const priorTwo = `${roundTwo.promptHeadStatic}${asTailConversationFirst({ tail: roundTwo.promptTailVariable })}`;
-          const priorThree = `${roundThree.promptHeadStatic}${asTailConversationFirst({ tail: roundThree.promptTailVariable })}`;
+          const priorTwo = asPromptConversationFirst({
+            prompt: roundTwo.prompt,
+          });
+          const priorThree = asPromptConversationFirst({
+            prompt: roundThree.prompt,
+          });
           const overlap = getOneSharedPrefixOverlap({
             earlier: priorTwo,
             later: priorThree,
@@ -452,8 +502,8 @@ describe('reviewPromptCacheAnatomy', () => {
               later: roundThree.prompt,
             });
             const prior = getOneSharedPrefixOverlap({
-              earlier: `${roundTwo.promptHeadStatic}${asTailConversationFirst({ tail: roundTwo.promptTailVariable })}`,
-              later: `${roundThree.promptHeadStatic}${asTailConversationFirst({ tail: roundThree.promptTailVariable })}`,
+              earlier: asPromptConversationFirst({ prompt: roundTwo.prompt }),
+              later: asPromptConversationFirst({ prompt: roundThree.prompt }),
             });
             // the margin the reorder was taken for: the shipped order keeps more
             expect(shipped.sharedBytes).toBeGreaterThan(prior.sharedBytes);
@@ -492,43 +542,45 @@ describe('reviewPromptCacheAnatomy', () => {
         // message and the tail as the user message only because the wire
         // bytes are unchanged by the split. break this and the split
         // silently drops or duplicates content.
-        expect(compiled.promptHeadStatic + compiled.promptTailVariable).toEqual(
+        expect(compiled.promptHead + compiled.promptTail).toEqual(
           compiled.prompt,
         );
       });
 
       then('the head is substantial enough to be worth a pin', () => {
         // a replica pin is derived from the system prompt alone, so a head of a
-        // few bytes would pin correctly and cache naught
-        expect(compiled.promptHeadStatic.length).toBeGreaterThan(
-          compiled.promptTailVariable.length,
-        );
+        // few bytes would pin correctly and cache naught. the head now carries
+        // every target body whole, so its mass grows with the corpus. this
+        // fixture holds one small target beside a large rubric, so head vs tail
+        // length is no test of that here; on a real level the corpus is ~88%
+        const [target] = targetsAtRound({ revision: 'v1' });
+        expect(compiled.promptHead).toContain(target!.content);
+        expect(compiled.promptTail).not.toContain(target!.content);
       });
 
       then(
-        'every round-variable block sits in the tail, never the head',
+        '🔴 every block the lane alone sends sits in the tail, never the head',
         () => {
-          // the target and the conversation are what the driver moves between
-          // rounds; a byte of either in the head would void the pin's whole value
-          expect(compiled.promptTailVariable).toContain('## target');
-          expect(compiled.promptTailVariable).toContain(
-            '## prior conversation',
-          );
-          expect(compiled.promptHeadStatic).not.toContain('## target');
-          expect(compiled.promptHeadStatic).not.toContain(
-            '## prior conversation',
-          );
+          // the rubric and the conversation are this lane's own; a byte of either
+          // in the head would part it from every peer lane of its level, so the
+          // level's prime meet (keyed brain + head) would find no peer
+          expect(compiled.promptTail).toContain('## rules');
+          expect(compiled.promptTail).toContain('## prior conversation');
+          expect(compiled.promptHead).not.toContain('## rules');
+          expect(compiled.promptHead).not.toContain('## prior conversation');
         },
       );
 
-      then('every static block sits in the head, never the tail', () => {
-        expect(compiled.promptHeadStatic).toContain('## rules');
-        expect(compiled.promptHeadStatic).toContain('CRITICAL INSTRUCTIONS');
-        expect(compiled.promptTailVariable).not.toContain('## rules');
-        expect(compiled.promptTailVariable).not.toContain(
-          'CRITICAL INSTRUCTIONS',
-        );
-      });
+      then(
+        '🔴 every block the level shares sits in the head, never the tail',
+        () => {
+          expect(compiled.promptHead).toContain('CRITICAL INSTRUCTIONS');
+          expect(compiled.promptHead).toContain('## output format');
+          expect(compiled.promptHead).toContain('## target');
+          expect(compiled.promptTail).not.toContain('CRITICAL INSTRUCTIONS');
+          expect(compiled.promptTail).not.toContain('## target');
+        },
+      );
     });
   });
 
@@ -610,6 +662,7 @@ describe('reviewPromptCacheAnatomy', () => {
         const shipped = asTargetSection({
           targets: input.targets,
           focus: 'push',
+          diffRange: null,
         });
         const interleaved = asTargetSectionInterleaved({
           targets: input.targets,

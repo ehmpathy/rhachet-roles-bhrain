@@ -8,6 +8,7 @@ import { DEFAULT_TEST_BRAIN } from '@src/.test/genTestBrainContext';
 import { ENV_OF_REVIEW_SUBPROCESS } from '@src/domain.operations/isReviewSubprocess';
 import { asRunArtifactPath } from '@src/domain.operations/review/asRunArtifactPath';
 import { ENV_OF_REVIEW_BRAIN_CALL_TIMEOUT_MS } from '@src/domain.operations/review/getOneReviewBrainCallTimeoutMsFromEnv';
+import { getOneReviewRunMeter } from '@src/domain.operations/review/meter/getOneReviewRunMeter';
 import { asReviewPrefixPrimeKey } from '@src/domain.operations/review/prime/asReviewPrefixPrimeKey';
 import { asReviewWatermarkKey } from '@src/domain.operations/review/watermark/asReviewWatermarkKey';
 import { getOneReviewWatermarkRaw } from '@src/domain.operations/review/watermark/getOneReviewWatermarkRaw';
@@ -306,4 +307,208 @@ describe('stepReview — the prime meet', () => {
       });
     },
   );
+
+  /**
+   * .what = two lanes of one level — two rubrics over one corpus — poured at once
+   * .why = 🔴 the seam the cure rests on. the corpus leads the head and the rubric trails it,
+   *        so two lanes with different rubrics compute ONE head, meet on ONE watermark, and
+   *        send ONE poke; the follower then reads the head the poke wrote. a compile-only test
+   *        proves the heads equal and naught about the meet
+   */
+  given('[case3] two lanes with distinct rubrics over one corpus', () => {
+    when('[t0] both lanes pour at once', () => {
+      const scene = useThen('both review', async () => {
+        const cwd = setOneRepo({ slug: 'review-prime-meet-two-rubrics' });
+        fs.mkdirSync(path.join(cwd, 'rules/a'), { recursive: true });
+        fs.mkdirSync(path.join(cwd, 'rules/b'), { recursive: true });
+        fs.writeFileSync(
+          path.join(cwd, 'rules/a/rule.name-the-actor.md'),
+          '# rule.name-the-actor\n\nname the actor, then the act.\n',
+        );
+        fs.writeFileSync(
+          path.join(cwd, 'rules/b/rule.forbid-else.md'),
+          '# rule.forbid-else\n\nreturn early; never else.\n',
+        );
+
+        /**
+         * .mock = the brain's `ask`, as a recorder of each system prompt and tail
+         * .why = the case asserts the bytes two lanes and one poke SEND; a live brain hides
+         *        them behind its reply, and a live call is forbidden in a suite ci runs
+         * .real = the live poke path: `setOnePrefixPoke.integration.test.ts` [case4]; the live
+         *         review path: `stepReview.integration.test.ts`
+         */
+        // .note = deliberate mutation, in a scoped zone: `asks` accumulates via push
+        const asks: { system: string; prompt: string }[] = [];
+        const atom = genBrainAtom({ slug: DEFAULT_TEST_BRAIN });
+        const brain = {
+          brain: {
+            choice: {
+              slug: atom.slug,
+              spec: atom.spec,
+              ask: async (input: {
+                role: {
+                  briefs: { get: () => Promise<{ content: string } | null> }[];
+                };
+                prompt: string;
+              }) => {
+                const briefs = await Promise.all(
+                  input.role.briefs.map(async (brief) => brief.get()),
+                );
+                asks.push({
+                  system: briefs.map((file) => file?.content ?? '').join(''),
+                  prompt: input.prompt,
+                });
+                const isPoke = input.prompt.includes('this is a cache poke');
+                return {
+                  output: isPoke ? { ack: 'ack' } : VERDICT,
+                  metrics: METRICS,
+                };
+              },
+            },
+          },
+        } as unknown as ContextBrain<BrainChoice>; // a fake reads only slug, spec, and ask
+
+        // pour both lanes, stdout muted and stderr kept
+        const spyErr = jest
+          .spyOn(console, 'error')
+          .mockImplementation(() => {});
+        const spyLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+        // each lane writes where a guard would, so its runs file under a guard identity
+        const dirOfPeer = path.join(
+          cwd,
+          '.behavior',
+          'v2026_11_01.demo',
+          '.reviews',
+          'peer',
+        );
+        fs.mkdirSync(dirOfPeer, { recursive: true });
+        const results = await Promise.all(
+          ['a', 'b'].map((lane, index) =>
+            stepReview(
+              {
+                rules: `rules/${lane}/*.md`,
+                pathsWith: ['src/**'],
+                output: path.join(
+                  dirOfPeer,
+                  `5.1.execution._.review.i1.abc123.r${index + 1}._.given.by_peer.lane-${lane}.report.md`,
+                ),
+                focus: 'push',
+                goal: 'representative',
+                cwd,
+                meet: 'join',
+              },
+              { brain },
+            ),
+          ),
+        ).finally(() => {
+          spyErr.mockRestore();
+          spyLog.mockRestore();
+        });
+
+        // what each lane's meet did, as its realized record holds it
+        const meets = results.map(
+          (result) =>
+            JSON.parse(
+              fs.readFileSync(
+                asRunArtifactPath({
+                  dir: result.log.dir,
+                  artifact: 'realized',
+                }),
+                'utf-8',
+              ),
+            ).meet as string,
+        );
+
+        // every run the pour minted under its log root, as the meter reads it
+        const root = path.dirname(results[0]!.log.dir);
+        const meters = await Promise.all(
+          fs.readdirSync(root).map((name) =>
+            getOneReviewRunMeter({
+              dir: path.join(root, name),
+              withLocus: false,
+            }),
+          ),
+        );
+        return { cwd, results, asks, meets, meters };
+      });
+
+      then('both lanes review', () => {
+        expect(scene.results.map((result) => result.outcome)).toEqual([
+          'reviewed',
+          'reviewed',
+        ]);
+      });
+
+      then('🔴 exactly one poke is sent for the two lanes', () => {
+        const pokes = scene.asks.filter((ask) =>
+          ask.prompt.includes('this is a cache poke'),
+        );
+        expect(pokes).toHaveLength(1);
+      });
+
+      then('🔴 every ask rides one byte-identical system prompt', () => {
+        const systems = new Set(scene.asks.map((ask) => ask.system));
+        expect(scene.asks).toHaveLength(3);
+        expect(systems.size).toEqual(1);
+        expect([...systems][0]).toContain('src/paddleOut.ts');
+      });
+
+      then('the two reviews part only in their tails — their rubrics', () => {
+        const reviews = scene.asks.filter(
+          (ask) => !ask.prompt.includes('this is a cache poke'),
+        );
+        expect(reviews.map((ask) => ask.prompt).sort()).toEqual([
+          expect.stringContaining('rules/a/rule.name-the-actor.md'),
+          expect.stringContaining('rules/b/rule.forbid-else.md'),
+        ]);
+      });
+
+      then('🔴 one lane primed, and its peer awaited the warm head', () => {
+        expect([...scene.meets].sort()).toEqual(['awaited', 'primed']);
+      });
+
+      then(
+        '🔴 the poke files as a named run — round, brain, and the poke slug of the lane that sent it',
+        () => {
+          // three runs: two lanes and one poke, and each names its reviewer
+          const slugs = scene.meters
+            .map((meter) => meter.identity?.slug ?? null)
+            .sort();
+          expect(slugs).toHaveLength(3);
+          expect(slugs.slice(0, 2)).toEqual(['lane-a', 'lane-b']);
+          expect(['poke.lane-a', 'poke.lane-b']).toContain(slugs[2]);
+          const poke = scene.meters.find((meter) =>
+            meter.identity?.slug.startsWith('poke.'),
+          );
+          expect(poke?.identity?.iteration).toEqual(1);
+          expect(poke?.brain).toEqual(DEFAULT_TEST_BRAIN);
+          expect(poke?.grade).toEqual('metered');
+        },
+      );
+
+      then(
+        '🔴 the poke writes no head of its own — no second copy of the corpus',
+        () => {
+          const poke = scene.meters.find((meter) =>
+            meter.identity?.slug.startsWith('poke.'),
+          );
+          expect(poke?.head).toEqual(null);
+          // the dir a poke once grew a head file per round in
+          expect(
+            fs.existsSync(
+              path.join(
+                scene.cwd,
+                '.agent',
+                '.cache',
+                'repo=bhrain',
+                'role=reviewer',
+                'skill=review',
+                'pokes',
+              ),
+            ),
+          ).toEqual(false);
+        },
+      );
+    });
+  });
 });

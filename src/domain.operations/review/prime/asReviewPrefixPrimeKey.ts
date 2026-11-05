@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 /**
  * .what = the key two lanes share exactly when a prime of one warms the other
  * .why = a prompt cache serves a prefix per model, and the prefix a lane sends
- *        as its system prompt is its static head (instructions + rules). so two
+ *        as its system prompt is its head (instructions + the corpus its level shares). so two
  *        lanes on one brain with one head would read each other's cache entry,
  *        and any other pair would not — the key is the hash of both, and of
  *        naught else (rule.require.name-the-shared-prefix-as-the-cache-anchor)

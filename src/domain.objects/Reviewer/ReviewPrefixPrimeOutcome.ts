@@ -12,10 +12,13 @@
  *                peer in its gather, or its poke faulted); this lane pours cold at once
  * - `timeout`  = a peer held the claim and never released it in time — within the await bound,
  *                or within what the lane's deadline left the meet
- * - `lapsed`   = the lane's deadline left the meet no time; this lane took no claim (or stopped
+ * - `expired`  = the lane's deadline left the meet no time; this lane took no claim (or stopped
  *                before its poke) and pours cold at once
  *
  * .why = its own file, so the meet's leaves can name it without an import of their orchestrator
+ *
+ * .note = `expired`, never `lapsed`: `lapsed` is the cache's word, for a prefix whose age passed
+ *         the cache reach (`term=prompt.cache.lapsed`). the meet's clock is the lane's deadline
  */
 export type ReviewPrefixPrimeOutcome =
   | 'primed'
@@ -24,4 +27,4 @@ export type ReviewPrefixPrimeOutcome =
   | 'awaited'
   | 'cold'
   | 'timeout'
-  | 'lapsed';
+  | 'expired';

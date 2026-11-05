@@ -2,8 +2,10 @@ import type { IsoPriceWords } from 'iso-price';
 
 import type { ReviewTokens } from '@src/domain.objects/Reviewer/ReviewTokens';
 import { asCountHuman } from '@src/domain.operations/review/asCountHuman';
+import { asLeafLinesOfRow } from '@src/domain.operations/review/asLeafLinesOfRow';
 import { asPromptInputsCensusLines } from '@src/domain.operations/review/asPromptInputsCensusLines';
 import { asRateHuman } from '@src/domain.operations/review/asRateHuman';
+import { getOneCacheHitRate } from '@src/domain.operations/review/getOneCacheHitRate';
 import type { GradeCensus } from '@src/domain.operations/review/getOneGradeCensus';
 import { getOnePromptTokens } from '@src/domain.operations/review/getOnePromptTokens';
 import type {
@@ -17,6 +19,7 @@ import {
 } from '@src/domain.operations/review/meter/asCostColumnHuman';
 import { asCostLeverLines } from '@src/domain.operations/review/meter/asCostLeverLines';
 import { WORD_OF_ABSENT } from '@src/domain.operations/review/meter/asFigureHuman';
+import { asPrefixVerdictLeafOfBrain } from '@src/domain.operations/review/meter/asPrefixVerdictLeafOfBrain';
 import { asPrefixVerdictRollupHuman } from '@src/domain.operations/review/meter/asPrefixVerdictRollupHuman';
 import { getOneCostLeverFigures } from '@src/domain.operations/review/meter/getOneCostLeverFigures';
 import { asCountedNoun } from '@src/utils/asCountedNoun';
@@ -233,6 +236,11 @@ const asRollupLines = (input: {
   title: string;
   rows: GroveRollupRow[];
   limit: number;
+  /**
+   * the facts an axis hangs beneath each of its rows, one leaf per fact — null where the
+   * row is the whole story
+   */
+  childrenOf: ((row: GroveRollupRow) => string[]) | null;
 }): string[] => {
   // an empty axis renders naught here; the caller names every empty axis on one line
   if (input.rows.length === 0) return [];
@@ -249,7 +257,7 @@ const asRollupLines = (input: {
     .reduce((sum, row) => sum + row.census.unknown, 0);
   return [
     `   ${input.title}`,
-    ...shown.map((row, index) => {
+    ...shown.flatMap((row, index) => {
       // `└─` is a LEAF marker, so it must be the last line of the branch. when an
       // overflow disclosure follows, the last SHOWN row is no longer last — the
       // disclosure is — so the row takes `├─` and the disclosure carries the `└─`.
@@ -275,7 +283,17 @@ const asRollupLines = (input: {
         { count: row.runs, one: 'run', many: 'runs' },
         { align: true },
       );
-      return `      ${last ? '└─' : '├─'} ${asTokenCount({ of: fullRate, census: row.census }).padStart(11)} at full rate  ${asSpend({ of: row.cost }).padStart(WIDTH_OF_COST_COLUMN)}  ${runs.padStart(9)}  ${row.key}${asUnknownMark({ unknown: row.census.unknown })}`;
+      // each fact an axis hangs beneath its row is a leaf of that row, so the stem of
+      // the row's own branch runs down beside them (rule.require.treestruct-output)
+      const children = input.childrenOf?.(row) ?? [];
+      return [
+        `      ${last ? '└─' : '├─'} ${asTokenCount({ of: fullRate, census: row.census }).padStart(11)} at full rate  ${asSpend({ of: row.cost }).padStart(WIDTH_OF_COST_COLUMN)}  ${runs.padStart(9)}  ${row.key}${asUnknownMark({ unknown: row.census.unknown })}`,
+        ...asLeafLinesOfRow({
+          indent: '      ',
+          isLastRow: last,
+          leaves: children,
+        }),
+      ];
     }),
     // the overflow names its lever, so a reader warned of a hidden unknown run knows
     // how to see it (rule.require.errors-name-the-fix)
@@ -287,6 +305,25 @@ const asRollupLines = (input: {
     '',
   ];
 };
+
+/**
+ * .what = the two facts a brain row hangs beneath it — its cache rate, and its prefix
+ *         verdicts
+ * .why = the wish asks the cache split per brain, and a rate alone cannot say why a brain
+ *        cached naught. the verdicts are read off the census's own per-brain rollup, so the
+ *        rows sum to the lever block's counts by construction
+ */
+const asBrainRowChildLines = (input: {
+  row: GroveRollupRow;
+  prefix: ReviewGroveReport['prefix'];
+}): string[] => [
+  `cached: ${asShare({ of: getOneCacheHitRate({ tokens: input.row.tokens }) })} of prompt tokens served from cache`,
+  asPrefixVerdictLeafOfBrain({
+    byBrain: input.prefix.byBrain,
+    brain: input.row.key,
+    absent: WORD_OF_ABSENT,
+  }),
+];
 
 /**
  * .what = the lines that name each tree whose log root could not be read
@@ -326,13 +363,23 @@ export const genReviewGroveStdout = (input: {
   const { report } = input;
   const treesSeen = report.trees.length;
 
-  // the five rollup axes, each ranked by full-rate mass, richest first
+  // the seven rollup axes, each ranked by full-rate mass, richest first. the brain axis
+  //    hangs its cache rate and its prefix verdicts beneath each row: a cache is per
+  //    model, so "which brain cached, and why not" is read off the brain row itself.
+  //    the meet axis trails it: a warm meet near zero is a miss, a cold one the weather
   const axes = [
-    { name: 'tree', rows: report.byTree },
-    { name: 'route', rows: report.byRoute },
-    { name: 'stone', rows: report.byStone },
-    { name: 'reviewer', rows: report.byReviewer },
-    { name: 'provider', rows: report.byProvider },
+    { name: 'tree', rows: report.byTree, childrenOf: null },
+    { name: 'route', rows: report.byRoute, childrenOf: null },
+    { name: 'stone', rows: report.byStone, childrenOf: null },
+    { name: 'reviewer', rows: report.byReviewer, childrenOf: null },
+    { name: 'provider', rows: report.byProvider, childrenOf: null },
+    {
+      name: 'brain',
+      rows: report.byBrain,
+      childrenOf: (row: GroveRollupRow) =>
+        asBrainRowChildLines({ row, prefix: report.prefix }),
+    },
+    { name: 'meet', rows: report.byMeet, childrenOf: null },
   ];
   const axesEmpty = axes.filter((axis) => axis.rows.length === 0);
 
@@ -366,6 +413,7 @@ export const genReviewGroveStdout = (input: {
           title: `by ${axis.name}`,
           rows: axis.rows,
           limit: input.limit,
+          childrenOf: axis.childrenOf,
         }),
       ),
       // every empty axis is named on ONE line, so absence stays visible at the cost

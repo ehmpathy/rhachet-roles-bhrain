@@ -2,6 +2,7 @@ import * as path from 'path';
 import type { BrainChoice, ContextBrain } from 'rhachet';
 
 import type { ReviewLaneClock } from '@src/domain.objects/Reviewer/ReviewLaneClock';
+import type { ReviewRunArgsRecord } from '@src/domain.objects/Reviewer/ReviewRunArgsRecord';
 import { asReviewOverflowScopeFigures } from '@src/domain.operations/review/asReviewOverflowScopeFigures';
 import { asReviewRouteOfOutput } from '@src/domain.operations/review/asReviewRouteOfOutput';
 import { asReviewRunArgsMetricsOfExpected } from '@src/domain.operations/review/asReviewRunArgsMetricsOfExpected';
@@ -34,6 +35,7 @@ import type { StepReviewInput } from '@src/domain.operations/review/StepReviewIn
 import type { StepReviewResult } from '@src/domain.operations/review/StepReviewResult';
 import { setInputArtifacts } from '@src/domain.operations/review/setInputArtifacts';
 import { setMetricsExpected } from '@src/domain.operations/review/setMetricsExpected';
+import { setPromptHeadArtifact } from '@src/domain.operations/review/setPromptHeadArtifact';
 import { setTokenArtifacts } from '@src/domain.operations/review/setTokenArtifacts';
 import { stepReviewOfCompiled } from '@src/domain.operations/review/stepReviewOfCompiled';
 import { asPathAbsoluteFromCwd } from '@src/utils/asPathAbsoluteFromCwd';
@@ -275,8 +277,8 @@ export const stepReviewOfScope = async (
   await setMetricsExpected({ logDir, metrics: metricsExpected });
 
   // write input artifacts
-  await setInputArtifacts({
-    logDir,
+  // the args record, built once: this run writes it, and a lane poke casts its own from it
+  const argsRecord: ReviewRunArgsRecord = {
     args: asReviewRunArgsOfRun({ args: scope.args, review }),
     scope: {
       ruleFiles,
@@ -286,6 +288,10 @@ export const stepReviewOfScope = async (
     },
     // the replay copy is cast from the one source the expected artifact was written from
     metrics: asReviewRunArgsMetricsOfExpected({ expected: metricsExpected }),
+  };
+  await setInputArtifacts({
+    logDir,
+    ...argsRecord,
     composition: promptResult.composition,
     prompt: promptResult.prompt,
   });
@@ -294,11 +300,14 @@ export const stepReviewOfScope = async (
   if (review.prime)
     return await setOneReviewPrefixPrime(
       {
-        head: promptResult.promptHeadStatic,
-        tail: promptResult.promptTailVariable,
+        // the prime's head rides as its own run's head artifact, as every run's does
+        headBrief: await setPromptHeadArtifact({
+          logDir,
+          head: promptResult.promptHead,
+        }),
+        tail: promptResult.promptTail,
         logDir,
         output: asPathAbsoluteFromCwd({ path: review.output, cwd }),
-        cwd,
         metricsExpected,
         // the input artifacts above wrote this run's compiled composition
         compiled: NAME_OF_RUN_ARTIFACT.compiled,
@@ -323,6 +332,7 @@ export const stepReviewOfScope = async (
         meet: review.meet ?? 'skip',
       },
       compiled: promptResult,
+      args: argsRecord,
       metricsExpected,
       scope,
       breakdowns: { rules: rulesBreakdown, targets: targetsBreakdown },

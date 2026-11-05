@@ -67,8 +67,8 @@ describe('getOneTargetCountFromCompiled', () => {
           { path: 'y.ts', content: 'Y'.repeat(200), diff: 'E'.repeat(40) },
           { path: 'z.ts', content: 'Z'.repeat(100), diff: 'F'.repeat(20) },
         ],
-        promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}`,
-        promptTailVariable:
+        promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(300)}`,
+        promptTail:
           focus === 'push'
             ? `tail${'D'.repeat(60)}${'E'.repeat(40)}${'F'.repeat(20)}${'X'.repeat(400)}${'Y'.repeat(200)}${'Z'.repeat(100)}`
             : 'tailx.tsy.tsz.ts',

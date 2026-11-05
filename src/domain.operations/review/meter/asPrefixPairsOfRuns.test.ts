@@ -17,6 +17,8 @@ const asRun = (input: {
   head: null,
   brain: null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   identity:
     input.slug === null
       ? null

@@ -10,7 +10,7 @@
  *                               write `false` and no peer reads the head as warm
  * - `sent`                    = whether the holder's own review departs at the release, and
  *                               so carries the head to the provider. true wherever the leader
- *                               settled (primed, solo, lapsed, or a faulted poke); false where
+ *                               settled (primed, solo, expired, or a faulted poke); false where
  *                               its prime threw a defect, since no review of its own follows
  * - `peers`                   = the lanes that registered against the current claim
  *

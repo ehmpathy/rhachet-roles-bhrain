@@ -15,6 +15,7 @@ const FIELD_OF_VERDICT: Record<
 > = {
   served: 'served',
   missed: 'missed',
+  lapsed: 'lapsed',
   'self-cached': 'selfCached',
   'over-reach': 'overReach',
   unshared: 'unshared',
@@ -39,6 +40,7 @@ export const getOnePrefixVerdictRollup = (input: {
       pairs: input.pairs.length,
       served: 0,
       missed: 0,
+      lapsed: 0,
       selfCached: 0,
       overReach: 0,
       unshared: 0,

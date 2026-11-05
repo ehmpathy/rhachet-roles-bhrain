@@ -63,8 +63,8 @@ describe('getOnePromptComposition', () => {
         refs,
         conversation,
         targets,
-        promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}${'f'.repeat(50)}`,
-        promptTailVariable: `tail${'c'.repeat(70)}${'D'.repeat(100)}${'F'.repeat(700)}`,
+        promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(300)}${'f'.repeat(50)}`,
+        promptTail: `tail${'c'.repeat(70)}${'D'.repeat(100)}${'F'.repeat(700)}`,
       });
 
       then('each source input is summed by content chars', () => {
@@ -125,8 +125,8 @@ describe('getOnePromptComposition', () => {
         conversation: [],
         targets: [{ path: 'x.ts', content: 'F'.repeat(400) }],
         targetsAsContext,
-        promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(100)}`,
-        promptTailVariable: `tail${'F'.repeat(400)}\n## context only\n${targetsAsContext.map((path) => `- ${path}`).join('\n')}`,
+        promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(100)}`,
+        promptTail: `tail${'F'.repeat(400)}\n## context only\n${targetsAsContext.map((path) => `- ${path}`).join('\n')}`,
       });
 
       then(
@@ -154,8 +154,8 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets: [{ path: 'gone.ts', content: null, diff: null }],
-        promptHeadStatic: 'preamble\n## output format\nfmt\n## rules\n',
-        promptTailVariable: 'tail',
+        promptHead: 'preamble\n## output format\nfmt\n## target\n',
+        promptTail: 'tail',
       });
 
       then('an absent body counts as zero, never as a crash', () => {
@@ -186,8 +186,8 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets: [],
-        promptHeadStatic: `${'i'.repeat(500)}## output format\nfmt\n## rules\n${'r'.repeat(10)}`,
-        promptTailVariable: '',
+        promptHead: `${'i'.repeat(500)}## output format\nfmt\n## target\n${'r'.repeat(10)}`,
+        promptTail: '',
       });
 
       then('the preamble is bounded by the head it was cut from', () => {
@@ -236,8 +236,8 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets: [],
-        promptHeadStatic: 'preamble\n## output format\nfmt\n## rules\n',
-        promptTailVariable: 'tail',
+        promptHead: 'preamble\n## output format\nfmt\n## target\n',
+        promptTail: 'tail',
       });
 
       then('every declared input carries its own row', () => {
@@ -274,10 +274,10 @@ describe('getOnePromptComposition', () => {
           refs: [],
           conversation: [],
           targets: [{ path: 'x.ts', content: 'F'.repeat(400), diff: null }],
-          promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}`,
+          promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(300)}`,
           // 🔴 the unattributed input: 5,000 chars really rendered, really paid
           //    for, and fed by no array this operation was told about
-          promptTailVariable: `${'F'.repeat(400)}${'U'.repeat(5_000)}`,
+          promptTail: `${'F'.repeat(400)}${'U'.repeat(5_000)}`,
         });
 
         then(
@@ -387,9 +387,9 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets,
-        promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(100)}`,
+        promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(100)}`,
         // exactly what the renderer sends: both bodies, and the EDITED diff only
-        promptTailVariable: `${'E'.repeat(60)}${'N'.repeat(400)}${'E'.repeat(300)}`,
+        promptTail: `${'E'.repeat(60)}${'N'.repeat(400)}${'E'.repeat(300)}`,
       });
 
       then(
@@ -459,9 +459,9 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets,
-        promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}`,
+        promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(300)}`,
         // exactly what a pull render sends: the paths, and not one payload byte
-        promptTailVariable: '- x.ts\n- y.ts',
+        promptTail: '- x.ts\n- y.ts',
       });
 
       then('🔴 neither target row counts a byte the prompt never sent', () => {
@@ -522,8 +522,8 @@ describe('getOnePromptComposition', () => {
         ],
         targets: [{ path: 'x.ts', content: 'F'.repeat(4), diff: null }],
         // the compiler's own scaffold dwarfs the supplies — 4,427 of 5,276
-        promptHeadStatic: `${'i'.repeat(2_756)}## output format\n${'o'.repeat(1_655)}## rules\n${'r'.repeat(6)}${'f'.repeat(16)}`,
-        promptTailVariable: `${'m'.repeat(789)}${'c'.repeat(34)}${'F'.repeat(4)}`,
+        promptHead: `${'i'.repeat(2_756)}## output format\n${'o'.repeat(1_655)}## target\n${'r'.repeat(6)}${'f'.repeat(16)}`,
+        promptTail: `${'m'.repeat(789)}${'c'.repeat(34)}${'F'.repeat(4)}`,
       });
 
       then(
@@ -566,9 +566,9 @@ describe('getOnePromptComposition', () => {
           refs: [],
           conversation: [],
           targets: [],
-          // 🔴 the rubric header alone — the output-format cut has no anchor
-          promptHeadStatic: `preamble\n## rules\n${'r'.repeat(300)}`,
-          promptTailVariable: '',
+          // 🔴 the target header alone — the output-format cut has no anchor
+          promptHead: `preamble\n## target\n${'r'.repeat(300)}`,
+          promptTail: '',
         });
 
       then('🔴 it refuses, never a head silently reported as nil', () => {
@@ -592,11 +592,11 @@ describe('getOnePromptComposition', () => {
         () => {
           const carried = asCarriedMeasurement<{
             foundOutputFormat: boolean;
-            foundRules: boolean;
+            foundFirstBlock: boolean;
           }>({ error: getError(measure) });
 
           expect(carried.foundOutputFormat).toEqual(false);
-          expect(carried.foundRules).toEqual(true);
+          expect(carried.foundFirstBlock).toEqual(true);
         },
       );
     });
@@ -609,9 +609,9 @@ describe('getOnePromptComposition', () => {
           refs: [],
           conversation: [],
           targets: [],
-          // 🔴 the rubric leads the output contract, so the span is negative
-          promptHeadStatic: `preamble\n## rules\n${'r'.repeat(300)}\n## output format\nfmt`,
-          promptTailVariable: '',
+          // 🔴 the target leads the output contract, so the span is negative
+          promptHead: `preamble\n## target\n${'r'.repeat(300)}\n## output format\nfmt`,
+          promptTail: '',
         });
 
       then('🔴 it refuses — the share bound could not have seen this', () => {
@@ -627,14 +627,14 @@ describe('getOnePromptComposition', () => {
       });
     });
 
-    when('[t2] the PREAMBLE quotes the rubric header', () => {
+    when('[t2] the PREAMBLE quotes the target header', () => {
       /**
        * 🔴 the latent misattribution the offset cut carried, and the reason the
-       * rubric marker is sought AFTER the output contract rather than from the
+       * first-block marker is sought AFTER the output contract rather than from the
        * head's start.
        *
        * the preamble carries caller-supplied goal text. a goal that mentions
-       * `## rules` sits AHEAD of the output contract, so a first-occurrence read
+       * `## target` sits AHEAD of the output contract, so a first-occurrence read
        * captures the cut — and `outputFormat` spans backward while the whole
        * block lands in the residual, on a head that is perfectly well-formed.
        */
@@ -645,27 +645,49 @@ describe('getOnePromptComposition', () => {
         refs: [],
         conversation: [],
         targets: [],
-        // the goal quotes the rubric header, 15 chars in — well ahead of the
+        // the goal quotes the target header, 11 chars in — well ahead of the
         // real one, which follows the output contract as the compiler emits it
-        promptHeadStatic: `goal: obey ## rules\n## output format\nfmt\n## rules\n${rules}`,
-        promptTailVariable: '',
+        promptHead: `goal: obey ## target\n## output format\nfmt\n## target\n${rules}`,
+        promptTail: '',
       });
 
-      then('🔴 the cut takes the REAL rubric header, never the quote', () => {
-        // `## output format` sits at 20 and the real `## rules` at 40, so the
-        // block is 20 chars. a first-occurrence read would have spanned −5
+      then('🔴 the cut takes the REAL target header, never the quote', () => {
+        // `## output format` sits at 21 and the real `## target` at 41, so the
+        // block is 20 chars. a first-occurrence read would have spanned backward
         expect(composition.inputs.outputFormat.chars).toBeGreaterThan(0);
       });
 
       then('the preamble keeps the whole span ahead of the contract', () => {
         expect(composition.inputs.instructions.chars).toEqual(
-          'goal: obey ## rules\n'.length,
+          'goal: obey ## target\n'.length,
         );
       });
 
       then('🔴 and the residual stays non-negative, so no row is lost', () => {
         expect(getOneAttributionGrade({ composition })).toEqual('attributed');
         expect(asSummed({ composition })).toEqual(composition.chars);
+      });
+    });
+
+    when('[t3] 🔴 a compiled head whose first block is the RUBRIC', () => {
+      // a template edit that put the rubric back ahead of the corpus: a compiled head
+      // is corpus-first by construction, so the census refuses it rather than cut it
+      const measure = () =>
+        getOnePromptComposition({
+          focus: 'push',
+          rules: [{ path: 'a.md', content: 'r'.repeat(300) }],
+          refs: [],
+          conversation: [],
+          targets: [],
+          promptHead: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}`,
+          promptTail: '',
+        });
+
+      then('it refuses, and names the absent target header', () => {
+        expect(measure).toThrow();
+        expect(getError(measure).message).toContain(
+          'does not carry the markers',
+        );
       });
     });
   });

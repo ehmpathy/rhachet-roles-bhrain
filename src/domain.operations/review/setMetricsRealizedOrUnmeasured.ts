@@ -17,9 +17,15 @@ import { setMetricsRealized } from '@src/domain.operations/review/setMetricsReal
 export const setMetricsRealizedOrUnmeasured = async (input: {
   logDir: string;
   /** the run's realized figures — what it returns, and the body of its artifact */
-  realized: Omit<ReviewRunMetricsRealized, 'compiled' | 'supply' | 'runaways'>;
+  realized: Omit<
+    ReviewRunMetricsRealized,
+    'compiled' | 'supply' | 'runaways' | 'meet'
+  >;
   /** the fields only the artifact carries */
-  record: Pick<ReviewRunMetricsRealized, 'compiled' | 'supply' | 'runaways'>;
+  record: Pick<
+    ReviewRunMetricsRealized,
+    'compiled' | 'supply' | 'runaways' | 'meet'
+  >;
   /** how many asks were billed with no reported spend; zero means measured */
   unmeasured: number;
 }): Promise<ReviewRunMetricsRealizedOfResult> => {

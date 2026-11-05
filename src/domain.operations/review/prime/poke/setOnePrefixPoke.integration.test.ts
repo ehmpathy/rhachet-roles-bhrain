@@ -12,16 +12,23 @@ import {
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { ReviewBrainCallError } from '@src/domain.operations/review/ReviewBrainCallError';
 import { ReviewTimeoutError } from '@src/domain.operations/review/ReviewTimeoutError';
+import { setPromptHeadArtifact } from '@src/domain.operations/review/setPromptHeadArtifact';
 
-import {
-  asPrefixPokeHeadPath,
-  DIR_OF_PREFIX_POKES,
-} from './asPrefixPokeHeadPath';
 import { isErrorOfPokeFault } from './isErrorOfPokeFault';
 import { setOnePrefixPoke } from './setOnePrefixPoke';
 
 const HEAD_OF_TEST = '# rules\n\nbe kind.\n';
 const TAIL_OF_TEST = '<target.file path="a.ts">const a = 1;</target.file>';
+
+/**
+ * .what = writes a head into a run dir of a temp repo, as a run's own head artifact
+ * .why = a poke rides the head its caller's run already wrote, never one of its own
+ */
+const genHeadBriefInRun = async (input: { cwd: string; head: string }) =>
+  await setPromptHeadArtifact({
+    logDir: path.join(input.cwd, '.log', 'run'),
+    head: input.head,
+  });
 
 /**
  * .what = a brain that records what it was asked and answers a declared measurement
@@ -84,17 +91,12 @@ describe('setOnePrefixPoke', () => {
     const scene = useBeforeAll(async () => {
       const cwd = genTempDir({ slug: 'poke-measured-hit' });
       const stub = genBrainStub({ inputTokens: 2, cacheGetTokens: 998 });
+      const headBrief = await genHeadBriefInRun({ cwd, head: HEAD_OF_TEST });
       const measured = await setOnePrefixPoke(
-        {
-          cwd,
-          reviewer: 'repo-rules',
-          head: HEAD_OF_TEST,
-          tail: TAIL_OF_TEST,
-          msOfTimeout: null,
-        },
+        { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
         { brain: stub.brain },
       );
-      return { cwd, stub, measured };
+      return { cwd, stub, measured, headBrief };
     });
 
     when('[t0] the poke is sent', () => {
@@ -115,21 +117,20 @@ describe('setOnePrefixPoke', () => {
         expect(prompt).toContain('this is a cache poke, not a review');
       });
 
-      then('the head is written under the poke cache dir', () => {
-        // never into the review run's own log dir — that dir is the run's record
-        const at = asPrefixPokeHeadPath({
-          cwd: scene.cwd,
-          reviewer: 'repo-rules',
-          head: HEAD_OF_TEST,
-        });
-        expect(
-          at.startsWith(
-            path.join(scene.cwd, DIR_OF_PREFIX_POKES, 'reviewer=repo-rules'),
-          ),
-        ).toEqual(true);
-        expect(fs.readFileSync(at, 'utf8')).toEqual(HEAD_OF_TEST);
-        expect(scene.stub.calls[0]?.briefUris[0]).toContain(path.basename(at));
+      then('🔴 the ask rides the head brief its caller handed it', () => {
+        expect(scene.stub.calls[0]?.briefUris[0]).toEqual(
+          scene.headBrief.ref.uri,
+        );
       });
+
+      then(
+        '🔴 the poke writes no head of its own — no cache dir that grows a head per round',
+        () => {
+          // a poke that wrote its own copy grew one head file per round under `.agent/.cache`,
+          // unbounded, and held the corpus twice beside the run's own head
+          expect(fs.existsSync(path.join(scene.cwd, '.agent'))).toEqual(false);
+        },
+      );
 
       then('🔴 promptTokens counts the CACHED tokens too', () => {
         // the hit grade is `cacheGet / promptTokens`. a denominator of `input`
@@ -154,14 +155,9 @@ describe('setOnePrefixPoke', () => {
     const scene = useBeforeAll(async () => {
       const cwd = genTempDir({ slug: 'poke-measured-miss' });
       const stub = genBrainStub({ inputTokens: 1_000, cacheGetTokens: 0 });
+      const headBrief = await genHeadBriefInRun({ cwd, head: HEAD_OF_TEST });
       const measured = await setOnePrefixPoke(
-        {
-          cwd,
-          reviewer: 'repo-rules',
-          head: HEAD_OF_TEST,
-          tail: TAIL_OF_TEST,
-          msOfTimeout: null,
-        },
+        { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
         { brain: stub.brain },
       );
       return { measured };
@@ -181,54 +177,45 @@ describe('setOnePrefixPoke', () => {
     });
   });
 
-  given('[case5] two primes of one reviewer poke two heads at once', () => {
+  given('[case5] two runs of one reviewer poke two heads at once', () => {
     /**
-     * .why = two lanes of one reviewer may prime two heads at once. a head file keyed by
-     *        reviewer alone let one overwrite the other between its write and its ask, so
-     *        a poke pinned a replica for a prefix it does not prime
+     * .why = two lanes of one reviewer may prime two heads at once. each poke rides the
+     *        head of its own run, so neither can overwrite the other between its write and
+     *        its ask, and neither pins a replica for a prefix it does not prime
      */
     const scene = useBeforeAll(async () => {
       const cwd = genTempDir({ slug: 'poke-two-heads' });
       const stub = genBrainStub({ inputTokens: 2, cacheGetTokens: 998 });
-      const headPrior = `${HEAD_OF_TEST}prior\n`;
-      const headNext = `${HEAD_OF_TEST}next\n`;
+      const briefs = await Promise.all(
+        ['prior', 'next'].map((name) =>
+          setPromptHeadArtifact({
+            logDir: path.join(cwd, '.log', name),
+            head: `${HEAD_OF_TEST}${name}\n`,
+          }),
+        ),
+      );
       await Promise.all(
-        [headPrior, headNext].map((head) =>
+        briefs.map((headBrief) =>
           setOnePrefixPoke(
-            {
-              cwd,
-              reviewer: 'repo-rules',
-              head,
-              tail: TAIL_OF_TEST,
-              msOfTimeout: null,
-            },
+            { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
             { brain: stub.brain },
           ),
         ),
       );
-      return { cwd, stub, headPrior, headNext };
+      return { stub, briefs };
     });
 
     when('[t0] both pokes are sent', () => {
-      then('each head lands in its own file, with its own bytes', () => {
-        const atPrior = asPrefixPokeHeadPath({
-          cwd: scene.cwd,
-          reviewer: 'repo-rules',
-          head: scene.headPrior,
-        });
-        const atNext = asPrefixPokeHeadPath({
-          cwd: scene.cwd,
-          reviewer: 'repo-rules',
-          head: scene.headNext,
-        });
-        expect(atPrior).not.toEqual(atNext);
-        expect(fs.readFileSync(atPrior, 'utf8')).toEqual(scene.headPrior);
-        expect(fs.readFileSync(atNext, 'utf8')).toEqual(scene.headNext);
-      });
-
-      then('each ask rides a distinct brief', () => {
-        const uris = scene.stub.calls.map((call) => call.briefUris[0]);
-        expect(new Set(uris).size).toEqual(2);
+      then('each ask rides the head of its own run, with its own bytes', () => {
+        const uris = scene.stub.calls.map((call) => call.briefUris[0]).sort();
+        expect(uris).toEqual(scene.briefs.map((brief) => brief.ref.uri).sort());
+        // each head holds its own bytes after both pokes, so neither overwrote the other
+        expect(fs.readFileSync(scene.briefs[0]!.ref.uri, 'utf8')).toEqual(
+          `${HEAD_OF_TEST}prior\n`,
+        );
+        expect(fs.readFileSync(scene.briefs[1]!.ref.uri, 'utf8')).toEqual(
+          `${HEAD_OF_TEST}next\n`,
+        );
       });
     });
   });
@@ -247,15 +234,10 @@ describe('setOnePrefixPoke', () => {
       const brain = {
         brain: { choice: { ask: () => new Promise<never>(() => undefined) } },
       } as unknown as ContextBrain<BrainChoice>;
+      const headBrief = await genHeadBriefInRun({ cwd, head: HEAD_OF_TEST });
       const error = await getError(
         setOnePrefixPoke(
-          {
-            cwd,
-            reviewer: 'repo-rules',
-            head: HEAD_OF_TEST,
-            tail: TAIL_OF_TEST,
-            msOfTimeout: 50,
-          },
+          { headBrief, tail: TAIL_OF_TEST, msOfTimeout: 50 },
           { brain },
         ),
       );
@@ -321,14 +303,9 @@ describe('setOnePrefixPoke', () => {
             },
           },
         } as unknown as ContextBrain<BrainChoice>;
+        const headBrief = await genHeadBriefInRun({ cwd, head: HEAD_OF_TEST });
         const measured = await setOnePrefixPoke(
-          {
-            cwd,
-            reviewer: 'repo-rules',
-            head: HEAD_OF_TEST,
-            tail: TAIL_OF_TEST,
-            msOfTimeout: null,
-          },
+          { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
           { brain },
         );
         return { asks, measured };
@@ -369,14 +346,12 @@ describe('setOnePrefixPoke', () => {
     when.repeatably(REPEATABLY_CONFIG)('[t0] the poke is sent', () => {
       const scene = useBeforeAll(async () => {
         const cwd = genTempDir({ slug: 'poke-live' });
+        const headBrief = await genHeadBriefInRun({
+          cwd,
+          head: `${HEAD_OF_TEST}\nmarker: ${getUuid()}\n`,
+        });
         const answer = await setOnePrefixPoke(
-          {
-            cwd,
-            reviewer: 'repo-rules',
-            head: `${HEAD_OF_TEST}\nmarker: ${getUuid()}\n`,
-            tail: TAIL_OF_TEST,
-            msOfTimeout: null,
-          },
+          { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
           { brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }) },
         );
         return { answer };

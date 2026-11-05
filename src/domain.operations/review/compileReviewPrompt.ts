@@ -5,10 +5,10 @@ import type { PromptComposition } from '@src/domain.objects/Reviewer/PromptCompo
 
 import { asGoalInstructions } from './asGoalInstructions';
 import { asPercentHuman } from './asPercentHuman';
-import { asPromptHeadStatic } from './asPromptHeadStatic';
-import { asPromptTailVariable } from './asPromptTailVariable';
+import { asPromptHead } from './asPromptHead';
+import { asPromptTail } from './asPromptTail';
 import { asSuppliedFilesSection } from './asSuppliedFilesSection';
-import { asTargetSection } from './asTargetSection';
+import { asTargetSectionsByBreadth } from './asTargetSectionsByBreadth';
 import { estimateTokenCount } from './estimateTokenCount';
 import { getOneEstimatedOutputTokens } from './getOneEstimatedOutputTokens';
 import { getOnePercentOfWindow } from './getOnePercentOfWindow';
@@ -36,8 +36,9 @@ export const compileReviewPrompt = (input: {
    */
   targetsAsContext?: string[];
   /**
-   * the targets every partition of a split carries — they render ahead of this run's own,
-   * so the shared prefix the prime wrote reaches past them. absent on a whole run
+   * the targets every partition of a split carries — they ride the head, and this run's
+   * own ride the tail behind the rubric, so the prefix the prime wrote reaches past the
+   * shared band and the rubric both. absent on a whole run, whose targets all ride the head
    */
   targetsShared?: string[];
   /**
@@ -53,16 +54,16 @@ export const compileReviewPrompt = (input: {
 }): {
   prompt: string;
   /**
-   * the cacheable head — `prompt` is exactly `promptHeadStatic + promptTailVariable`.
+   * the shared head — `prompt` is exactly `promptHead + promptTail`.
    *
-   * exposed so the caller can hand it to the brain as the system prompt — the
-   * slot a provider pins a cache replica to, so a shared prefix that lives only
-   * in the user message can earn no cache hit
-   * (rule.require.name-the-shared-prefix-as-the-cache-anchor).
+   * exposed so the caller can hand it to the brain as the system prompt — the slot
+   * a replica pin would key on, and the one the level's prime meet keys on
+   * (rule.require.name-the-shared-prefix-as-the-cache-anchor). whether a pin rides
+   * the call is the brain adapter's choice; see `asRoleOfSharedPrefix`.
    */
-  promptHeadStatic: string;
-  /** the round-variable tail — the target, then the conversation */
-  promptTailVariable: string;
+  promptHead: string;
+  /** the lane tail — its rubric and refs, a partition's own targets, then the conversation */
+  promptTail: string;
   /**
    * where this prompt's chars actually went, by section.
    *
@@ -92,33 +93,36 @@ export const compileReviewPrompt = (input: {
   const conversation = input.conversation ?? [];
   const conversationSection = asSuppliedFilesSection({ files: conversation });
 
-  // the target block — a path list in pull focus, diff + content in push
-  const targetSection = asTargetSection({
+  // the target block, by reuse breadth — the band the level or split shares, and a
+  // partition's own band. a path list in pull focus, diff + content in push
+  const targetSections = asTargetSectionsByBreadth({
     targets: input.targets,
     focus: input.focus,
-    diffRange: input.diffRange,
-    shared: input.targetsShared,
+    diffRange: input.diffRange ?? null,
+    shared: input.targetsShared ?? null,
   });
 
   // build goal instructions
   const goalInstructions = asGoalInstructions({ goal: input.goal });
 
-  // the static head — every block byte-identical across the rounds of one lane
-  const promptHeadStatic = asPromptHeadStatic({
+  // the shared head — what every lane of the level sends byte for byte: the
+  // instructions, the output format, and the corpus they share
+  const promptHead = asPromptHead({
     goalInstructions,
-    rulesSection,
-    refsSection,
+    targetSection: targetSections.shared,
   });
 
-  // the variable tail — the target, then the conversation
-  const promptTailVariable = asPromptTailVariable({
-    targetSection,
+  // the lane tail — its rubric and refs, a partition's own band, then the conversation
+  const promptTail = asPromptTail({
+    rulesSection,
+    refsSection,
+    targetSectionNarrow: targetSections.narrow,
     targetsAsContext: input.targetsAsContext,
     partitionPeers: input.partitionPeers,
     conversationSection,
   });
 
-  const prompt = `${promptHeadStatic}${promptTailVariable}`;
+  const prompt = `${promptHead}${promptTail}`;
 
   // measure what the prompt is made of BEFORE the gate, so a refusal can say which
   // named input overran the window — not only that one did
@@ -129,8 +133,8 @@ export const compileReviewPrompt = (input: {
     conversation: input.conversation ?? [],
     targets: input.targets,
     targetsAsContext: input.targetsAsContext,
-    promptHeadStatic,
-    promptTailVariable,
+    promptHead,
+    promptTail,
   });
 
   // estimate tokens
@@ -181,8 +185,8 @@ export const compileReviewPrompt = (input: {
 
   return {
     prompt,
-    promptHeadStatic,
-    promptTailVariable,
+    promptHead,
+    promptTail,
     composition,
     tokenEstimate,
     contextWindowPercent: getOnePercentRounded({

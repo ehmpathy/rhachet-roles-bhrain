@@ -16,7 +16,10 @@ import type { ReviewRunMetricsRealized } from '@src/domain.objects/Reviewer/Revi
 export const asReviewRunMetricsRealized = (input: {
   metrics: BrainOutputMetrics;
   time: ReviewRunMetricsRealized['time'];
-}): Omit<ReviewRunMetricsRealized, 'compiled' | 'supply' | 'runaways'> => {
+}): Omit<
+  ReviewRunMetricsRealized,
+  'compiled' | 'supply' | 'runaways' | 'meet'
+> => {
   // 🔴 the annotation is the LINK to the read side — an inferred literal here
   // let a rename change the json keys with no compile error anywhere
   const tokens: ReviewRunMetricsRealized['tokens'] = {

@@ -7,6 +7,7 @@ import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 import { pathToFileURL } from 'url';
 
 import { IS_CACHEABLE_SECTION } from '@src/domain.objects/Reviewer/PromptSectionChars';
+import type { ReviewRunMeet } from '@src/domain.objects/Reviewer/ReviewRunMeet';
 import { DIR_OF_REVIEW_LOGS } from '@src/domain.operations/review/asReviewLogsDir';
 import { asRunArtifactPath } from '@src/domain.operations/review/asRunArtifactPath';
 
@@ -222,6 +223,14 @@ const asStableRefusal = (input: {
  *         which breadth answers *"which input bought this?"* is declared ONCE,
  *         by `--help`, and clamped by the snapshot. it is not restated here.
  */
+/**
+ * .what = the corpus the `repo-rules` lane sends round over round, in `[case1]`'s tree
+ * .why = two rounds of one lane pair by their prompt bytes, so both carry this body
+ *        (`setOneRun` `promptBody`). ~60k chars, at the run's 5 billed tokens per stated
+ *        char, expects ~300k cached tokens: the round's own cache.get, so the pair serves
+ */
+const BODY_OF_REPO_RULES_PROMPT = `# review task\n${'corpus line\n'.repeat(5_000)}`;
+
 const setOneRun = (input: {
   tree: string;
   name: string;
@@ -277,6 +286,15 @@ const setOneRun = (input: {
    *        cli can be shown to price it `unknown`, never a `refused` $0
    */
   prompt?: boolean;
+  /**
+   * the bytes of `input.prompt.md`, a bare header by default.
+   *
+   * .why = the meter pairs two rounds of one reviewer by their prompt bytes. a pair of
+   *        bare headers shares 13 chars against a bill of hundreds of thousands of cached
+   *        tokens, a reach no real pair reads; a fixture whose pair renders must hand both
+   *        rounds a body sized to what they bill
+   */
+  promptBody?: string;
 }): void => {
   const dir = path.join(input.tree, '.log', 'bhrain', 'review', input.name);
   fs.mkdirSync(dir, { recursive: true });
@@ -296,7 +314,10 @@ const setOneRun = (input: {
 
   if (input.grade === 'refused') return;
   if (input.prompt !== false)
-    fs.writeFileSync(path.join(dir, 'input.prompt.md'), '# review task');
+    fs.writeFileSync(
+      path.join(dir, 'input.prompt.md'),
+      input.promptBody ?? '# review task',
+    );
 
   // all EIGHT named inputs, and they sum to `prompt.chars` exactly.
   // `getOnePromptSectionCharsFromCompiled` throws on an artifact whose rows disagree
@@ -414,6 +435,7 @@ const setOneTree = (input: { tree: string }): void => {
     grade: 'metered',
     input_: 400_000,
     cacheGet: 100_000,
+    promptBody: BODY_OF_REPO_RULES_PROMPT,
   });
   setOneRun({
     tree: input.tree,
@@ -453,6 +475,8 @@ describe('reviewCost.acceptance', () => {
           input_: 200_000,
           cacheGet: 300_000,
           compiled: true,
+          // the same corpus its prior round sent, so the pair reads a plausible reach
+          promptBody: BODY_OF_REPO_RULES_PROMPT,
         });
         return { tree, run: runCli({ cwd: tree, args: ['--of', 'run'] }) };
       });
@@ -1573,8 +1597,8 @@ describe('reviewCost.acceptance', () => {
           // mirrored by hand, which is the conscious step the clamp exists for.
           const DESCRIPTIONS = [
             'ONE review invocation — its cost AND what its prompt was made of',
-            "this worktree's review history, rolled up by reviewer, level, stone, round",
-            'every tree on this machine, rolled up by tree, route, stone, reviewer',
+            "this worktree's review history, rolled up by reviewer, level, provider, brain, meet, stone, round",
+            'every tree on this machine, rolled up by tree, route, stone, reviewer, provider, brain, meet',
           ];
           for (const description of DESCRIPTIONS) {
             expect(help.stdout).toContain(description);
@@ -2479,12 +2503,9 @@ describe('reviewCost.acceptance', () => {
     });
 
     afterAll(() => {
-      // restored so the temp cleanup can recurse into it
-      try {
-        fs.chmodSync(scene.barred, 0o755);
-      } catch {
-        // already gone, or never made — either way there is naught to restore
-      }
+      // restored so the temp cleanup can recurse into it; a dir already gone has naught
+      // to restore, and any other fault fails loud
+      if (fs.existsSync(scene.barred)) fs.chmodSync(scene.barred, 0o755);
     });
 
     when('[t0] the tree breadth reads it', () => {
@@ -2634,6 +2655,10 @@ describe('reviewCost.acceptance', () => {
         expect(run.stderr).toContain(scene.absent);
       });
 
+      then('🔴 and it names no `looked in:` path below it', () => {
+        expect(run.stderr).not.toContain('looked in:');
+      });
+
       // the three breadths are snapped SEPARATELY, because the claim across
       // this case is that each names its own corpus word — `no reviews to price`
       // at tree, `no review run to price` at run, `no review logs to price` at
@@ -2660,6 +2685,16 @@ describe('reviewCost.acceptance', () => {
         expect(run.stderr).toContain('no review run to price');
         expect(run.stderr).toContain(scene.absent);
       });
+
+      then(
+        '🔴 and it names no `looked in:` path below a dir that is not there',
+        () => {
+          // the headline already echoes the absent path; a `looked in:` row under it
+          // would name `<absent>/.log/bhrain/review`, a second path a reader must parse
+          // only to learn it cannot exist either
+          expect(run.stderr).not.toContain('looked in:');
+        },
+      );
 
       then('the run refusal renders as the human sees it', () => {
         expect(
@@ -3636,6 +3671,8 @@ describe('reviewCost.acceptance', () => {
               cacheGet: index === 0 ? 0 : lane.cacheGet,
               // the self-cached round bills no fresh input — its turns read their own
               input_: lane.slug === 'lane-selfcached' && index === 1 ? 0 : null,
+              brain: null,
+              meet: null,
             }),
           ),
         );
@@ -3656,6 +3693,8 @@ describe('reviewCost.acceptance', () => {
               head: 4_000,
               cacheGet: index === 0 ? 0 : lane.cacheGet,
               input_: lane.slug === 'lane-selfcached' && index === 1 ? 0 : null,
+              brain: null,
+              meet: null,
             }),
           ),
         );
@@ -3802,7 +3841,9 @@ describe('reviewCost.acceptance', () => {
           expect(scene.selfCached.stdout).toContain(
             '├─ prefix vs i1: self-cached',
           );
-          expect(scene.selfCached.stdout).toContain('· reach — of expected');
+          expect(scene.selfCached.stdout).toContain(
+            '· reach —  (no expected prefix to weigh it against)',
+          );
         });
 
         then(
@@ -3857,7 +3898,7 @@ describe('reviewCost.acceptance', () => {
 
         then('🔴 one row under the cache lever counts every verdict', () => {
           expect(scene.atTree.stdout).toContain(
-            '└─ prefix:    1 served · 🔴 1 missed · 1 self-cached · 🟡 1 over-reach · 0 unshared',
+            '└─ prefix:    1 served · 🔴 1 missed · 0 lapsed · 1 self-cached · 🟡 1 over-reach · 0 unshared',
           );
         });
 
@@ -3867,6 +3908,7 @@ describe('reviewCost.acceptance', () => {
             pairs: 4,
             served: 1,
             missed: 1,
+            lapsed: 0,
             selfCached: 1,
             overReach: 1,
             unshared: 0,
@@ -3889,7 +3931,7 @@ describe('reviewCost.acceptance', () => {
 
         then('🔴 the grove row reads the same counts as its one tree', () => {
           expect(scene.atGrove.stdout).toContain(
-            '└─ prefix:    1 served · 🔴 1 missed · 1 self-cached · 🟡 1 over-reach · 0 unshared',
+            '└─ prefix:    1 served · 🔴 1 missed · 0 lapsed · 1 self-cached · 🟡 1 over-reach · 0 unshared',
           );
         });
 
@@ -3907,6 +3949,1066 @@ describe('reviewCost.acceptance', () => {
       });
     },
   );
+
+  /**
+   * .what = a reviewer whose second round ran two hours after its first, and read naught
+   * .why = 🔴 CLAMP. a zero read past the cache's reach is the clock, not a broken prefix.
+   *        the run report must say so — `lapsed`, with the gap — so a driver never chases a
+   *        prompt defect that is not there
+   */
+  given(
+    '[case26] a reviewer whose second round ran past the cache reach',
+    () => {
+      const route = '.behavior/v2026_09_18.feat-demo';
+      const SHARED = 'a'.repeat(5_000);
+      const scene = useBeforeAll(async () => {
+        const tree = genTempDir({ slug: 'review-cost-cli-case26' });
+        const rounds = [
+          { name: '2026-09-23T10-00-00-000Z.pid1.lane-lapsed', tail: 'ONE' },
+          { name: '2026-09-23T12-00-00-000Z.pid1.lane-lapsed', tail: 'TWO' },
+        ];
+        const setRoundsIn = (input: { tree: string }) =>
+          rounds.forEach((round, index) =>
+            setOnePrefixRun({
+              tree: input.tree,
+              name: round.name,
+              route,
+              slug: 'lane-lapsed',
+              round: `i00${index + 1}`,
+              prompt: `${SHARED}ROUND-${round.tail}-TAIL`,
+              head: 4_000,
+              cacheGet: 0,
+              input_: null,
+              brain: null,
+              meet: null,
+            }),
+          );
+        setRoundsIn({ tree });
+
+        // a grove of one reviewed tree, so the grove counts read beside the tree's
+        const grove = genTempDir({ slug: 'review-cost-cli-case26-grove' });
+        const groveTree = path.join(grove, 'repo.beav.feat-lapse');
+        fs.mkdirSync(groveTree, { recursive: true });
+        setRoundsIn({ tree: groveTree });
+
+        return {
+          tree,
+          grove,
+          atGrove: runCli({
+            cwd: grove,
+            args: ['--of', 'grove', '--at', grove],
+          }),
+          lapsed: runCli({
+            cwd: tree,
+            args: [
+              '--of',
+              'run',
+              '--at',
+              path.join(tree, DIR_OF_REVIEW_LOGS, rounds[1]!.name),
+            ],
+          }),
+          lapsedJson: runCli({
+            cwd: tree,
+            args: [
+              '--of',
+              'run',
+              '--at',
+              path.join(tree, DIR_OF_REVIEW_LOGS, rounds[1]!.name),
+              '--json',
+            ],
+          }),
+          atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+          atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+          atGroveJson: runCli({
+            cwd: grove,
+            args: ['--of', 'grove', '--at', grove, '--json'],
+          }),
+        };
+      });
+
+      when('[t0] the second round is priced by name', () => {
+        then('it exits clean', () => {
+          expect(scene.lapsed.stderr).toEqual('');
+          expect(scene.lapsed.exitCode).toEqual(0);
+        });
+
+        then('🔴 it reads lapsed, with the gap past the reach', () => {
+          expect(scene.lapsed.stdout).toContain(
+            '├─ prefix vs i1: 🟡 lapsed (120m since i1, past the 66-minute reach)',
+          );
+        });
+
+        then('🔴 it never reads missed', () => {
+          expect(scene.lapsed.stdout).not.toContain('🔴 missed');
+        });
+
+        then('the run renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.lapsed.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] the tree is priced', () => {
+        then('🔴 the rollup counts the pair as lapsed', () => {
+          expect(scene.atTree.stdout).toContain(
+            '└─ prefix:    0 served · 0 missed · 🟡 1 lapsed · 0 self-cached · 0 over-reach · 0 unshared',
+          );
+        });
+
+        then('the tree renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atTree.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] the grove is priced', () => {
+        then('it exits clean AND speaks its status on stderr', () => {
+          expectGroveExitedCleanAndSpoke({ run: scene.atGrove });
+        });
+
+        then(
+          '🔴 the grove row reads the same lapsed count as its one tree',
+          () => {
+            expect(scene.atGrove.stdout).toContain(
+              '└─ prefix:    0 served · 0 missed · 🟡 1 lapsed · 0 self-cached · 0 over-reach · 0 unshared',
+            );
+          },
+        );
+
+        then('the grove renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atGrove.stdout, root: scene.grove }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t3] the second round is asked for json', () => {
+        then('it exits clean', () => {
+          expect(scene.lapsedJson.stderr).toEqual('');
+          expect(scene.lapsedJson.exitCode).toEqual(0);
+        });
+
+        then('🔴 the pair verdict reads lapsed on the wire', () => {
+          const doc = JSON.parse(scene.lapsedJson.stdout);
+          expect(doc.prefix.verdict).toEqual('lapsed');
+        });
+
+        then('the run json renders as a consumer receives it', () => {
+          expect(
+            asStableRoot({ stdout: scene.lapsedJson.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t4] the tree is asked for json', () => {
+        then(
+          '🔴 the reviewer row grades cold, cause lapsed, with the gap in minutes',
+          () => {
+            const payload = JSON.parse(scene.atTreeJson.stdout);
+            const row = payload.report.byReviewer.find(
+              (each: { key: string }) => each.key === 'lane-lapsed',
+            );
+            expect(row.cacheGrade).toEqual({
+              kind: 'cold',
+              cause: 'lapsed',
+              minutes: 120,
+            });
+          },
+        );
+
+        then('🔴 the census counts the pair lapsed, and lists it so', () => {
+          const payload = JSON.parse(scene.atTreeJson.stdout);
+          expect(payload.prefix.verdicts.lapsed).toEqual(1);
+          expect(
+            payload.prefix.pairs.map(
+              (pair: { verdict: string }) => pair.verdict,
+            ),
+          ).toEqual(['lapsed']);
+        });
+
+        then('the tree json renders as a consumer receives it', () => {
+          expect(
+            asStableRoot({ stdout: scene.atTreeJson.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t5] the grove is asked for json', () => {
+        then('🔴 the grove census counts the same lapsed pair', () => {
+          // the grove json is the report itself, unwrapped
+          const doc = JSON.parse(scene.atGroveJson.stdout);
+          expect(doc.prefix.verdicts.lapsed).toEqual(1);
+        });
+
+        then('the grove json renders as a consumer receives it', () => {
+          expect(
+            asStableRoot({
+              stdout: scene.atGroveJson.stdout,
+              root: scene.grove,
+            }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  /**
+   * .what = two reviewers whose runs RECORD their brain — one held its brain, one switched
+   * .why = 🔴 CLAMP. a guard run records its brain, so the common `--of run` and the brain rows
+   *        must be pinned with a brain present, not only with the absent row. and a switch of
+   *        brain must read off disk as `unshared` — a cache is per model, so a round on a new
+   *        brain cannot read its prior's prefix, and a zero there is no defect
+   */
+  given('[case27] reviewers whose runs record the brain they rode', () => {
+    const route = '.behavior/v2026_09_18.feat-demo';
+    const SHARED = 'a'.repeat(5_000);
+    const FLASH = 'openrouter/deepseek/flash';
+    const PRO = 'openrouter/deepseek/pro';
+    const scene = useBeforeAll(async () => {
+      // the tree sits inside a grove, so one corpus is read at all three breadths
+      const grove = genTempDir({ slug: 'review-cost-cli-case27-grove' });
+      const tree = path.join(grove, 'repo.beav.feat-brains');
+      fs.mkdirSync(tree, { recursive: true });
+      const lanes = [
+        {
+          slug: 'lane-held',
+          minute: '00',
+          brains: [FLASH, FLASH],
+          cacheGet: 626,
+        },
+        {
+          slug: 'lane-switched',
+          minute: '10',
+          brains: [FLASH, PRO],
+          cacheGet: 0,
+        },
+      ];
+      lanes.forEach((lane) =>
+        lane.brains.forEach((brain, index) =>
+          setOnePrefixRun({
+            tree,
+            name: `2026-09-23T10-${lane.minute}-0${index}-000Z.pid1.${lane.slug}`,
+            route,
+            slug: lane.slug,
+            round: `i00${index + 1}`,
+            prompt: `${SHARED}ROUND-${index === 0 ? 'ONE' : 'TWO'}-TAIL`,
+            head: 4_000,
+            cacheGet: index === 0 ? 0 : lane.cacheGet,
+            input_: null,
+            brain,
+            meet: null,
+          }),
+        ),
+      );
+      const atRunOf = (input: { slug: string; minute: string }) =>
+        runCli({
+          cwd: tree,
+          args: [
+            '--of',
+            'run',
+            '--at',
+            path.join(
+              tree,
+              DIR_OF_REVIEW_LOGS,
+              `2026-09-23T10-${input.minute}-01-000Z.pid1.${input.slug}`,
+            ),
+          ],
+        });
+      return {
+        grove,
+        tree,
+        held: atRunOf({ slug: 'lane-held', minute: '00' }),
+        switched: atRunOf({ slug: 'lane-switched', minute: '10' }),
+        atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+        atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+        atGrove: runCli({ cwd: grove, args: ['--of', 'grove', '--at', grove] }),
+        atGroveJson: runCli({
+          cwd: grove,
+          args: ['--of', 'grove', '--at', grove, '--json'],
+        }),
+      };
+    });
+
+    when('[t0] a round on the same brain as its prior', () => {
+      then('it exits clean', () => {
+        expect(scene.held.stderr).toEqual('');
+        expect(scene.held.exitCode).toEqual(0);
+      });
+
+      then('🔴 the run names the brain it rode', () => {
+        expect(scene.held.stdout).toContain(`├─ brain: ${FLASH}`);
+        expect(scene.held.stdout).not.toContain('(no brain — unrecorded)');
+      });
+
+      then('it reads served', () => {
+        expect(scene.held.stdout).toContain('├─ prefix vs i1: served');
+      });
+
+      then('the run renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.held.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] a round on a different brain than its prior', () => {
+      then('🔴 the run names its own brain', () => {
+        expect(scene.switched.stdout).toContain(`├─ brain: ${PRO}`);
+      });
+
+      then('🔴 it reads unshared, never missed', () => {
+        expect(scene.switched.stdout).toContain('├─ prefix vs i1: unshared');
+        expect(scene.switched.stdout).not.toContain('🔴 missed');
+      });
+
+      then(
+        '🔴 the unshared pair names the brain switch as its cause, never a layout break',
+        () => {
+          expect(scene.switched.stdout).toContain(
+            `unshared — brain switched (${FLASH} → ${PRO})`,
+          );
+          expect(scene.switched.stdout).not.toContain('prefix breaks in:');
+        },
+      );
+
+      then('the run renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.switched.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] the tree is priced', () => {
+      then('🔴 each brain row names its own brain', () => {
+        expect(scene.atTree.stdout).toContain(FLASH);
+        expect(scene.atTree.stdout).toContain(PRO);
+      });
+
+      then('the tree renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atTree.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t3] the tree is read as json', () => {
+      then(
+        '🔴 the json carries one brain row per brain, never the absent row',
+        () => {
+          const payload = JSON.parse(scene.atTreeJson.stdout);
+          const keys = payload.report.byBrain
+            .map((row: { key: string }) => row.key)
+            .sort();
+          expect(keys).toEqual([FLASH, PRO].sort());
+        },
+      );
+
+      then('the tree json renders as a consumer receives it', () => {
+        expect(
+          asStableRoot({ stdout: scene.atTreeJson.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t4] the grove is read', () => {
+      then('it exits clean, its progress on stderr', () => {
+        expect(scene.atGrove.exitCode).toEqual(0);
+        expect(scene.atGrove.stderr).toContain('folded 4 runs priced');
+      });
+
+      then('🔴 the grove names each brain the runs rode', () => {
+        expect(scene.atGrove.stdout).toContain(FLASH);
+        expect(scene.atGrove.stdout).toContain(PRO);
+        expect(scene.atGrove.stdout).not.toContain('(no brain — unrecorded)');
+      });
+
+      then(
+        '🔴 each brain hangs its own prefix verdicts — the switch reads unshared',
+        () => {
+          expect(scene.atGrove.stdout).toContain(
+            '└─ pairs: 0 served · 0 missed · 0 lapsed · 0 self-cached · 0 over-reach · 1 unshared',
+          );
+          expect(scene.atGrove.stdout).toContain(
+            '└─ pairs: 1 served · 0 missed · 0 lapsed · 0 self-cached · 0 over-reach · 0 unshared',
+          );
+        },
+      );
+
+      then('the grove renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atGrove.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t5] the grove is read as json', () => {
+      then('🔴 the grove json carries one brain row per brain', () => {
+        // the grove json is the report itself, unwrapped
+        const doc = JSON.parse(scene.atGroveJson.stdout);
+        expect(
+          doc.byBrain.map((row: { key: string }) => row.key).sort(),
+        ).toEqual([FLASH, PRO].sort());
+      });
+
+      then('the grove json renders as a consumer receives it', () => {
+        expect(
+          asStableRoot({ stdout: scene.atGroveJson.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+    });
+  });
+
+  /**
+   * .what = group lanes whose prior round is two hours old, but which met a warm peer this round
+   * .why = 🔴 the cure's own win and its own failure. a lane reads the head a peer's prime wrote
+   *        seconds before, so a zero read is a real miss — never the clock — and a read past
+   *        what it shares with its stale prior is the win, never an instrument fault
+   */
+  given(
+    '[case28] group lanes that met a warm peer, past their prior reach',
+    () => {
+      const route = '.behavior/v2026_09_18.feat-demo';
+      const SHARED = 'a'.repeat(5_000);
+      const scene = useBeforeAll(async () => {
+        const tree = genTempDir({ slug: 'review-cost-cli-case28' });
+        const lanes = [
+          { slug: 'lane-met-missed', cacheGet: 0 },
+          { slug: 'lane-met-served', cacheGet: 900 },
+        ];
+        lanes.forEach((lane) =>
+          ['10', '12'].forEach((hour, index) =>
+            setOnePrefixRun({
+              tree,
+              name: `2026-09-23T${hour}-00-00-000Z.pid1.${lane.slug}`,
+              route,
+              slug: lane.slug,
+              round: `i00${index + 1}`,
+              prompt: `${SHARED}ROUND-${index === 0 ? 'ONE' : 'TWO'}-TAIL`,
+              head: 4_000,
+              cacheGet: index === 0 ? 0 : lane.cacheGet,
+              input_: null,
+              brain: null,
+              meet: index === 0 ? 'solo' : 'awaited',
+            }),
+          ),
+        );
+        const atRunOf = (input: { slug: string }) =>
+          runCli({
+            cwd: tree,
+            args: [
+              '--of',
+              'run',
+              '--at',
+              path.join(
+                tree,
+                DIR_OF_REVIEW_LOGS,
+                `2026-09-23T12-00-00-000Z.pid1.${input.slug}`,
+              ),
+            ],
+          });
+        return {
+          tree,
+          missed: atRunOf({ slug: 'lane-met-missed' }),
+          served: atRunOf({ slug: 'lane-met-served' }),
+          atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+          atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+        };
+      });
+
+      when('[t0] a zero read after a warm meet', () => {
+        then('it exits clean', () => {
+          expect(scene.missed.stderr).toEqual('');
+          expect(scene.missed.exitCode).toEqual(0);
+        });
+
+        then(
+          '🔴 it reads missed, never lapsed — the peer wrote it seconds before',
+          () => {
+            expect(scene.missed.stdout).toContain('🔴 missed');
+            expect(scene.missed.stdout).not.toContain('lapsed');
+          },
+        );
+
+        then('the run renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.missed.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] a read of the head the warm peer wrote', () => {
+        then('🔴 it reads served, never over-reach', () => {
+          expect(scene.served.stdout).toContain('├─ prefix vs i1: served');
+          expect(scene.served.stdout).not.toContain('over-reach');
+        });
+
+        then('the run renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.served.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] the tree is priced', () => {
+        then(
+          '🔴 the rollup counts one served and one missed, and no lapse',
+          () => {
+            expect(scene.atTree.stdout).toContain(
+              '└─ prefix:    1 served · 🔴 1 missed · 0 lapsed · 0 self-cached · 0 over-reach · 0 unshared',
+            );
+          },
+        );
+
+        then(
+          '🔴 no lane grades cold for a lapse — a warm meet held the head for it',
+          () => {
+            expect(scene.atTree.stdout).not.toContain('cold (lapsed');
+            expect(scene.atTree.stdout).toMatch(
+              /lane-met-missed .* 🟡 warm and cached NAUGHT/,
+            );
+          },
+        );
+
+        then(
+          '🔴 the warm zero names the replica, never a prefix that broke — the poke wrote the head seconds before',
+          () => {
+            expect(scene.atTree.stdout).toMatch(
+              /lane-met-missed .* the meet's poke warmed the head this round, and the read met none/,
+            );
+            expect(scene.atTree.stdout).not.toMatch(
+              /lane-met-missed .* a prefix broke/,
+            );
+          },
+        );
+
+        then('the tree renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atTree.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t3] the tree is read as json', () => {
+        then(
+          '🔴 the warm-met zero carries `via: meet`, and no dir — no prefix broke',
+          () => {
+            const payload = JSON.parse(scene.atTreeJson.stdout);
+            const rowMissed = payload.report.byReviewer.find(
+              (row: { key: string }) => row.key === 'lane-met-missed',
+            );
+            expect(rowMissed.cacheGrade).toEqual({ kind: 'warm', via: 'meet' });
+          },
+        );
+
+        then('the json payload renders as a consumer receives it', () => {
+          expect(
+            asStableRoot({ stdout: scene.atTreeJson.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  /**
+   * .what = a lane that met a warm peer, whose head outruns what it shares with its prior
+   * .why = 🔴 the expected read comes from the meet's head, not the prior. the pair must name
+   *        that source, and every breadth must name the meet, text and json alike
+   */
+  given('[case29] a lane whose warm-met head outruns its prior share', () => {
+    const route = '.behavior/v2026_09_18.feat-demo';
+    const scene = useBeforeAll(async () => {
+      const tree = genTempDir({ slug: 'review-cost-cli-case29' });
+      ['10', '12'].forEach((hour, index) =>
+        setOnePrefixRun({
+          tree,
+          name: `2026-09-23T${hour}-00-00-000Z.pid1.lane-headlong`,
+          route,
+          slug: 'lane-headlong',
+          round: `i00${index + 1}`,
+          // the two rounds share 1,000 chars; the head the peer warmed is 4,000
+          prompt: `${'a'.repeat(1_000)}${index === 0 ? 'x' : 'y'}${'b'.repeat(4_000)}`,
+          head: 4_000,
+          cacheGet: index === 0 ? 0 : 900,
+          input_: null,
+          brain: null,
+          meet: index === 0 ? 'solo' : 'awaited',
+        }),
+      );
+      const dirOfRound = path.join(
+        tree,
+        DIR_OF_REVIEW_LOGS,
+        '2026-09-23T12-00-00-000Z.pid1.lane-headlong',
+      );
+      return {
+        tree,
+        atRun: runCli({ cwd: tree, args: ['--of', 'run', '--at', dirOfRound] }),
+        atRunJson: runCli({
+          cwd: tree,
+          args: ['--of', 'run', '--at', dirOfRound, '--json'],
+        }),
+        atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+        atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+      };
+    });
+
+    when('[t0] the run is read', () => {
+      then('it exits clean', () => {
+        expect(scene.atRun.stderr).toEqual('');
+        expect(scene.atRun.exitCode).toEqual(0);
+      });
+
+      then(
+        '🔴 the expected read names the head and the meet, not the prior',
+        () => {
+          expect(scene.atRun.stdout).toContain(
+            'chars of head a peer warmed this round; meet: awaited)',
+          );
+          expect(scene.atRun.stdout).not.toContain('shared with i1)');
+        },
+      );
+
+      then('the run names its meet', () => {
+        expect(scene.atRun.stdout).toContain('│  ├─ meet: awaited');
+      });
+
+      then('the run renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atRun.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] the run is read as json', () => {
+      then('the meet and the expected source ride the payload', () => {
+        const payload = JSON.parse(scene.atRunJson.stdout);
+        expect(payload.run.meet).toEqual('awaited');
+        expect(payload.prefix.meet).toEqual('awaited');
+        expect(payload.prefix.expectedFrom).toEqual('meet');
+      });
+
+      then('the json payload renders as a consumer receives it', () => {
+        // the wire shape of `expectedFrom: 'meet'`, pinned whole so a rename fails here
+        expect(
+          asStableRoot({ stdout: scene.atRunJson.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] the tree is read', () => {
+      then('🔴 it counts runs by meet, each meet its own row', () => {
+        expect(scene.atTree.stdout).toContain(
+          '├─ by meet — heaviest prompt first',
+        );
+        expect(scene.atTree.stdout).toMatch(/│ {2}[├└]─ awaited +1 run /);
+        expect(scene.atTree.stdout).toMatch(/│ {2}[├└]─ solo +1 run /);
+      });
+
+      then('the json counts them too', () => {
+        const payload = JSON.parse(scene.atTreeJson.stdout);
+        expect(
+          payload.report.byMeet.map((row: { key: string }) => row.key).sort(),
+        ).toEqual(['awaited', 'solo']);
+      });
+
+      then('the tree renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atTree.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+  });
+
+  /**
+   * .what = one lane per value a run's meet can take, read at every breadth
+   * .why = 🔴 the meet is a published contract value at run, tree, grove, and in json. each
+   *        value is one a caller meets on a real run (`skipped.partition` on every split lane,
+   *        `faulted` / `timeout` / `expired` on a prime that misses), so each is snapped where
+   *        it renders (rule.require.contract-snapshot-exhaustiveness)
+   */
+  given('[case30] a lane per meet value, read at run, tree, and grove', () => {
+    const route = '.behavior/v2026_09_18.feat-demo';
+    const MEETS: ReviewRunMeet[] = [
+      'primed',
+      'faulted',
+      'solo',
+      'awaited',
+      'cold',
+      'timeout',
+      'expired',
+      'skipped.partition',
+      'skipped.lone',
+      'poke',
+    ];
+    // a poke files under the slug of the lane it primed, as `asReviewLanePokeOutputPath` names it
+    const asSlug = (input: { meet: ReviewRunMeet }) =>
+      input.meet === 'poke' ? 'poke.lane-primed' : `lane-${input.meet}`;
+    const asRunName = (input: { index: number; meet: ReviewRunMeet }) =>
+      `2026-09-23T10-${String(input.index).padStart(2, '0')}-00-000Z.pid1.${asSlug(input)}`;
+    const scene = useBeforeAll(async () => {
+      const grove = genTempDir({ slug: 'review-cost-cli-case30-grove' });
+      const tree = path.join(grove, 'repo.beav.feat-meets');
+      fs.mkdirSync(tree, { recursive: true });
+      MEETS.forEach((meet, index) =>
+        setOnePrefixRun({
+          tree,
+          name: asRunName({ index, meet }),
+          route,
+          slug: asSlug({ meet }),
+          round: 'i001',
+          prompt: `${'a'.repeat(1_000)}${meet}`,
+          head: 400,
+          cacheGet: 0,
+          input_: null,
+          brain: null,
+          meet,
+        }),
+      );
+      const atRunOf = (input: { index: number; meet: ReviewRunMeet }) =>
+        runCli({
+          cwd: tree,
+          args: [
+            '--of',
+            'run',
+            '--at',
+            path.join(tree, DIR_OF_REVIEW_LOGS, asRunName(input)),
+          ],
+        });
+      return {
+        grove,
+        tree,
+        atRuns: MEETS.map((meet, index) => ({
+          meet,
+          run: atRunOf({ index, meet }),
+        })),
+        atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+        atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+        atGrove: runCli({ cwd: grove, args: ['--of', 'grove', '--at', grove] }),
+        atGroveJson: runCli({
+          cwd: grove,
+          args: ['--of', 'grove', '--at', grove, '--json'],
+        }),
+      };
+    });
+
+    when('[t0] each run is read', () => {
+      then('🔴 each run names its own meet, verbatim', () => {
+        scene.atRuns.forEach((one) => {
+          expect(one.run.exitCode).toEqual(0);
+          expect(one.run.stdout).toContain(`│  ├─ meet: ${one.meet}`);
+        });
+      });
+
+      then('the meet row of every run renders as the human sees it', () => {
+        // the meet row alone, per value — the rest of each render is `[case29]`'s
+        expect(
+          scene.atRuns
+            .map((one) =>
+              one.run.stdout
+                .split('\n')
+                .find((line) => line.includes('─ meet: ')),
+            )
+            .join('\n'),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] the tree is read', () => {
+      then('🔴 the tree counts one row per meet value', () => {
+        MEETS.forEach((meet) =>
+          expect(scene.atTree.stdout).toMatch(
+            new RegExp(`│ {2}[├└]─ ${meet.replace('.', '\\.')} +1 run `),
+          ),
+        );
+      });
+
+      then('the json counts every value', () => {
+        const payload = JSON.parse(scene.atTreeJson.stdout);
+        expect(
+          payload.report.byMeet.map((row: { key: string }) => row.key).sort(),
+        ).toEqual([...MEETS].sort());
+      });
+
+      then('the tree renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atTree.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+
+      then('the tree json renders as a consumer receives it', () => {
+        expect(
+          asStableRoot({ stdout: scene.atTreeJson.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] the grove is read', () => {
+      then('🔴 the grove counts one row per meet value, never absent', () => {
+        expect(scene.atGrove.exitCode).toEqual(0);
+        // a grove row ends on its key, so the key anchors at the line end
+        MEETS.forEach((meet) =>
+          expect(scene.atGrove.stdout).toMatch(
+            new RegExp(` 1 run +${meet.replace('.', '\\.')}$`, 'm'),
+          ),
+        );
+        expect(scene.atGrove.stdout).not.toContain('(no meet —');
+      });
+
+      then('the grove json counts every value', () => {
+        // the grove json is the report itself, unwrapped
+        const doc = JSON.parse(scene.atGroveJson.stdout);
+        expect(
+          doc.byMeet.map((row: { key: string }) => row.key).sort(),
+        ).toEqual([...MEETS].sort());
+      });
+
+      then('the grove renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atGrove.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+
+      then('the grove json renders as a consumer receives it', () => {
+        expect(
+          asStableRoot({ stdout: scene.atGroveJson.stdout, root: scene.grove }),
+        ).toMatchSnapshot();
+      });
+    });
+  });
+
+  /**
+   * .what = the headline journey: a first round of a nine-lane level, one lane primed and
+   *         eight awaited, every follower read the shared head from cache, beside the poke
+   * .why = 🔴 the cure's success state. a follower has no prior round, so its whole read
+   *        is owed to the meet; the tree must show the level cached, the follower run must
+   *        name the meet's head as its expected source, and the poke's spend must file
+   *        under its own key (`vision case=1`)
+   */
+  given(
+    '[case31] a first-round level of nine lanes that read the primed head',
+    () => {
+      const route = '.behavior/v2026_09_18.feat-demo';
+      // the head every lane shares, and one tail per lane
+      const asPrompt = (input: { slug: string }) =>
+        `${'h'.repeat(40_000)}${input.slug}${'t'.repeat(2_000)}`;
+      const FOLLOWERS = Array.from(
+        { length: 8 },
+        (_, index) => `lane-follower-${index + 1}`,
+      );
+      const scene = useBeforeAll(async () => {
+        const tree = genTempDir({ slug: 'review-cost-cli-case31' });
+
+        // the poke, then the primer, then the eight followers — mint order is send order
+        setOnePrefixRun({
+          tree,
+          name: '2026-09-23T10-00-00-000Z.pid1.poke.lane-primer',
+          route,
+          slug: 'poke.lane-primer',
+          round: 'i001',
+          prompt: 'h'.repeat(40_000),
+          head: 40_000,
+          cacheGet: 0,
+          input_: null,
+          brain: null,
+          meet: 'poke',
+        });
+        setOnePrefixRun({
+          tree,
+          name: '2026-09-23T10-01-00-000Z.pid1.lane-primer',
+          route,
+          slug: 'lane-primer',
+          round: 'i001',
+          prompt: asPrompt({ slug: 'lane-primer' }),
+          head: 40_000,
+          cacheGet: 9_990,
+          input_: null,
+          brain: null,
+          meet: 'primed',
+        });
+        FOLLOWERS.forEach((slug, index) =>
+          setOnePrefixRun({
+            tree,
+            name: `2026-09-23T10-02-${String(index).padStart(2, '0')}-000Z.pid1.${slug}`,
+            route,
+            slug,
+            round: 'i001',
+            prompt: asPrompt({ slug }),
+            head: 40_000,
+            cacheGet: 9_990,
+            input_: null,
+            brain: null,
+            meet: 'awaited',
+          }),
+        );
+        const dirOfFollower = path.join(
+          tree,
+          DIR_OF_REVIEW_LOGS,
+          '2026-09-23T10-02-00-000Z.pid1.lane-follower-1',
+        );
+        const dirOfPoke = path.join(
+          tree,
+          DIR_OF_REVIEW_LOGS,
+          '2026-09-23T10-00-00-000Z.pid1.poke.lane-primer',
+        );
+        return {
+          tree,
+          atTree: runCli({ cwd: tree, args: ['--of', 'tree'] }),
+          atTreeJson: runCli({ cwd: tree, args: ['--of', 'tree', '--json'] }),
+          atFollower: runCli({
+            cwd: tree,
+            args: ['--of', 'run', '--at', dirOfFollower],
+          }),
+          atPoke: runCli({
+            cwd: tree,
+            args: ['--of', 'run', '--at', dirOfPoke],
+          }),
+        };
+      });
+
+      when('[t0] the tree is read', () => {
+        then('it exits clean', () => {
+          expect(scene.atTree.stderr).toEqual('');
+          expect(scene.atTree.exitCode).toEqual(0);
+        });
+
+        then(
+          '🔴 the awaited row reads its eight followers cached, with no naught flag',
+          () => {
+            const row = scene.atTree.stdout
+              .split('\n')
+              .find((line) => /│ {2}[├└]─ awaited +8 runs /.test(line));
+            expect(row).toBeDefined();
+            expect(row).not.toContain('NAUGHT');
+            expect(row).not.toContain(' 0.0% cached');
+          },
+        );
+
+        then(
+          '🔴 the poke files under its own meet key, never as unrecorded',
+          () => {
+            expect(scene.atTree.stdout).toMatch(/│ {2}[├└]─ poke +1 run /);
+            expect(scene.atTree.stdout).not.toContain('(no meet —');
+            const payload = JSON.parse(scene.atTreeJson.stdout);
+            expect(
+              payload.report.byMeet
+                .map((row: { key: string }) => row.key)
+                .sort(),
+            ).toEqual(['awaited', 'poke', 'primed']);
+          },
+        );
+
+        then('the tree renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atTree.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] one follower run is read', () => {
+        then(
+          '🔴 the follower names its warm meet and reads the shared head from cache',
+          () => {
+            expect(scene.atFollower.exitCode).toEqual(0);
+            expect(scene.atFollower.stdout).toContain('│  ├─ meet: awaited');
+            expect(scene.atFollower.stdout).toContain(
+              'cache:     95.1% of prompt tokens served from cache',
+            );
+          },
+        );
+
+        then(
+          'its prefix row names the first round — a first-round pair verdict against the meet is owed (`.dream/…first-round-prefix-verdict-of-a-warm-meet`)',
+          () => {
+            expect(scene.atFollower.stdout).toContain(
+              '├─ prefix: —  (the first round of lane-follower-1 in this tree)',
+            );
+          },
+        );
+
+        then('the follower run renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atFollower.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] the poke run is read', () => {
+        then('🔴 the poke run names its meet as poke', () => {
+          expect(scene.atPoke.exitCode).toEqual(0);
+          expect(scene.atPoke.stdout).toContain('│  ├─ meet: poke');
+        });
+
+        then('the poke run renders whole', () => {
+          expect(
+            asStableRoot({ stdout: scene.atPoke.stdout, root: scene.tree }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  /**
+   * .what = a run whose realized record carries a meet string no reader knows — torn, or
+   *         written by a later version
+   * .why = 🔴 a record off disk is untrusted. an unknown meet must read as no meet, never as a
+   *        warm one, so the human sees the absent-record key at the run breadth
+   *        (`asReviewRunMeetOfRealized`)
+   */
+  given('[case32] a run whose record names an unknown meet', () => {
+    const route = '.behavior/v2026_09_18.feat-demo';
+    const name = '2026-09-23T10-00-00-000Z.pid1.lane-torn';
+    const scene = useBeforeAll(async () => {
+      const tree = genTempDir({ slug: 'review-cost-cli-case32' });
+      setOnePrefixRun({
+        tree,
+        name,
+        route,
+        slug: 'lane-torn',
+        round: 'i001',
+        prompt: 'a'.repeat(1_000),
+        head: 400,
+        cacheGet: 0,
+        input_: null,
+        brain: null,
+        meet: null,
+      });
+
+      // the torn value, written over the seed's record as a later version or a torn write would
+      const dir = path.join(tree, DIR_OF_REVIEW_LOGS, name);
+      const pathOfRealized = asRunArtifactPath({ dir, artifact: 'realized' });
+      fs.writeFileSync(
+        pathOfRealized,
+        JSON.stringify({
+          ...JSON.parse(fs.readFileSync(pathOfRealized, 'utf-8')),
+          meet: 'prim',
+        }),
+      );
+      return {
+        tree,
+        atRun: runCli({ cwd: tree, args: ['--of', 'run', '--at', dir] }),
+      };
+    });
+
+    when('[t0] the run is read', () => {
+      then(
+        '🔴 it reads the unknown meet as no meet, never as a warm one',
+        () => {
+          expect(scene.atRun.exitCode).toEqual(0);
+          expect(scene.atRun.stdout).toContain(
+            '│  ├─ meet: (no meet — unrecorded or unreadable)',
+          );
+          expect(scene.atRun.stdout).not.toContain('meet: prim');
+        },
+      );
+
+      then('the run renders whole', () => {
+        expect(
+          asStableRoot({ stdout: scene.atRun.stdout, root: scene.tree }),
+        ).toMatchSnapshot();
+      });
+    });
+  });
 });
 
 /**
@@ -3930,6 +5032,10 @@ const setOnePrefixRun = (input: {
   cacheGet: number;
   /** fresh input tokens — null bills the rest of the prompt as fresh input */
   input_: number | null;
+  /** the brain the args record names — null for a run that recorded none */
+  brain: string | null;
+  /** what the run's level meet did — null for a run whose record names none */
+  meet: ReviewRunMeet | null;
 }): void => {
   const dir = path.join(input.tree, DIR_OF_REVIEW_LOGS, input.name);
   fs.mkdirSync(dir, { recursive: true });
@@ -3942,6 +5048,7 @@ const setOnePrefixRun = (input: {
       args: {
         output: path.join(input.route, '.reviews', 'peer', leaf),
         focus: 'push',
+        ...(input.brain === null ? {} : { brain: input.brain }),
       },
       scope: { ruleFiles: ['a.md'], refFiles: [], targetFiles: ['x.ts'] },
     }),
@@ -3973,6 +5080,7 @@ const setOnePrefixRun = (input: {
         output: 100,
       },
       cost: { total: '$0.0100' },
+      ...(input.meet === null ? {} : { meet: input.meet }),
     }),
   );
 };

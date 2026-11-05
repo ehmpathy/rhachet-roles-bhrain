@@ -14,10 +14,10 @@ exports[`stepReview — a reply that runs to the output limit given: [case4] the
    │  ├─ rules: 1
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 1,272
+   │  ├─ estimate: 1,310
    │  └─ context: 0.1%
    └─ cost
-      └─ estimate: $0.000635600
+      └─ estimate: $0.000655000
 
 🪵 logs
    ├─ scope: .log/bhrain/review/$STAMP/input.scope.json

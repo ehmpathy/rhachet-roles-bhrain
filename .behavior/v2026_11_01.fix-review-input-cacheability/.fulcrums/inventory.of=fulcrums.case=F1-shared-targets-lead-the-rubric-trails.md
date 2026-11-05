@@ -45,3 +45,19 @@ no route artifact, no stored state depends on the order. a revert is the same di
 ruled 2026-11-05 by the director: **A**. the rubric and refs trail the corpus a level's lanes share.
 the verdict bar is content equality — the same content in a new order — with no hand-run review.
 the lever is the corpus a level shares, not a lane's second round.
+
+## .consequences measured after the verdict
+
+the verdict named the layout, not each test it retired. these are its measured costs, recorded so a
+later reader can weigh them against it. none is a separate verdict; the director may overturn any by
+name:
+
+- the cross-round prefix majority on the one-target worst case is lost: `reviewPromptCacheAnatomy`
+  `[case1]` falls 79.1% → 33.9% and 70.5% → 30.2%; its floor is re-pinned at 0.25
+- a lane's own second round shares less: `[case5]`'s margin over the counterfactual falls to 51.8%
+  vs 51.0%; `[case6]` 82.2% → 56.9% and 44.1% → 18.9%
+- the prefix ends ahead of `## rules`: a rubric edit no longer voids the corpus, and a corpus edit
+  voids the rubric
+- one rubric on a new target no longer reads warm (the retired `casePromptCache` premise)
+
+each has a row in `5.3.verification.yield.md` `### test lock-ins retired`.

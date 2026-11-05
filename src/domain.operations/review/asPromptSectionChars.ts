@@ -7,8 +7,9 @@ import {
 import { getOneAttributionGradeOfMarkup } from '@src/domain.operations/review/getOneAttributionGradeOfMarkup';
 import {
   MARKER_OF_OUTPUT_FORMAT,
-  MARKER_OF_RULES,
+  MARKERS_OF_FIRST_BLOCK,
 } from '@src/domain.operations/review/getOneHeadMarkerOffsets';
+import { getOneOffsetOfFirstBlockMarker } from '@src/domain.operations/review/getOneOffsetOfFirstBlockMarker';
 
 /**
  * .what = the census rows a delimited block feeds — every row but the head and residual
@@ -350,17 +351,18 @@ const asPathOfTag = (input: { tag: string }): string | null => {
 };
 
 /**
- * .what = the offset the block scan starts at — the rubric header, where the head carries one
+ * .what = the offset the block scan starts at — the first block header behind the output
+ *         contract, where the head carries one
  * .why = the head's instructions name the blocks by their literal tags (the rule never
  *        to flag the `<rules>` section, the diff howto's `<target.diff path="…">`). a
  *        scan from offset 0 opens a block at that prose, hunts forward to the REAL
  *        close, and folds the whole static head into one row — the absorption
  *        `rule.require.distinguish-every-review-input` forbids, with every figure still
- *        summed. no real block opens ahead of the rubric header, so the scan starts there
+ *        summed. no real block opens ahead of the first block header, so the scan starts there
  *
- * .note = the same two markers the attribution grade cuts at (`getOneHeadMarkerOffsets`),
- *         sought in the same order: the rubric header that follows the output contract,
- *         never a quote of `## rules` earlier in the instructions
+ * .note = the first block header is the target in a corpus-first prompt and the rubric in
+ *         a rubric-first one (`getOneOffsetOfFirstBlockMarker`). to start at the rubric alone
+ *         would skip the whole target block of a corpus-first prompt, where the rubric trails it
  *
  * .note = 0 where either marker is absent — an older layout this reader must survive.
  *         it scans as it always did there, and the attribution grade declines to vouch
@@ -368,8 +370,12 @@ const asPathOfTag = (input: { tag: string }): string | null => {
 const getOneOffsetOfFirstBlockScan = (input: { prompt: string }): number => {
   const atOutputFormat = input.prompt.indexOf(MARKER_OF_OUTPUT_FORMAT);
   if (atOutputFormat < 0) return 0;
-  const atRules = input.prompt.indexOf(MARKER_OF_RULES, atOutputFormat);
-  return atRules < 0 ? 0 : atRules;
+  const atFirstBlock = getOneOffsetOfFirstBlockMarker({
+    text: input.prompt,
+    from: atOutputFormat,
+    markers: MARKERS_OF_FIRST_BLOCK,
+  });
+  return atFirstBlock < 0 ? 0 : atFirstBlock;
 };
 
 /**
@@ -396,11 +402,15 @@ const getOneHeadRows = (input: {
   const head = input.prompt.slice(0, input.headUntil);
   const atOutputFormat = head.indexOf(MARKER_OF_OUTPUT_FORMAT);
   if (atOutputFormat < 0) return null;
-  const atRules = head.indexOf(MARKER_OF_RULES, atOutputFormat);
-  if (atRules < 0) return null;
+  const atFirstBlock = getOneOffsetOfFirstBlockMarker({
+    text: head,
+    from: atOutputFormat,
+    markers: MARKERS_OF_FIRST_BLOCK,
+  });
+  if (atFirstBlock < 0) return null;
   return {
     instructions: atOutputFormat,
-    outputFormat: atRules - atOutputFormat,
+    outputFormat: atFirstBlock - atOutputFormat,
   };
 };
 

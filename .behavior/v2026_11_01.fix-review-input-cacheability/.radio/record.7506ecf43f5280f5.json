@@ -1,0 +1,19 @@
+{
+  "key": "7506ecf43f5280f5",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-anthropic"
+  },
+  "exid": null,
+  "title": "feat: mark the system prompt with cache_control, so a repeated system prompt is read from cache",
+  "description": "# feat: mark the system prompt with `cache_control`, so a repeated system prompt is read from the prompt cache\n\n## .what\n\n`rhachet-brains-anthropic@0.4.3` sends the system prompt as a bare string and sets no `cache_control` breakpoint. anthropic's prompt cache serves only content behind an explicit breakpoint, so an ask on an anthropic brain never reads a cache, however long and repeated its system prompt.\n\n- `dist/domain.operations/atoms/genBrainAtom.js:42` — the system prompt joined from `role.briefs`\n- `dist/domain.operations/atoms/genBrainAtom.js:88-96` — `system: systemPrompt`, a string, no `cache_control` block\n- grep of the installed dist for `cache_control`: 0 matches\n\n## .why it matters\n\n`rhachet-roles-bhrain` carries a review's shared corpus as the system prompt, so the lanes of a guard level, and a prime poke ahead of them, send it byte for byte. on an anthropic brain none of it is ever read from cache, so every lane pays it at the full input rate.\n\n## .the shape of the fix\n\n- send `system` as a content-block array: `[{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }]`\n- leave the user message unmarked; its bytes vary per ask\n- report `cache_creation_input_tokens` as `cache.set` and `cache_read_input_tokens` as `cache.get` in the token cast, so a caller's meter reads both\n\n## .how to verify\n\ntwo asks with one system prompt above the model's minimum cacheable length, seconds apart: the first reports `cache.set` near the system prompt's tokens, the second reports `cache.get` near them.\n\n## .source\n\nfound in `ehmpathy/rhachet-roles-bhrain` route `.behavior/v2026_11_01.fix-review-input-cacheability` (cause C7). no review lane defaults to an anthropic brain today, so this is a latent loss, not a live one.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 42,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "43"
+}

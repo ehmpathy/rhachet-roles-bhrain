@@ -119,8 +119,8 @@ the fix named itself: hand the static head to `ask` as briefs. that one change e
 halves at once — the static block becomes a system message (so it leads the message array,
 which is the order a prefix cache serves from) and it gives the affinity pin a key to derive.
 
-shipped. `stepReview.ts` now writes `promptHeadStatic` to `input.prompt.head.md`, hands that
-artifact as the lone brief, and sends `promptTailVariable` as the prompt. the wire bytes are
+shipped. `stepReview.ts` now writes `promptHead` to `input.prompt.head.md`, hands that
+artifact as the lone brief, and sends `promptTail` as the prompt. the wire bytes are
 unchanged — `compileReviewPrompt` returns both halves and `head + tail === prompt`, clamped in
 `reviewPromptCacheAnatomy.test.ts` case4.
 

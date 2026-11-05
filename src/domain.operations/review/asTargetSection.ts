@@ -115,7 +115,8 @@ const RANK_OF_DIFF_KIND: Record<'new' | 'deleted' | 'edited', number> = {
  */
 const asPullTargetSection = (input: {
   targets: ReviewTarget[];
-  diffRange?: string;
+  /** the base `git diff` runs against — null where the scope names none */
+  diffRange: string | null;
 }): string => {
   const pathList = input.targets.map((t) => `- ${t.path}`).join('\n');
   const rangeNote = input.diffRange
@@ -176,29 +177,17 @@ const asPullTargetSection = (input: {
  *         `focus === 'pull'`. the census must zero exactly the two rows this
  *         branch declines to render, so the two read one decision.
  *
- * 🔴 .why `shared` splits the section into two BANDS before the kind groups — the
- *     body-then-diff order is a volatility order, and volatility is key 2. reuse
- *     BREADTH is key 1 (`rule.require.order-prompt-bytes-by-reuse-breadth`): on a
- *     partition run, the targets every partition carries must lead every prompt
- *     byte for byte, or the prime writes a prefix no partition reads. one kind
- *     group over the whole list put each partition's OWN edited bodies ahead of
- *     the shared route files (they render as additions, in the diff group), so
- *     the prefix parted at the first narrow byte.
- *
- *     measured 2026-10-12, `5.3.verification i004`, partition `14.cli`: 75k chars
- *     of its own bodies led 1.07M chars of shared route, and the run cached 0.3%
- *     (rule.forbid.shared-bytes-behind-narrow-bytes).
- *
- *     ⇒ so the shared band renders first, kind groups within it, then the narrow
- *     band, kind groups within it. a whole run has no shared band, so its bytes
- *     are unchanged.
+ * .note = it renders ONE breadth band. a partition's split into the band every
+ *         partition carries and its own band is `asTargetSectionsByBreadth`, which
+ *         calls this once per band — breadth is key 1, so it parts the targets first,
+ *         and this volatility order (key 2) runs within each band
+ *         (`rule.require.order-prompt-bytes-by-reuse-breadth`)
  */
 export const asTargetSection = (input: {
   targets: ReviewTarget[];
   focus: 'pull' | 'push';
-  diffRange?: string;
-  /** the paths every partition of a split carries; absent on a whole run */
-  shared?: string[];
+  /** the base `git diff` runs against — null where the scope names none */
+  diffRange: string | null;
 }): string => {
   if (!isTargetPayloadSent({ focus: input.focus }))
     return asPullTargetSection({
@@ -206,22 +195,17 @@ export const asTargetSection = (input: {
       diffRange: input.diffRange,
     });
 
-  // push focus: the shared band leads, then this run's own band — each in kind groups
-  const shared = new Set(input.shared ?? []);
-  const bands = [
-    input.targets.filter((target) => shared.has(target.path)),
-    input.targets.filter((target) => !shared.has(target.path)),
-  ];
-  return bands
-    .flatMap((band) => asTargetBlocksOfBand({ targets: band }))
-    .join(SEPARATOR_OF_BLOCKS);
+  // push focus: every edited body, then every diff, in kind groups
+  return asTargetBlocksOfBand({ targets: input.targets }).join(
+    SEPARATOR_OF_BLOCKS,
+  );
 };
 
 /**
  * .what = one band's blocks — every edited file's stable body, then every diff,
  *         additions then deletions then mutations
- * .why = the volatility order, applied within one breadth band (see `asTargetSection`).
- *        a stable sort keeps the upstream cache-stability order within each kind
+ * .why = the volatility order (see `asTargetSection`). a stable sort keeps the
+ *        upstream cache-stability order within each kind
  */
 const asTargetBlocksOfBand = (input: { targets: ReviewTarget[] }): string[] => {
   // every edited file's body, in the upstream order

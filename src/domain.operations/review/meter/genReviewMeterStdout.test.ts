@@ -18,11 +18,14 @@ const genMeteredRun = (input: {
   tokens: { input: number; cacheSet: number; cacheGet: number; output: number };
   cost: string;
   provider?: string;
+  brain?: string;
 }): Extract<ReviewRunMeter, { grade: 'metered' }> => ({
   dir: `.log/bhrain/review/stamp.pid1.${input.slug}-i${input.iteration}`,
   head: null,
-  brain: null,
+  brain: input.brain ?? null,
   provider: input.provider ?? null,
+  meet: null,
+  minutesOfCall: null,
   identity: {
     stone: input.stone,
     iteration: input.iteration,
@@ -82,6 +85,8 @@ describe('genReviewMeterStdout', () => {
         head: null,
         brain: null,
         provider: null,
+        meet: null,
+        minutesOfCall: null,
         identity: {
           stone: '5.1.execution.from_vision',
           iteration: 2,
@@ -110,6 +115,8 @@ describe('genReviewMeterStdout', () => {
         head: null,
         brain: null,
         provider: null,
+        meet: null,
+        minutesOfCall: null,
         identity: {
           stone: '5.1.execution.from_vision',
           iteration: 2,
@@ -229,6 +236,8 @@ describe('genReviewMeterStdout', () => {
         head: null,
         brain: null,
         provider: null,
+        meet: null,
+        minutesOfCall: null,
         identity: null,
         defect: null,
         grade: 'unknown',
@@ -532,12 +541,14 @@ describe('genReviewMeterStdout', () => {
         root: '.log/bhrain/review',
       });
 
+      // keyed on the row's own shape, `─ <slug> `: the hint now names a run dir, and the
+      // dir carries the slug, so a bare slug match would find the levers line first
       const rowOfFirst = stdout
         .split('\n')
-        .find((line) => line.includes('lane-first'));
+        .find((line) => line.includes('─ lane-first '));
       const rowOfSixth = stdout
         .split('\n')
-        .find((line) => line.includes('lane-sixth'));
+        .find((line) => line.includes('─ lane-sixth '));
 
       then('both lanes really do read the same rate', () => {
         // the premise, asserted rather than assumed — if either lane ever stops to
@@ -560,9 +571,18 @@ describe('genReviewMeterStdout', () => {
         '🔴 the warm zero names its next move, since no pause explains it',
         () => {
           expect(rowOfSixth).toContain(
-            '`--of run --at <rundir>` names the input past the seam',
+            `\`rhx review._.cost --of run --at ${runs[2]!.dir}\` names the input past the seam`,
           );
-          expect(rowOfFirst).not.toContain('`--of run`');
+          expect(rowOfFirst).not.toContain('--of run');
+        },
+      );
+
+      then(
+        '🔴 the hint names the run dir itself, never a placeholder to hunt down',
+        () => {
+          // the latest repeat of the lane, so the command opens the zero it flags
+          expect(rowOfSixth).not.toContain('<rundir>');
+          expect(rowOfSixth).toContain(runs[2]!.dir);
         },
       );
 
@@ -576,10 +596,10 @@ describe('genReviewMeterStdout', () => {
 
       then('the whole surface reads as a human sees it', () => {
         expect(stdout).toContain(
-          '├─ lane-sixth    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; `--of run --at <rundir>` names the input past the seam',
+          `├─ lane-sixth    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at ${runs[2]!.dir}\` names the input past the seam`,
         );
         expect(stdout).toContain(
-          '└─ lane-first    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane to share a prefix with',
+          '└─ lane-first    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with',
         );
         expect(stdout).toMatchSnapshot();
       });
@@ -1155,7 +1175,7 @@ describe('genReviewMeterStdout', () => {
             '├─ runs: 6 (5 metered · 1 refused · 0 unknown)',
           );
           expect(stdout).toContain(
-            '├─ lane-held       2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 warm and cached NAUGHT — a prefix broke; `--of run --at <rundir>` names the input past the seam',
+            `├─ lane-held       2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at ${runs[5]!.dir}\` names the input past the seam`,
           );
           expect(stdout).toMatchSnapshot();
         });
@@ -1295,6 +1315,70 @@ describe('genReviewMeterStdout', () => {
         expect(stdout).toContain('provider');
         expect(stdout).toContain('Wafer');
         expect(stdout).toContain('DeepSeek');
+      });
+
+      then('the stdout matches its snapshot', () => {
+        expect(stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case14] two lanes on two brains, one cached and one not', () => {
+    const runs: ReviewRunMeter[] = [
+      genMeteredRun({
+        slug: 'repo-rules',
+        stone: '5.1.execution.from_vision',
+        iteration: 1,
+        index: 0,
+        tokens: { input: 50_000, cacheSet: 0, cacheGet: 50_000, output: 900 },
+        cost: '$0.0300',
+        brain: 'openrouter/deepseek/flash',
+      }),
+      genMeteredRun({
+        slug: 'mech-failhides',
+        stone: '5.1.execution.from_vision',
+        iteration: 1,
+        index: 1,
+        tokens: { input: 100_000, cacheSet: 0, cacheGet: 0, output: 800 },
+        cost: '$0.0600',
+        brain: 'openrouter/qwen/coder',
+      }),
+    ];
+    const rollupOf = (input: { served: number; missed: number }) => ({
+      pairs: input.served + input.missed,
+      served: input.served,
+      missed: input.missed,
+      lapsed: 0,
+      selfCached: 0,
+      overReach: 0,
+      unshared: 0,
+      unmeasured: 0,
+    });
+
+    when('[t0] the report renders with its per-brain verdicts', () => {
+      const stdout = genReviewMeterStdout({
+        report: genReviewMeterReport({ runs, levels: new Map() }),
+        root: '.log/bhrain/review',
+        prefix: {
+          verdicts: rollupOf({ served: 0, missed: 1 }),
+          byBrain: [
+            {
+              brain: 'openrouter/qwen/coder',
+              verdicts: rollupOf({ served: 0, missed: 1 }),
+            },
+          ],
+        },
+      });
+
+      then('the brain axis renders a row per brain, each with its rate', () => {
+        expect(stdout).toContain('by brain');
+        expect(stdout).toMatch(/openrouter\/deepseek\/flash .* 50\.0% cached/);
+        expect(stdout).toMatch(/openrouter\/qwen\/coder .* {2}0\.0% cached/);
+      });
+
+      then('each brain row hangs its prefix verdicts', () => {
+        expect(stdout).toContain('pairs: 0 served · 🔴 1 missed');
+        expect(stdout).toContain('pairs: —  (no reviewer ran twice)');
       });
 
       then('the stdout matches its snapshot', () => {

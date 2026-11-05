@@ -14,14 +14,15 @@ import type { ReviewPrefixPair } from '@src/domain.operations/review/meter/Revie
 import { ReviewRunArtifactError } from '@src/domain.operations/review/ReviewRunArtifactError';
 
 /**
- * .what = the guard identity a run dir's args record names, or null
+ * .what = the guard identity and brain a run dir's args record names, or null
  * .why = the prior lookup reads only the args record of each earlier run, never its
  *        full meter. a torn args record names no identity it can be trusted for, so it
- *        is passed over as a run of no lane — the same way the tree walk drops it
+ *        is passed over as a run of no lane — the same way the tree walk drops it. the
+ *        brain rides the same read, as the full meter reads it (`getOneReviewRunMeter`)
  */
 const getOneIdentityOfRunDir = async (input: {
   dir: string;
-}): Promise<ReviewRunIdentity | null> => {
+}): Promise<{ identity: ReviewRunIdentity; brain: string | null } | null> => {
   try {
     // .note = the reader already proved the body a record; the `as` binds only the
     //         field NAMES of the deep-partial read shape
@@ -30,7 +31,9 @@ const getOneIdentityOfRunDir = async (input: {
       artifact: 'args',
     })) as ReviewRunArgsRecordRead | null;
     const output = args?.args?.output;
-    return output ? asReviewRunIdentity({ output }) : null;
+    if (!output) return null;
+    const identity = asReviewRunIdentity({ output });
+    return identity ? { identity, brain: args?.args?.brain ?? null } : null;
   } catch (error) {
     if (error instanceof ReviewRunArtifactError) return null;
     throw error;
@@ -47,7 +50,11 @@ const getOnePriorRunDirOfLane = async (input: {
   dirs: string[];
   before: string;
   lane: string;
-}): Promise<{ dir: string; identity: ReviewRunIdentity } | null> => {
+}): Promise<{
+  dir: string;
+  identity: ReviewRunIdentity;
+  brain: string | null;
+} | null> => {
   // compared by name alone, since the mint stamp leads it — so a relative `--at` and
   // an absolute root still order alike
   const before = path.basename(input.before);
@@ -55,9 +62,9 @@ const getOnePriorRunDirOfLane = async (input: {
     .filter((dir) => path.basename(dir) < before)
     .reverse();
   for (const dir of earlier) {
-    const identity = await getOneIdentityOfRunDir({ dir });
-    if (identity && asPrefixLaneKey({ identity }) === input.lane)
-      return { dir, identity };
+    const found = await getOneIdentityOfRunDir({ dir });
+    if (found && asPrefixLaneKey({ identity: found.identity }) === input.lane)
+      return { dir, ...found };
   }
   return null;
 };

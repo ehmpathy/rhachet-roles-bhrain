@@ -1,5 +1,6 @@
-import * as path from 'path';
 import type { BrainChoice, ContextBrain } from 'rhachet';
+import type { Artifact } from 'rhachet-artifact';
+import type { GitFile } from 'rhachet-artifact-git';
 
 import type { ReviewRunMetricsExpected } from '@src/domain.objects/Reviewer/ReviewRunMetricsExpected';
 import { asReviewRunMetricsRealized } from '@src/domain.operations/review/asReviewRunMetricsRealized';
@@ -18,18 +19,20 @@ import { getOneSecondsRounded } from './getOneSecondsRounded';
  *        poke first writes it; the N then read it (`rule.require.prime-the-shared-prefix-before-a-pour`)
  *
  * .note = the poke (`setOnePrefixPoke`) mirrors a review's send — same head-as-system-prompt,
- *         same affinity pin, same one-token answer — so a prime and a review share the pin
+ *         byte for byte, and a one-token answer — so a prime and a review share a prefix. no
+ *         replica pin rides either ask, so they meet one host by chance, not by key
+ *         (`setOnePrefixPoke`)
  * .note = its realized metrics are written to its own log dir, so the meter counts the prime's
  *         spend beside the partitions it served; a cost hidden from the meter is a lie by omission
  */
 export const setOneReviewPrefixPrime = async (
   input: {
-    head: string;
+    /** the head, as the brief a run already wrote (`setPromptHeadArtifact`) — the poke writes none */
+    headBrief: Artifact<typeof GitFile>;
     tail: string;
     logDir: string;
     /** the absolute path the prime would have written a report to; it writes none */
     output: string;
-    cwd: string;
     metricsExpected: ReviewRunMetricsExpected;
     /** the compiled artifact this run's dir holds; null where the run compiled no prompt */
     compiled: string | null;
@@ -45,9 +48,7 @@ export const setOneReviewPrefixPrime = async (
   const msBegin = Date.now();
   const poke = await setOnePrefixPoke(
     {
-      cwd: input.cwd,
-      reviewer: `prime.${path.basename(input.output, '.md')}`,
-      head: input.head,
+      headBrief: input.headBrief,
       tail: input.tail,
       msOfTimeout: input.msOfTimeout,
     },
@@ -76,6 +77,9 @@ export const setOneReviewPrefixPrime = async (
       compiled: input.compiled,
       // a poke asks for one output token, so it cannot run to the output limit
       runaways: [],
+      // a prime IS the meet's poke, never a lane that meets — so it files as `poke`, never
+      // under the absent-record key a run that predates the field files under
+      meet: 'poke',
     },
   });
 

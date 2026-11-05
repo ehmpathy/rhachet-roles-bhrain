@@ -65,14 +65,26 @@ in common than the meter computed, so the meter's shared-prefix figure under-rea
 | Reka | 578,893 | $0.06 | 5 |
 | Wafer | 529,065 | $0.51 | 19 |
 
-## .the gap: no brain axis
+## .per brain — read 2026-11-05, after cure 0, before cure 1
 
-the wish asks for this split **per brain**. each run's meter row carries `brain`
-(`src/domain.objects/Reviewer/ReviewRunMeter.ts:77`), yet neither report rolls up by it:
-`GroveAxis = 'tree' | 'route' | 'stone' | 'reviewer' | 'provider'`
-(`src/domain.operations/review/grove/genReviewGroveReport.ts:191`). a hand census over the json
-would break `rule.forbid.adhoc-scope-rollups`, so the per-brain before-figure is owed by the tool:
-cure 0 adds the axis, then this section is re-read with it.
+read via `rhx review._.cost --of grove --limit 20` on the cure-0 build (the `by brain` axis and the
+`lapsed` verdict are cure 0 and cure 2). the grove grew since 2026-11-01: 76 trees walked, 49 with
+logs, 2,826 runs (2,557 metered · 90 refused · 179 unknown), $57.66 total, 13.1% of prompt tokens
+from cache over the life of the grove.
+
+| brain | full-rate tokens | cost | runs | cached | served | missed | lapsed | self | over-reach | unshared | unmeasured |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| (no brain — unrecorded) | 217,356,936 | $23.17 | 997 (+62 unknown) | 5.0% | 127 | 160 | 61 | 3 | 102 | 0 | 47 |
+| openrouter/deepseek/flash | 215,702,056 | $33.98 | 1,810 (+117 unknown) | 19.9% | 726 | 196 | 86 | 5 | 218 | 0 | 90 |
+| openrouter/deepseek/pro | 529,065 | $0.51 | 19 | 14.1% | 2 | 11 | 3 | 0 | 0 | 3 | — |
+
+- the `(no brain — unrecorded)` row is older runs whose `input.args.json` predates the brain field;
+  they cannot be split further, and the tool names them rather than guess
+- 🟡 **150 of the 517 zero-read pairs are `lapsed`** — the round began past the 66-minute reach of
+  its prior, so no cache could serve it. before cure 2 all 517 read as `missed`. the 367 that stand
+  are the misses a layout or a pin can still win
+- the 3 `unshared` pairs on `deepseek/pro` are brain switches (cure 0): a prompt cache is per
+  model, so those rounds could read naught their prior wrote
 
 ## .scale against the wish
 

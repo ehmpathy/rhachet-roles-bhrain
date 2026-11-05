@@ -4,21 +4,30 @@ exports[`reviewPromptCacheAnatomy given: [case1] the same reviewer, across conse
 {
   "prefixSurvival": {
     "round1 -> round2": {
-      "sharedBytes": 13544,
-      "sharedShare": "79.1%",
+      "sharedBytes": 5805,
+      "sharedShare": "33.9%",
     },
     "round2 -> round3": {
-      "sharedBytes": 13544,
-      "sharedShare": "70.5%",
+      "sharedBytes": 5805,
+      "sharedShare": "30.2%",
     },
   },
   "sectionOffsets": {
     "conversation": 14642,
     "outputFormat": 3956,
-    "rules": 5627,
-    "target": 13364,
+    "rules": 6905,
+    "target": 5627,
     "totalBytes": 17117,
   },
+}
+`;
+
+exports[`reviewPromptCacheAnatomy given: [case2] two different reviewers on the same stone and round when: [t0] the two lanes are compared then: the cross-lane share is snapped, so a claim can cite it 1`] = `
+{
+  "rulesAt": 6905,
+  "sharedBytes": 7040,
+  "sharedShareOfLaneA": "62.4%",
+  "totalBytes": 11286,
 }
 `;
 
@@ -30,12 +39,12 @@ exports[`reviewPromptCacheAnatomy given: [case5] a realistic corpus, where few o
     "totalBytes": 30659,
   },
   "prior: conversation then target": {
-    "sharedBytes": 15637,
+    "sharedBytes": 15638,
     "sharedShare": "51.0%",
   },
   "shipped: target then conversation": {
-    "sharedBytes": 23624,
-    "sharedShare": "77.1%",
+    "sharedBytes": 15885,
+    "sharedShare": "51.8%",
   },
 }
 `;
@@ -48,22 +57,22 @@ exports[`reviewPromptCacheAnatomy given: [case6] the WITHIN-target layout — ev
   },
   "scenario A — diff base HELD (the interleave wins)": {
     "prior: one diff per body": {
-      "sharedBytes": 25217,
-      "sharedShare": "82.2%",
+      "sharedBytes": 17478,
+      "sharedShare": "56.9%",
     },
     "shipped: bodies then diffs": {
-      "sharedBytes": 23624,
-      "sharedShare": "76.8%",
+      "sharedBytes": 15885,
+      "sharedShare": "51.7%",
     },
   },
   "scenario B — diff base MOVED (the shipped order wins)": {
     "prior: one diff per body": {
-      "sharedBytes": 13529,
-      "sharedShare": "44.1%",
+      "sharedBytes": 5790,
+      "sharedShare": "18.9%",
     },
     "shipped: bodies then diffs": {
-      "sharedBytes": 23624,
-      "sharedShare": "76.8%",
+      "sharedBytes": 15885,
+      "sharedShare": "51.7%",
     },
   },
 }

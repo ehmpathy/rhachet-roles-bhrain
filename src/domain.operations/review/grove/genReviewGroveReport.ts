@@ -27,10 +27,12 @@ import { getOneDenialOfBarredGrove } from '@src/domain.operations/review/grove/g
 import { getOneFullRateTokens } from '@src/domain.operations/review/grove/getOneFullRateTokens';
 import { getOnePrefixCensusOfTrees } from '@src/domain.operations/review/grove/getOnePrefixCensusOfTrees';
 import { isPathPresent } from '@src/domain.operations/review/isPathPresent';
+import { BRAIN_OF_ABSENT_ARGS } from '@src/domain.operations/review/meter/BRAIN_OF_ABSENT_ARGS';
 import { PROVIDER_OF_ABSENT_SUPPLY } from '@src/domain.operations/review/meter/genReviewMeterReport';
 import { getAllReviewRunMeters } from '@src/domain.operations/review/meter/getAllReviewRunMeters';
 import { getOneAccountedCost } from '@src/domain.operations/review/meter/getOneAccountedCost';
-import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixPair';
+import { MEET_OF_ABSENT_RECORD } from '@src/domain.operations/review/meter/MEET_OF_ABSENT_RECORD';
+import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixCensus';
 import { SLUG_OF_ABSENT_IDENTITY } from '@src/domain.operations/review/SLUG_OF_ABSENT_IDENTITY';
 import { asCountedNoun } from '@src/utils/asCountedNoun';
 import { compareStrings } from '@src/utils/compareStrings';
@@ -100,9 +102,25 @@ export interface ReviewGroveReport {
    */
   byProvider: GroveRollupRow[];
   /**
+   * spend by the brain each run rode, richest first
+   *
+   * .why = a prompt cache is per model as well as per provider, so the grove's cache
+   *        rate must be readable by brain here as it is at `--of tree`
+   *        (rule.require.report-both-cost-levers-with-trend-and-locus)
+   */
+  byBrain: GroveRollupRow[];
+  /**
+   * spend by what each run's level meet did, richest first
+   *
+   * .why = the cure leans on the meet, so the grove's cache rate must be readable by meet
+   *        here as it is at `--of tree` — a warm meet near zero is a miss, a cold one the
+   *        weather (rule.require.report-both-cost-levers-with-trend-and-locus)
+   */
+  byMeet: GroveRollupRow[];
+  /**
    * the corpus cut by the UTC day each run was minted, oldest first
    *
-   * .why = the four rollups above are keyed by place. this is the one time axis the
+   * .why = the rollups above are keyed by place. this is the one time axis the
    *        grove carries, so the two levers can show which way they moved here too
    *        (rule.require.report-both-cost-levers-with-trend-and-locus)
    */
@@ -185,16 +203,23 @@ interface GroveFlatRun {
 
 /**
  * .what = the axes the grove rolls its spend up along
- * .why = a CLOSED set. the report declares four `by*` fields and each is one
- *        position on this axis, so the union is the contract those four share
+ * .why = a CLOSED set. the report declares one `by*` field per position on this
+ *        axis, so the union is the contract those fields share
  */
-type GroveAxis = 'tree' | 'route' | 'stone' | 'reviewer' | 'provider';
+type GroveAxis =
+  | 'tree'
+  | 'route'
+  | 'stone'
+  | 'reviewer'
+  | 'provider'
+  | 'brain'
+  | 'meet';
 
 /**
  * .what = how each axis reads its key off a run
- * .why = it must stay a Record, never four inline `.map` callbacks at the call
- *        sites. the Record is what goes red when a fifth axis joins `GroveAxis`,
- *        where four anonymous maps in an orchestrator body compile while they
+ * .why = it must stay a Record, never one inline `.map` callback per call
+ *        site. the Record is what goes red when a new axis joins `GroveAxis`,
+ *        where anonymous maps in an orchestrator body compile while they
  *        silently leave the new axis unkeyed — and each is decode-friction a
  *        reader must simulate (rule.forbid.inline-decode-friction).
  *
@@ -211,6 +236,8 @@ const KEY_OF_AXIS: Record<GroveAxis, (one: GroveFlatRun) => string | null> = {
   stone: (one) => one.meter.identity?.stone ?? null,
   reviewer: (one) => one.meter.identity?.slug ?? null,
   provider: (one) => one.meter.provider,
+  brain: (one) => one.meter.brain,
+  meet: (one) => one.meter.meet,
 };
 
 /**
@@ -242,6 +269,10 @@ export const LABEL_OF_ABSENT_KEY: Record<GroveAxis, string> = {
   reviewer: SLUG_OF_ABSENT_IDENTITY,
   // the meter's own constant, for the same reason as the two above
   provider: PROVIDER_OF_ABSENT_SUPPLY,
+  // the meter's own constant, for the same reason as the three above
+  brain: BRAIN_OF_ABSENT_ARGS,
+  // the meter's own constant, for the same reason as the four above
+  meet: MEET_OF_ABSENT_RECORD,
 };
 
 /**
@@ -455,8 +486,8 @@ const asRunMeters = (input: { flat: GroveFlatRun[] }): ReviewRunMeter[] =>
 
 /**
  * .what = rolls a set of runs up along one axis
- * .why = one rollup operation, four axes — so tree, route, stone, and reviewer
- *        cannot drift on how they aggregate or how they sort
+ * .why = one rollup operation for every axis — so no two axes can drift on how
+ *        they aggregate or how they sort
  */
 const asRollup = (input: {
   flat: GroveFlatRun[];
@@ -578,6 +609,8 @@ export const genReviewGroveReport = async (input: {
     byStone: asRollup({ flat, axis: 'stone' }),
     byReviewer: asRollup({ flat, axis: 'reviewer' }),
     byProvider: asRollup({ flat, axis: 'provider' }),
+    byBrain: asRollup({ flat, axis: 'brain' }),
+    byMeet: asRollup({ flat, axis: 'meet' }),
     byDay: getAllGroveDaySamples({ runs }),
     prefix,
   };

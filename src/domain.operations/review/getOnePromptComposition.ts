@@ -14,8 +14,10 @@ import { isTargetPayloadSent } from '@src/domain.operations/review/isTargetPaylo
  * .why = declared beside the union so a new input must state its seam at the
  *        moment it is named, rather than default into the cheap half by silence
  *
- * .note = `markup` is marked cacheable because all but its last few hundred chars
- *         (the `## target` header and the `<target>` tags) sit in the static head.
+ * .note = `markup` is marked cacheable because all but a few hundred chars of it — the
+ *         section headers and the `<target>` tags — sit in the head the lanes of a level
+ *         share. the remainder is the tail's own headers and notes (the rules and refs
+ *         headers, the continued-target header, the context-only and peers notes).
  *
  * .note = `targetFiles` and `targetPaths` are a POSITION claim, never a promise
  *         that every body caches — see `IS_CACHEABLE_SECTION`, which argues it.
@@ -30,6 +32,7 @@ import { isTargetPayloadSent } from '@src/domain.operations/review/isTargetPaylo
 export const IS_CACHEABLE: Record<PromptInputName, boolean> = {
   instructions: true,
   outputFormat: true,
+  // partly: they trail the shared corpus (`IS_CACHEABLE_SECTION`)
   rules: true,
   refs: true,
   markup: true,
@@ -147,10 +150,10 @@ export const getOnePromptComposition = (input: {
   }>;
   /** targets a partition run carries as context only — rendered as a path list */
   targetsAsContext?: string[];
-  promptHeadStatic: string;
-  promptTailVariable: string;
+  promptHead: string;
+  promptTail: string;
 }): PromptComposition => {
-  const chars = input.promptHeadStatic.length + input.promptTailVariable.length;
+  const chars = input.promptHead.length + input.promptTail.length;
 
   // in `pull` focus the renderer sends a path list and no payload, so both
   // target rows are nil — a sum over the source arrays regardless would count a
@@ -226,14 +229,14 @@ export const getOnePromptComposition = (input: {
   // the head census is an offset cut, so it refuses a head it cannot cut,
   // and hands back the offsets rather than merely assert them, so this
   // census cannot re-derive what it already decided (rule.forbid.failhide)
-  const { atOutputFormat, atRules } = getOneHeadMarkerOffsets({
-    promptHeadStatic: input.promptHeadStatic,
+  const { atOutputFormat, atFirstBlock } = getOneHeadMarkerOffsets({
+    promptHead: input.promptHead,
   });
 
-  // the output-format block spans from its own marker to the rubric's.
+  // the output-format block spans from its own marker to the first block behind it.
   // .why = it is the one static block whose position was a defect, so its size
   //        is worth its own row rather than a lump into `instructions`
-  const outputFormat = atRules - atOutputFormat;
+  const outputFormat = atFirstBlock - atOutputFormat;
 
   // all that sits ahead of the output-format block is the grove-wide preamble
   const instructions = atOutputFormat;
@@ -268,8 +271,8 @@ export const getOnePromptComposition = (input: {
   const measured: Omit<PromptComposition, 'attribution'> = {
     chars,
     cacheable: {
-      head: input.promptHeadStatic.length,
-      tail: input.promptTailVariable.length,
+      head: input.promptHead.length,
+      tail: input.promptTail.length,
     },
     inputs: {
       instructions: asWeight('instructions', {

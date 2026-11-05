@@ -128,6 +128,8 @@ const asReport = (input: {
   byRoute?: GroveRollupRow[];
   byStone?: GroveRollupRow[];
   byReviewer?: GroveRollupRow[];
+  /** the brain axis — none by default */
+  byBrain?: GroveRollupRow[];
   inputs?: ReviewGroveReport['inputs'];
   /** trees whose log root could not be read — none by default */
   treesUnreadable?: ReviewGroveReport['treesUnreadable'];
@@ -150,6 +152,7 @@ const asReport = (input: {
     input.byRoute ?? [],
     input.byStone ?? [],
     input.byReviewer ?? [],
+    input.byBrain ?? [],
   ].filter((rows) => rows.length > 0);
   const totals = axes.map((rows) => asAxisTotals({ rows }));
   for (const total of totals)
@@ -240,6 +243,7 @@ const asReportBody = (input: {
   byRoute?: GroveRollupRow[];
   byStone?: GroveRollupRow[];
   byReviewer?: GroveRollupRow[];
+  byBrain?: GroveRollupRow[];
   inputs: ReviewGroveReport['inputs'];
   treesUnreadable?: ReviewGroveReport['treesUnreadable'];
   byDay?: ReviewGroveReport['byDay'];
@@ -261,6 +265,8 @@ const asReportBody = (input: {
   byStone: input.byStone ?? [],
   byReviewer: input.byReviewer ?? [],
   byProvider: [],
+  byBrain: input.byBrain ?? [],
+  byMeet: [],
   // empty by DEFAULT, so no case renders a trend it did not ask for
   byDay: input.byDay ?? [],
   // no round pairs by DEFAULT, so the prefix row reads absent on every case that
@@ -270,11 +276,13 @@ const asReportBody = (input: {
       pairs: 0,
       served: 0,
       missed: 0,
+      lapsed: 0,
       selfCached: 0,
       overReach: 0,
       unshared: 0,
       unmeasured: 0,
     },
+    byBrain: [],
     pairs: [],
   },
 });
@@ -878,7 +886,7 @@ describe('genReviewGroveStdout', () => {
 
       then('the axis renders as ABSENT, never as a zero', () => {
         expect(out).toContain(
-          'by tree · route · stone · reviewer · provider: absent — no run carried them',
+          'by tree · route · stone · reviewer · provider · brain · meet: absent — no run carried them',
         );
       });
 
@@ -1460,5 +1468,91 @@ describe('genReviewGroveStdout', () => {
         );
       },
     );
+  });
+
+  given('[case19] a grove whose runs rode two brains', () => {
+    // two brains over one corpus: one cached half its prompt, one cached naught. the
+    // brain rows are the cut the wish asks for first — which brain cached, and why not
+    // the axes partition one run list, so the brain rows sum to the tree row, cost and all
+    const rowOfTree = asRow({
+      key: 'tree-a',
+      input: 300,
+      cacheSet: 0,
+      output: 30,
+      runs: 3,
+      cacheGet: 100,
+    });
+    // ranked as the real fold ranks them: most full-rate tokens first
+    const byBrain = [
+      asRow({
+        key: 'openrouter/qwen/coder',
+        input: 200,
+        cacheSet: 0,
+        output: 10,
+        runs: 1,
+      }),
+      asRow({
+        key: 'openrouter/deepseek/flash',
+        input: 100,
+        cacheSet: 0,
+        output: 20,
+        runs: 2,
+        cacheGet: 100,
+      }),
+    ].map((row) => ({ ...row, cost: asIsoPrice('USD 0.50') }));
+    const rollupOf = (input: { served: number; missed: number }) => ({
+      pairs: input.served + input.missed,
+      served: input.served,
+      missed: input.missed,
+      lapsed: 0,
+      selfCached: 0,
+      overReach: 0,
+      unshared: 0,
+      unmeasured: 0,
+    });
+    const report = asReport({
+      byTree: [rowOfTree],
+      byBrain,
+      inputs: asInputs({ read: 3, unread: 0 }),
+      prefix: {
+        verdicts: rollupOf({ served: 1, missed: 0 }),
+        byBrain: [
+          {
+            brain: 'openrouter/deepseek/flash',
+            verdicts: rollupOf({ served: 1, missed: 0 }),
+          },
+        ],
+        pairs: [],
+      },
+    });
+    const out = genReviewGroveStdout({ report, limit: 10 });
+
+    when('[t0] the grove renders', () => {
+      then('each brain row hangs its cache rate', () => {
+        expect(out).toContain(
+          'cached: 50.0% of prompt tokens served from cache',
+        );
+        expect(out).toContain(
+          'cached: 0.0% of prompt tokens served from cache',
+        );
+      });
+
+      then('each brain row hangs its prefix verdicts', () => {
+        expect(out).toContain(
+          'pairs: 1 served · 0 missed · 0 lapsed · 0 self-cached · 0 over-reach · 0 unshared',
+        );
+      });
+
+      then(
+        'a brain that ran no reviewer twice reads absent, never zeroes',
+        () => {
+          expect(out).toContain('pairs: absent  (no reviewer ran twice)');
+        },
+      );
+
+      then('the render is stable', () => {
+        expect(out).toMatchSnapshot();
+      });
+    });
   });
 });

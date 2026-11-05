@@ -6,6 +6,8 @@ import { asReviewTokensFromRealized } from '@src/domain.operations/review/asRevi
 import { asRunArtifactPath } from '@src/domain.operations/review/asRunArtifactPath';
 import { getOneReviewRunHead } from '@src/domain.operations/review/getOneReviewRunHead';
 import { asIsoPriceOfRunArtifact } from '@src/domain.operations/review/meter/asIsoPriceOfRunArtifact';
+import { asMinutesOfCallOfRealized } from '@src/domain.operations/review/meter/asMinutesOfCallOfRealized';
+import { asReviewRunMeetOfRealized } from '@src/domain.operations/review/meter/asReviewRunMeetOfRealized';
 import { getAllNamesOfUnmeasuredFields } from '@src/domain.operations/review/meter/getAllNamesOfUnmeasuredFields';
 import { getOneCacheSavedPriceWherePriced } from '@src/domain.operations/review/meter/getOneCacheSavedPriceWherePriced';
 import { getOnePromptSections } from '@src/domain.operations/review/meter/getOnePromptSections';
@@ -65,10 +67,20 @@ export const getOneReviewRunMeter = async (input: {
     provider:
       (realized as ReviewRunMetricsRealizedRead | null)?.supply?.provider ??
       null,
+    // the meet and the call's wall time ride in the realized metrics too
+    meet: asReviewRunMeetOfRealized({ realized }),
+    minutesOfCall: asMinutesOfCallOfRealized({ realized, dir: input.dir }),
     defect: null,
   } satisfies Pick<
     ReviewRunMeter,
-    'dir' | 'identity' | 'head' | 'brain' | 'provider' | 'defect'
+    | 'dir'
+    | 'identity'
+    | 'head'
+    | 'brain'
+    | 'provider'
+    | 'meet'
+    | 'minutesOfCall'
+    | 'defect'
   >;
   const scope: ReviewRunMeter['scope'] = argsRecord
     ? {

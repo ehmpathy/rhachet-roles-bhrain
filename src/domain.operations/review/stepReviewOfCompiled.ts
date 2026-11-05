@@ -2,6 +2,7 @@ import * as path from 'path';
 import type { BrainChoice, ContextBrain } from 'rhachet';
 
 import type { ReviewLaneClock } from '@src/domain.objects/Reviewer/ReviewLaneClock';
+import type { ReviewRunArgsRecord } from '@src/domain.objects/Reviewer/ReviewRunArgsRecord';
 import type { ReviewRunMetricsExpected } from '@src/domain.objects/Reviewer/ReviewRunMetricsExpected';
 import { asReviewRunMetricsRealized } from '@src/domain.operations/review/asReviewRunMetricsRealized';
 import { asReviewRunMetricsRealizedOfAsks } from '@src/domain.operations/review/asReviewRunMetricsRealizedOfAsks';
@@ -17,17 +18,13 @@ import { getOneReviewAnswerOfBrain } from '@src/domain.operations/review/getOneR
 import { getOneReviewBrainCallResidualMs } from '@src/domain.operations/review/getOneReviewBrainCallResidualMs';
 import type { getOneReviewScope } from '@src/domain.operations/review/getOneReviewScope';
 import type { ReviewPartitionOfTargets } from '@src/domain.operations/review/partition/getAllTargetsByPartition';
-import { asReviewPrefixPrimeKey } from '@src/domain.operations/review/prime/asReviewPrefixPrimeKey';
-import { genReviewPrefixPrime } from '@src/domain.operations/review/prime/genReviewPrefixPrime';
-import { getOneReviewPrimeMeetStopMs } from '@src/domain.operations/review/prime/getOneReviewPrimeMeetStopMs';
-import { setOneReviewLanePrime } from '@src/domain.operations/review/prime/setOneReviewLanePrime';
+import { genReviewRunMeet } from '@src/domain.operations/review/prime/genReviewRunMeet';
 import type { StepReviewResult } from '@src/domain.operations/review/StepReviewResult';
 import { setMetricsRealizedOrUnmeasured } from '@src/domain.operations/review/setMetricsRealizedOrUnmeasured';
 import { setOutputArtifacts } from '@src/domain.operations/review/setOutputArtifacts';
 import { setPromptHeadArtifact } from '@src/domain.operations/review/setPromptHeadArtifact';
 import { setReviewLaneOutcome } from '@src/domain.operations/review/setReviewLaneOutcome';
 import { withSpinner } from '@src/domain.operations/withSpinner';
-import { asPathAbsoluteFromCwd } from '@src/utils/asPathAbsoluteFromCwd';
 
 /**
  * .what = reviews one compiled prompt: states the header, primes the shared prefix, asks the
@@ -51,6 +48,8 @@ export const stepReviewOfCompiled = async (
     };
     /** the compiled prompt, which fit the window */
     compiled: ReturnType<typeof compileReviewPrompt>;
+    /** the args record this run wrote, which a lane poke's own record is cast from */
+    args: ReviewRunArgsRecord;
     metricsExpected: ReviewRunMetricsExpected;
     scope: Pick<
       Awaited<ReturnType<typeof getOneReviewScope>>,
@@ -70,7 +69,7 @@ export const stepReviewOfCompiled = async (
 ): Promise<StepReviewResult> => {
   const { review, compiled: promptResult, metricsExpected, scope } = input;
   const { logDir, cwd } = input;
-  const { msOfReviewStart, brainCallTimeoutMs } = input.clock;
+  const { brainCallTimeoutMs } = input.clock;
   const logDirRelative = path.relative(cwd, logDir);
   const brainSpec = context.brain.brain.choice.spec;
 
@@ -111,53 +110,29 @@ export const stepReviewOfCompiled = async (
     }),
   );
 
-  // write the static head as the brief the brain call rides on (the replica pin)
+  // write the shared head as the brief the brain call rides on — the system prompt.
+  // .note = whether a replica pin derives from it is the adapter's choice; see `asRoleOfSharedPrefix`
   const promptHeadBrief = await setPromptHeadArtifact({
     logDir,
-    head: promptResult.promptHeadStatic,
+    head: promptResult.promptHead,
   });
 
-  // prime the head this lane shares with the peers of its pour, so the pour reads it
-  // from cache rather than each lane pay it in full
-  // .why = the guard pours a level's lanes as separate processes ~62ms apart, so lanes
-  //        that share a head all arrive cold (rule.forbid.cold-pour-of-a-shared-prefix).
-  //        they meet on one watermark, keyed by brain + head; one poke goes first, then
-  //        all pour
-  // .note = a partition run skips it: its split lane already primed its common prefix
-  // .note = a lone run skips it too: only a lane its caller marked `meet: 'join'` (a lane
-  //         the guard spawned, read once at the cli boundary) has peers to meet, so a lone
-  //         run must not pay the gather wait
-  // .note = 🔴 the meet is bounded by the lane's own deadline: every wait in it stops at
-  //         half the brain call bound, so the brain call keeps the other half, and an
-  //         optimization can never time out the review it serves
-  if (!review.partition && review.meet === 'join')
-    await genReviewPrefixPrime(
-      {
-        cwd,
-        key: asReviewPrefixPrimeKey({
-          brain: context.brain.brain.choice.slug,
-          head: promptResult.promptHeadStatic,
-        }),
-        deadline: {
-          msOfStop: getOneReviewPrimeMeetStopMs({
-            msOfReviewStart,
-            brainCallTimeoutMs,
-          }),
-        },
-      },
-      {
-        prime: () =>
-          setOneReviewLanePrime(
-            {
-              head: promptResult.promptHeadStatic,
-              cwd,
-              output: asPathAbsoluteFromCwd({ path: review.output, cwd }),
-              metricsExpected,
-            },
-            { brain: context.brain },
-          ),
-      },
-    );
+  // meet the peers of this lane's pour, so one poke warms the head they share and the
+  // pour reads it from cache rather than each lane pay it in full
+  // .note = what the meet did rides the realized record, so the meter can tell a round that
+  //         read a peer's prime from one that could read only its own prior (`ReviewRunMeet`)
+  const meet = await genReviewRunMeet(
+    {
+      partition: review.partition !== null,
+      join: review.meet === 'join',
+      head: { text: promptResult.promptHead, brief: promptHeadBrief },
+      args: input.args,
+      metricsExpected,
+      cwd,
+      clock: input.clock,
+    },
+    { brain: context.brain },
+  );
 
   // invoke brain under a deadline, with a spinner
   // .note = the deadline is the share of the bound the prior work left, never the whole bound
@@ -174,7 +149,7 @@ export const stepReviewOfCompiled = async (
       getOneReviewAnswerOfBrain(
         {
           promptHeadBrief,
-          prompt: promptResult.promptTailVariable,
+          prompt: promptResult.promptTail,
           timeoutMs: getOneReviewBrainCallResidualMs({
             clock: input.clock,
             msOfNow: Date.now(),
@@ -211,6 +186,7 @@ export const stepReviewOfCompiled = async (
     unmeasured: metricsOfAsks.unmeasured,
     record: {
       runaways: metricsOfAsks.runaways,
+      meet,
       // who served the call, so a zero cache read can be told apart later
       supply: asReviewRunSupplyOfAnswer({ answer: reviewIssues }),
       /**

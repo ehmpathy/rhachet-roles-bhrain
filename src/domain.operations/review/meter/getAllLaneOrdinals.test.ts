@@ -1,6 +1,7 @@
 import { asIsoPrice } from 'iso-price';
 import { given, then, when } from 'test-fns';
 
+import type { ReviewRunMeet } from '@src/domain.objects/Reviewer/ReviewRunMeet';
 import type {
   ReviewRunFigures,
   ReviewRunGrade,
@@ -32,6 +33,8 @@ const asRun = (input: {
   minute: number;
   grade?: ReviewRunGrade;
   stamp?: string;
+  meet?: ReviewRunMeet | null;
+  minutesOfCall?: number | null;
 }): ReviewRunMeter => {
   const at = new Date(Date.UTC(2026, 8, 26, 0, input.minute));
   const stamp = input.stamp ?? at.toISOString().replace(/[:.]/g, '-');
@@ -40,6 +43,8 @@ const asRun = (input: {
     head: 'aaaa',
     brain: 'openrouter/deepseek/flash',
     provider: null,
+    meet: input.meet ?? null,
+    minutesOfCall: input.minutesOfCall ?? null,
     identity: {
       route: '.behavior/v2026_09_20.review-cost-meter',
       stone: '5.1',
@@ -170,6 +175,84 @@ describe('getAllLaneOrdinals', () => {
           expect(runs.map((run) => ordinals.get(run.dir)?.ordinal)).toEqual([
             1, 2, 3,
           ]);
+        });
+      });
+    },
+  );
+
+  given(
+    '[case7] 🔴 a prior whose call ran long, then a run 70m past its mint',
+    () => {
+      // the prior was minted at 0 and its call ran 8m, so it last sent at 8. the round at
+      // 70 sits 62m past that send — inside the reach — though 70m past the prior's mint
+      const runs = [
+        asRun({ minute: 0, minutesOfCall: 8 }),
+        asRun({ minute: 70 }),
+      ];
+
+      when('[t0] the ordinals are folded', () => {
+        then(
+          'the later run is a repeat — the gap runs from the last send',
+          () => {
+            const ordinals = getAllLaneOrdinals({ runs });
+            expect(ordinals.get(runs[1]!.dir)?.ordinal).toEqual(2);
+            expect(ordinals.get(runs[1]!.dir)?.lapsedMinutes).toBeNull();
+          },
+        );
+      });
+
+      when('[t1] the prior call ran only 1m', () => {
+        const runsShort = [
+          asRun({ minute: 0, minutesOfCall: 1 }),
+          asRun({ minute: 70 }),
+        ];
+        then('the later run lapsed, 69m past the last send', () => {
+          const ordinals = getAllLaneOrdinals({ runs: runsShort });
+          expect(ordinals.get(runsShort[1]!.dir)?.ordinal).toEqual(1);
+          expect(ordinals.get(runsShort[1]!.dir)?.lapsedMinutes).toEqual(69);
+        });
+      });
+    },
+  );
+
+  given(
+    '[case8] 🔴 a run that met a warm peer, past its own lane reach',
+    () => {
+      // its own lane last sent 120m ago, but a peer primed the head this round
+      const runs = [
+        asRun({ minute: 0 }),
+        asRun({ minute: 120, meet: 'awaited' }),
+      ];
+
+      when('[t0] the ordinals are folded', () => {
+        then('the run is met warm, and names no lapse', () => {
+          const ordinals = getAllLaneOrdinals({ runs });
+          expect(ordinals.get(runs[1]!.dir)?.metWarm).toEqual(true);
+          expect(ordinals.get(runs[1]!.dir)?.lapsedMinutes).toBeNull();
+        });
+      });
+
+      when('[t1] the met-warm run is its lane first round', () => {
+        const runsFirst = [asRun({ minute: 0, meet: 'primed' })];
+        then('it is met warm, though its ordinal is 1', () => {
+          const ordinals = getAllLaneOrdinals({ runs: runsFirst });
+          expect(ordinals.get(runsFirst[0]!.dir)).toEqual({
+            ordinal: 1,
+            lapsedMinutes: null,
+            metWarm: true,
+          });
+        });
+      });
+
+      when('[t2] the run met cold (solo)', () => {
+        const runsSolo = [
+          asRun({ minute: 0 }),
+          asRun({ minute: 120, meet: 'solo' }),
+        ];
+        then('the lapse is named as before', () => {
+          const ordinals = getAllLaneOrdinals({ runs: runsSolo });
+          expect(ordinals.get(runsSolo[1]!.dir)?.metWarm).toEqual(false);
+          expect(ordinals.get(runsSolo[1]!.dir)?.lapsedMinutes).toEqual(120);
         });
       });
     },

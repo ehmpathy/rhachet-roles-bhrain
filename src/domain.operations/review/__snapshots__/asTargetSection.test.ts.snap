@@ -1,7 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`asTargetSection given: [case1] a partition run whose shared files are additions when: [t0] the section renders with the shared set then: the section matches its snapshot 1`] = `
-"<target.diff path=".behavior/v1/.fulcrums/case=F1.md" kind="+">
+exports[`asTargetSection given: [case1] one band of targets when: [t0] the section renders then: the section bytes render as the reviewer reads them 1`] = `
+"<target.file path="src/contract/cli/learn.ts">
+export const learn = 2;
+</target.file>
+
+---
+
+<target.diff path=".behavior/v1/.fulcrums/case=F1.md" kind="+">
 fork one
 </target.diff>
 
@@ -10,12 +16,6 @@ fork one
 <target.diff path=".behavior/v1/.seeds/case=S1.md" kind="+">
 seed one
 </target.diff>
-
----
-
-<target.file path="src/contract/cli/learn.ts">
-export const learn = 2;
-</target.file>
 
 ---
 

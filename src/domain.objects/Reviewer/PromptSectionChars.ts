@@ -24,11 +24,11 @@
 export interface PromptSectionChars {
   /** the review instructions — the head text ahead of the output contract */
   instructions: number;
-  /** the output contract — from `MARKER_OF_OUTPUT_FORMAT` to `MARKER_OF_RULES` */
+  /** the output contract — from `MARKER_OF_OUTPUT_FORMAT` to the first block behind it */
   outputFormat: number;
-  /** the rubric, as rendered — identical per lane, across its rounds */
+  /** the rubric, as rendered — identical per lane, and the lane's own bytes */
   rules: number;
-  /** reference docs, as rendered — identical per lane, across its rounds */
+  /** reference docs, as rendered — identical per lane, and the lane's own bytes */
   refs: number;
   /** the prior peer dialogue — APPENDS every round */
   conversation: number;
@@ -66,9 +66,17 @@ export interface PromptSectionChars {
  * .note = `instructions` and `outputFormat` lead the static head, identical for
  *         every lane of one goal, so both are cacheable.
  *
- * .note = `scaffold` is marked cacheable because all but its last few hundred
- *         chars (the `## target` header and the `<target>` tags) sit in the
- *         static head.
+ * .note = `scaffold` is marked cacheable because its bulk — the target block's
+ *         `---` separators and tags — sits in the head the lanes of a level share.
+ *
+ * 🔴 .note = `rules` and `refs` are `true`, and the claim is a PARTLY one. in a
+ *         corpus-first prompt (what `compileReviewPrompt` emits) they trail the target
+ *         corpus, so a round whose base moved or whose driver repaired a file parts the
+ *         prefix ahead of them — but the partitions of a lane read them from one another
+ *         within a round, and a round with a stable corpus reads them across rounds. in a
+ *         rubric-first prompt on disk, they lead the corpus outright. one static table
+ *         labels both layouts, so it holds the position each row CAN reach
+ *         (`asPromptHead` states the trade)
  *
  * 🔴 .note = `targetFiles` is `true`, and it reads as a surprise. it is NOT a
  *         guarantee that every file body caches — a file the driver just repaired
@@ -90,6 +98,7 @@ export interface PromptSectionChars {
 export const IS_CACHEABLE_SECTION: Record<keyof PromptSectionChars, boolean> = {
   instructions: true,
   outputFormat: true,
+  // partly: they trail the corpus in today's layout (see the 🔴 note above)
   rules: true,
   refs: true,
   scaffold: true,
@@ -108,17 +117,18 @@ export const IS_CACHEABLE_SECTION: Record<keyof PromptSectionChars, boolean> = {
  * .what = the rank each census row prints at — the wire order, head to tail
  * .why = declared once, beside the union it ranks, so every breadth renders
  *        the same order rather than each with its own that could differ.
- *        the order is the order the bytes are sent: the static head leads
- *        (instructions, outputFormat, scaffold, rules, refs), then the per-round tail.
+ *        the order is the order the bytes are sent: the head the lanes of a level
+ *        share leads (instructions, outputFormat, scaffold, the target rows), then the
+ *        lane's own tail (rules, refs, conversation).
  *
- * .note = per `asPromptHeadStatic`: byte 0 opens the instructions, which run to
- *         `MARKER_OF_OUTPUT_FORMAT`; the output contract runs to `MARKER_OF_RULES`;
- *         the first `scaffold` byte is that marker's header line, `## rules (FOR
- *         REFERENCE ONLY …)`, ahead of the `<rules>` body. the `# review task` preamble
+ * .note = per `asPromptHead`: byte 0 opens the instructions, which run to
+ *         `MARKER_OF_OUTPUT_FORMAT`; the output contract runs to `MARKER_OF_TARGET`;
+ *         the first `scaffold` byte is that marker's header line, `## target (REVIEW
+ *         THIS SECTION ONLY)`, ahead of the `<target>` body. the `# review task` preamble
  *         is `instructions`, never scaffold. `scaffold` is spread through the prompt
- *         (headers and tags), so its rank is where its FIRST byte sits. verified
- *         2026-10-10 against a shipped `input.prompt.md`: `## output format` at line 43,
- *         `## rules (…)` at line 83, `<rules>` at line 85.
+ *         (headers and tags), so its rank is where its FIRST byte sits. the layout
+ *         fixture (`genReviewPromptLayoutInput`) compiles to `## output format`, then
+ *         `## target (…)`, then `## rules (…)`, in that order — read it there to check.
  *
  * .note = must stay a Record, never a hand-written array — a Record goes red
  *         when a seventh input joins `PromptSectionChars`; an array would
@@ -137,12 +147,12 @@ export const RANK_OF_SECTION: Record<keyof PromptSectionChars, number> = {
   instructions: 1,
   outputFormat: 2,
   scaffold: 3,
-  rules: 4,
-  refs: 5,
-  targetFiles: 6,
-  'targetDiffs.additions': 7,
-  'targetDiffs.deletions': 8,
-  'targetDiffs.mutations': 9,
+  targetFiles: 4,
+  'targetDiffs.additions': 5,
+  'targetDiffs.deletions': 6,
+  'targetDiffs.mutations': 7,
+  rules: 8,
+  refs: 9,
   conversation: 10,
 };
 

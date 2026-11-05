@@ -33,7 +33,7 @@ it is a property of a PAIR, never of one prompt. "this prompt's shared prefix" i
 anyone can compute; "the prefix round 2 shares with round 1" is. the code reflects that:
 `getOneSharedPrefixOverlap({ earlier, later })` takes two.
 
-`promptHeadStatic` is the block a compiler emits to serve as one; the shared prefix is the
+`promptHead` is the block a compiler emits to serve as one; the shared prefix is the
 measured run two requests actually had. the two coincide only when the layout holds, which is
 why the second is what gets clamped.
 
