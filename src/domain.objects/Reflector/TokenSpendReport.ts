@@ -40,7 +40,22 @@ export interface TokenSpendEfficiency {
   cacheWrite1h: number;
   output: number;
   priced: TokenPriceSum;
-  models: string[];
+
+  /**
+   * the spend per model, in first-seen order; a session that switched model, or called a
+   * helper model, names each with its own calls, tokens, and price at its own rates
+   */
+  byModel: TokenSpendOfModel[];
+}
+
+/**
+ * .what = one model's share of the spend: its calls, its tokens, and their price
+ */
+export interface TokenSpendOfModel {
+  model: string;
+  calls: number;
+  tokens: number;
+  priced: TokenPriceSum;
 }
 
 /**

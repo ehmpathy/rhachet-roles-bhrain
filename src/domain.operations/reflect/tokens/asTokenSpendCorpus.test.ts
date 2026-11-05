@@ -48,7 +48,14 @@ const genReport = (input: {
       cacheWrite1h: 0,
       output: 1,
       priced: UNPRICED,
-      models: ['claude-demo'],
+      byModel: [
+        {
+          model: 'claude-demo',
+          calls: input.calls,
+          tokens: input.cacheRead + 2,
+          priced: UNPRICED,
+        },
+      ],
     },
     contextPerCall: input.context,
     inventory: input.inventory,

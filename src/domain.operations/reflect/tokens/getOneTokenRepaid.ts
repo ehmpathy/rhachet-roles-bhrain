@@ -19,6 +19,12 @@ export interface TokenRepaidRow {
   tokens: TokenCountsByKind;
 
   /**
+   * the same counts split by the model of each call, so each part takes its model's rate
+   * (a session that switched from opus to sonnet paid the block at both)
+   */
+  byModel: { model: string; tokens: TokenCountsByKind }[];
+
+  /**
    * how many calls carried this block
    */
   calls: number;
@@ -55,13 +61,7 @@ export const getOneTokenRepaid = (input: {
 
   const rows = input.held.map((held) => ({
     held,
-    tokens: {
-      input: 0,
-      output: 0,
-      cacheRead: 0,
-      cacheWrite5m: 0,
-      cacheWrite1h: 0,
-    },
+    tokensByModel: new Map<string, TokenCountsByKind>(),
     calls: 0,
   }));
 
@@ -69,7 +69,7 @@ export const getOneTokenRepaid = (input: {
   // ended rows gather at the front and each call need not re-walk them
   let heldFrom = 0;
   for (let index = 0; index < calls.length; index++) {
-    const { spend } = calls[index]!;
+    const { spend, model } = calls[index]!;
     while (
       heldFrom < rows.length &&
       rows[heldFrom]!.held.endedAt !== null &&
@@ -106,26 +106,68 @@ export const getOneTokenRepaid = (input: {
         spanEnd: writeEnd,
       });
       const raw = held.tokens - read - write;
-      row.tokens.cacheRead += read;
-      row.tokens.cacheWrite1h += write * shareOf1h;
-      row.tokens.cacheWrite5m += write * (1 - shareOf1h);
-      row.tokens.input += raw;
+      const tokens = row.tokensByModel.get(model) ?? {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite5m: 0,
+        cacheWrite1h: 0,
+      };
+      row.tokensByModel.set(model, {
+        input: tokens.input + raw,
+        output: 0,
+        cacheRead: tokens.cacheRead + read,
+        cacheWrite5m: tokens.cacheWrite5m + write * (1 - shareOf1h),
+        cacheWrite1h: tokens.cacheWrite1h + write * shareOf1h,
+      });
       row.calls += 1;
     }
   }
 
-  return rows.map((row) => ({
-    held: row.held,
-    tokens: {
-      input: Math.round(row.tokens.input),
-      output: 0,
-      cacheRead: Math.round(row.tokens.cacheRead),
-      cacheWrite5m: Math.round(row.tokens.cacheWrite5m),
-      cacheWrite1h: Math.round(row.tokens.cacheWrite1h),
-    },
-    calls: row.calls,
-  }));
+  return rows.map((row) => {
+    const byModel = [...row.tokensByModel.entries()].map(([model, tokens]) => ({
+      model,
+      tokens: asCountsRounded({ tokens }),
+    }));
+    return {
+      held: row.held,
+      tokens: asCountsRounded({
+        tokens: {
+          input: sumOfKind({ byModel, kind: 'input' }),
+          output: 0,
+          cacheRead: sumOfKind({ byModel, kind: 'cacheRead' }),
+          cacheWrite5m: sumOfKind({ byModel, kind: 'cacheWrite5m' }),
+          cacheWrite1h: sumOfKind({ byModel, kind: 'cacheWrite1h' }),
+        },
+      }),
+      byModel,
+      calls: row.calls,
+    };
+  });
 };
+
+/**
+ * .what = token counts rounded to whole tokens
+ * .why = a span split by ttl share yields fractions; a report counts whole tokens
+ */
+const asCountsRounded = (input: {
+  tokens: TokenCountsByKind;
+}): TokenCountsByKind => ({
+  input: Math.round(input.tokens.input),
+  output: Math.round(input.tokens.output),
+  cacheRead: Math.round(input.tokens.cacheRead),
+  cacheWrite5m: Math.round(input.tokens.cacheWrite5m),
+  cacheWrite1h: Math.round(input.tokens.cacheWrite1h),
+});
+
+/**
+ * .what = one kind's count, summed across the per-model parts
+ */
+const sumOfKind = (input: {
+  byModel: { tokens: TokenCountsByKind }[];
+  kind: keyof TokenCountsByKind;
+}): number =>
+  input.byModel.reduce((sum, part) => sum + part.tokens[input.kind], 0);
 
 /**
  * .what = the length of overlap between a block's range and a span

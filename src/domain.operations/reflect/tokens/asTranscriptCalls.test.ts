@@ -80,7 +80,7 @@ const TEST_CASES: {
   },
   {
     description:
-      'a call to another model → a call for efficiency, but off the main thread',
+      'a helper call to another model, with a small prompt of its own → a call for efficiency, but off the main thread',
     given: {
       records: [
         genAssistant({ requestId: 'req_1', output: 10 }),
@@ -88,6 +88,7 @@ const TEST_CASES: {
           requestId: 'req_title',
           model: 'claude-small',
           output: 3,
+          cacheRead: 5,
         }),
         genAssistant({ requestId: 'req_2', output: 5 }),
       ],
@@ -97,6 +98,83 @@ const TEST_CASES: {
       outputs: [10, 3, 5],
       isMainThread: [true, false, true],
       isAfterCompaction: [false, false, false],
+    },
+  },
+  {
+    description:
+      'a switch of model mid-session (opus → sonnet), which re-sends the conversation → both models on the main thread',
+    given: {
+      records: [
+        genAssistant({
+          requestId: 'req_1',
+          model: 'claude-opus',
+          output: 10,
+          cacheRead: 20_000,
+        }),
+        genAssistant({
+          requestId: 'req_2',
+          model: 'claude-opus',
+          output: 10,
+          cacheRead: 30_000,
+        }),
+        genAssistant({
+          requestId: 'req_3',
+          model: 'claude-sonnet',
+          output: 10,
+          cacheRead: 31_000,
+        }),
+        genAssistant({
+          requestId: 'req_4',
+          model: 'claude-sonnet',
+          output: 10,
+          cacheRead: 32_000,
+        }),
+      ],
+    },
+    expect: {
+      requestIds: ['req_1', 'req_2', 'req_3', 'req_4'],
+      outputs: [10, 10, 10, 10],
+      isMainThread: [true, true, true, true],
+      isAfterCompaction: [false, false, false, false],
+    },
+  },
+  {
+    description:
+      'a switch of model right after a compaction, whose context shrank → still on the main thread, flagged after the compaction',
+    given: {
+      records: [
+        genAssistant({
+          requestId: 'req_1',
+          model: 'claude-opus',
+          output: 10,
+          cacheRead: 90_000,
+        }),
+        genAssistant({
+          requestId: 'req_2',
+          model: 'claude-opus',
+          output: 10,
+          cacheRead: 95_000,
+        }),
+        COMPACTION,
+        genAssistant({
+          requestId: 'req_3',
+          model: 'claude-sonnet',
+          output: 10,
+          cacheRead: 8_000,
+        }),
+        genAssistant({
+          requestId: 'req_4',
+          model: 'claude-sonnet',
+          output: 10,
+          cacheRead: 9_000,
+        }),
+      ],
+    },
+    expect: {
+      requestIds: ['req_1', 'req_2', 'req_3', 'req_4'],
+      outputs: [10, 10, 10, 10],
+      isMainThread: [true, true, true, true],
+      isAfterCompaction: [false, false, true, false],
     },
   },
   {

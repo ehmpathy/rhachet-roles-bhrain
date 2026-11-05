@@ -27,6 +27,8 @@ const uuidLive = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const uuidUnpriced = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const uuidCompactParent = '12121212-1212-4212-8212-121212121212';
 const uuidTornParent = '34343434-3434-4434-8434-343434343434';
+const uuidHaiku = '56565656-5656-4656-8656-565656565656';
+const uuidSwitch = '78787878-7878-4878-8878-787878787878';
 
 /**
  * .what = one assistant record with a usage block
@@ -162,6 +164,25 @@ const genCompactedSessionJsonl = (): string =>
 const genSubagentJsonl = (): string =>
   asJsonl(
     genSessionRecords().map((record) => ({ ...record, isSidechain: true })),
+  );
+
+/**
+ * .what = the session, with its last call on sonnet: a `/model` switch mid-session
+ * .why = the sonnet call re-sends the whole conversation, so it is the thread too
+ */
+const genSwitchedSessionJsonl = (): string =>
+  asJsonl(
+    genSessionRecords().map((record) =>
+      record.requestId === 'req_3'
+        ? {
+            ...record,
+            message: {
+              ...(record.message as Record<string, unknown>),
+              model: 'claude-sonnet-4-5-20250929',
+            },
+          }
+        : record,
+    ),
   );
 
 /**
@@ -301,6 +322,17 @@ describe('reflect.on.token.spend', () => {
         .join('claude-mystery-1'),
     );
 
+    // a session on the cheapest claude, haiku 4.5, and one that switched opus → sonnet
+    const haikuPath = path.join(tempDir, `${uuidHaiku}.jsonl`);
+    fs.writeFileSync(
+      haikuPath,
+      genSessionJsonl()
+        .split('claude-opus-4-5-20251101')
+        .join('claude-haiku-4-5-20251001'),
+    );
+    const switchPath = path.join(tempDir, `${uuidSwitch}.jsonl`);
+    fs.writeFileSync(switchPath, genSwitchedSessionJsonl());
+
     // a corpus of one metered session, one torn, and one unmetered — read, with two skips
     const mixedReadDir = path.join(tempDir, 'mixed-read');
     fs.mkdirSync(mixedReadDir, { recursive: true });
@@ -334,6 +366,8 @@ describe('reflect.on.token.spend', () => {
 
     const env = { CLAUDE_CONFIG_DIR: configDir };
     return {
+      haikuPath,
+      switchPath,
       unpricedPath,
       mixedReadDir,
       mixedSkipDir,
@@ -1258,6 +1292,72 @@ describe('reflect.on.token.spend', () => {
 
       then('stderr matches snapshot', () => {
         expect(asSnap(res.stderr)).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case33] a session on the cheapest claude, haiku 4.5', () => {
+    when('[t0] the skill runs', () => {
+      const res = useThen('it succeeds', async () =>
+        invokeReflectSkill({
+          skill: 'reflect.on.token.spend',
+          subcommand: null,
+          args: { from: scene.haikuPath },
+          cwd: scene.tempDir,
+          env: scene.env,
+        }),
+      );
+
+      then('exit code is 0, and the model is named', () => {
+        expect(res.code).toEqual(0);
+        expect(res.stdout).toContain('models = claude-haiku-4-5-20251001');
+      });
+
+      // haiku 4.5 rates are a fifth of opus 4.5 on every kind: $0.18379 → $0.036758
+      then('it is priced at the haiku spec, a fifth of the opus total', () => {
+        expect(res.stdout).toContain('total price = $0.04');
+        expect(res.stdout).not.toContain('unpriced');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(asSnap(res.stdout)).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case34] a session that switched model mid-way, opus → sonnet', () => {
+    when('[t0] the skill runs', () => {
+      const res = useThen('it succeeds', async () =>
+        invokeReflectSkill({
+          skill: 'reflect.on.token.spend',
+          subcommand: null,
+          args: { from: scene.switchPath },
+          cwd: scene.tempDir,
+          env: scene.env,
+        }),
+      );
+
+      then('exit code is 0, and each model is a row at its own rate', () => {
+        expect(res.code).toEqual(0);
+        expect(res.stdout).toContain('models (2, each at its own rate)');
+        expect(res.stdout).toMatch(/claude-opus-4-5-20251101 +2 calls/);
+        expect(res.stdout).toMatch(/claude-sonnet-4-5-20250929 +1 call /);
+      });
+
+      // opus calls 1-2 = $0.17061; sonnet call 3 = $0.007908; the sum = $0.178518
+      then('the total sums each model at its own spec', () => {
+        expect(res.stdout).toContain('total price = $0.18');
+        expect(res.stdout).not.toContain('unpriced');
+      });
+
+      // 🔴 red before the fix: the sonnet call fell off the main thread, so the context
+      //    peak read the last opus call (25,100) and the inventory lost the last turn
+      then('the sonnet call stays on the thread: its context is the peak', () => {
+        expect(res.stdout).toContain('peak   = 25,161');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(asSnap(res.stdout)).toMatchSnapshot();
       });
     });
   });

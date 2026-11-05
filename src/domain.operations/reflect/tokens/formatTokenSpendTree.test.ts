@@ -41,7 +41,14 @@ const genReport = (): TokenSpendReport =>
       cacheWrite1h: 0,
       output: 40,
       priced: { ...UNPRICED, unpricedTokens: 1_550 },
-      models: ['claude-demo'],
+      byModel: [
+        {
+          model: 'claude-demo',
+          calls: 4,
+          tokens: 1_550,
+          priced: { ...UNPRICED, unpricedTokens: 1_550 },
+        },
+      ],
     },
     contextPerCall: { median: 400, peak: 600 },
     inventory: [

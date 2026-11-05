@@ -11,6 +11,7 @@ import type {
   TokenPriceByKind,
   TokenPriceSum,
   TokenSpendInventoryRow,
+  TokenSpendOfModel,
   TokenSpendReport,
 } from '@src/domain.objects/Reflector/TokenSpendReport';
 import { asTokenCountHuman } from '@src/infra/cli/asTokenCountHuman';
@@ -181,7 +182,7 @@ const asEfficiencySection = (input: { report: TokenSpendReport }): string[] => {
           price: byKind.output,
         }),
         asTotalPriceLeaf({ priced: efficiency.priced }),
-        `models = ${efficiency.models.join(', ')}`,
+        asModelsLeaf({ byModel: efficiency.byModel }),
         ...(contextPerCall
           ? [
               {
@@ -196,6 +197,34 @@ const asEfficiencySection = (input: { report: TokenSpendReport }): string[] => {
       ],
     }),
   ];
+};
+
+/**
+ * .what = the `models` leaf: one model on one line; several as one branch per model
+ * .why = a session that switched model, or called a helper, spent at more than one rate;
+ *        the reader sees each model's calls, tokens, and price, the heaviest first
+ */
+const asModelsLeaf = (input: {
+  byModel: TokenSpendOfModel[];
+}): string | { line: string; children: string[] } => {
+  const [modelOnly, ...modelsAfter] = input.byModel;
+  if (modelOnly && modelsAfter.length === 0)
+    return `models = ${modelOnly.model}`;
+
+  // one column width for every model shown, so the figures align
+  const width = Math.max(
+    0,
+    ...input.byModel.map((entry) => entry.model.length),
+  );
+  return {
+    line: `models (${input.byModel.length}, each at its own rate)`,
+    children: [...input.byModel]
+      .sort((a, b) => b.tokens - a.tokens)
+      .map(
+        (entry) =>
+          `${entry.model.padEnd(width)}  ${asCount(entry.calls).padStart(7)} ${entry.calls === 1 ? 'call ' : 'calls'}  ${asCount(entry.tokens).padStart(13)} tok  ${asPriced(entry.priced).padStart(10)}`,
+      ),
+  };
 };
 
 const asInventorySection = (input: { report: TokenSpendReport }): string[] => {

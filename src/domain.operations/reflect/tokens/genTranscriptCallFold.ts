@@ -40,14 +40,13 @@ export interface TranscriptCallsFolded {
  * .why = the provider meters a request; one call may span several assistant records
  *        (thought, text, tool_use), and each repeats the usage. a naive sum double-counts
  *
- * .note = the session's own model is the one whose calls carried the most context, which
- *         is known only at the end. so each model keeps its own cursor into the arrivals: a call
- *         takes every block since the prior call of ITS model, and `done()` keeps the
- *         arrivals of the session model's calls alone. that equals a walk that knew the
- *         session model up front, since a call to another model never resets the arrivals
+ * .note = which calls form the main thread is known only at the end (`asThreadMembership`):
+ *         the session may switch model mid-way, and a helper model may interleave small
+ *         calls. so each call records where the block log stood when it opened, and `done()`
+ *         walks the thread calls in order: a thread call takes every block since the prior
+ *         thread call, of whichever model. a call off the thread takes no arrivals
  * .note = deliberate mutation: the fold's state (the tool-use index, the block log, the
- *         per-model cursors, the open calls) is private to the closure; `done()` returns
- *         fresh immutable literals
+ *         open calls) is private to the closure; `done()` returns fresh immutable literals
  */
 export const genTranscriptCallFold = (input: {
   thread: TranscriptThread;
@@ -58,19 +57,8 @@ export const genTranscriptCallFold = (input: {
 } => {
   const toolUseIndex: ToolUseIndex = new Map();
   const blocks: TokenBlock[] = [];
-  const opened: {
-    requestId: string;
-    model: string;
-    spend: TranscriptCallSpend;
-    arrivals: TokenBlock[];
-    isAfterCompaction: boolean;
-    isSidechain: boolean;
-  }[] = [];
+  const opened: CallOpened[] = [];
   const openedIndexByRequestId = new Map<string, number>();
-  const cursorByModel = new Map<
-    string,
-    { blocksFrom: number; compactionsSeen: number }
-  >();
   let compactions = 0;
   let records = 0;
   let recordsWithSpend = 0;
@@ -108,28 +96,20 @@ export const genTranscriptCallFold = (input: {
       return;
     }
 
-    // a new request opens a call, which takes the arrivals since its model's prior call
-    const cursor = cursorByModel.get(metered.model) ?? {
-      blocksFrom: 0,
-      compactionsSeen: 0,
-    };
+    // a new request opens a call, which marks where the block log and the compactions stood
     openedIndexByRequestId.set(metered.requestId, opened.length);
     opened.push({
       requestId: metered.requestId,
       model: metered.model,
       spend: metered.spend,
-      arrivals: blocks.slice(cursor.blocksFrom),
-      isAfterCompaction: compactions > cursor.compactionsSeen,
+      blocksAt: blocks.length,
+      compactionsAt: compactions,
       isSidechain: false,
-    });
-    cursorByModel.set(metered.model, {
-      blocksFrom: blocks.length,
-      compactionsSeen: compactions,
     });
   };
 
-  // a sidechain call: deduped by request like any call, but it takes no arrivals and moves
-  // no cursor, so the main thread's delta sequence never sees it
+  // a sidechain call: deduped by request like any call, but it is never on the thread, so
+  // the main thread's delta sequence never sees it
   const openSidechainCall = (sidechain: {
     metered: { requestId: string; model: string; spend: TranscriptCallSpend };
   }): void => {
@@ -144,41 +124,115 @@ export const genTranscriptCallFold = (input: {
       requestId: metered.requestId,
       model: metered.model,
       spend: metered.spend,
-      arrivals: [],
-      isAfterCompaction: false,
+      blocksAt: blocks.length,
+      compactionsAt: compactions,
       isSidechain: true,
     });
   };
 
   const done = (): TranscriptCallsFolded => {
-    const sessionModel = asSessionModel({
-      calls: opened.filter((call) => !call.isSidechain),
+    const membership = asThreadMembership({ calls: opened });
+
+    // each thread call takes the blocks and compactions since the prior thread call
+    let threadPrior = { blocksAt: 0, compactionsAt: 0 };
+    const calls = opened.map((call, index) => {
+      const isMainThread = membership[index]!;
+      const prior = threadPrior;
+      if (isMainThread) threadPrior = call;
+      return new TranscriptCall({
+        ordinal: index + 1,
+        requestId: call.requestId,
+        model: call.model,
+        isMainThread,
+        spend: call.spend,
+        arrivals: isMainThread
+          ? blocks.slice(prior.blocksAt, call.blocksAt)
+          : [],
+        isAfterCompaction:
+          isMainThread && call.compactionsAt > prior.compactionsAt,
+      });
     });
-    return {
-      calls: opened.map((call, index) => {
-        const isMainThread = !call.isSidechain && call.model === sessionModel;
-        return new TranscriptCall({
-          ordinal: index + 1,
-          requestId: call.requestId,
-          model: call.model,
-          isMainThread,
-          spend: call.spend,
-          arrivals: isMainThread ? call.arrivals : [],
-          isAfterCompaction: isMainThread ? call.isAfterCompaction : false,
-        });
-      }),
-      records,
-      recordsWithSpend,
-    };
+    return { calls, records, recordsWithSpend };
   };
 
   return { push, done };
 };
 
 /**
+ * .what = one call as the fold opened it: its spend, and where the block log and the
+ *         compaction count stood at that moment
+ * .why = thread membership is known only at the end, so arrivals are cut from the block
+ *        log then, between consecutive thread calls
+ */
+interface CallOpened {
+  requestId: string;
+  model: string;
+  spend: TranscriptCallSpend;
+  blocksAt: number;
+  compactionsAt: number;
+  isSidechain: boolean;
+}
+
+/**
+ * .what = whether each call is on the main thread: the conversation the session holds
+ * .why = a session may switch model mid-way (`/model`), and the new model's calls carry
+ *        the same conversation, so they are the thread too. a helper model's call (a title,
+ *        a summary) carries a small prompt of its own, and stays off it
+ *
+ * .note = the session model (the one whose calls carried the most context) is always on
+ *         the thread. a call to another model joins it when it carries the conversation:
+ *         its context is at least half of the prior thread call's, or a compaction cut the
+ *         context since. before any thread call, the next session-model call is the measure
+ * .note = deliberate mutation: the walk keeps the last thread call in a local
+ */
+const asThreadMembership = (input: { calls: CallOpened[] }): boolean[] => {
+  const sessionModel = asSessionModel({
+    calls: input.calls.filter((call) => !call.isSidechain),
+  });
+  let threadLast: CallOpened | null = null;
+  return input.calls.map((call, index) => {
+    if (call.isSidechain) return false;
+    const isJoined =
+      call.model === sessionModel ||
+      isCarrierOfThread({
+        call,
+        threadLast,
+        sessionNext:
+          input.calls
+            .slice(index + 1)
+            .find(
+              (other) => !other.isSidechain && other.model === sessionModel,
+            ) ?? null,
+      });
+    if (isJoined) threadLast = call;
+    return isJoined;
+  });
+};
+
+/**
+ * .what = does a call to another model carry the conversation the thread holds?
+ * .why = a model switch re-sends the whole conversation; a helper sends a prompt of its own
+ */
+const isCarrierOfThread = (input: {
+  call: CallOpened;
+  threadLast: CallOpened | null;
+  sessionNext: CallOpened | null;
+}): boolean => {
+  const measure = input.threadLast ?? input.sessionNext;
+  if (measure === null) return false;
+  const isAfterCompaction =
+    input.threadLast !== null &&
+    input.call.compactionsAt > input.threadLast.compactionsAt;
+  if (isAfterCompaction) return true;
+  return (
+    asCallContext({ call: input.call }) * 2 >= asCallContext({ call: measure })
+  );
+};
+
+/**
  * .what = the model whose calls carried the most context, summed over its calls
- * .why = a session may interleave calls to a second model (a summary, a title); those
- *        count in efficiency but never form the context delta sequence
+ * .why = the session model anchors the thread; a call to another model joins it only
+ *        where it carries the conversation (`asThreadMembership`)
  *
  * .note = the weight is context, never a count of records: a helper called every turn may
  *         outnumber the main thread's calls, but each of its prompts is small, while the

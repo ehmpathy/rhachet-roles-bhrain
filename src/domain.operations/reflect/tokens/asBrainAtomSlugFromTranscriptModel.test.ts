@@ -22,6 +22,11 @@ const TEST_CASES = [
     expect: { slug: 'claude/opus/v5.5' },
   },
   {
+    description: 'the newest haiku, family-first with a date suffix',
+    given: { model: 'claude-haiku-4-5-20251001' },
+    expect: { slug: 'claude/haiku/v4.5' },
+  },
+  {
     description: 'version-first id',
     given: { model: 'claude-3-5-haiku-20241022' },
     expect: { slug: 'claude/haiku/v3.5' },

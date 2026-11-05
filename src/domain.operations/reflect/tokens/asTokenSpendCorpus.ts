@@ -1,5 +1,6 @@
 import {
   type TokenSpendInventoryRow,
+  type TokenSpendOfModel,
   type TokenSpendRepaidRow,
   TokenSpendReport,
   type TokenSpendSkip,
@@ -63,10 +64,7 @@ export const asTokenSpendCorpus = (input: {
           facet: (report) => [report.efficiency.priced],
         }),
       }),
-      models: asUnionOf({
-        reports,
-        facet: (report) => report.efficiency.models,
-      }),
+      byModel: asByModelOfCorpus({ reports }),
     },
     contextPerCall: asContextPerCallOfCorpus({ reports }),
     inventory: asInventoryOfCorpus({ reports }),
@@ -120,6 +118,27 @@ const asNotesOfCorpus = (input: { reports: TokenSpendReport[] }): string[] =>
       return `${note} (in ${carriers} of ${input.reports.length} transcripts)`;
     },
   );
+
+/**
+ * .what = the spend per model summed across transcripts, in first-seen order
+ * .why = a model named by several transcripts reads once, with its calls, tokens, and
+ *        price added across them
+ */
+const asByModelOfCorpus = (input: {
+  reports: TokenSpendReport[];
+}): TokenSpendOfModel[] =>
+  asGroupsByKey({
+    items: listOf({
+      reports: input.reports,
+      facet: (report) => report.efficiency.byModel,
+    }),
+    keyOf: (entry) => entry.model,
+  }).map((ofModel) => ({
+    model: ofModel[0]!.model,
+    calls: ofModel.reduce((sum, entry) => sum + entry.calls, 0),
+    tokens: ofModel.reduce((sum, entry) => sum + entry.tokens, 0),
+    priced: asTokenPriceSum({ parts: ofModel.map((entry) => entry.priced) }),
+  }));
 
 /**
  * .what = the median of the transcripts' medians, and the peak of their peaks

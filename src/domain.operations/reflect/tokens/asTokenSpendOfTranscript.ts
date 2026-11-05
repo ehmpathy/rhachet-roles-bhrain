@@ -8,7 +8,7 @@ import type { TranscriptCall } from '@src/domain.objects/Reflector/TranscriptCal
 
 import { asCallContext } from './asCallContext';
 import { asGroupsByKey } from './asGroupsByKey';
-import { asTokenPrice } from './asTokenPrice';
+import { asTokenPrice, type TokenCountsByKind } from './asTokenPrice';
 import { asTokenPriceSum } from './asTokenPriceSum';
 import { asTokenRepaidTotal } from './asTokenRepaidTotal';
 import { getOneTokenInventory } from './getOneTokenInventory';
@@ -33,20 +33,16 @@ export const asTokenSpendOfTranscript = (input: {
     calls: mainCalls,
   });
   const repaid = getOneTokenRepaid({ calls: mainCalls, held });
-  const sessionRates = asSessionRates({
-    mainCalls,
-    ratesByModel: input.ratesByModel,
-  });
 
   // inventory: the blocks held at the last call, per category
   const heldAtEnd = held.filter((entry) => entry.endedAt === null);
   const inventory = asInventoryRows({ held: heldAtEnd });
 
-  // repaid: per category·label, priced at the session's model
+  // repaid: per category·label, each call's part priced at that call's model
   const repaidRows = asRepaidRows({
     repaid,
     mainCalls,
-    rates: sessionRates,
+    ratesByModel: input.ratesByModel,
   });
 
   return new TokenSpendReport({
@@ -137,6 +133,8 @@ const asEfficiency = (input: {
       ),
     };
     return {
+      model,
+      calls: calls.length,
       tokens,
       priced: asTokenPrice({
         tokens,
@@ -158,21 +156,18 @@ const asEfficiency = (input: {
     ),
     output: perModel.reduce((sum, entry) => sum + entry.tokens.output, 0),
     priced: asTokenPriceSum({ parts: perModel.map((entry) => entry.priced) }),
-    models,
+    byModel: perModel.map((entry) => ({
+      model: entry.model,
+      calls: entry.calls,
+      tokens:
+        entry.tokens.input +
+        entry.tokens.output +
+        entry.tokens.cacheRead +
+        entry.tokens.cacheWrite5m +
+        entry.tokens.cacheWrite1h,
+      priced: entry.priced,
+    })),
   };
-};
-
-/**
- * .what = the rates of the session's model — the model of the main-thread calls
- * .why = repaid rows price the main thread's context, so they take its model's rates
- */
-const asSessionRates = (input: {
-  mainCalls: TranscriptCall[];
-  ratesByModel: Map<string, TokenRates>;
-}): TokenRates | null => {
-  const sessionModel = input.mainCalls[0]?.model ?? null;
-  if (sessionModel === null) return null;
-  return input.ratesByModel.get(sessionModel) ?? null;
 };
 
 /**
@@ -248,7 +243,7 @@ const asInventoryRows = (input: {
 const asRepaidRows = (input: {
   repaid: ReturnType<typeof getOneTokenRepaid>;
   mainCalls: TranscriptCall[];
-  rates: TokenRates | null;
+  ratesByModel: Map<string, TokenRates>;
 }): TokenSpendRepaidRow[] => {
   return asGroupsByKey({
     items: input.repaid,
@@ -275,9 +270,18 @@ const asRepaidRows = (input: {
         category: first.held.category,
         label: first.held.label,
         tokens,
-        priced: asTokenPrice({
-          tokens: { ...tokens, output: 0 },
-          rates: input.rates,
+        priced: asTokenPriceSum({
+          parts: asGroupsByKey({
+            items: rows.flatMap((row) => row.byModel),
+            keyOf: (part) => part.model,
+          }).map((ofModel) =>
+            asTokenPrice({
+              tokens: asCountsSummed({
+                parts: ofModel.map((part) => part.tokens),
+              }),
+              rates: input.ratesByModel.get(ofModel[0]!.model) ?? null,
+            }),
+          ),
         }),
         peak: {
           arrivedAtCall: input.mainCalls[peakRow.held.arrivedAt]?.ordinal ?? 0,
@@ -288,3 +292,17 @@ const asRepaidRows = (input: {
     })
     .filter((row) => asTokenRepaidTotal({ tokens: row.tokens }) > 0);
 };
+
+/**
+ * .what = token counts summed kind by kind
+ * .why = one model's parts of a repaid row price once, at that model's rates
+ */
+const asCountsSummed = (input: {
+  parts: TokenCountsByKind[];
+}): TokenCountsByKind => ({
+  input: input.parts.reduce((sum, part) => sum + part.input, 0),
+  output: input.parts.reduce((sum, part) => sum + part.output, 0),
+  cacheRead: input.parts.reduce((sum, part) => sum + part.cacheRead, 0),
+  cacheWrite5m: input.parts.reduce((sum, part) => sum + part.cacheWrite5m, 0),
+  cacheWrite1h: input.parts.reduce((sum, part) => sum + part.cacheWrite1h, 0),
+});
