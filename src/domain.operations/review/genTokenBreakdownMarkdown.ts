@@ -1,3 +1,6 @@
+import { asTokenCountHuman } from '@src/infra/cli/asTokenCountHuman';
+import { asTreeBranchMarkers } from '@src/infra/cli/asTreeBranchMarkers';
+
 import { asRateHuman } from './asRateHuman';
 import {
   NAMES_OF_TARGET_INPUT,
@@ -23,7 +26,7 @@ export const genTokenBreakdownMarkdown = (
   [
     '# token breakdown',
     '',
-    `total: ${formatTokens(input.all.total)} tokens`,
+    `total: ${asTokenCountHuman({ tokens: input.all.total })} tokens`,
     '',
 
     // render blended all section
@@ -71,7 +74,7 @@ const asSectionLines = (input: {
 }): string[] => [
   `## ${input.title}`,
   '',
-  `total: ${formatTokens(input.breakdown.total)} tokens`,
+  `total: ${asTokenCountHuman({ tokens: input.breakdown.total })} tokens`,
   '',
   '```',
   ...renderTree({
@@ -80,16 +83,6 @@ const asSectionLines = (input: {
   }),
   '```',
 ];
-
-/**
- * .what = formats token count for display
- * .why = human-readable numbers
- */
-const formatTokens = (tokens: number): string => {
-  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(1)}M`;
-  if (tokens >= 1_000) return `${(tokens / 1_000).toFixed(1)}k`;
-  return `${tokens}`;
-};
 
 /**
  * .what = one node of the path hierarchy
@@ -163,8 +156,7 @@ const renderNode = (input: {
     .sort((a, b) => asTokensOrder({ a, b }))
     .flatMap((child, index, children) => {
       const isLast = index === children.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      const childPrefix = isLast ? '   ' : '│  ';
+      const { elbow, stem } = asTreeBranchMarkers({ isLast });
       // the one percent render (rule.require.single-source-of-truth-for-render); a
       // share over a zero total is undefined, so it renders absent, never `NaN%`
       const pct = asRateHuman({
@@ -173,11 +165,11 @@ const renderNode = (input: {
       });
       const suffix = child.isFile ? '' : '/';
       return [
-        `${input.prefix}${branch} ${child.name}${suffix} (${formatTokens(child.tokens)}, ${pct})`,
+        `${input.prefix}${elbow} ${child.name}${suffix} (${asTokenCountHuman({ tokens: child.tokens })}, ${pct})`,
         ...(!child.isFile && child.children.size > 0
           ? renderNode({
               node: child,
-              prefix: input.prefix + childPrefix,
+              prefix: input.prefix + stem,
               grandTotal: input.grandTotal,
             })
           : []),

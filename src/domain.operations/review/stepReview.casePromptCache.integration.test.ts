@@ -216,7 +216,19 @@ const asBilledTokens = (input: {
   };
 };
 
-describe('stepReview.casePromptCache', () => {
+/**
+ * .what = the suite runs only where BHRAIN_TEST_LIVE_BRAIN_CACHE=1 targets it
+ * .why = it makes live brain calls and grades the provider's cache, so the default run makes
+ *        no live call from it; to run it:
+ *        BHRAIN_TEST_LIVE_BRAIN_CACHE=1 rhx git.repo.test --what integration --scope 'path://stepReview.casePromptCache' --mode apply
+ */
+const isLiveBrainCacheTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_CACHE === '1';
+const describeIfLiveBrainCacheTargeted = isLiveBrainCacheTargeted
+  ? describe
+  : describe.skip;
+
+describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
   // three real brain calls over a ~60k-token prompt, per attempt
   jest.setTimeout(600000);
 

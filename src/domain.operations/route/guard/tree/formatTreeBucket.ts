@@ -1,4 +1,4 @@
-import { asTreeBranchMarkers } from './asTreeBranchMarkers';
+import { asTreeBranchMarkers } from '@src/infra/cli/asTreeBranchMarkers';
 
 /**
  * .what = formats content into a tree bucket structure

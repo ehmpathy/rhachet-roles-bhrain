@@ -1875,7 +1875,7 @@ exports[`roleBootClamps given: [case12] the thinker role boot when: [t1] it boot
 exports[`roleBootClamps given: [case13] the reflector role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
   "budget": 500,
-  "payload": 376,
+  "payload": 384,
 }
 `;
 

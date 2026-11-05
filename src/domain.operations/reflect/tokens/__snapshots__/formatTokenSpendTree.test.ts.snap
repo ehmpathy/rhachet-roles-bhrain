@@ -1,0 +1,199 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatTokenSpendTree given: [case1] an inventory row that spans five tools when: [t0] the tree is rendered then: the render matches the snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = <transcript>
+   │  ├─ chosen by = path
+   │  ├─ calls = 4
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            10    0.6%    unpriced
+   │  ├─ cache.read      =         1,000   64.5%    unpriced
+   │  ├─ cache.write.5m  =           500   32.3%    unpriced
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =            40    2.6%    unpriced
+   │  ├─ total price = unpriced
+   │  │  ├─ why  = no rate spec for these tokens in the installed brain packages; a rate is never guessed
+   │  │  ├─ held = every token count above is measured; only the $ is absent
+   │  │  └─ lift = a brain package version whose spec covers these models
+   │  ├─ models = claude-demo
+   │  └─ context.per-call
+   │     ├─ median = 400
+   │     └─ peak   = 600
+   │
+   ├─ inventory (context at the last call, by category)
+   │  └─ tool.result              1,000  100.0%  [apportioned]
+   │     ├─ Bash · git.repo.test                 710   71.0% of tool.result
+   │     ├─ Read                                 160   16.0%
+   │     ├─ Grep                                  60    6.0%
+   │     └─ (2 more)                              70    7.0%
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  └─ (none)
+   │
+   └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
+      └─ (no target)
+"
+`;
+
+exports[`formatTokenSpendTree given: [case2] a corpus of two read, one skipped, with a rebase when: [t0] the tree is rendered then: the render matches the snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcripts (3)
+   │  ├─ matched = 3 · metered = 2 · skipped = 1
+   │  ├─ chosen by = glob
+   │  │  ├─ /p/one.jsonl
+   │  │  ├─ /p/two.jsonl
+   │  │  └─ /p/three.jsonl (skipped · unmetered)
+   │  ├─ calls = 4
+   │  └─ rebases = 1
+   │     └─ call 12 · compaction · 900 → 300 · in two.jsonl
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            10    0.6%    unpriced
+   │  ├─ cache.read      =         1,000   64.5%    unpriced
+   │  ├─ cache.write.5m  =           500   32.3%    unpriced
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =            40    2.6%    unpriced
+   │  ├─ total price = unpriced
+   │  │  ├─ why  = no rate spec for these tokens in the installed brain packages; a rate is never guessed
+   │  │  ├─ held = every token count above is measured; only the $ is absent
+   │  │  └─ lift = a brain package version whose spec covers these models
+   │  ├─ models = claude-demo
+   │  └─ context.per-call
+   │     ├─ median = 400
+   │     └─ peak   = 600
+   │
+   ├─ inventory (context at the last call, by category)
+   │  └─ tool.result              1,000  100.0%  [apportioned]  (p10 22.0% · p50 43.0% · p90 61.0%)
+   │     ├─ Bash · git.repo.test                 710   71.0% of tool.result
+   │     ├─ Read                                 160   16.0%
+   │     ├─ Grep                                  60    6.0%
+   │     └─ (2 more)                              70    7.0%
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  └─ (none)
+   │
+   ├─ skipped (1)
+   │  └─ unmetered (1)
+   │     └─ /p/three.jsonl
+   │
+   └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
+      └─ (no target)
+"
+`;
+
+exports[`formatTokenSpendTree given: [case3] a transcript with two subagents when: [t0] the tree is rendered then: the render matches the snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = <transcript>
+   │  ├─ chosen by = path
+   │  ├─ calls = 4
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            10    0.6%    unpriced
+   │  ├─ cache.read      =         1,000   64.5%    unpriced
+   │  ├─ cache.write.5m  =           500   32.3%    unpriced
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =            40    2.6%    unpriced
+   │  ├─ total price = unpriced
+   │  │  ├─ why  = no rate spec for these tokens in the installed brain packages; a rate is never guessed
+   │  │  ├─ held = every token count above is measured; only the $ is absent
+   │  │  └─ lift = a brain package version whose spec covers these models
+   │  ├─ models = claude-demo
+   │  └─ context.per-call
+   │     ├─ median = 400
+   │     └─ peak   = 600
+   │
+   ├─ inventory (context at the last call, by category)
+   │  └─ tool.result              1,000  100.0%  [apportioned]
+   │     ├─ Bash · git.repo.test                 710   71.0% of tool.result
+   │     ├─ Read                                 160   16.0%
+   │     ├─ Grep                                  60    6.0%
+   │     └─ (2 more)                              70    7.0%
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  └─ (none)
+   │
+   ├─ subagents (2, their own spend)
+   │  ├─ /p/one/subagents/agent-a.jsonl
+   │  │  ├─ calls = 3
+   │  │  ├─ tokens = 1,200
+   │  │  └─ price = unpriced
+   │  └─ /p/one/subagents/agent-b.jsonl
+   │     ├─ calls = 1
+   │     ├─ tokens = 400
+   │     └─ price = unpriced
+   │
+   └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
+      └─ (no target)
+"
+`;
+
+exports[`formatTokenSpendTree given: [case4] twelve repaid rows, more than the section shows when: [t0] the tree is rendered then: the render matches the snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = <transcript>
+   │  ├─ chosen by = path
+   │  ├─ calls = 4
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            10    0.6%    unpriced
+   │  ├─ cache.read      =         1,000   64.5%    unpriced
+   │  ├─ cache.write.5m  =           500   32.3%    unpriced
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =            40    2.6%    unpriced
+   │  ├─ total price = unpriced
+   │  │  ├─ why  = no rate spec for these tokens in the installed brain packages; a rate is never guessed
+   │  │  ├─ held = every token count above is measured; only the $ is absent
+   │  │  └─ lift = a brain package version whose spec covers these models
+   │  ├─ models = claude-demo
+   │  └─ context.per-call
+   │     ├─ median = 400
+   │     └─ peak   = 600
+   │
+   ├─ inventory (context at the last call, by category)
+   │  └─ tool.result              1,000  100.0%  [apportioned]
+   │     ├─ Bash · git.repo.test                 710   71.0% of tool.result
+   │     ├─ Read                                 160   16.0%
+   │     ├─ Grep                                  60    6.0%
+   │     └─ (2 more)                              70    7.0%
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ tool.result · tool-1     unpriced   15.4%      1.2k tok
+   │  │  └─ read unpriced (1.2k) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-2     unpriced   14.1%      1.1k tok
+   │  │  └─ read unpriced (1.1k) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-3     unpriced   12.8%      1.0k tok
+   │  │  └─ read unpriced (1.0k) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-4     unpriced   11.5%       900 tok
+   │  │  └─ read unpriced (900) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-5     unpriced   10.3%       800 tok
+   │  │  └─ read unpriced (800) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-6     unpriced    9.0%       700 tok
+   │  │  └─ read unpriced (700) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-7     unpriced    7.7%       600 tok
+   │  │  └─ read unpriced (600) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-8     unpriced    6.4%       500 tok
+   │  │  └─ read unpriced (500) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-9     unpriced    5.1%       400 tok
+   │  │  └─ read unpriced (400) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · tool-10    unpriced    3.8%       300 tok
+   │  │  └─ read unpriced (300) · write.5m $0.00 (0) · write.1h $0.00 (0) · input $0.00 (0)
+   │  └─ (2 more, 3.8% together)
+   │
+   └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
+      └─ (no target)
+"
+`;
