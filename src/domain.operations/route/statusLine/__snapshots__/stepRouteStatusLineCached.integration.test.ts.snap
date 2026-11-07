@@ -29,10 +29,10 @@ exports[`stepRouteStatusLineCached.integration given: [case9] a seat whose route
 "BadRequestError: multiple routes bound to this branch. use --route to disambiguate
 
 {
-  "branch": "vlad/test-statusline-bind",
+  "branch": "human/test-statusline-bind",
   "flagFiles": [
-    "$TEMP/my-route-other/.route/.bind.vlad.test-statusline-bind.flag",
-    "$TEMP/my-route/.route/.bind.vlad.test-statusline-bind.flag"
+    "$TEMP/my-route-other/.route/.bind.human.test-statusline-bind.flag",
+    "$TEMP/my-route/.route/.bind.human.test-statusline-bind.flag"
   ]
 }"
 `;

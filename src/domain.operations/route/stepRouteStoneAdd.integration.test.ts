@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
@@ -208,6 +209,33 @@ describe('stepRouteStoneAdd.integration', () => {
         expect(result.emit).toBeNull();
       });
     });
+
+    when(
+      '[t2] the stone path holds a dir, which the stone scan does not list',
+      () => {
+        then(
+          'the exclusive write refuses with the path and the fix',
+          async () => {
+            await fs.mkdir(path.join(tempDir, '2.criteria.stone'));
+            const error = await getError(
+              stepRouteStoneAdd({
+                stone: '2.criteria',
+                source: '@stdin',
+                stdin: 'criteria content',
+                route: tempDir,
+                mode: 'apply',
+              }),
+            );
+
+            expect(error).toBeInstanceOf(BadRequestError);
+            expect(error.message).toContain('stone path already taken');
+            expect(
+              error.message.split(tempDir).join('$ROUTE'),
+            ).toMatchSnapshot();
+          },
+        );
+      },
+    );
   });
 
   given('[case5] invalid stone name', () => {
@@ -240,6 +268,7 @@ describe('stepRouteStoneAdd.integration', () => {
 
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('numeric prefix');
+        expect(error.message).toMatchSnapshot();
       });
     });
 
@@ -257,6 +286,7 @@ describe('stepRouteStoneAdd.integration', () => {
 
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('alpha segment');
+        expect(error.message).toMatchSnapshot();
       });
     });
   });
@@ -276,6 +306,8 @@ describe('stepRouteStoneAdd.integration', () => {
 
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('route not found');
+        expect(error.message).toContain('rhx route.bind.get');
+        expect(error.message).toMatchSnapshot();
       });
     });
   });

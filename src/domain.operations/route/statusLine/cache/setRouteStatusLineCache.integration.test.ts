@@ -32,7 +32,7 @@ describe('setRouteStatusLineCache.integration', () => {
       const out = useBeforeAll(async () => {
         const cacheDir = path.join(scene.dir, 'case1', 'nested');
         const cachePath = path.join(cacheDir, 'branch=main.json');
-        setRouteStatusLineCache({ cachePath, record: RECORD });
+        await setRouteStatusLineCache({ cachePath, record: RECORD });
         return { cachePath, names: fs.readdirSync(cacheDir) };
       });
 
@@ -52,15 +52,22 @@ describe('setRouteStatusLineCache.integration', () => {
   });
 
   given('[case2] a dir where the cache file goes, so the rename faults', () => {
+    const occupied = useBeforeAll(async () => {
+      const cacheDir = path.join(scene.dir, 'case2');
+      const cachePath = path.join(cacheDir, 'branch=main.json');
+      fs.mkdirSync(path.join(cachePath, 'occupant'), { recursive: true });
+      return { cacheDir, cachePath };
+    });
+
     when('[t0] a record is written', () => {
       const out = useBeforeAll(async () => {
-        const cacheDir = path.join(scene.dir, 'case2');
-        const cachePath = path.join(cacheDir, 'branch=main.json');
-        fs.mkdirSync(path.join(cachePath, 'occupant'), { recursive: true });
         const error = await getError(async () =>
-          setRouteStatusLineCache({ cachePath, record: RECORD }),
+          setRouteStatusLineCache({
+            cachePath: occupied.cachePath,
+            record: RECORD,
+          }),
         );
-        return { error, names: fs.readdirSync(cacheDir) };
+        return { error, names: fs.readdirSync(occupied.cacheDir) };
       });
 
       then('it throws the fs fault to the caller', () => {

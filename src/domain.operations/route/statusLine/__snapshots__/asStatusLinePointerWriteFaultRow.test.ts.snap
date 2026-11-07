@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStatusLinePointerWriteFaultRow given: [case1] a permission fault names its code, the path, and the fix when: [t0] the pointer write fault row is rendered then: it names the code, the path, and the fix 1`] = `"[route.status.line] fault: pointer write failed (EACCES) at .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=feat.x.route. fix: repair the cause, then rhx route.drive"`;
+
+exports[`asStatusLinePointerWriteFaultRow given: [case2] a full disk names its code, the path, and the fix when: [t0] the pointer write fault row is rendered then: it names the code, the path, and the fix 1`] = `"[route.status.line] fault: pointer write failed (ENOSPC) at .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=feat.x.route. fix: repair the cause, then rhx route.drive"`;

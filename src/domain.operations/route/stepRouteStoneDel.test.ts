@@ -171,6 +171,7 @@ describe('stepRouteStoneDel', () => {
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('route not found');
+        expect(error.message).toMatchSnapshot();
       });
     });
   });
@@ -477,6 +478,10 @@ describe('stepRouteStoneDel', () => {
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('at least one --stone required');
+        // the bag names the temp route, whose path differs per run
+        expect(
+          error.message.split(tempDir).join('<tempDir>'),
+        ).toMatchSnapshot();
       });
     });
   });

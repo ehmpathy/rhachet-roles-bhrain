@@ -111,7 +111,7 @@ describe('driver.init.status-line-survives-enroll.acceptance', () => {
       then('settings.of.repo.json holds the route status line', () => {
         expect(
           getBrainDirSettings(scene).repoLayer.statusLine?.command,
-        ).toContain('routeStatusLine');
+        ).toContain('route.status.line.sh');
       });
     });
 
@@ -141,7 +141,7 @@ describe('driver.init.status-line-survives-enroll.acceptance', () => {
       then('the status line survives in settings.of.repo.json', () => {
         expect(
           getBrainDirSettings(scene).repoLayer.statusLine?.command,
-        ).toContain('routeStatusLine');
+        ).toContain('route.status.line.sh');
       });
     });
   });

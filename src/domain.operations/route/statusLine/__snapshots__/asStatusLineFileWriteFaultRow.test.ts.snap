@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStatusLineFileWriteFaultRow given: [case1] an fs fault names its code, the route, and the fix when: [t0] the write fault row is rendered then: it names the cause, the route, the stale read, and the fix 1`] = `"[route.status.line] fault: status file write failed (ENOSPC) for .behavior/v2026_10_26.x, the line reads stale, or unknown if never written, until the next write. fix: repair the cause, then rhx route.drive"`;
+
+exports[`asStatusLineFileWriteFaultRow given: [case2] a corrupt ledger names itself, the route, and the fix when: [t0] the write fault row is rendered then: it names the cause, the route, the stale read, and the fix 1`] = `"[route.status.line] fault: status file write failed (corrupt ledger) for .behavior/v2026_10_26.x, the line reads stale, or unknown if never written, until the next write. fix: repair the cause, then rhx route.drive"`;
