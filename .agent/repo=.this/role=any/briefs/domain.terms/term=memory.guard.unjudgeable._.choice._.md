@@ -10,8 +10,8 @@ term.synonyms.forbidden:
 
 ## .what
 a hook payload the guard cannot judge: not json, or json with no `tool_name`, or unreadable on
-stdin. the field holds the cause as one phrase. an unjudgeable call proceeds with exit 1 and the
-fault line; it is never blocked.
+stdin. the field holds the cause as one phrase. an unjudgeable call proceeds, exit 0; it is never
+blocked.
 
 ## .refs
 - src/domain.operations/memory/asToolInvocation.ts   # `unjudgeable: string | null`
