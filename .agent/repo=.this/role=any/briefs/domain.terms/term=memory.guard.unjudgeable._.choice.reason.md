@@ -14,7 +14,7 @@ it could not do, never what the sender did wrong.
 
 - `asToolInvocation.test.ts`: `{}`, `[]`, `null`, a renamed key each give
   `unjudgeable: 'tool payload has no tool_name'`; non-json gives `'tool payload is not json'`
-- the outcome is ruled: a guard that cannot judge never halts (fulcrum F1, exit 1)
+- the outcome: a guard that cannot judge never halts; the call passes, exit 0
 
 ## .disputes
 

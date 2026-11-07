@@ -15,9 +15,9 @@ stands before a tool call and decides. `memory` qualifies it, so the two never c
 ## .evidence
 
 - the skill, the hook command, and the cli all carry the name (`memory.guard.sh`,
-  `LEARNER_MEMORY_GUARD_HOOK_COMMAND`, `memoryGuard`)
+  `rhx memory.guard --mode hook`, `memoryGuard`)
 - the rule it enforces: `rule.forbid.native-memory` (learner)
-- the invariant this route set: a guard that cannot judge never halts (fulcrum F1, ruled exit 1)
+- the invariant: a payload the guard cannot judge never halts; it passes, exit 0
 
 ## .disputes
 

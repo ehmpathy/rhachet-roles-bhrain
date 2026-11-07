@@ -229,14 +229,12 @@ describe('memoryGuard (integration)', () => {
     when('[t0] the guard runs', () => {
       const result = runGuardRaw('{ not json');
 
-      then('it proceeds with exit code 1, never 2 (does not halt)', () => {
-        expect(result.exitCode).toEqual(1);
+      then('it fails open with exit code 0, never 2 (does not halt)', () => {
+        expect(result.exitCode).toEqual(0);
       });
 
-      then('one line names the blind spot (snapshot)', () => {
-        expect(result.stderr).toEqual(
-          '📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues\n',
-        );
+      then('the fail-open variant matches snapshot (silent, no stderr)', () => {
+        expect(result.stderr).toEqual('');
         expect(result).toMatchSnapshot();
       });
     });
@@ -246,14 +244,12 @@ describe('memoryGuard (integration)', () => {
     when('[t0] the guard runs', () => {
       const result = runGuard({});
 
-      then('it proceeds with exit code 1, never 2 (does not halt)', () => {
-        expect(result.exitCode).toEqual(1);
+      then('it fails open with exit code 0, never 2 (does not halt)', () => {
+        expect(result.exitCode).toEqual(0);
       });
 
-      then('one line names the blind spot (snapshot)', () => {
-        expect(result.stderr).toEqual(
-          '📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues\n',
-        );
+      then('the fail-open variant matches snapshot (silent, no stderr)', () => {
+        expect(result.stderr).toEqual('');
         expect(result).toMatchSnapshot();
       });
     });

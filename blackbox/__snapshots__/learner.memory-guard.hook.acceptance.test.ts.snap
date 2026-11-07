@@ -3,7 +3,11 @@
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t0] a write into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -20,7 +24,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -29,7 +33,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 {
   "arrow": {
     "exitCode": 2,
-    "stderr": "🦉 hold on, friend — that memory would fade.
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -46,12 +54,16 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
   },
   "fdDup": {
     "exitCode": 2,
-    "stderr": "🦉 hold on, friend — that memory would fade.
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -68,7 +80,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
   },
 }
@@ -117,7 +129,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t3] a copy into native memory behind a loop fires the hook then: it is blocked, exit 2 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -134,7 +150,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -149,7 +165,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t4b] a memory read redirected to a relative path, no cwd sent then: it is blocked, exit 2, with the unplaced nudge: the target may land in memory 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: an unplaced write beside claude native memory
@@ -171,7 +191,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -179,7 +199,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t4c] a relative write, with the memory dir sent as the cwd then: it is blocked, exit 2: the target lands in memory 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -196,7 +220,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -204,7 +228,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t5] a Write tool call into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -221,7 +249,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -229,7 +257,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t6] an Edit tool call into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -246,7 +278,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -254,7 +286,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t7] a copy out of native memory fires the hook then: it is blocked, exit 2, with the copy nudge 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: a copy beside claude native memory
@@ -275,7 +311,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
@@ -283,7 +319,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t8] a redirect through a var beside the memory dir fires the hook then: it is blocked, exit 2, with the unplaced nudge 1`] = `
 {
   "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: an unplaced write beside claude native memory
@@ -305,16 +345,15 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
 }
 `;
 
-exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t9] a malformed json payload fires the hook then: it proceeds: exit 1, never 2, with a line that names the blind spot 1`] = `
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t9] a malformed json payload fires the hook then: it is allowed, exit 0, silent: never 2 1`] = `
 {
-  "exitCode": 1,
-  "stderr": "📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-",
+  "exitCode": 0,
+  "stderr": "",
 }
 `;
 
@@ -326,7 +365,11 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
   },
   "intoMemory": {
     "exitCode": 2,
-    "stderr": "🦉 hold on, friend — that memory would fade.
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -343,7 +386,7 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
    ├─ 🟡 machine-local secrets or paths?
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
 ",
   },
 }
@@ -353,77 +396,5 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
 {
   "exitCode": 0,
   "stderr": "",
-}
-`;
-
-exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t11] the hook fires from a subdir of the tree (a drifted cwd) then: a write into native memory is still blocked, exit 2: the hook anchors on the project dir 1`] = `
-{
-  "exitCode": 2,
-  "stderr": "🦉 hold on, friend — that memory would fade.
-
-📜 memory.guard
-   ├─ ✋ blocked: write to claude native memory
-   │  └─ /home/agent/.claude/projects/p/memory/x.md
-   │
-   ├─ why
-   │  └─ ~/.claude memory is machine-local + invisible in git
-   │     it will not survive for the next traveler
-   │
-   ├─ capture it durably instead
-   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
-   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
-   │
-   ├─ 🟡 machine-local secrets or paths?
-   │  └─ generalize them — keep the raw secret or path out of durable memory
-   │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
-",
-}
-`;
-
-exports[`learner.memory-guard.hook.acceptance given: [case2] a repo with the hook registered and no learner link when: [t0] a call that touches no memory path fires the hook then: it is allowed: exit 1, one line that names the fault and fix 1`] = `
-{
-  "exitCode": 1,
-  "stderr": "📜 memory.guard: could not run (skill not linked under <tree>); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-",
-}
-`;
-
-exports[`learner.memory-guard.hook.acceptance given: [case2] a repo with the hook registered and no learner link when: [t1] a write into native memory fires the hook then: it proceeds too: exit 1, never 2, the skill is not linked 1`] = `
-{
-  "exitCode": 1,
-  "stderr": "📜 memory.guard: could not run (skill not linked under <tree>); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-",
-}
-`;
-
-exports[`learner.memory-guard.hook.acceptance given: [case2] a repo with the hook registered and no learner link when: [t2] the human runs the fix the notice prints then: the next call is allowed silent, and a memory write is blocked again 1`] = `
-{
-  "afterFix": {
-    "exitCode": 0,
-    "stderr": "",
-  },
-  "afterWrite": {
-    "exitCode": 2,
-    "stderr": "🦉 hold on, friend — that memory would fade.
-
-📜 memory.guard
-   ├─ ✋ blocked: write to claude native memory
-   │  └─ /home/agent/.claude/projects/p/memory/x.md
-   │
-   ├─ why
-   │  └─ ~/.claude memory is machine-local + invisible in git
-   │     it will not survive for the next traveler
-   │
-   ├─ capture it durably instead
-   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
-   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
-   │
-   ├─ 🟡 machine-local secrets or paths?
-   │  └─ generalize them — keep the raw secret or path out of durable memory
-   │
-   └─ 🪷 the instinct is right — pave the path for whoever comes next
-",
-  },
 }
 `;

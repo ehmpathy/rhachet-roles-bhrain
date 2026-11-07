@@ -1,12 +1,5 @@
 import { Role } from 'rhachet';
 
-import { MEMORY_GUARD_TOOLS } from '@src/domain.operations/memory/MEMORY_GUARD_TOOLS';
-
-import {
-  LEARNER_MEMORY_GUARD_HOOK_BUDGET,
-  LEARNER_MEMORY_GUARD_HOOK_COMMAND,
-} from './getLearnerRoleHookCommand';
-
 /**
  * .what = learner role definition
  * .why = enables durable retention of knowledge via lesson externalization
@@ -28,16 +21,15 @@ export const ROLE_LEARNER: Role = Role.build({
   hooks: {
     onBrain: {
       // onTool: halt writes to claude native memory, redirect to durable capture.
-      // the command fails open on any guard fault; see LEARNER_MEMORY_GUARD_HOOK_COMMAND
+      // registered as a skill invoked via `rhx <skill> --mode hook` (same pattern
+      // as the driver role's route.bounce) — the memory.guard.sh wrapper captures
+      // stdin and hands it to node on node's own stdin, never via an env var
       onTool: [
         {
-          command: LEARNER_MEMORY_GUARD_HOOK_COMMAND,
-          timeout: LEARNER_MEMORY_GUARD_HOOK_BUDGET,
+          command: './node_modules/.bin/rhx memory.guard --mode hook',
+          timeout: 'PT5S',
           filter: {
-            what: [
-              ...MEMORY_GUARD_TOOLS.file,
-              ...MEMORY_GUARD_TOOLS.shell,
-            ].join('|'),
+            what: 'Write|Edit|Bash',
             when: 'before',
           },
         },

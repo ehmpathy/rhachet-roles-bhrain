@@ -87,11 +87,6 @@ a guard halts the common ways knowledge lands in native memory, but it cannot ca
 so do not read the guard's silence as "this was fine": the discipline is yours. when you mean to
 persist a lesson, redirect it to `.agent/` by hand, whether or not a guard stops you.
 
-a guard that cannot run — skill not linked, cli absent, node absent, a load fault, a timeout —
-never halts the call. it lets the call through and prints one line that names the fault and its
-fix (`📜 memory.guard: could not run (…); call allowed. fix: …`). while that line shows, no guard
-stands between you and native memory, so the discipline above is the only one in force.
-
 ## .enforcement
 
 write to `~/.claude/**/memory/**` or `~/.claude/**/MEMORY.md` = **blocker** (halted by the

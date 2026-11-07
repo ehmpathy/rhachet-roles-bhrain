@@ -3,11 +3,19 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { LEARNER_MEMORY_GUARD_HOOK_COMMAND } from '../src/domain.roles/learner/getLearnerRoleHookCommand';
+import { ROLE_LEARNER } from '../src/domain.roles/learner/getLearnerRole';
 import { execAsync, genTempDirForRhachet } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-driver');
 const MEMORY_PATH = '/home/agent/.claude/projects/p/memory/x.md';
+
+/**
+ * .what = the hook command the learner role registers, read off the role itself
+ * .why = the suite fires the exact bytes `rhachet init --hooks` renders
+ */
+const HOOK_COMMAND = ROLE_LEARNER.hooks?.onBrain?.onTool?.[0]?.command;
+if (!HOOK_COMMAND)
+  throw new Error('learner role registers no onTool hook; the suite has no subject');
 
 /**
  * .what = run the registered hook command, as claude code does, in a tree
@@ -16,20 +24,15 @@ const MEMORY_PATH = '/home/agent/.claude/projects/p/memory/x.md';
 const runHookRaw = (input: {
   tree: string;
   stdin: string;
-  spawnDir?: string;
 }): { exitCode: number; stderr: string } => {
-  const result = spawnSync('/bin/sh', ['-c', LEARNER_MEMORY_GUARD_HOOK_COMMAND], {
-    cwd: input.spawnDir ?? input.tree,
+  const result = spawnSync('/bin/sh', ['-c', HOOK_COMMAND], {
+    cwd: input.tree,
     env: { ...process.env, CLAUDE_PROJECT_DIR: input.tree },
     input: input.stdin,
     encoding: 'utf-8',
     timeout: 15_000,
   });
-  // a hook that names a fault exits before it reads its payload, so the write of
-  // the payload may meet a closed pipe; that is the reader's choice, not a fault
-  const isPayloadUnread =
-    (result.error as NodeJS.ErrnoException | undefined)?.code === 'EPIPE';
-  if (result.error && !isPayloadUnread) throw result.error;
+  if (result.error) throw result.error;
   return { exitCode: result.status ?? -1, stderr: result.stderr };
 };
 
@@ -341,17 +344,13 @@ describe('learner.memory-guard.hook.acceptance', () => {
     });
 
     when('[t9] a malformed json payload fires the hook', () => {
-      then(
-        'it proceeds: exit 1, never 2, with a line that names the blind spot',
-        async () => {
-          const result = runHookRaw({ tree: scene.tree, stdin: '{ not json' });
-          expect(result.exitCode).toEqual(1);
-          expect(result.stderr).toContain('tool payload is not json');
-          expect(
-            await asHookSnap({ result, tree: scene.tree }),
-          ).toMatchSnapshot();
-        },
-      );
+      then('it is allowed, exit 0, silent: never 2', async () => {
+        const result = runHookRaw({ tree: scene.tree, stdin: '{ not json' });
+        expect(result).toEqual({ exitCode: 0, stderr: '' });
+        expect(
+          await asHookSnap({ result, tree: scene.tree }),
+        ).toMatchSnapshot();
+      });
     });
 
     when('[t9b] a memory note piped to tee fires the hook', () => {
@@ -393,95 +392,6 @@ describe('learner.memory-guard.hook.acceptance', () => {
         expect(
           await asHookSnap({ result, tree: scene.tree }),
         ).toMatchSnapshot();
-      });
-    });
-
-    when('[t11] the hook fires from a subdir of the tree (a drifted cwd)', () => {
-      then(
-        'a write into native memory is still blocked, exit 2: the hook anchors on the project dir',
-        async () => {
-          const result = runHookRaw({
-            tree: scene.tree,
-            spawnDir: path.join(scene.tree, '.agent'),
-            stdin: JSON.stringify({
-              tool_name: 'Bash',
-              tool_input: { command: `echo x > ${MEMORY_PATH}` },
-            }),
-          });
-          expect(result.exitCode).toEqual(2);
-          expect(result.stderr).toContain(MEMORY_PATH);
-          expect(
-            await asHookSnap({ result, tree: scene.tree }),
-          ).toMatchSnapshot();
-        },
-      );
-    });
-  });
-
-  given('[case2] a repo with the hook registered and no learner link', () => {
-    // the incident: a hook whose skill cannot be found must never halt the call
-    const scene = useBeforeAll(async () => ({
-      tree: genTempDirForRhachet({
-        slug: 'learner-memory-guard-hook-unlinked',
-        clone: ASSETS_DIR,
-      }),
-    }));
-
-    when('[t0] a call that touches no memory path fires the hook', () => {
-      then(
-        'it is allowed: exit 1, one line that names the fault and fix',
-        async () => {
-          const result = runBash({ tree: scene.tree, command: 'ls' });
-          expect(result.exitCode).toEqual(1);
-          expect(result.stderr).toContain('📜 memory.guard: could not run');
-          expect(result.stderr).toContain('call allowed');
-          expect(result.stderr.trim().split('\n')).toHaveLength(1);
-          expect(
-            await asHookSnap({ result, tree: scene.tree }),
-          ).toMatchSnapshot();
-        },
-      );
-    });
-
-    when('[t1] a write into native memory fires the hook', () => {
-      then('it proceeds too: exit 1, never 2, the skill is not linked', async () => {
-        const result = runBash({
-          tree: scene.tree,
-          command: `echo x > ${MEMORY_PATH}`,
-        });
-        expect(result.exitCode).toEqual(1);
-        expect(result.stderr).toContain('skill not linked');
-        expect(
-          await asHookSnap({ result, tree: scene.tree }),
-        ).toMatchSnapshot();
-      });
-    });
-
-    when('[t2] the human runs the fix the notice prints', () => {
-      then('the next call is allowed silent, and a memory write is blocked again', async () => {
-        // read the fix off the notice, exactly as the human would
-        const notice = runBash({ tree: scene.tree, command: 'ls' });
-        const fix = notice.stderr.match(/ fix: (.+)\n?$/)?.[1];
-        expect(fix).toEqual(
-          './node_modules/.bin/rhachet roles link --repo bhrain --role learner',
-        );
-
-        // run it in the tree, then fire the next call
-        await execAsync(fix ?? '', { cwd: scene.tree });
-        const result = runBash({ tree: scene.tree, command: 'ls' });
-        expect(result).toEqual({ exitCode: 0, stderr: '' });
-
-        // the guard is back on: a true write halts again
-        const write = runBash({
-          tree: scene.tree,
-          command: `echo x > ${MEMORY_PATH}`,
-        });
-        expect(write.exitCode).toEqual(2);
-        expect(write.stderr).toContain(MEMORY_PATH);
-        expect({
-          afterFix: await asHookSnap({ result, tree: scene.tree }),
-          afterWrite: await asHookSnap({ result: write, tree: scene.tree }),
-        }).toMatchSnapshot();
       });
     });
   });

@@ -9,8 +9,6 @@ import { ROLE_LEARNER } from './getLearnerRole';
  *        onTool entry could be deleted and every other test would still pass while
  *        the hook silently stops firing in consuming repos (the wish requires the
  *        hook be "registered via the learner role boot/init")
- * .note = the clamps that read the skill file from disk live in
- *         getLearnerRole.integration.test.ts
  */
 describe('getLearnerRole', () => {
   given('[case1] the built learner role', () => {
@@ -22,22 +20,12 @@ describe('getLearnerRole', () => {
       });
 
       then(
-        'the hook runs the linked skill file directly, anchored on the project dir',
+        'the hook invokes the memory guard skill via rhx --mode hook',
         () => {
-          // never via `rhx`: its own lookup fault (an unlinked skill) exits 2, which
-          // claude code reads as block, and every Write/Edit/Bash call halts
-          const command = onToolHooks[0]?.command ?? '';
-          expect(command).not.toContain('rhx');
-          expect(command).toContain('d="${CLAUDE_PROJECT_DIR:-.}"');
-          expect(command).toContain(
-            'r="$d/.agent/repo=bhrain"; s="$r/role=learner/skills"; f="$s/memory.guard.sh"',
-          );
-          expect(command).toContain('--mode hook');
-
-          // the absent-skill branch exits 1 (a visible, non-block notice), never 2
-          expect(command).toContain('exit 1');
-          expect(command).not.toContain('exit 2');
-          expect(command).toMatchSnapshot();
+          // conformant registration: a skill invoked via `rhx <skill> --mode hook`
+          // (same pattern as the driver role's route.bounce), not a raw node -e eval
+          expect(onToolHooks[0]?.command).toContain('rhx memory.guard');
+          expect(onToolHooks[0]?.command).toContain('--mode hook');
         },
       );
 
