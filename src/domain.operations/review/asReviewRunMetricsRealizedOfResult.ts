@@ -10,7 +10,10 @@ import type { ReviewRunMetricsRealizedOfResult } from '@src/domain.objects/Revie
  *        others (`0.wish`: never under-report)
  */
 export const asReviewRunMetricsRealizedOfResult = (input: {
-  realized: Omit<ReviewRunMetricsRealized, 'compiled' | 'supply' | 'runaways'>;
+  realized: Omit<
+    ReviewRunMetricsRealized,
+    'compiled' | 'supply' | 'runaways' | 'meet'
+  >;
   /**
    * false where any ask was billed with no reported spend — a reply that ran to its output
    * limit with no reported output count, or a fault a retry swallowed that may have been billed

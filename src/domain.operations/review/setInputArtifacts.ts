@@ -5,6 +5,7 @@ import type { ReviewRunArgsRecord } from '@src/domain.objects/Reviewer/ReviewRun
 import type { ReviewRunMetricsCompiled } from '@src/domain.objects/Reviewer/ReviewRunMetricsCompiled';
 import { asPromptSectionChars } from '@src/domain.operations/review/asPromptSectionChars';
 import { asRunArtifactPath } from '@src/domain.operations/review/asRunArtifactPath';
+import { setReviewRunArgsArtifact } from '@src/domain.operations/review/setReviewRunArgsArtifact';
 
 /**
  * .what = writes input artifacts to log directory for auditability
@@ -34,14 +35,10 @@ export const setInputArtifacts = async (input: {
   await fs.mkdir(input.logDir, { recursive: true });
 
   // write input.args.json
-  const argsPath = asRunArtifactPath({ dir: input.logDir, artifact: 'args' });
-  const argsRecord: ReviewRunArgsRecord = {
-    args: input.args,
-    scope: input.scope,
-    metrics: input.metrics,
-  };
-  const argsContent = JSON.stringify(argsRecord, null, 2);
-  await fs.writeFile(argsPath, argsContent, 'utf-8');
+  const { argsPath } = await setReviewRunArgsArtifact({
+    logDir: input.logDir,
+    record: { args: input.args, scope: input.scope, metrics: input.metrics },
+  });
 
   // write input.prompt.md
   const promptPath = asRunArtifactPath({

@@ -50,7 +50,7 @@ reaches past it — and offered **a rename of the shipped `head` field** as the 
 two options.
 
 that offer was wrong, and a term file one directory away already said so.
-`term=prompt.cache.shared-prefix._.choice._.md` had settled that `promptHeadStatic` and
+`term=prompt.cache.shared-prefix._.choice._.md` had settled that `promptHead` and
 `shared prefix` are two concepts — one declarative and per-prompt, one measured and per-pair —
 and it listed `static head` as a forbidden synonym. the file was in the branch's own git
 status as added.

@@ -38,7 +38,7 @@ const DELAYS_OF_TRANSIENT_BRAIN_RETRY = [{ seconds: 10 }, { seconds: 30 }];
  */
 export const getOneReviewAnswerOfBrain = async (
   input: {
-    /** the static head, written as the brief the call rides on (the replica pin) */
+    /** the static head, written as the brief the call rides on (the system prompt) */
     promptHeadBrief: Artifact<typeof GitFile>;
     /** the variable tail of the prompt */
     prompt: string;
@@ -68,7 +68,7 @@ export const getOneReviewAnswerOfBrain = async (
               operation: async () =>
                 await context.brain.brain.choice.ask({
                   // 🔴 the shared constructor, never a literal — a prime poke must send a
-                  //    BYTE-IDENTICAL system prompt to reach this round's replica, and the
+                  //    BYTE-IDENTICAL system prompt to warm this round's prefix, and the
                   //    two call sites cannot see each other (`asRoleOfSharedPrefix`)
                   role: asRoleOfSharedPrefix({ prefix: input.promptHeadBrief }),
                   prompt: input.prompt,

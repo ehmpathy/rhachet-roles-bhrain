@@ -7,8 +7,8 @@ exports[`review.refs-single.acceptance given: [case1] single ref file provided t
    │  ├─ refs: 1
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 1,809
+   │  ├─ estimate: 1,850
    │  └─ context: 0.2%
    └─ cost
-      └─ estimate: $0.000904700"
+      └─ estimate: $0.000925000"
 `;

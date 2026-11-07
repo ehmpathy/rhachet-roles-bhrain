@@ -53,25 +53,39 @@ const REPEATABLY_CONFIG_OF_LIVE_CACHE = {
  *            a mock here would measure our own imagination of a cache, which is
  *            precisely the instrument the defect above slipped past.
  *
- * .how = three real reviews per attempt, over two temp trees:
+ * .how = three real reviews per attempt, over two temp trees. the corpus leads the
+ *        prompt and rides the system slot (`asPromptHead`); each lane's rubric trails it.
+ *        so the reuse this proves is the one the layout was built for — two LANES over
+ *        one corpus:
  *
- *          round 1  tree A, chapter1  ⇒ COLD    — its rubric was minted seconds ago
- *          round 2  tree A, chapter2  ⇒ WARM    — same rubric, different target
- *          control  tree B, chapter1  ⇒ COLD    — a DIFFERENT rubric, run last
+ *          round 1  tree A, rubric a  ⇒ COLD    — its corpus was minted seconds ago
+ *          round 2  tree A, rubric b  ⇒ WARM    — a peer lane: other rubric, same corpus
+ *          control  tree B, rubric a  ⇒ COLD    — a DIFFERENT corpus, run last
  *
  *        🔴 the control is what makes this an experiment rather than an anecdote. a
  *        warm round 2 alone could mean the provider serves any large prompt from some
  *        shared pool. only `round 2 WARM beside control COLD` isolates the shared
- *        prefix as the cause.
+ *        prefix as the cause — and the control shares round 1's RUBRIC, so a warm
+ *        control would mean the rubric, not the corpus, bought the read.
  *
- * .note = the rubric carries a per-ATTEMPT marker at byte 0, so every attempt of
+ * .note = the corpus carries a per-ATTEMPT marker at byte 0, so every attempt of
  *         `when.repeatably` mints a prefix the provider has never seen. a marker minted
  *         once at suite scope would leave attempt 2's "cold" round served from attempt
  *         1's cache, and the cold assertion would fail for a reason that is no defect.
+ *
+ * 🟡 .note = rewritten for the corpus-first layout (fulcrum F1). the prior form proved the
+ *         rubric-first reuse — same rubric, new target — which the cure gives up by design,
+ *         so it would read red against a correct prompt.
+ *
+ * 🔴 .note = UNPROVEN AS WRITTEN. these assertions have never executed against a live brain:
+ *         the gate below is set by no ci job, and the route that rewrote them forbids a live
+ *         call. until one run under `BHRAIN_TEST_LIVE_BRAIN_CACHE=1` lands a green, the claim
+ *         rests ONLY on the meter's reads of real guard rounds (`appendix/measurement.after.md`
+ *         of `v2026_11_01.fix-review-input-cacheability`), never on this suite
  */
 
 /**
- * .what = how large the shared rubric is, in chars
+ * .what = how large the shared corpus is, in chars
  * .why = the minimum cacheable prefix is unpublished, and it is NOT small: a live
  *        probe measured a ~5.8k-token prefix serve `cache.get 0`, while 58k served at
  *        99.998%. so this suite sends 240k chars (~60k tokens), a size KNOWN to hit,
@@ -80,7 +94,7 @@ const REPEATABLY_CONFIG_OF_LIVE_CACHE = {
  * .note = it stays well under the brain's context window (200k tokens), so the
  *         `compileReviewPrompt` failfast at 75% is nowhere near.
  */
-const CHARS_OF_RUBRIC = 240_000;
+const CHARS_OF_CORPUS = 240_000;
 
 /**
  * .what = the share of a round's prompt above which it counts as WARM
@@ -92,43 +106,44 @@ const SHARE_OF_WARM = 0.5;
 
 /**
  * .what = the most a COLD round may be served, in tokens
- * .why = 🔴 "cold" means the RUBRIC was not served, never that zero tokens were. the
- *        prompt leads with the review's static instructions, ahead of the rubric and
- *        its marker, and every rubric shares them — so a cold round may be served that
- *        head, one cache block of ~1k tokens. measured 2026-09-26: 1,024 on a round 1
- *        and 1,050 on a control, intermittent. that serve is the shared-prefix layout
- *        at work (`rule.require.name-the-shared-prefix-as-the-cache-anchor`), not a leak.
+ * .why = 🔴 "cold" means the CORPUS was not served, never that zero tokens were. the
+ *        prompt leads with the review's static instructions, ahead of the corpus and
+ *        its marker, and every review shares them — so a cold round may be served that
+ *        static span, one cache block of ~1k tokens. measured 2026-09-26: 1,024 on a
+ *        round 1 and 1,050 on a control, intermittent. that serve is the shared-prefix
+ *        layout at work (`rule.require.name-the-shared-prefix-as-the-cache-anchor`).
  *
- * .note = two blocks is the max: a rubric serve is ~60k tokens, so a head serve and
- *         a rubric serve sit an order of magnitude apart, and the grade cannot confuse them
+ * .note = two blocks is the max: a corpus serve is ~60k tokens, so a static-span serve
+ *         and a corpus serve sit an order of magnitude apart, and the grade cannot
+ *         confuse them
  */
 const TOKENS_OF_COLD_MAX = 2_048;
 
 /**
- * .what = mints a large rubric whose first bytes are unique to this attempt
- * .why = the marker sits at byte 0 of the rubric, so two rubrics diverge right after
- *        the static review head they share, and therefore occupy separate cache entries
- *        under separate affinity keys. that is what lets
- *        the control lane be genuinely cold while it runs seconds after a warm one.
+ * .what = mints a large chapter whose first bytes are unique to this attempt
+ * .why = the marker sits at byte 0 of the corpus, so two corpora diverge right after
+ *        the static instructions they share, and therefore occupy separate cache entries
+ *        under separate affinity keys. that is what lets the control be genuinely cold
+ *        while it runs seconds after a warm one.
  *
  * .note = real english prose, varied per block, rather than one byte repeated. a cache
  *         operates on TOKENS, and a run of identical bytes tokenizes unlike prose — so
  *         filler would measure a regime no review ever sends.
  */
-const genOneLargeRubric = (input: { marker: string }): string => {
-  const head = `# rules · corpus ${input.marker}\n\n`;
+const genOneLargeChapter = (input: { marker: string }): string => {
+  const head = `# chapter 1 · the harbor · ${input.marker}\n\n`;
   const blocks: string[] = [head];
   let chars = head.length;
   let index = 0;
-  while (chars < CHARS_OF_RUBRIC) {
+  while (chars < CHARS_OF_CORPUS) {
     index += 1;
     const block = [
-      `## rule ${index}: a sentence names its own actor`,
+      `## passage ${index}`,
       '',
-      `prose that leaves its subject implied costs every reader a re-read. rule`,
-      `${index} asks the author to name the actor, then the act, so a reviewer`,
-      `grades the claim rather than reconstructs it first. a clause that hides`,
-      `who acted is a nitpick; a claim that cannot be checked at all is a blocker.`,
+      `the tide turned at dawn, and a gull settled on the mast to watch the crew`,
+      `haul crate ${index} aboard. the mate counted aloud; the cook said naught.`,
+      `a decision was reached by the crew, and the course was altered before noon,`,
+      `while the swell was handled badly and the deck was soaked twice over.`,
       '',
     ].join('\n');
     blocks.push(block);
@@ -136,6 +151,16 @@ const genOneLargeRubric = (input: { marker: string }): string => {
   }
   return blocks.join('');
 };
+
+/**
+ * .what = a small rubric, one per lane
+ * .why = the lanes of a level part at their rubric, which trails the corpus; it need not
+ *        be large, since the reuse under test is the corpus ahead of it
+ */
+const genOneRubric = (input: { lane: 'a' | 'b' }): string =>
+  input.lane === 'a'
+    ? '# rule.name-the-actor\n\na sentence names its actor, then the act. a hidden actor is a nitpick.\n'
+    : '# rule.forbid-passive\n\nforbid the passive voice where an active one would serve. a nitpick.\n';
 
 /**
  * .what = seeds one temp tree that `stepReview` can review end to end
@@ -152,34 +177,25 @@ const genOneLargeRubric = (input: { marker: string }): string => {
 const setOneReviewTree = (input: { at: string; marker: string }): void => {
   execSync('git init --quiet', { cwd: input.at });
 
-  const rules = path.join(input.at, '.agent/repo=.this/role=any/briefs/rules');
-  fs.mkdirSync(rules, { recursive: true });
-  fs.writeFileSync(
-    path.join(rules, 'rule.name-the-actor.md'),
-    genOneLargeRubric({ marker: input.marker }),
-  );
+  // one rubric dir per lane, so a round names its lane by its rules glob
+  (['a', 'b'] as const).forEach((lane) => {
+    const rules = path.join(
+      input.at,
+      `.agent/repo=.this/role=any/briefs/rules.${lane}`,
+    );
+    fs.mkdirSync(rules, { recursive: true });
+    fs.writeFileSync(
+      path.join(rules, `rule.lane-${lane}.md`),
+      genOneRubric({ lane }),
+    );
+  });
 
+  // the corpus every lane of the level reviews, unique to this attempt and tree
   const chapters = path.join(input.at, 'chapters');
   fs.mkdirSync(chapters, { recursive: true });
   fs.writeFileSync(
     path.join(chapters, 'chapter1.md'),
-    [
-      '# chapter 1 · the harbor',
-      '',
-      'the tide turned at dawn. a gull settled on the mast and watched the crew',
-      'haul the last crate aboard. nobody spoke until the rope was fast.',
-      '',
-    ].join('\n'),
-  );
-  fs.writeFileSync(
-    path.join(chapters, 'chapter2.md'),
-    [
-      '# chapter 2 · open water',
-      '',
-      'a decision was reached by the crew, and the course was altered before noon.',
-      'the swell was handled badly and the deck was soaked twice over.',
-      '',
-    ].join('\n'),
+    genOneLargeChapter({ marker: input.marker }),
   );
 };
 
@@ -239,7 +255,7 @@ describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
   }));
 
   given(
-    '[case1] two review rounds that share one rubric, beside a control that does not',
+    '[case1] two lanes that share one corpus, beside a control that does not',
     () => {
       when.repeatably(REPEATABLY_CONFIG_OF_LIVE_CACHE)(
         '[t0] all three reviews run in sequence against the live brain',
@@ -259,13 +275,13 @@ describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
 
               const runOneRound = async (input: {
                 tree: string;
-                chapter: string;
+                lane: 'a' | 'b';
                 slug: string;
               }) =>
                 await stepReview(
                   {
-                    rules: '.agent/**/briefs/rules/*.md',
-                    paths: `chapters/${input.chapter}`,
+                    rules: `.agent/**/briefs/rules.${input.lane}/*.md`,
+                    paths: 'chapters/chapter1.md',
                     output: path.join(input.tree, `review.${input.slug}.md`),
                     focus: 'push',
                     goal: 'representative',
@@ -280,18 +296,20 @@ describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
 
               const roundOne = await runOneRound({
                 tree: treeShared,
-                chapter: 'chapter1.md',
+                lane: 'a',
                 slug: 'r1',
               });
+              // a peer lane: another rubric over the same corpus
               const roundTwo = await runOneRound({
                 tree: treeShared,
-                chapter: 'chapter2.md',
+                lane: 'b',
                 slug: 'r2',
               });
-              // last, so a cold figure here cannot be an artifact of order
+              // last, so a cold figure here cannot be an artifact of order. it shares
+              // round 1's rubric, so only the corpus can part it from round 2
               const control = await runOneRound({
                 tree: treeControl,
-                chapter: 'chapter1.md',
+                lane: 'a',
                 slug: 'control',
               });
 
@@ -327,15 +345,15 @@ describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
             },
           );
 
-          then('🔴 round 1 is COLD — its rubric was minted seconds ago', () => {
-            // at most the shared static head — never the rubric (TOKENS_OF_COLD_MAX)
+          then('🔴 round 1 is COLD — its corpus was minted seconds ago', () => {
+            // at most the shared static span — never the corpus (TOKENS_OF_COLD_MAX)
             expect(measured.roundOne.inputCacheRead).toBeLessThanOrEqual(
               TOKENS_OF_COLD_MAX,
             );
           });
 
           then('and round 1 really did send the large prefix', () => {
-            // without this, a cold figure could mean the rubric never reached the
+            // without this, a cold figure could mean the corpus never reached the
             // prompt at all, and the assertion above would pass for that reason
             expect(measured.roundOne.prompt).toBeGreaterThan(40_000);
           });
@@ -364,12 +382,12 @@ describeIfLiveBrainCacheTargeted('stepReview.casePromptCache', () => {
           });
 
           then(
-            '🔴 the control stays COLD — a different rubric shares no prefix',
+            '🔴 the control stays COLD — a different corpus shares no prefix',
             () => {
               // the counterfactual. a warm round 2 beside a warm control would mean
               // the provider serves any large prompt from a shared pool, and the
-              // shared prefix would be proven of naught. the static head both rubrics
-              // share may be served; the rubric may not (TOKENS_OF_COLD_MAX)
+              // shared prefix would be proven of naught. the static span both corpora
+              // follow may be served; the corpus may not (TOKENS_OF_COLD_MAX)
               expect(measured.control.inputCacheRead).toBeLessThanOrEqual(
                 TOKENS_OF_COLD_MAX,
               );

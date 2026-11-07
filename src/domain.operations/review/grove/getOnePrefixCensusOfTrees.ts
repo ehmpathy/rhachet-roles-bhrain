@@ -1,8 +1,8 @@
 import type { ReviewRunMeter } from '@src/domain.objects/Reviewer/ReviewRunMeter';
 import type { ReviewTree } from '@src/domain.operations/review/grove/getAllReviewTrees';
+import { asPrefixCensusOfPairs } from '@src/domain.operations/review/meter/asPrefixCensusOfPairs';
 import { getOnePrefixCensusOfRuns } from '@src/domain.operations/review/meter/getOnePrefixCensusOfRuns';
-import { getOnePrefixVerdictRollup } from '@src/domain.operations/review/meter/getOnePrefixVerdictRollup';
-import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixPair';
+import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixCensus';
 import { getAllResultsInBoundedPool } from '@src/utils/getAllResultsInBoundedPool';
 
 /**
@@ -27,6 +27,7 @@ export const getOnePrefixCensusOfTrees = async (input: {
     bound: BOUND_OF_CONCURRENT_TREES,
     map: (one) => getOnePrefixCensusOfRuns({ runs: one.runs }),
   });
-  const pairs = censuses.flatMap((census) => census.pairs);
-  return { verdicts: getOnePrefixVerdictRollup({ pairs }), pairs };
+  return asPrefixCensusOfPairs({
+    pairs: censuses.flatMap((census) => census.pairs),
+  });
 };

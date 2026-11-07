@@ -1,3 +1,4 @@
+import { isRunMeetWarm } from '@src/domain.objects/Reviewer/ReviewRunMeet';
 import type { ReviewRunMeter } from '@src/domain.objects/Reviewer/ReviewRunMeter';
 import { asCountHuman } from '@src/domain.operations/review/asCountHuman';
 import { asPromptSectionRows } from '@src/domain.operations/review/asPromptSectionRows';
@@ -19,10 +20,12 @@ import {
 } from '@src/domain.operations/review/meter/asTargetLocusLines';
 import { asTargetLocusLinesByInput } from '@src/domain.operations/review/meter/asTargetLocusLinesByInput';
 import { asTokenRowLines } from '@src/domain.operations/review/meter/asTokenRowLines';
+import { BRAIN_OF_ABSENT_ARGS } from '@src/domain.operations/review/meter/BRAIN_OF_ABSENT_ARGS';
 import { getOneCostLeverFigures } from '@src/domain.operations/review/meter/getOneCostLeverFigures';
 import { getOneLocusChars } from '@src/domain.operations/review/meter/getOneLocusChars';
 import { getOneLocusCharsTotal } from '@src/domain.operations/review/meter/getOneLocusCharsTotal';
 import type { TargetSplitOfRun } from '@src/domain.operations/review/meter/getOneTargetSplitOfRun';
+import { MEET_OF_ABSENT_RECORD } from '@src/domain.operations/review/meter/MEET_OF_ABSENT_RECORD';
 import type { ReviewPrefixPair } from '@src/domain.operations/review/meter/ReviewPrefixPair';
 import { SLUG_OF_ABSENT_IDENTITY } from '@src/domain.operations/review/SLUG_OF_ABSENT_IDENTITY';
 import { asCountedNoun } from '@src/utils/asCountedNoun';
@@ -67,13 +70,26 @@ const asRunIdentityLine = (input: { run: ReviewRunMeter }): string => {
  *         a zero beside a zero is an unremarkable cold run, and a word there
  *         would grade what needs none.
  */
+/**
+ * .what = the note a zero cache write carries, where a reader would doubt it
+ * .why = beside a cache read, a zero write looks unmeasured; on a poke, whose whole job is
+ *        to write the head, a zero write looks like the poke failed. both are measured
+ *        zeros of a brain that bills no cache write, and each says so
+ */
+const asCacheSetCaveat = (input: { run: ReviewRunMeter }): string => {
+  const { tokens, meet } = input.run;
+  if (!tokens || tokens.cacheSet !== 0) return '';
+  if (tokens.cacheGet > 0)
+    return '  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)';
+  if (meet === 'poke')
+    return '  (a MEASURED zero — this brain bills no cache WRITE, so a poke writes for free)';
+  return '';
+};
+
 const asRunTokenLines = (input: { run: ReviewRunMeter }): string[] => {
   const { tokens, grade } = input.run;
   if (!tokens) return [`   │  └─ ${MARK_OF_ABSENT} (grade = ${grade})`];
-  const caveatOfCacheSet =
-    tokens.cacheSet === 0 && tokens.cacheGet > 0
-      ? '  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)'
-      : '';
+  const caveatOfCacheSet = asCacheSetCaveat({ run: input.run });
   return asTokenRowLines({
     prefix: '   │  ',
     figures: {
@@ -159,7 +175,41 @@ const asRunLeverFiguresOfNilGrade = (input: {
   };
 };
 
-const asRunLeverLines = (input: { run: ReviewRunMeter }): string[] => {
+/**
+ * .what = the caveat a zero cache rate carries at run breadth
+ * .why = a zero reads three ways (cold first, lapsed, warm miss); the prefix pair row
+ *        parts them where it renders, so the caveat names the row that grades it, and
+ *        only sends a reader to the tree where no pair renders here
+ */
+const asRunCacheCaveat = (input: {
+  cacheHitRate: number | null;
+  paired: boolean;
+  /** whether the prefix row below names this run its lane's first round in the tree */
+  firstRound: boolean;
+  meet: ReviewRunMeter['meet'];
+}): string => {
+  if (input.cacheHitRate !== 0) return '';
+  // a poke writes the head its peers read, so its zero is by design and owes no hunt
+  if (input.meet === 'poke')
+    return '  poke — it writes the head its peers read; no read owed';
+  // after a warm meet a zero reads one way — a miss, never the clock — so it is named here
+  if (isRunMeetWarm({ meet: input.meet }))
+    return "  🟡 warm and cached NAUGHT — the meet's poke warmed the head this round, and the read met none; no pin rides the ask, so it likely reached another replica";
+  if (input.paired)
+    return '  🟡 a zero reads three ways — the `prefix vs` row below grades this one';
+  // a first round with no warm meet had naught to read
+  if (input.firstRound)
+    return '  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share; no act owed';
+  return `  🟡 a cold first run, a prefix past the ${MINUTES_OF_CACHE_REACH}-minute reach, and a warm miss read alike here — grade it with: rhx review._.cost --of tree --trace`;
+};
+
+const asRunLeverLines = (input: {
+  run: ReviewRunMeter;
+  /** whether a prefix pair renders below, which grades a zero in place */
+  paired: boolean;
+  /** whether the prefix row below names this run its lane's first round in the tree */
+  firstRound: boolean;
+}): string[] => {
   const { tokens, grade } = input.run;
 
   // a run with no tokens has no figure for either lever. `unknown` renders ABSENT and
@@ -178,11 +228,14 @@ const asRunLeverLines = (input: { run: ReviewRunMeter }): string[] => {
   // the caveat rides the figure it qualifies, exactly as the tree's cold/warm
   // marker does — one place to read a rate and its qualification. it names all
   // three causes a zero can have, since the tree grade parts all three
-  // (`getOneCacheGrade`)
-  const caveatOfGrade =
-    cacheHitRate === 0
-      ? `  🟡 a cold first run, a prefix past the ${MINUTES_OF_CACHE_REACH}-minute reach, and a warm miss read alike here — grade it with: rhx review._.cost --of tree --trace`
-      : '';
+  // (`getOneCacheGrade`). where a prefix pair renders below, that row grades the zero
+  // in place, so the caveat points down at it rather than back out to the tree
+  const caveatOfGrade = asRunCacheCaveat({
+    cacheHitRate,
+    paired: input.paired,
+    firstRound: input.firstRound,
+    meet: input.run.meet,
+  });
 
   const levers = getOneCostLeverFigures({
     // one run, so the per-run divisor is one and the figure is this run's own
@@ -490,13 +543,25 @@ export const genReviewRunStdout = (input: {
     '🦉 review cost — one run',
     `   ├─ run: ${run.dir}`,
     `   │  ├─ identity: ${asRunIdentityLine({ run })}`,
+    // a cache is per model, so the brain the run rode is the key its cache rate reads
+    // under — filed as the tree and grove brain rows file it, absent row included
+    `   │  ├─ brain: ${run.brain ?? BRAIN_OF_ABSENT_ARGS}`,
+    // a run that met a warm peer read the head that peer wrote, so the meet names whose
+    // cache the run could hit — filed as the tree and grove meet rows file it
+    `   │  ├─ meet: ${run.meet ?? MEET_OF_ABSENT_RECORD}`,
     `   │  ├─ grade: ${run.grade}`,
     ...facts,
     '   │',
     // the levers lead the detail they summarize: a reader who wants only "how big,
     // and how much repeated" stops here, and the token rows below are the
     // arithmetic behind these two figures rather than a peer of them
-    ...asRunLeverLines({ run }),
+    // a null pair is a run with no prior round to pair with — its lane's first round,
+    // where it carries an identity — and an absent one means rounds were never paired
+    ...asRunLeverLines({
+      run,
+      paired: !!input.prefix,
+      firstRound: input.prefix === null && run.identity !== null,
+    }),
     '   │',
     // the prefix rows sit under the cache lever they explain: what the cache COULD
     // have served from the prior round, beside what it DID serve

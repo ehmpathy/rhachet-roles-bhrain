@@ -27,6 +27,8 @@ const asRun = (input: {
   head: input.head ?? null,
   brain: input.brain ?? null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   identity: {
     route: '.behavior/v2026_09_20.review-cost-meter',
     stone: input.stone,

@@ -25,8 +25,8 @@ const asCompiled = () => {
     refs: [{ path: 'b.md', content: 'f'.repeat(50) }],
     conversation: [{ path: 'c.md', content: 'c'.repeat(70) }],
     targets: [{ path: 'x.ts', content: 'F'.repeat(400), diff: 'D'.repeat(60) }],
-    promptHeadStatic: `preamble\n## output format\nfmt\n## rules\n${'r'.repeat(300)}${'f'.repeat(50)}`,
-    promptTailVariable: `tail${'c'.repeat(70)}${'D'.repeat(60)}${'F'.repeat(400)}`,
+    promptHead: `preamble\n## output format\nfmt\n## target\n${'r'.repeat(300)}${'f'.repeat(50)}`,
+    promptTail: `tail${'c'.repeat(70)}${'D'.repeat(60)}${'F'.repeat(400)}`,
   });
   return { rows: composition.inputs, chars: composition.chars };
 };

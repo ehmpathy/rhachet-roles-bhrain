@@ -18,7 +18,7 @@ import type { ReviewRunMetricsRealized } from '@src/domain.objects/Reviewer/Revi
  */
 export type ReviewRunMetricsRealizedOfResult = Omit<
   ReviewRunMetricsRealized,
-  'compiled' | 'supply' | 'runaways' | 'cost' | 'tokens'
+  'compiled' | 'supply' | 'runaways' | 'meet' | 'cost' | 'tokens'
 > & {
   tokens: ReviewRunMetricsRealized['tokens'] | null;
   cost: ReviewRunMetricsRealized['cost'] | null;

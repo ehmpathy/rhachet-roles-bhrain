@@ -1,3 +1,4 @@
+import { asLeafLinesOfRow } from '@src/domain.operations/review/asLeafLinesOfRow';
 import { asPromptInputsCensusLines } from '@src/domain.operations/review/asPromptInputsCensusLines';
 import { asRateHuman } from '@src/domain.operations/review/asRateHuman';
 import { getOnePromptTokens } from '@src/domain.operations/review/getOnePromptTokens';
@@ -12,6 +13,7 @@ import {
   MARK_OF_ABSENT,
 } from '@src/domain.operations/review/meter/asFigureHuman';
 import { asGradesWord } from '@src/domain.operations/review/meter/asGradesWord';
+import { asPrefixVerdictLeafOfBrain } from '@src/domain.operations/review/meter/asPrefixVerdictLeafOfBrain';
 import { asPrefixVerdictRollupHuman } from '@src/domain.operations/review/meter/asPrefixVerdictRollupHuman';
 import { asTokenRowLines } from '@src/domain.operations/review/meter/asTokenRowLines';
 import { asUnknownCaveat } from '@src/domain.operations/review/meter/asUnknownCaveat';
@@ -24,7 +26,7 @@ import {
   type CostLeverSample,
   getOneCostLeverFigures,
 } from '@src/domain.operations/review/meter/getOneCostLeverFigures';
-import type { ReviewPrefixRollup } from '@src/domain.operations/review/meter/ReviewPrefixPair';
+import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixCensus';
 import { SLUG_OF_ABSENT_IDENTITY } from '@src/domain.operations/review/SLUG_OF_ABSENT_IDENTITY';
 import { asCountedNoun } from '@src/utils/asCountedNoun';
 
@@ -94,14 +96,27 @@ const asCacheCaveat = (input: { bucket: ReviewMeterBucket }): string => {
   // shorter pause between rounds prevents (`getOneCacheGrade`)
   const grade = bucket.cacheGrade;
   if (grade?.kind === 'cold' && grade.cause === 'first')
-    return '  cold (first round) — no prior prompt of its lane to share a prefix with';
+    // a lane is one reviewer on one brain, so a brain switch starts a lane; the hint says so,
+    // or a reviewer with two rounds reads as one that never had a prior
+    return '  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with';
+  if (grade?.kind === 'cold' && grade.cause === 'poke')
+    return '  poke — it writes the head its peers read; no read owed';
   if (grade?.kind === 'cold' && grade.cause === 'lapsed')
     return `  🟡 cold (lapsed ${Math.round(grade.minutes)}m) — its prefix aged past the ${MINUTES_OF_CACHE_REACH}-minute cache reach between rounds`;
+  // a zero after a warm meet is no broken prefix: the meet's poke wrote the head seconds
+  // before, and the read found none. no replica pin rides the ask, so the read most
+  // likely met a replica the poke never warmed — a route fault, owed upstream. a row may
+  // hold the lane that sent the poke, so the hint names the poke, never "a peer"
+  if (grade?.kind === 'warm' && grade.via === 'meet')
+    return "  🟡 warm and cached NAUGHT — the meet's poke warmed the head this round, and the read met none; no pin rides the ask, so it likely reached another replica";
   // the zero no pause explains: the prefix broke between rounds, so the next move is to
   // find which input sits past the cache seam — the run breadth names it, and its own
   // zero-rate caveat points back here (`--of tree --trace`), so each leads to the other.
-  // the hint names `--at`: a bare `--of run` reads the LATEST run, never the row flagged
-  return '  🟡 warm and cached NAUGHT — a prefix broke; `--of run --at <rundir>` names the input past the seam';
+  // the hint names `--at` and the dir: a bare `--of run` reads the LATEST run, never the
+  // row flagged, and a placeholder left the driver to hunt the dir by hand
+  if (grade?.kind === 'warm' && grade.via === 'prior')
+    return `  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at ${grade.dir}\` names the input past the seam`;
+  return '';
 };
 
 /**
@@ -148,12 +163,26 @@ const asAxisSection = (input: {
   last: boolean;
   /** how the rows are ordered — `rank` sorts heaviest prompt first, `key` in axis order */
   sort: 'rank' | 'key';
+  /**
+   * the facts an axis hangs beneath each of its rows, one leaf per fact — null where the
+   * row is the whole story
+   */
+  childrenOf: ((bucket: ReviewMeterBucket) => string[]) | null;
 }): string[] => {
   const stem = input.last ? ' ' : '│';
   const keyWidth = getOneKeyWidth({ buckets: input.buckets });
-  const rows = input.buckets.map((bucket, index) => {
-    const leaf = index === input.buckets.length - 1 ? '└─' : '├─';
-    return `   ${stem}  ${leaf} ${asBucketRow({ bucket, keyWidth })}`;
+  const rows = input.buckets.flatMap((bucket, index) => {
+    const isLast = index === input.buckets.length - 1;
+    const children = input.childrenOf?.(bucket) ?? [];
+    return [
+      `   ${stem}  ${isLast ? '└─' : '├─'} ${asBucketRow({ bucket, keyWidth })}`,
+      // each fact is a leaf of its row, so the row's stem runs down beside them
+      ...asLeafLinesOfRow({
+        indent: `   ${stem}  `,
+        isLastRow: isLast,
+        leaves: children,
+      }),
+    ];
   });
   return [
     `   ${input.last ? '└─' : '├─'} by ${input.title}${HINT_OF_AXIS_SORT[input.sort]}`,
@@ -218,14 +247,16 @@ export const genReviewMeterStdout = (input: {
    */
   trace?: boolean;
   /**
-   * the shared-prefix verdict counts over every round pair of this tree
-   * (`getOnePrefixCensusOfRuns`)
+   * the shared-prefix verdict counts over every round pair of this tree, whole and per
+   * brain (`getOnePrefixCensusOfRuns`)
    *
    * .note = absent (`undefined`) where the caller did not pair rounds at all, so no
-   *         prefix row renders; the cli always pairs, and so always renders it
+   *         prefix row renders and no brain row hangs verdicts; the cli always pairs,
+   *         and so always renders both
    */
-  prefix?: ReviewPrefixRollup;
+  prefix?: Pick<ReviewPrefixCensus, 'verdicts' | 'byBrain'>;
 }): string => {
+  const { prefix } = input;
   const { corpus } = input.report;
 
   // the phrase is built by one operation every tree surface reads, so a grade
@@ -288,10 +319,10 @@ export const genReviewMeterStdout = (input: {
       // the verdict counts sit under the rate they explain — a zero rate reads
       // as a miss, a layout break, or a self-cache only once they are counted
       verdicts:
-        input.prefix === undefined
+        prefix === undefined
           ? null
           : asPrefixVerdictRollupHuman({
-              rollup: input.prefix,
+              rollup: prefix.verdicts,
               absent: MARK_OF_ABSENT,
             }),
       // the window names the stone and its round count, so the move reads as a
@@ -347,6 +378,7 @@ export const genReviewMeterStdout = (input: {
       buckets: input.report.byReviewer,
       last: false,
       sort: 'rank',
+      childrenOf: null,
     }),
     '   │',
     // the level axis sits beside reviewer, never at the tail. it is the
@@ -358,6 +390,7 @@ export const genReviewMeterStdout = (input: {
       buckets: input.report.byLevel,
       last: false,
       sort: 'rank',
+      childrenOf: null,
     }),
     '   │',
     // the provider axis sits beside the lane axes: a cache lives on the provider
@@ -367,6 +400,38 @@ export const genReviewMeterStdout = (input: {
       buckets: input.report.byProvider,
       last: false,
       sort: 'rank',
+      childrenOf: null,
+    }),
+    '   │',
+    // the brain axis sits beside provider: a cache is per model as well, and each brain
+    // row hangs its prefix verdicts, so a rate near zero reads with its cause beside it
+    ...asAxisSection({
+      title: 'brain',
+      buckets: input.report.byBrain,
+      last: false,
+      sort: 'rank',
+      // the row already carries the brain's cache rate; its verdicts say WHY a rate near
+      // zero happened, read off the census's own per-brain rollup
+      childrenOf:
+        prefix === undefined
+          ? null
+          : (bucket) => [
+              asPrefixVerdictLeafOfBrain({
+                byBrain: prefix.byBrain,
+                brain: bucket.key,
+                absent: MARK_OF_ABSENT,
+              }),
+            ],
+    }),
+    '   │',
+    // the meet axis sits beside brain: a lane that met a warm peer reads the head that peer
+    // wrote, so a warm meet near zero is a miss, and a cold meet near zero is the weather
+    ...asAxisSection({
+      title: 'meet',
+      buckets: input.report.byMeet,
+      last: false,
+      sort: 'rank',
+      childrenOf: null,
     }),
     '   │',
     ...asAxisSection({
@@ -374,6 +439,7 @@ export const genReviewMeterStdout = (input: {
       buckets: input.report.byStone,
       last: false,
       sort: 'rank',
+      childrenOf: null,
     }),
     '   │',
     ...asAxisSection({
@@ -385,6 +451,7 @@ export const genReviewMeterStdout = (input: {
       // deliberate shape (rule.forbid.snapshot-visual-blemishes)
       last: !input.trace,
       sort: 'key',
+      childrenOf: null,
     }),
     // the cross-tab, opt-in — see the `trace` option's .why
     ...(input.trace
@@ -395,6 +462,7 @@ export const genReviewMeterStdout = (input: {
             buckets: input.report.byRoundAndReviewer,
             last: true,
             sort: 'key',
+            childrenOf: null,
           }),
         ]
       : []),

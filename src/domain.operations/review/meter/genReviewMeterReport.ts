@@ -11,6 +11,7 @@ import {
 } from '@src/domain.operations/review/getOnePromptInputsCensus';
 import { getOnePromptTokens } from '@src/domain.operations/review/getOnePromptTokens';
 import { getOneReviewTokensOfRuns } from '@src/domain.operations/review/getOneReviewTokensOfRuns';
+import { BRAIN_OF_ABSENT_ARGS } from '@src/domain.operations/review/meter/BRAIN_OF_ABSENT_ARGS';
 import {
   getAllLaneOrdinals,
   type LaneOrdinal,
@@ -22,6 +23,7 @@ import {
   type CacheGrade,
   getOneCacheGrade,
 } from '@src/domain.operations/review/meter/getOneCacheGrade';
+import { MEET_OF_ABSENT_RECORD } from '@src/domain.operations/review/meter/MEET_OF_ABSENT_RECORD';
 import { SLUG_OF_ABSENT_IDENTITY } from '@src/domain.operations/review/SLUG_OF_ABSENT_IDENTITY';
 import { compareStrings } from '@src/utils/compareStrings';
 
@@ -125,6 +127,24 @@ export interface ReviewMeterReport {
    *        total it (rule.forbid.adhoc-scope-rollups)
    */
   byProvider: ReviewMeterBucket[];
+  /**
+   * one row per brain the runs rode — `brain` from each run's args record, or
+   * `BRAIN_OF_ABSENT_ARGS` where none was recorded.
+   *
+   * .why = a prompt cache is per model as well as per provider, and the guards pour lanes
+   *        over several brains. a cache rate per brain is the split the cost question asks
+   *        for first — "which brain cached, and which did not"
+   */
+  byBrain: ReviewMeterBucket[];
+  /**
+   * one row per level meet outcome — `meet` from each run's realized record, or
+   * `MEET_OF_ABSENT_RECORD` where none was recorded.
+   *
+   * .why = the cure leans on the meet: a lane that met a warm peer reads the head that peer
+   *        wrote. a rate per meet shows whether the warm meets cached and the cold ones did
+   *        not, and how much spend rode a split lane that met no peer (`skipped.partition`)
+   */
+  byMeet: ReviewMeterBucket[];
   byStone: ReviewMeterBucket[];
   byRound: ReviewMeterBucket[];
   /**
@@ -284,9 +304,11 @@ const ORDER_OF_BUCKETS: Record<
   'rank' | 'key',
   (a: ReviewMeterBucket, b: ReviewMeterBucket) => number
 > = {
+  // the key breaks a tie, as the grove rollup's does, so two equal rows read in one order
+  // at every breadth and every run, never in the order the runs happened to be read
   rank: (a, b) =>
     getOnePromptTokens({ tokens: b.tokens }) -
-    getOnePromptTokens({ tokens: a.tokens }),
+      getOnePromptTokens({ tokens: a.tokens }) || compareStrings(a.key, b.key),
   key: (a, b) => compareStrings(a.key, b.key),
 };
 
@@ -404,6 +426,18 @@ export const genReviewMeterReport = (input: {
       ordinals,
       sort: 'rank',
       asKey: (run) => run.provider ?? PROVIDER_OF_ABSENT_SUPPLY,
+    }),
+    byBrain: getAllBucketsByKey({
+      runs: input.runs,
+      ordinals,
+      sort: 'rank',
+      asKey: (run) => run.brain ?? BRAIN_OF_ABSENT_ARGS,
+    }),
+    byMeet: getAllBucketsByKey({
+      runs: input.runs,
+      ordinals,
+      sort: 'rank',
+      asKey: (run) => run.meet ?? MEET_OF_ABSENT_RECORD,
     }),
     byStone: getAllBucketsByKey({
       runs: input.runs,

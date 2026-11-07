@@ -62,6 +62,7 @@ const setOneReviewLogDir = async (input: {
       supply: { provider: null, generationId: null },
       compiled: 'metrics.compiled.json',
       runaways: [],
+      meet: 'skipped.lone',
     };
     await fs.writeFile(
       path.join(dir, 'metrics.realized.json'),

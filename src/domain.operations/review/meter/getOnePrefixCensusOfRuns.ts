@@ -1,8 +1,8 @@
 import type { ReviewRunMeter } from '@src/domain.objects/Reviewer/ReviewRunMeter';
+import { asPrefixCensusOfPairs } from '@src/domain.operations/review/meter/asPrefixCensusOfPairs';
 import { asPrefixPairsOfRuns } from '@src/domain.operations/review/meter/asPrefixPairsOfRuns';
 import { getOnePrefixPairOfRuns } from '@src/domain.operations/review/meter/getOnePrefixPairOfRuns';
-import { getOnePrefixVerdictRollup } from '@src/domain.operations/review/meter/getOnePrefixVerdictRollup';
-import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixPair';
+import type { ReviewPrefixCensus } from '@src/domain.operations/review/meter/ReviewPrefixCensus';
 import { getAllResultsInBoundedPool } from '@src/utils/getAllResultsInBoundedPool';
 
 /**
@@ -30,5 +30,5 @@ export const getOnePrefixCensusOfRuns = async (input: {
     bound: BOUND_OF_CONCURRENT_PAIRS,
     map: getOnePrefixPairOfRuns,
   });
-  return { verdicts: getOnePrefixVerdictRollup({ pairs }), pairs };
+  return asPrefixCensusOfPairs({ pairs });
 };

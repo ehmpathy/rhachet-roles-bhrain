@@ -7,15 +7,16 @@ import { setOneFileAtomic } from '@src/infra/fs/setOneFileAtomic';
 
 /**
  * .what = writes the tally prompt's static head to a content-keyed file, as a brief artifact
- * .why = 🔴 a brief becomes the SYSTEM message, and the system message is the only input a
- *        replica pin is derived from (rule.require.name-the-shared-prefix-as-the-cache-anchor).
- *        the tally head repeats byte-identical across every fallback tally of a run and across
- *        runs, so it must travel as the one brief — never as the first bytes of the user
- *        message, where an empty brief list casts to a system prompt of `''` and no pin forms
+ * .why = 🔴 a brief becomes the SYSTEM message, the slot a shared prefix leads and the one a
+ *        replica pin would key on, were one sent — none is (`setOnePrefixPoke`;
+ *        rule.require.name-the-shared-prefix-as-the-cache-anchor). the tally head repeats
+ *        byte-identical across every fallback tally of a run and across runs, so it must
+ *        travel as the one brief — never as the first bytes of the user message, where an
+ *        empty brief list casts to a system prompt of `''`
  *
  * .note = the path is keyed by the head's own digest, so one head maps to one file and a
- *         rewrite of identical bytes changes naught. the pin hashes the brief's TEXT, never
- *         its path, so where the file sits costs the pin naught
+ *         rewrite of identical bytes changes naught. the system message is the brief's TEXT,
+ *         never its path, so where the file sits costs the prefix naught
  * .note = it sits under the os temp dir, since a tally runs inside a guard or a review.by
  *         round with no run log dir of its own to hold it
  * .note = 🔴 the write is an atomic swap (`setOneFileAtomic`), never an in-place write. a

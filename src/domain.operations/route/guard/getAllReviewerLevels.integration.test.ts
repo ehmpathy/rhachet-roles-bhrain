@@ -21,6 +21,8 @@ const genRun = (input: {
   head: null,
   brain: null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   identity: {
     route: input.route,
     stone: input.stone,

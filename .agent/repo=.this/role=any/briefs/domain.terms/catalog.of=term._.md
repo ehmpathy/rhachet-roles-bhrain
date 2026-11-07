@@ -22,7 +22,7 @@ never a license to coin a synonym.
 | `route.guard.review` | review · absorption · absorption.concede · absorption.concede.severity · absorption.dispute · clearance · contemplate · contemplate.absent · contemplate.stale · converse · feedback · forgive · given · given.concern · latest · malfunction · overrule · peer · peer.meter · retired · reviewer · spoken · taken · tallier · terminal · unreadable · vibe |
 | `review` | attribution · breadth · breakdown · cost · focus · meter · trace · scope · scope.locus · scope.partition · scope.polluter · scope.split · scope.target |
 | `review.grade` | grade · attribution.attributed · attribution.unattributed · cache.cold · cache.warm · honesty · honesty.metered · honesty.refused · honesty.unknown |
-| `prompt` | chars · composition · cache · cache.eviction · cache.hit-rate · cache.poke · cache.seam · cache.shared-prefix · cache.stability · cache.touch |
+| `prompt` | chars · composition · cache · cache.eviction · cache.hit-rate · cache.lapsed · cache.meet · cache.poke · cache.seam · cache.shared-prefix · cache.stability · cache.touch |
 | `prose` | prose · absolute · bulletize · condensation · contrastive · diffusion · distillation · elucidation · emphasis · narration · obfuscation · refout · subversive · subversive.shallow · subversive.squishy · summary |
 | `artifact` | artifact · dream · footer · min · seed · tool · tool.skill · trait · withdraw |
 | `externalize` | externalize · enbrief · enskill · entool · entrait · learn · pave |

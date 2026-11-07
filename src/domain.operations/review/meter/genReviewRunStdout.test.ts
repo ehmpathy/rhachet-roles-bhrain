@@ -19,6 +19,8 @@ const asRun = (input: {
   head: null,
   brain: null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   identity: {
     slug: 'repo-rules',
     stone: '5.1.execution.from_vision',
@@ -484,6 +486,166 @@ describe('genReviewRunStdout', () => {
       );
     });
 
+    when('[t3] BOTH cache figures are 0, and a prefix pair renders', () => {
+      const stdout = genReviewRunStdout({
+        run: asRunOfTokens({ cacheSet: 0, cacheGet: 0 }),
+        root: ROOT,
+        prefix: {
+          reviewer: 'repo-rules',
+          prior: { dir: '/r/a', stone: '5.1', iteration: 1 },
+          round: { dir: '/r/b', stone: '5.1', iteration: 2 },
+          brains: { prior: null, round: null },
+          minutesSincePrior: 10,
+          meet: null,
+          sharedChars: 5_000,
+          expectedTokens: 1_252,
+          expectedFrom: 'prior',
+          detectedTokens: 0,
+          reach: 0,
+          verdict: 'missed',
+          breaksIn: 'head',
+          headChars: 3_000,
+        },
+      });
+
+      then(
+        '🔴 the caveat points at the prefix row below, never back out to the tree',
+        () => {
+          // the reader arrived here from the tree's hint; to send them back to it is a
+          // loop, while the prefix row three lines down already grades the zero
+          const rowOfCache = stdout
+            .split('\n')
+            .find((line) => line.includes('served from cache'));
+          expect(rowOfCache).toContain(
+            'the `prefix vs` row below grades this one',
+          );
+          expect(rowOfCache).not.toContain('--of tree');
+          expect(stdout).toContain('prefix vs i1');
+        },
+      );
+    });
+
+    when(
+      '[t4] BOTH cache figures are 0, on its lane first round, with no warm meet',
+      () => {
+        const stdout = genReviewRunStdout({
+          run: asRunOfTokens({ cacheSet: 0, cacheGet: 0 }),
+          root: ROOT,
+          prefix: null,
+        });
+
+        then(
+          '🔴 the caveat grades it a cold first round in place, never a hunt elsewhere',
+          () => {
+            const rowOfCache = stdout
+              .split('\n')
+              .find((line) => line.includes('served from cache'));
+            expect(rowOfCache).toContain('cold (first round)');
+            expect(rowOfCache).toContain('no act owed');
+            expect(rowOfCache).not.toContain('--of tree');
+          },
+        );
+      },
+    );
+
+    when(
+      '[t5] BOTH cache figures are 0, on its lane first round, after a warm meet',
+      () => {
+        const stdout = genReviewRunStdout({
+          run: {
+            ...asRunOfTokens({ cacheSet: 0, cacheGet: 0 }),
+            meet: 'awaited',
+          },
+          root: ROOT,
+          prefix: null,
+        });
+
+        then(
+          "🔴 the caveat names a miss — the meet's poke warmed the head, and the read met none",
+          () => {
+            const rowOfCache = stdout
+              .split('\n')
+              .find((line) => line.includes('served from cache'));
+            expect(rowOfCache).toContain("the meet's poke warmed the head");
+            expect(rowOfCache).not.toContain('cold (first round)');
+          },
+        );
+      },
+    );
+
+    when('[t6] BOTH cache figures are 0, on a poke', () => {
+      const stdout = genReviewRunStdout({
+        run: {
+          ...asRunOfTokens({ cacheSet: 0, cacheGet: 0 }),
+          meet: 'poke',
+        },
+        root: ROOT,
+        prefix: null,
+      });
+
+      then('🔴 the caveat says a poke owes no read, never a miss', () => {
+        const rowOfCache = stdout
+          .split('\n')
+          .find((line) => line.includes('served from cache'));
+        expect(rowOfCache).toContain(
+          'poke — it writes the head its peers read',
+        );
+        expect(rowOfCache).not.toContain('🟡');
+      });
+
+      then(
+        '🔴 the zero write is named measured, so the poke never reads as failed',
+        () => {
+          const rowOfCacheSet = stdout
+            .split('\n')
+            .find((line) => line.includes('cache.set:'));
+          expect(rowOfCacheSet).toContain(
+            'a MEASURED zero — this brain bills no cache WRITE',
+          );
+        },
+      );
+    });
+
+    when(
+      '[t7] BOTH cache figures are 0, after a warm meet, and a prefix pair renders',
+      () => {
+        const stdout = genReviewRunStdout({
+          run: {
+            ...asRunOfTokens({ cacheSet: 0, cacheGet: 0 }),
+            meet: 'awaited',
+          },
+          root: ROOT,
+          prefix: {
+            reviewer: 'repo-rules',
+            prior: { dir: '/r/a', stone: '5.1', iteration: 1 },
+            round: { dir: '/r/b', stone: '5.1', iteration: 2 },
+            brains: { prior: null, round: null },
+            minutesSincePrior: 120,
+            meet: 'awaited',
+            sharedChars: 5_000,
+            expectedTokens: 1_252,
+            expectedFrom: 'meet',
+            detectedTokens: 0,
+            reach: 0,
+            verdict: 'missed',
+            breaksIn: 'head',
+            headChars: 3_000,
+          },
+        });
+
+        then(
+          '🔴 the caveat names the miss in place — after a warm meet a zero reads one way',
+          () => {
+            const rowOfCache = stdout
+              .split('\n')
+              .find((line) => line.includes('served from cache'));
+            expect(rowOfCache).toContain('warm and cached NAUGHT');
+            expect(rowOfCache).not.toContain('reads three ways');
+          },
+        );
+      },
+    );
+
     when('[t2] a cache WRITE was billed', () => {
       const stdout = genReviewRunStdout({
         run: asRunOfTokens({ cacheSet: 50_000, cacheGet: 40_000 }),
@@ -828,6 +990,41 @@ describe('genReviewRunStdout', () => {
       then('the cost row carries the six digits every breadth shares', () => {
         expect(stdout).toContain('cost: $1.000000');
       });
+    });
+  });
+
+  given('[case13] the brain the run rode', () => {
+    /**
+     * .why = a cache is per model, so a run's rate reads under its brain. the tree and
+     *        grove file each run under a brain row; the run breadth names that same key,
+     *        so a reader who opened one run knows which brain row it counts toward
+     */
+    when('[t0] the run recorded its brain', () => {
+      const stdout = genReviewRunStdout({
+        run: {
+          ...asRun({ attribution: 'attributed' }),
+          brain: 'openrouter/deepseek/flash',
+        },
+        root: ROOT,
+      });
+
+      then('the run names it beside its identity', () => {
+        expect(stdout).toContain('├─ brain: openrouter/deepseek/flash');
+      });
+    });
+
+    when('[t1] the run recorded no brain', () => {
+      const stdout = genReviewRunStdout({
+        run: asRun({ attribution: 'attributed' }),
+        root: ROOT,
+      });
+
+      then(
+        'it names the absent key the brain rows file it under, never a guess',
+        () => {
+          expect(stdout).toContain('├─ brain: (no brain — unrecorded)');
+        },
+      );
     });
   });
 });

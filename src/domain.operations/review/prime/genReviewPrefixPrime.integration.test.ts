@@ -751,7 +751,7 @@ describe('genReviewPrefixPrime', () => {
             // case reads a's release rather than b's own give-up
             // .note = a's deadline leaves ~1.2s past the 300ms gather, so the watermark holds
             //         of a loaded box cannot spend it before the poke is sent (seen at 800ms:
-            //         the leader lapsed in its gather and never poked)
+            //         the leader expired in its gather and never poked)
             const before = Date.now();
             const leaderAwaited = runOneLane(
               { meet, name: 'a', msOfStop: before + MS_OF_STOP_LEADER },
@@ -816,7 +816,7 @@ describe('genReviewPrefixPrime', () => {
   given('[case15] a lane whose deadline left the meet no time at all', () => {
     when('[t0] the lane meets', () => {
       const scene = useThen('it runs', async () => {
-        const meet = genOneMeet({ slug: 'prime-deadline-lapsed' });
+        const meet = genOneMeet({ slug: 'prime-deadline-expired' });
         const watermark = {
           cwd: meet.cwd,
           key: asReviewWatermarkKey({ kind: 'prime', of: [meet.key] }),
@@ -837,7 +837,7 @@ describe('genReviewPrefixPrime', () => {
       });
 
       then('it pours at once, with no gather', () => {
-        expect(scene.lane.outcome).toEqual('lapsed');
+        expect(scene.lane.outcome).toEqual('expired');
         expect(scene.waited).toBeLessThan(OPTIONS.msOfGather);
       });
 

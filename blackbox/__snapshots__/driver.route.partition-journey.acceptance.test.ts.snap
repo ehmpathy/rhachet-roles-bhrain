@@ -108,7 +108,7 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 │  │     │  └─ joined via intersect
 │  │     │     ├─ files: 8
 │  │     │     └─ tokens: 873.2k
-│  │     ├─ prompt — 3.5M chars · 3.5M targets (99.8%) · 4.0k instructions · 1.7k outputFormat · 774 scaffold · 381 rules
+│  │     ├─ prompt — 3.5M chars · 3.5M targets (99.8%) · 4.0k instructions · 1.7k outputFormat · 927 scaffold · 381 rules
 │  │     ├─ target mass by directory — 3.5M chars over 2 directories
 │  │     │  ├─  50.1%      1.7M chars  4 files   src/beta   1.7M added
 │  │     │  └─  49.9%      1.7M chars  4 files   src/alpha  1.7M added
@@ -301,7 +301,7 @@ exports[`driver.route.partition-journey.acceptance given: [case3] a guarded ston
 │  │     │  └─ joined via intersect
 │  │     │     ├─ files: 8
 │  │     │     └─ tokens: 2.6M
-│  │     ├─ prompt — 10.6M chars · 10.6M targets (99.9%) · 4.0k instructions · 1.7k outputFormat · 1.3k scaffold · 381 rules
+│  │     ├─ prompt — 10.6M chars · 10.6M targets (99.9%) · 4.0k instructions · 1.7k outputFormat · 1.4k scaffold · 381 rules
 │  │     ├─ target mass by directory — 10.6M chars over 2 directories
 │  │     │  ├─  50.1%      5.3M chars  4 files   src/beta   1.7M bodies · 3.5M edits
 │  │     │  └─  49.9%      5.3M chars  4 files   src/alpha  1.7M bodies · 3.5M edits

@@ -18,6 +18,8 @@ const asRun = (input: {
   head: null,
   brain: null,
   provider: null,
+  meet: null,
+  minutesOfCall: null,
   grade: 'unknown',
   defect: null,
   scope: null,

@@ -90,9 +90,12 @@ export interface PromptComposition {
   attribution: AttributionGrade;
   /** the split a prompt cache actually sees */
   cacheable: {
-    /** chars in the static head — the max a cache could ever serve */
+    /**
+     * chars in the head — the system prompt: instructions, output format, and the
+     * corpus a level shares. the max a cache could ever serve, across lanes and rounds
+     */
     head: number;
-    /** chars in the variable tail — re-paid at full input rate every round */
+    /** chars in the tail — the lane's own rubric, refs, band, and conversation; no peer lane sends them */
     tail: number;
   };
   /** every char of the prompt, attributed to exactly one named input */

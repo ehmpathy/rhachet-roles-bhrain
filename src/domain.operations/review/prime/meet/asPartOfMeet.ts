@@ -38,7 +38,7 @@ export const asPartOfMeet = (input: {
   const isRecent = isReleased && msOfNow - found.primedAt < ms.stale;
   if (isRecent && found.warm === true) return { role: 'warm' };
 
-  // a recent COLD release whose holder sent its own review (solo, lapsed, or a faulted poke):
+  // a recent COLD release whose holder sent its own review (solo, expired, or a faulted poke):
   // that review carries the head, so trail it — pour once it has had `reach` to land
   if (isRecent && found.sent === true)
     return {

@@ -1,6 +1,8 @@
 import type { IsoPriceHuman } from 'iso-price';
 import type { IsoDuration } from 'iso-time';
 
+import type { ReviewRunMeet } from './ReviewRunMeet';
+
 /**
  * .what = the payload `metrics.realized.json` carries — the measured tokens,
  *         spend, and wall time of one review run, plus a pointer to the peer
@@ -80,6 +82,16 @@ export interface ReviewRunMetricsRealized {
    *         which a reader treats as empty — such a run had no retry to fold
    */
   runaways: ReviewRunRunawayAsk[];
+  /**
+   * what the run's level meet did, before its brain call
+   *
+   * .why = a round can read a head a peer's prime wrote seconds before, and only this record
+   *        tells the meter so (`ReviewRunMeet`)
+   *
+   * .note = null on a prime run, which is the meet's poke, not a lane that meets. absent on
+   *         a file written before it existed, which a reader treats as unknown
+   */
+  meet: ReviewRunMeet | null;
 }
 
 /**
@@ -124,4 +136,5 @@ export type ReviewRunMetricsRealizedRead = {
   supply?: Partial<ReviewRunMetricsRealized['supply']>;
   compiled?: ReviewRunMetricsRealized['compiled'];
   runaways?: Partial<ReviewRunRunawayAsk>[];
+  meet?: ReviewRunMetricsRealized['meet'];
 };

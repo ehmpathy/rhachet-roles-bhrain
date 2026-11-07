@@ -1,5 +1,10 @@
+import {
+  isRunMeetWarm,
+  type ReviewRunMeet,
+} from '@src/domain.objects/Reviewer/ReviewRunMeet';
 import type { ReviewTokens } from '@src/domain.objects/Reviewer/ReviewTokens';
 import { getOnePromptTokens } from '@src/domain.operations/review/getOnePromptTokens';
+import { isMinutesPastCacheReach } from '@src/domain.operations/review/meter/isMinutesPastCacheReach';
 import type { ReviewPrefixVerdict } from '@src/domain.operations/review/meter/ReviewPrefixPair';
 
 /**
@@ -51,6 +56,57 @@ const getOneCharsPerToken = (input: {
 };
 
 /**
+ * .what = whether a round rode a brain its prior round did not
+ * .why = a prompt cache is per model, so a round on a new brain can read no prefix its
+ *        prior wrote. an unrecorded brain on either side proves no switch, so it reads false
+ */
+const isPairBrainSwitched = (input: {
+  brains: { prior: string | null; round: string | null };
+}): boolean =>
+  input.brains.prior !== null &&
+  input.brains.round !== null &&
+  input.brains.prior !== input.brains.round;
+
+/**
+ * .what = the cache read a round's shared prefix could earn, in tokens — null where a
+ *         prompt is not on disk
+ * .why = a round on a brain its prior did not ride shares no prefix a cache could serve,
+ *        whatever its bytes share, so its expected read is zero
+ */
+const getOneExpectedTokens = (input: {
+  sharedChars: number | null;
+  promptChars: number | null;
+  tokens: ReviewTokens | null;
+  brains: { prior: string | null; round: string | null };
+  meet: ReviewRunMeet | null;
+  headChars: number | null;
+}): number | null => {
+  // a round that met a warm peer can read the head that peer warmed, on its own brain
+  if (isPairMetWarm(input))
+    return Math.round(
+      Math.max(input.sharedChars ?? 0, input.headChars) /
+        getOneCharsPerToken(input),
+    );
+  if (input.sharedChars === null) return null;
+  if (isPairBrainSwitched(input)) return 0;
+  return Math.round(input.sharedChars / getOneCharsPerToken(input));
+};
+
+/**
+ * .what = whether a round met a peer that warmed its head this round, with a head to measure
+ * .why = the cure's own win: a lane reads the head a peer's prime wrote seconds before. that
+ *        read can exceed what the lane shares with its own prior round, so a grade against the
+ *        prior alone would call the win `over-reach`, and a zero read against a stale prior
+ *        would call a real miss `lapsed`. the meet is keyed on brain + head, so the peer rode
+ *        this round's brain, and the gap to it is seconds
+ */
+const isPairMetWarm = (input: {
+  meet: ReviewRunMeet | null;
+  headChars: number | null;
+}): input is { meet: ReviewRunMeet; headChars: number } =>
+  input.headChars !== null && isRunMeetWarm({ meet: input.meet });
+
+/**
  * .what = a round's expected cache read, its detected one, their reach, and the verdict
  * .why = the decision that parts a layout break from a cache miss, in one pure place,
  *        so the run, tree, and grove breadths cannot grade one pair two ways
@@ -65,17 +121,24 @@ export const getOnePrefixVerdict = (input: {
   promptChars: number | null;
   /** this round's tokens — null where the round is not metered */
   tokens: ReviewTokens | null;
+  /** the brain each round rode on — null where a round's args record names none */
+  brains: { prior: string | null; round: string | null };
+  /** the minutes from the prior round's last send to this round's mint — null where unread */
+  minutesSincePrior: number | null;
+  /** what this round's level meet did — null where its record names none */
+  meet: ReviewRunMeet | null;
+  /** this round's static head, in chars — null where its census is absent */
+  headChars: number | null;
 }): {
   expectedTokens: number | null;
+  expectedFrom: 'prior' | 'meet' | null;
   detectedTokens: number | null;
   reach: number | null;
   verdict: ReviewPrefixVerdict | null;
 } => {
-  // the expected half stands on the prompts alone
-  const expectedTokens =
-    input.sharedChars === null
-      ? null
-      : Math.round(input.sharedChars / getOneCharsPerToken(input));
+  // the expected half stands on the prompts, the brains, and the meet alone
+  const expectedTokens = getOneExpectedTokens(input);
+  const expectedFrom = asExpectedFrom({ ...input, expectedTokens });
   const detectedTokens = input.tokens?.cacheGet ?? null;
 
   // no verdict where either half is unmeasured
@@ -84,12 +147,19 @@ export const getOnePrefixVerdict = (input: {
     expectedTokens === null ||
     detectedTokens === null
   )
-    return { expectedTokens, detectedTokens, reach: null, verdict: null };
+    return {
+      expectedTokens,
+      expectedFrom,
+      detectedTokens,
+      reach: null,
+      verdict: null,
+    };
 
   // a multi-turn run read its own turns; no cross-round reach to state
   if (isRunSelfCached({ tokens: input.tokens }))
     return {
       expectedTokens,
+      expectedFrom,
       detectedTokens,
       reach: null,
       verdict: 'self-cached',
@@ -99,6 +169,7 @@ export const getOnePrefixVerdict = (input: {
   if (expectedTokens === 0)
     return {
       expectedTokens,
+      expectedFrom,
       detectedTokens,
       reach: null,
       verdict: detectedTokens > 0 ? 'over-reach' : 'unshared',
@@ -108,20 +179,57 @@ export const getOnePrefixVerdict = (input: {
   const reach = detectedTokens / expectedTokens;
   return {
     expectedTokens,
+    expectedFrom,
     detectedTokens,
     reach,
-    verdict: asVerdictOfReach({ reach, detectedTokens }),
+    verdict: asVerdictOfReach({
+      reach,
+      detectedTokens,
+      // a warm peer touched the head seconds before, so its gap is never the prior's
+      minutesSincePrior: isPairMetWarm(input) ? 0 : input.minutesSincePrior,
+    }),
   };
 };
 
 /**
- * .what = the verdict of a round whose prefix was shared, by its reach
- * .why = three outcomes over one figure, named so the composer above reads plainly
+ * .what = which bytes a round's expected read was taken from — null where it is unmeasured
+ * .why = the render names the source, so a figure the meet set never reads as one shared
+ *        with the prior round. `meet` only where the head a warm peer wrote is the longer
+ *        of the two — the same `max` the expected figure takes
+ */
+const asExpectedFrom = (input: {
+  expectedTokens: number | null;
+  sharedChars: number | null;
+  meet: ReviewRunMeet | null;
+  headChars: number | null;
+}): 'prior' | 'meet' | null => {
+  if (input.expectedTokens === null) return null;
+  if (isPairMetWarm(input) && input.headChars > (input.sharedChars ?? 0))
+    return 'meet';
+  return 'prior';
+};
+
+/**
+ * .what = whether a round began past the cache reach of its prior round
+ * .why = past the reach, no cache could hold the prior's prefix, so a zero read is the
+ *        clock. an unread gap proves no lapse, so it reads false and the zero stays a miss
+ */
+const isPairPastCacheReach = (input: {
+  minutesSincePrior: number | null;
+}): boolean => isMinutesPastCacheReach({ minutes: input.minutesSincePrior });
+
+/**
+ * .what = the verdict of a round whose prefix was shared, by its reach and its gap
+ * .why = four outcomes over two figures, named so the composer above reads plainly. a
+ *        zero read parts on the clock: past the reach it lapsed, within it it missed
  */
 const asVerdictOfReach = (input: {
   reach: number;
   detectedTokens: number;
+  minutesSincePrior: number | null;
 }): ReviewPrefixVerdict => {
+  if (input.detectedTokens === 0 && isPairPastCacheReach(input))
+    return 'lapsed';
   if (input.detectedTokens === 0) return 'missed';
   if (input.reach > REACH_OF_OVER) return 'over-reach';
   return 'served';

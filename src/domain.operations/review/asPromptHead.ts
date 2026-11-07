@@ -1,32 +1,58 @@
 import {
   MARKER_OF_OUTPUT_FORMAT,
-  MARKER_OF_RULES,
+  MARKER_OF_TARGET,
 } from './getOneHeadMarkerOffsets';
 
 /**
- * .what = the prompt's static head — every block that is byte-identical across
- *         the rounds of one lane
+ * .what = the prompt's shared head — every block that the lanes of one level send
+ *         byte for byte, within one round
  * .why = a prompt cache keys on the exact byte prefix from token 0, so every
- *        byte of static content placed ahead of the first variable byte is
- *        cacheable and every byte placed behind it is not. this head is composed
- *        most-universal first, so the prefix survives as far as possible:
+ *        byte placed ahead of the first byte two requests differ on can be read
+ *        from cache, and every byte behind it cannot. this head is composed
+ *        widest-share first (`rule.require.order-prompt-bytes-by-reuse-breadth`):
  *
  *          1. instructions + diff howto + goal  — identical for every lane of one goal
  *          2. output format                     — identical for every review ever
- *          3. rules, then refs                  — identical per lane, per round
+ *          3. the target corpus                 — identical for every lane of a level
+ *                                                 that binds one corpus
  *
- *        blocks 1 and 2 are what several lanes of one goal on one stone share,
- *        so they set how far a peer lane's prefix can reach before its own
- *        rubric parts it. the goal block parts an `exhaustive` lane from a
- *        `representative` one ahead of block 2, so two lanes of different
- *        goals share only the instructions and the diff howto.
+ *        the lane's own rubric and refs trail it, in the tail (`asPromptTail`).
+ *        a guard pours a level's lanes seconds apart, nine lanes over one corpus, each
+ *        with its own rubric: a rubric ahead of the corpus parted every lane from its
+ *        peers there, so each paid the corpus in full. with the corpus here, the lanes
+ *        compute one head, the level's prime meet (keyed brain + head) primes it once,
+ *        and the peers read it from cache.
+ *
+ * 🔴 .note = the trade, stated so a reader does not hoist the rubric ahead of the corpus:
+ *         a rubric does not ride a cross-round prefix. it sits behind the corpus, and a
+ *         round whose driver repaired a file or whose base moved parts the prefix ahead
+ *         of it. a rubric is ~7% of a heavy prompt; the corpus a level shares is ~88%,
+ *         read by N−1 peers. with the rubric ahead of the corpus, heavy levels cached ~1%
+ *         per round (`.behavior/v2026_11_01.fix-review-input-cacheability/appendix/measurement.before.md`)
+ *
+ * 🟡 .note = the second trade: the head rides as the SYSTEM prompt, so the reviewed code
+ *         now rides there too. a target body is repo-supplied text, and an instruction
+ *         planted in a diff now reads at system trust where it read at user trust. the
+ *         harm is bounded: a review's output is a verdict a guard tallies, and a forged
+ *         clean verdict still meets the driver's passage and the human gate. the cache
+ *         anchor is worth it, and the `<target>` fence plus the closer ("the <target>
+ *         section … is what you review") keep the target named as data
+ *
+ * .note = "static" names that the head is byte-identical across the LANES of one round,
+ *         not across rounds: the corpus moves when the driver repairs a file. across
+ *         rounds the cache still serves a lane up to its first changed target, since
+ *         `getAllTargetsByCacheStability` sorts the repaired ones last
+ *
+ *        the goal block parts an `exhaustive` lane from a `representative` one ahead of
+ *        block 2, so two lanes of different goals share only the instructions and the
+ *        diff howto.
  *
  * .note = the goal block sits ahead of the output format on purpose, though the
  *         output format is the more universal of the two
  *         (rule.require.order-prompt-sections-by-volatility-then-size):
  *         - the census cuts the head by its markers: `instructions` runs from token 0
- *           to `MARKER_OF_OUTPUT_FORMAT`, and `outputFormat` from there to the rules
- *           (`getOneHeadMarkerOffsets`). a hoist would fold the goal into
+ *           to `MARKER_OF_OUTPUT_FORMAT`, and `outputFormat` from there to the target
+ *           block (`getOneHeadMarkerOffsets`). a hoist would fold the goal into
  *           `outputFormat` and make that row per-goal, so the census would mis-name
  *           what it measures
  *         - the gain is bounded by ~1.7k chars, and only between two lanes of
@@ -36,10 +62,11 @@ import {
  *           buys a census whose rows each hold one volatility
  *         - the break-even: the hoist gains `p × 1.7k` chars read at the cache rate,
  *           where `p` is the chance a lane's prefix is served from a replica a lane of
- *           ANOTHER goal warmed. the replica pin keys on the system prompt, and the goal
- *           block rides inside it, so two goals never share a pin: `p = 0` wherever the
- *           pin holds, and the hoist gains naught. it pays only on an unpinned brain,
- *           and there at most ~1.7k × (1 − 1/31) ≈ 1.6k chars per cross-goal pair — below
+ *           ANOTHER goal warmed. a replica pin keyed on the system prompt would part two
+ *           goals, since the goal block rides inside it: `p = 0` wherever such a pin
+ *           holds. where no pin rides the call (`rhachet-brains-openrouter@0.1.4` sends
+ *           none; see `asRoleOfSharedPrefix`), the hoist gains at most ~1.7k × (1 − 1/31)
+ *           ≈ 1.6k chars per cross-goal pair — below
  *           the cost of one census row that mis-names what it measures
  *
  * .note = every instruction item is unconditional, and reads correctly whether or
@@ -48,10 +75,10 @@ import {
  *         first divergent byte to the top of the prompt
  *         (research.review-cost-and-cache).
  */
-export const asPromptHeadStatic = (input: {
+export const asPromptHead = (input: {
   goalInstructions: string;
-  rulesSection: string;
-  refsSection: string | null;
+  /** the target band every lane of the level, or every partition of the split, sends */
+  targetSection: string;
 }): string => `# review task
 
 you are a reviewer. apply the rules below to the target files.
@@ -122,19 +149,9 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-${MARKER_OF_RULES} (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+${MARKER_OF_TARGET} (REVIEW THIS SECTION ONLY)
 
-<rules>
-${input.rulesSection}
-</rules>
-${
-  input.refsSection
-    ? `
-## refs (REFERENCE DOCUMENTS — USE FOR CONTEXT, DO NOT FLAG)
-
-<refs>
-${input.refsSection}
-</refs>
-`
-    : ''
-}`;
+<target>
+${input.targetSection}
+</target>
+`;

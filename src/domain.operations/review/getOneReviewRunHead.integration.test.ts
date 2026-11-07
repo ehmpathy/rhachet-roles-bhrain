@@ -30,6 +30,20 @@ const getOneRunDigests = async (input: {
 };
 
 /**
+ * .what = the span of a corpus-first head ahead of its target block
+ * .why = the goal quotes `## target`, so a cut sought from the head's start would be caught
+ */
+const HEAD_AHEAD_OF_TARGET =
+  'goal: exhaustive. review the `## target` section.\n\n## output format\n\nN blockers\nN nitpicks\n\n';
+
+/**
+ * .what = a span ahead of the target block that runs past one 64 KiB read chunk
+ * .why = each `🌊` is four utf-8 bytes, and 30,001 of them plus the preamble put a chunk
+ *        edge inside a char, so the read must decode across it
+ */
+const HEAD_LONG_AHEAD_OF_TARGET = `goal: exhaustive.\n${'🌊'.repeat(30_001)}\n\n## output format\n\nN blockers\nN nitpicks\n\n`;
+
+/**
  * .what = the clamp that a lane names the exact bytes a shared prefix carries
  * .why = the lane ordinal fold groups runs by lane, and the lane's whole claim is
  *        "these runs share a cache". a cache keys on the system prompt, so that claim is
@@ -41,12 +55,71 @@ describe('getOneReviewRunHead', () => {
     first: await getOneRunDigests({ head: '# rules\n\nname the actor.\n' }),
     again: await getOneRunDigests({ head: '# rules\n\nname the actor.\n' }),
     other: await getOneRunDigests({ head: '# rules\n\nname the act.\n' }),
+    corpusOne: await getOneRunDigests({
+      head: `${HEAD_AHEAD_OF_TARGET}## target\n\n<target>\nexport const surf = 1;\n</target>\n`,
+    }),
+    corpusRepaired: await getOneRunDigests({
+      head: `${HEAD_AHEAD_OF_TARGET}## target\n\n<target>\nexport const surf = 2;\n</target>\n`,
+    }),
+    corpusNewGoal: await getOneRunDigests({
+      head: `${HEAD_AHEAD_OF_TARGET.replace('exhaustive', 'focused')}## target\n\n<target>\nexport const surf = 1;\n</target>\n`,
+    }),
+    // a span past one read chunk, of multibyte chars, so a chunk edge splits a char
+    // and the cut sits chunks in; then a corpus of several chunks behind it
+    corpusLong: await getOneRunDigests({
+      head: `${HEAD_LONG_AHEAD_OF_TARGET}## target\n\n<target>\n${'a'.repeat(200_000)}\n</target>\n`,
+    }),
+    corpusLongRepaired: await getOneRunDigests({
+      head: `${HEAD_LONG_AHEAD_OF_TARGET}## target\n\n<target>\n${'b'.repeat(200_000)}\n</target>\n`,
+    }),
   }));
 
-  given('[case1] the head a review writes, read as a lane', () => {
+  given('[case6] 🔴 a head whose span runs past one read chunk', () => {
+    when('[t0] the lane head is read', () => {
+      then('it digests the span exactly, as a whole-file read would', () => {
+        expect(scene.corpusLong.laneHead).toEqual(
+          createHash('sha256')
+            .update(HEAD_LONG_AHEAD_OF_TARGET)
+            .digest('hex')
+            .slice(0, 16),
+        );
+      });
+
+      then('a repaired corpus behind it keeps the lane', () => {
+        expect(scene.corpusLongRepaired.laneHead).toEqual(
+          scene.corpusLong.laneHead,
+        );
+      });
+    });
+  });
+
+  given('[case4] 🔴 two corpus-first runs whose target bodies differ', () => {
+    when('[t0] both lane heads are compared', () => {
+      then(
+        'one lane — a repaired file parts the prefix, never the lane',
+        () => {
+          expect(scene.corpusRepaired.laneHead).toEqual(
+            scene.corpusOne.laneHead,
+          );
+        },
+      );
+    });
+  });
+
+  given('[case5] two corpus-first runs whose instructions differ', () => {
+    when('[t0] both lane heads are compared', () => {
+      then('two lanes — the span ahead of the corpus is the key', () => {
+        expect(scene.corpusNewGoal.laneHead).not.toEqual(
+          scene.corpusOne.laneHead,
+        );
+      });
+    });
+  });
+
+  given('[case1] a rubric-first head a review writes, read as a lane', () => {
     when('[t0] the lane head is computed', () => {
       then(
-        '🔴 it digests the very bytes the brain call sends — the system prompt',
+        '🔴 it digests the very bytes the brain call sends — the system prompt, which holds no target block',
         () => {
           expect(scene.first.laneHead).toEqual(
             createHash('sha256')

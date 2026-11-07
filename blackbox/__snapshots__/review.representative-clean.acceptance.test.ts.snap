@@ -6,8 +6,8 @@ exports[`review.representative-clean.acceptance given: [case1] mechanic codebase
    │  ├─ rules: 3
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 2,719
+   │  ├─ estimate: 2,757
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001359700"
+      └─ estimate: $0.001379100"
 `;

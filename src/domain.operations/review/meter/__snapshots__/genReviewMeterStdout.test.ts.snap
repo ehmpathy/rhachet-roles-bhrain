@@ -18,10 +18,10 @@ exports[`genReviewMeterStdout given: [case1] a corpus of guard-run reviews, two 
    │  └─ — (no prompt could be read, 5 unread)
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ repo-rules                  2 runs ·  875.0k prompt ·   0.0% cached ·    $0.437500  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ repo-rules                  2 runs ·  875.0k prompt ·   0.0% cached ·    $0.437500  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.repo-rules-i2\` names the input past the seam
    │  ├─ mech-failhides              1 run  ·  200.0k prompt ·  10.0% cached ·    $0.090000
-   │  ├─ behavior-intent-coverage    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
-   │  └─ arch-smell-scopeleaks       1 run  ·       0 prompt ·      — cached ·           $0
+   │  ├─ arch-smell-scopeleaks       1 run  ·       0 prompt ·      — cached ·           $0
+   │  └─ behavior-intent-coverage    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
@@ -29,12 +29,18 @@ exports[`genReviewMeterStdout given: [case1] a corpus of guard-run reviews, two 
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
    │
    └─ by round
       ├─ 5.1.execution.from_vision i001    2 runs ·  620.0k prompt ·   3.2% cached ·    $0.300000
-      └─ 5.1.execution.from_vision i002    3 runs ·  455.0k prompt ·   0.0% cached ·    $0.227500  🟡 +1 unknown (cost unrecorded, not zero)  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+      └─ 5.1.execution.from_vision i002    3 runs ·  455.0k prompt ·   0.0% cached ·    $0.227500  🟡 +1 unknown (cost unrecorded, not zero)  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.repo-rules-i2\` names the input past the seam"
 `;
 
 exports[`genReviewMeterStdout given: [case2] a corpus where not one run was metered when: [t0] the report is rendered then: the render matches snapshot 1`] = `
@@ -63,6 +69,12 @@ exports[`genReviewMeterStdout given: [case2] a corpus where not one run was mete
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
    ├─ by stone — heaviest prompt first
    │  └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
    │
@@ -89,13 +101,19 @@ exports[`genReviewMeterStdout given: [case3] two lanes whose input order INVERTS
    │
    ├─ by reviewer — heaviest prompt first
    │  ├─ lane-warm    1 run  ·  450.0k prompt ·  44.4% cached ·    $0.080000
-   │  └─ lane-cold    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ lane-cold    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
    │
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
@@ -130,11 +148,17 @@ exports[`genReviewMeterStdout given: [case4] the same stone, re-driven after a r
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
    │
    └─ by round
-      ├─ 5.1.execution.from_vision i001    1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i001    1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
       └─ 5.1.execution.from_vision i002    1 run  ·  400.0k prompt ·  75.0% cached ·    $0.074000"
 `;
 
@@ -144,7 +168,7 @@ exports[`genReviewMeterStdout given: [case5] two lanes at 0.0%, one cold and one
    │  ├─ runs: 3 (3 metered · 0 refused · 0 unknown)
    │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
    │  │  ├─ input:     236,667 prompt tokens/run   ↓ 16.0% 🎉
-   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
    │  ├─ tokens
    │  │  ├─ input:     710.0k
    │  │  ├─ cache.set: 0
@@ -156,21 +180,27 @@ exports[`genReviewMeterStdout given: [case5] two lanes at 0.0%, one cold and one
    │  └─ — (no prompt could be read, 3 unread)
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ lane-sixth    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
-   │  └─ lane-first    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ lane-sixth    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
+   │  └─ lane-first    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
-   │  └─ (no level — guard unread)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no level — guard unread)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
    │
    ├─ by provider — heaviest prompt first
-   │  └─ (no provider — unreported)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no provider — unreported)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
    │
    ├─ by stone — heaviest prompt first
-   │  └─ 5.1.execution.from_vision    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ 5.1.execution.from_vision    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam
    │
    └─ by round
-      ├─ 5.1.execution.from_vision i001    2 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  cold (first round) — no prior prompt of its lane to share a prefix with
-      └─ 5.1.execution.from_vision i002    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+      ├─ 5.1.execution.from_vision i001    2 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      └─ 5.1.execution.from_vision i002    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-sixth-i2\` names the input past the seam"
 `;
 
 exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers cross when: [t0] the report is rendered with the cross-tab withheld then: the render matches snapshot 1`] = `
@@ -192,7 +222,7 @@ exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers
    │
    ├─ by reviewer — heaviest prompt first
    │  ├─ repo-rules        2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
-   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.mech-failhides-i2\` names the input past the seam
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
@@ -200,11 +230,17 @@ exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
    │
    └─ by round
-      ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
       └─ 5.1.execution.from_vision i002    2 runs ·  610.0k prompt ·  49.2% cached ·    $0.179000"
 `;
 
@@ -227,7 +263,7 @@ exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers
    │
    ├─ by reviewer — heaviest prompt first
    │  ├─ repo-rules        2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
-   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.mech-failhides-i2\` names the input past the seam
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
@@ -235,17 +271,23 @@ exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
    │
    ├─ by round
-   │  ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │  └─ 5.1.execution.from_vision i002    2 runs ·  610.0k prompt ·  49.2% cached ·    $0.179000
    │
    └─ by round × reviewer
-      ├─ 5.1.execution.from_vision i001 · mech-failhides    1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
-      ├─ 5.1.execution.from_vision i001 · repo-rules        1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
-      ├─ 5.1.execution.from_vision i002 · mech-failhides    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+      ├─ 5.1.execution.from_vision i001 · mech-failhides    1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      ├─ 5.1.execution.from_vision i001 · repo-rules        1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      ├─ 5.1.execution.from_vision i002 · mech-failhides    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.mech-failhides-i2\` names the input past the seam
       └─ 5.1.execution.from_vision i002 · repo-rules        1 run  ·  400.0k prompt ·  75.0% cached ·    $0.074000"
 `;
 
@@ -267,18 +309,24 @@ exports[`genReviewMeterStdout given: [case7] a corpus whose lanes sit at two gua
    │  └─ — (no prompt could be read, 4 unread)
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
-   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │  ├─ arch-smell-scopeleaks    1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
-   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
-   │  ├─ L1                           2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ L1                           2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │  ├─ L3                           1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
-   │  └─ (no level — guard unread)    1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ (no level — guard unread)    1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
@@ -305,16 +353,22 @@ exports[`genReviewMeterStdout given: [case7] a corpus whose lanes sit at two gua
    │  └─ — (no prompt could be read, 4 unread)
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
-   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │  ├─ arch-smell-scopeleaks    1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
-   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
    │
    ├─ by provider — heaviest prompt first
    │  └─ (no provider — unreported)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
@@ -329,7 +383,7 @@ exports[`genReviewMeterStdout given: [case9] a lane past ten dollars beside a su
    │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
    │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
    │  │  ├─ input:     100,000 prompt tokens/run   → flat
-   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
    │  ├─ tokens
    │  │  ├─ input:     400.0k
    │  │  ├─ cache.set: 0
@@ -341,21 +395,27 @@ exports[`genReviewMeterStdout given: [case9] a lane past ten dollars beside a su
    │  └─ — (no prompt could be read, 4 unread)
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ lane-costly    2 runs ·  200.0k prompt ·   0.0% cached ·   $15.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
-   │  └─ lane-cheap     2 runs ·  200.0k prompt ·   0.0% cached ·    $0.001420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ lane-cheap     2 runs ·  200.0k prompt ·   0.0% cached ·    $0.001420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-cheap-i2\` names the input past the seam
+   │  └─ lane-costly    2 runs ·  200.0k prompt ·   0.0% cached ·   $15.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
    │
    ├─ by level — heaviest prompt first
-   │  └─ (no level — guard unread)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no level — guard unread)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
    │
    ├─ by provider — heaviest prompt first
-   │  └─ (no provider — unreported)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no provider — unreported)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
    │
    ├─ by stone — heaviest prompt first
-   │  └─ 5.1.execution.from_vision    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ 5.1.execution.from_vision    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam
    │
    └─ by round
-      ├─ 5.1.execution.from_vision i001    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  cold (first round) — no prior prompt of its lane to share a prefix with
-      └─ 5.1.execution.from_vision i002    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+      ├─ 5.1.execution.from_vision i001    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      └─ 5.1.execution.from_vision i002    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/stamp.pid1.lane-costly-i2\` names the input past the seam"
 `;
 
 exports[`genReviewMeterStdout given: [case10] a tree whose runs carry their prompt composition — which INPUT bought it when: [t0] the report is rendered then: the render matches snapshot 1`] = `
@@ -364,7 +424,7 @@ exports[`genReviewMeterStdout given: [case10] a tree whose runs carry their prom
    │  ├─ runs: 3 (3 metered · 0 refused · 0 unknown)
    │  ├─ levers — input DOWN · cache UP
    │  │  ├─ input:     30,000 prompt tokens/run
-   │  │  └─ cache:     0.0% of prompt tokens served from cache  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  │  └─ cache:     0.0% of prompt tokens served from cache  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │  ├─ tokens
    │  │  ├─ input:     90.0k
    │  │  ├─ cache.set: 0
@@ -386,13 +446,13 @@ exports[`genReviewMeterStdout given: [case10] a tree whose runs carry their prom
    │  ├─ instructions          2,500 chars    1.7%  cacheable
    │  ├─ outputFormat          1,200 chars    0.8%  cacheable
    │  ├─ scaffold              9,300 chars    6.2%  cacheable
-   │  ├─ rules                30,000 chars   20.0%  cacheable
-   │  ├─ refs                  6,000 chars    4.0%  cacheable
    │  ├─ targetFiles          86,000 chars   57.3%  cacheable
    │  ├─ targetDiffs          13,000 chars    8.7%
    │  │  ├─ additions          5,000 chars    3.3%  cacheable
    │  │  ├─ deletions              0 chars    0.0%  cacheable
    │  │  └─ mutations          8,000 chars    5.3%  per round
+   │  ├─ rules                30,000 chars   20.0%  cacheable
+   │  ├─ refs                  6,000 chars    4.0%  cacheable
    │  ├─ conversation          2,000 chars    1.3%  per round
    │  │
    │  ├─ total               150,000 chars
@@ -404,21 +464,27 @@ exports[`genReviewMeterStdout given: [case10] a tree whose runs carry their prom
    │     └─  25.0%    15,000 chars  1 file    blackbox
    │
    ├─ by reviewer — heaviest prompt first
-   │  ├─ lane-0    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
-   │  ├─ lane-1    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
-   │  └─ lane-2    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ lane-0    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │  ├─ lane-1    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │  └─ lane-2    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
-   │  └─ (no level — guard unread)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ (no level — guard unread)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by provider — heaviest prompt first
-   │  └─ (no provider — unreported)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ (no provider — unreported)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by stone — heaviest prompt first
-   │  └─ 5.1.execution.from_vision    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ 5.1.execution.from_vision    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    └─ by round
-      └─ 5.1.execution.from_vision i001    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with"
+      └─ 5.1.execution.from_vision i001    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with"
 `;
 
 exports[`genReviewMeterStdout given: [case10] one lane whose rounds landed on two providers when: [t1] the report renders then: the stdout matches its snapshot 1`] = `
@@ -449,6 +515,12 @@ exports[`genReviewMeterStdout given: [case10] one lane whose rounds landed on tw
    │  ├─ Wafer                         1 run  ·  400.0k prompt ·   0.3% cached ·    $0.200000
    │  └─ (no provider — unreported)    1 run  ·       0 prompt ·      — cached ·           $0
    │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.3.verification    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
    │
@@ -464,7 +536,7 @@ exports[`genReviewMeterStdout given: [case11] 🔴 three lanes at 0.0%, graded b
    │  ├─ runs: 6 (5 metered · 1 refused · 0 unknown)
    │  ├─ levers — input DOWN · cache UP (trend over 4 rounds of 5.1.execution.from_vision)
    │  │  ├─ input:     100,000 prompt tokens/run   → flat
-   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
    │  ├─ tokens
    │  │  ├─ input:     500.0k
    │  │  ├─ cache.set: 0
@@ -476,22 +548,72 @@ exports[`genReviewMeterStdout given: [case11] 🔴 three lanes at 0.0%, graded b
    │  └─ — (no prompt could be read, 6 unread)
    │
    ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-held       2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
    │  ├─ lane-lapsed     2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 cold (lapsed 120m) — its prefix aged past the 66-minute cache reach between rounds
-   │  ├─ lane-held       2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
-   │  └─ lane-refused    2 runs ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ lane-refused    2 runs ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
    │
    ├─ by level — heaviest prompt first
-   │  └─ (no level — guard unread)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no level — guard unread)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
    │
    ├─ by provider — heaviest prompt first
-   │  └─ (no provider — unreported)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ (no provider — unreported)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
+   │
+   ├─ by brain — heaviest prompt first
+   │  └─ (no brain — unrecorded)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
    │
    ├─ by stone — heaviest prompt first
-   │  └─ 5.1.execution.from_vision    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ 5.1.execution.from_vision    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
    │
    └─ by round
-      ├─ 5.1.execution.from_vision i000    3 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
-      ├─ 5.1.execution.from_vision i005    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane to share a prefix with
-      ├─ 5.1.execution.from_vision i050    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+      ├─ 5.1.execution.from_vision i000    3 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      ├─ 5.1.execution.from_vision i005    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+      ├─ 5.1.execution.from_vision i050    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  🟡 warm and cached NAUGHT — a prefix broke; \`rhx review._.cost --of run --at .log/bhrain/review/2026-09-26T09-50-00-000Z.pid1.lane-held-m50\` names the input past the seam
       └─ 5.1.execution.from_vision i120    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  🟡 cold (lapsed 120m) — its prefix aged past the 66-minute cache reach between rounds"
+`;
+
+exports[`genReviewMeterStdout given: [case14] two lanes on two brains, one cached and one not when: [t0] the report renders with its per-brain verdicts then: the stdout matches its snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 2 (2 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     100,000 prompt tokens/run
+   │  │  ├─ cache:     25.0% of prompt tokens served from cache
+   │  │  └─ prefix:    0 served · 🔴 1 missed · 0 lapsed · 0 self-cached · 0 over-reach · 0 unshared
+   │  ├─ tokens
+   │  │  ├─ input:     150.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 50.0k
+   │  │  └─ output:    1.7k
+   │  └─ cost: $0.090000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 2 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ mech-failhides    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.060000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │  └─ repo-rules        1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    2 runs ·  200.0k prompt ·  25.0% cached ·    $0.090000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    2 runs ·  200.0k prompt ·  25.0% cached ·    $0.090000
+   │
+   ├─ by brain — heaviest prompt first
+   │  ├─ openrouter/deepseek/flash    1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
+   │  │  └─ pairs: —  (no reviewer ran twice)
+   │  └─ openrouter/qwen/coder        1 run  ·  100.0k prompt ·   0.0% cached ·    $0.060000  cold (first round) — no prior prompt of its lane (one reviewer on one brain) to share a prefix with
+   │     └─ pairs: 0 served · 🔴 1 missed · 0 lapsed · 0 self-cached · 0 over-reach · 0 unshared
+   │
+   ├─ by meet — heaviest prompt first
+   │  └─ (no meet — unrecorded or unreadable)    2 runs ·  200.0k prompt ·  25.0% cached ·    $0.090000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    2 runs ·  200.0k prompt ·  25.0% cached ·    $0.090000
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    2 runs ·  200.0k prompt ·  25.0% cached ·    $0.090000"
 `;

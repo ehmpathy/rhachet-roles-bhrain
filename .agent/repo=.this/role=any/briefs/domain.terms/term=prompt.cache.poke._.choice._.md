@@ -31,6 +31,14 @@ three properties define it, and each parts it from a neighbour:
   writes the prefix the way any call does — by a send — and a later poke of the same prefix
   HITS and bills at the cache rate
 
+## .where a poke lives
+
+- **it rides the head its run already wrote.** the poke takes the run's own head artifact as
+  its system prompt, so it writes no file of its own and no second copy of a corpus
+- **it is a run of its own.** a poke spends, so it gets a log dir and an args record. a lane
+  poke files under `poke.<the primer's slug>` (`asReviewLanePokeOutputPath`): the meter names
+  its stone, round, and brain, and the primer lane's rounds and ordinal stay as they were
+
 ## .a poke sends a HEAD. it becomes a PREFIX only if the next round agrees
 
 a poke is one prompt. a shared prefix is a property of a pair. so the act and its payoff sit
@@ -49,7 +57,7 @@ against the prefix its peers realize, or it is a guess.
 
 the api surface is `brain.cache({ prefix })`, never `{ head }` and never `{ sharedPrefix }`:
 
-- not `head` — `promptHeadStatic` is a narrower, marker-cut block (102.7k in the largest
+- not `head` — `promptHead` is a narrower, marker-cut block (102.7k in the largest
   measured prompt); the run worth a poke reaches past it into the stable target span
 - not `sharedPrefix` — inside a `brain.cache` boundary the qualifier earns no clarity, and
   the caller supplies one prompt's bytes, never a measured pair
@@ -57,6 +65,7 @@ the api surface is `brain.cache({ prefix })`, never `{ head }` and never `{ shar
 ## .refs
 
 - `src/domain.operations/review/prime/poke/setOnePrefixPoke.ts`  # the poke act
+- `src/domain.operations/review/prime/asReviewLanePokeOutputPath.ts`  # where a lane poke files
 - `.dream/v2026_09_24.feat.a-prefix-keep-alive-could-halve-the-bill-if-eviction-is-lru.md`
 - `term=prompt.cache.shared-prefix._.choice._.md`              # what a poke aims to become
 

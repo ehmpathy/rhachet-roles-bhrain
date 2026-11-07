@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asPromptTail given: [case1] a partition run with targets it reads as context only when: [t0] the tail is rendered then: the tail matches the snapshot 1`] = `
+"
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.forbid.x.md
+forbid x
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+[REPAIR] fixed
+</conversation>
+
+## target, continued (THE REST OF THE <target> SECTION — REVIEW IT TOO)
+
+<target>
+### src/a.ts
+...
+</target>
+
+## context only (ANOTHER PARTITION GRADES THESE — READ THEM, DO NOT FLAG)
+
+this review is one partition of a larger scope. the targets below sit in the <target> section
+above so you can judge the rest with them, but another partition reports on them. do not raise
+a concern located in any of them:
+
+- src/types.ts
+
+## now review
+
+the conversation above is CONTEXT. the <target> section above it is what you review.
+weigh the driver's [REPAIR]/[REFUTE] responses on merit, then report on the target.
+"
+`;
+
+exports[`asPromptTail given: [case2] a whole run, no context-only targets when: [t0] the tail is rendered then: the tail opens with the rubric 1`] = `
+"
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.forbid.x.md
+forbid x
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
+"
+`;
+
+exports[`asPromptTail given: [case3] 🔴 a partition run whose lane has peer partitions when: [t0] the tail is rendered then: the tail matches the snapshot 1`] = `
+"
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.forbid.x.md
+forbid x
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+[REPAIR] fixed
+</conversation>
+
+## target, continued (THE REST OF THE <target> SECTION — REVIEW IT TOO)
+
+<target>
+### src/route/a.ts
+</target>
+
+## peer partitions (THE REST OF THIS LANE — A FILE ABSENT FROM <target> MAY LIVE IN ONE)
+
+this review is one partition of a larger scope. the partitions below review the rest of it, in
+the same round. a file absent from your <target> is NOT evidence that the file is absent from the
+branch: where a peer's globs could hold it, do not report it absent, untested, or unseen.
+
+a slice owes no quota of concerns. zero blockers and zero nitpicks is a valid verdict for a clean
+slice — raise only what you would raise if this slice were the whole review.
+
+- git: src/git/**
+- review: src/review/** blackbox/review*
+
+## now review
+
+the conversation above is CONTEXT. the <target> section above it is what you review.
+weigh the driver's [REPAIR]/[REFUTE] responses on merit, then report on the target.
+"
+`;

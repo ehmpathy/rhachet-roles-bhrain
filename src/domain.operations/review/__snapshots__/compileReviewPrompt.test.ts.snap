@@ -73,6 +73,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -82,13 +90,10 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 forbid console.log
 </rules>
 
-## target (REVIEW THIS SECTION ONLY)
+## now review
 
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -165,6 +170,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -173,14 +186,6 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule: no-console
 forbid console.log
 </rules>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -271,6 +276,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -279,14 +292,6 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule: no-console
 forbid console.log
 </rules>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -388,6 +393,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -396,14 +409,6 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule: no-console
 forbid console.log
 </rules>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -513,6 +518,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -521,14 +534,6 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule: no-console
 forbid console.log
 </rules>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -638,6 +643,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -646,14 +659,6 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule: no-console
 forbid console.log
 </rules>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -787,6 +792,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -803,14 +816,6 @@ forbid console.log
 
 some ref context
 </refs>
-
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-<target.file path="src/valid.ts">
-export const valid = 1;
-</target.file>
-</target>
 
 ## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
 
@@ -920,6 +925,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.diff path="src/new.ts" kind="+">
+export const created = 1;
+</target.diff>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -928,13 +941,10 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule
 </rules>
 
-## target (REVIEW THIS SECTION ONLY)
+## now review
 
-<target>
-<target.diff path="src/new.ts" kind="+">
-export const created = 1;
-</target.diff>
-</target>
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1011,14 +1021,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rule.md
-
-# rule
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -1039,6 +1041,19 @@ diff --git a/src/edited.ts b/src/edited.ts
 +// context line
 </target.diff>
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.md
+
+# rule
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1115,6 +1130,12 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.diff path="src/gone.ts" kind="-" />
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -1123,11 +1144,10 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule
 </rules>
 
-## target (REVIEW THIS SECTION ONLY)
+## now review
 
-<target>
-<target.diff path="src/gone.ts" kind="-" />
-</target>
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1204,6 +1224,14 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/unchanged.ts">
+export const same = 1;
+</target.file>
+</target>
+
 ## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
 
 <rules>
@@ -1212,13 +1240,10 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 # rule
 </rules>
 
-## target (REVIEW THIS SECTION ONLY)
+## now review
 
-<target>
-<target.file path="src/unchanged.ts">
-export const same = 1;
-</target.file>
-</target>
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1295,14 +1320,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rule.md
-
-# rule
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -1317,6 +1334,19 @@ diff --git a/assets/logo.png b/assets/logo.png
 Binary files a/assets/logo.png and b/assets/logo.png differ
 </target.diff>
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.md
+
+# rule
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1393,14 +1423,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rule.md
-
-# rule
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -1416,6 +1438,19 @@ export const value = 2;
 +export const value = 2;
 </target.diff>
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.md
+
+# rule
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1492,14 +1527,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rule.md
-
-# rule
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -1509,6 +1536,19 @@ the following files are in scope for review. please open and read them as needed
 
 the diff range for "this pr" is \`since-main\` — run \`git diff\` against that base to see what changed.
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.md
+
+# rule
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;
 
@@ -1595,15 +1635,6 @@ IMPORTANT: every violation MUST include a "snippet" with the actual code from th
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-### rules/rule.no-any.md
-
-# rule: no-any
-forbid the any type
-</rules>
-
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
@@ -1638,5 +1669,19 @@ diff --git a/src/edited.ts b/src/edited.ts
 +export const edited = (n: number): number => n * 2;
 </target.diff>
 </target>
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.no-any.md
+
+# rule: no-any
+forbid the any type
+</rules>
+
+## now review
+
+the rules above are the rubric. the <target> section is what you review.
+grade the target against the rubric, then report on the target.
 "
 `;

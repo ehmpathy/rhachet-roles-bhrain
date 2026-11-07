@@ -4,10 +4,10 @@ exports[`getOnePromptComposition given: [case6] a corpus of new, edited, and del
 {
   "attribution": "attributed",
   "cacheable": {
-    "head": 139,
+    "head": 140,
     "tail": 760,
   },
-  "chars": 899,
+  "chars": 900,
   "inputs": {
     "conversation": {
       "cacheable": false,
@@ -21,7 +21,7 @@ exports[`getOnePromptComposition given: [case6] a corpus of new, edited, and del
     },
     "markup": {
       "cacheable": true,
-      "chars": 9,
+      "chars": 10,
       "count": 1,
     },
     "outputFormat": {

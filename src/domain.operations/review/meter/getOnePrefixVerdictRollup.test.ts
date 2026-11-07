@@ -1,3 +1,5 @@
+import { given, then, when } from 'test-fns';
+
 import type {
   ReviewPrefixPair,
   ReviewPrefixRollup,
@@ -16,8 +18,12 @@ const asPair = (input: {
   reviewer: 'repo-rules',
   prior: { dir: '/r/a', stone: '5.1', iteration: 1 },
   round: { dir: '/r/b', stone: '5.1', iteration: 2 },
+  brains: { prior: null, round: null },
+  minutesSincePrior: 10,
+  meet: null,
   sharedChars: 1_000,
   expectedTokens: 250,
+  expectedFrom: 'prior',
   detectedTokens: 100,
   reach: 0.4,
   verdict: input.verdict,
@@ -37,6 +43,7 @@ const TEST_CASES: Array<{
       pairs: 0,
       served: 0,
       missed: 0,
+      lapsed: 0,
       selfCached: 0,
       overReach: 0,
       unshared: 0,
@@ -49,14 +56,16 @@ const TEST_CASES: Array<{
       'served',
       'served',
       'missed',
+      'lapsed',
       'self-cached',
       'over-reach',
       'unshared',
     ],
     expected: {
-      pairs: 6,
+      pairs: 7,
       served: 2,
       missed: 1,
+      lapsed: 1,
       selfCached: 1,
       overReach: 1,
       unshared: 1,
@@ -70,6 +79,7 @@ const TEST_CASES: Array<{
       pairs: 2,
       served: 1,
       missed: 0,
+      lapsed: 0,
       selfCached: 0,
       overReach: 0,
       unshared: 0,
@@ -79,10 +89,16 @@ const TEST_CASES: Array<{
 ];
 
 describe('getOnePrefixVerdictRollup', () => {
-  TEST_CASES.map((thisCase) =>
-    test(thisCase.description, () => {
-      const pairs = thisCase.verdicts.map((verdict) => asPair({ verdict }));
-      expect(getOnePrefixVerdictRollup({ pairs })).toEqual(thisCase.expected);
-    }),
-  );
+  given('[case1] a set of round pairs, each with a verdict', () => {
+    TEST_CASES.forEach((thisCase, index) =>
+      when(`[t${index}] the verdicts are rolled up`, () => {
+        then(thisCase.description, () => {
+          const pairs = thisCase.verdicts.map((verdict) => asPair({ verdict }));
+          expect(getOnePrefixVerdictRollup({ pairs })).toEqual(
+            thisCase.expected,
+          );
+        });
+      }),
+    );
+  });
 });

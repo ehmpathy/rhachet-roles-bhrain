@@ -34,8 +34,8 @@ const asComposition = (input: { prompt: string }) => {
     // the census cuts its head rows at the compiler's own two markers, so a
     // fixture head must carry them — a head without them is a code defect the
     // census refuses (`getOneHeadMarkerOffsets`), never a shape to clamp
-    promptHeadStatic: `${input.prompt}\n## output format\nfmt\n## rules\n${rules}`,
-    promptTailVariable: `${conversation}${targetDiff}${targetFile}`,
+    promptHead: `${input.prompt}\n## output format\nfmt\n## target\n${rules}`,
+    promptTail: `${conversation}${targetDiff}${targetFile}`,
   });
 };
 

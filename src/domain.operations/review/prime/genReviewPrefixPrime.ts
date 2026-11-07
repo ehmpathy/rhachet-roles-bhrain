@@ -1,6 +1,7 @@
 import { sleep } from 'iso-time';
 import { getUuid } from 'uuid-fns';
 
+import type { ReviewPrefixPrimeOutcome } from '@src/domain.objects/Reviewer/ReviewPrefixPrimeOutcome';
 import { asReviewWatermarkKey } from '@src/domain.operations/review/watermark/asReviewWatermarkKey';
 import { asWatermarkFaultOrThrow } from '@src/domain.operations/review/watermark/asWatermarkFaultOrThrow';
 
@@ -10,7 +11,6 @@ import { getOneMsLeftOfMeet } from './meet/getOneMsLeftOfMeet';
 import { getOneOutcomeOfLeader } from './meet/getOneOutcomeOfLeader';
 import { getOneReleaseOfHolder } from './meet/getOneReleaseOfHolder';
 import { setReleaseOfClaim } from './meet/setReleaseOfClaim';
-import type { ReviewPrefixPrimeOutcome } from './ReviewPrefixPrimeOutcome';
 
 /**
  * .what = the default windows of the meet, in milliseconds
@@ -72,7 +72,7 @@ const MS_OF_REACH_DEFAULT = 5_000;
  *         by what that instant leaves, and a lane that reaches the meet with none left takes
  *         no claim at all. so a wedged or crashed primer costs the cache, never the review
  * .note = 🔴 a release is warm only where the poke settled. the claim is released on every
- *         exit, but a solo exit, a lapsed exit, or a faulted poke releases it COLD: the lane's
+ *         exit, but a solo exit, an expired exit, or a faulted poke releases it COLD: the lane's
  *         own review has not reached the provider yet, so a lane that read that release as
  *         warm would pour against a cache no request filled. a LATE lane that finds such a
  *         release trails it instead: the holder's own review departed at the release and
@@ -112,7 +112,7 @@ export const genReviewPrefixPrime = async (
   const nonce = `pid${process.pid}.${getUuid()}`;
 
   // the deadline left the meet no time: pour cold at once, with no claim a peer would wait on
-  if (getOneMsLeftOfMeet(input.deadline) <= 0) return { outcome: 'lapsed' };
+  if (getOneMsLeftOfMeet(input.deadline) <= 0) return { outcome: 'expired' };
 
   // decide this lane's part in the meet, under a short hold; a store fault pours cold
   const part = await genPartOfMeet({ meet, nonce, ms }).catch(

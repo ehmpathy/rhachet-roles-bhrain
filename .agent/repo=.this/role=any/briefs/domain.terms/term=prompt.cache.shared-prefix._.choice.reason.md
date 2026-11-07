@@ -23,7 +23,7 @@ the integer is what the meter reports.
 | rejected | why |
 |---|---|
 | `common prefix` | `common` is the synonym-drift twin of `shared`, and `shared` was already in the adapter's own prose (*"the key names what requests SHARE"*). one word per concept |
-| `static head` | names a **block a compiler emits**, which is a different concept — and one this repo also has, as `promptHeadStatic`. the head is what we INTEND to share; the shared prefix is what two requests MEASURABLY did. they part the moment a layout defect lands, and that gap is what the meter exists to catch |
+| `static head` | names a **block a compiler emits**, which is a different concept — and one this repo also has, as `promptHead`. the head is what we INTEND to share; the shared prefix is what two requests MEASURABLY did. they part the moment a layout defect lands, and that gap is what the meter exists to catch |
 | `cacheable prefix` | asserts the outcome the term exists to interrogate. a prefix is cacheable only if it is also pinned; to build that claim into the name hides the third obligation, which is the one that was missed |
 | `prompt prefix` | the vendor's full phrase, and it drops `shared` — which is the half that makes the concept a relation rather than a property |
 | `preamble` | prose, not a measurement. names a position and carries no claim about what repeats |

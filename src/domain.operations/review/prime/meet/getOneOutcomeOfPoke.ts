@@ -1,5 +1,5 @@
+import type { ReviewPrefixPrimeOutcome } from '@src/domain.objects/Reviewer/ReviewPrefixPrimeOutcome';
 import { asReviewPrimeFaultLine } from '@src/domain.operations/review/prime/asReviewPrimeFaultLine';
-import type { ReviewPrefixPrimeOutcome } from '@src/domain.operations/review/prime/ReviewPrefixPrimeOutcome';
 import { withPrimeFaultSurvived } from '@src/domain.operations/review/prime/withPrimeFaultSurvived';
 import { ReviewTimeoutError } from '@src/domain.operations/review/ReviewTimeoutError';
 import { withDeadline } from '@src/domain.operations/review/withDeadline';
@@ -8,7 +8,7 @@ import { getOneMsLeftOfMeet } from './getOneMsLeftOfMeet';
 
 /**
  * .what = the outcome of the leader's poke: `primed`, `faulted` where it hit a prime fault or
- *         outlasted what the lane's deadline left the meet, or `lapsed` where none was left
+ *         outlasted what the lane's deadline left the meet, or `expired` where none was left
  * .why = 🔴 the poke has a wedge bound of its own, far longer than a short review bound. so the
  *        leader waits on it no longer than the meet may spend; past that, the lane stops to
  *        wait, releases its claim cold, and its review departs inside its bound. a prime is an
@@ -26,7 +26,7 @@ export const getOneOutcomeOfPoke = async (input: {
 }): Promise<ReviewPrefixPrimeOutcome> => {
   // no time left to poke: the lane pours cold, with no poke sent
   const msOfWait = getOneMsLeftOfMeet(input.deadline);
-  if (msOfWait <= 0) return 'lapsed';
+  if (msOfWait <= 0) return 'expired';
 
   // poke within what the deadline left; survive only a prime fault, or the deadline
   return withDeadline({

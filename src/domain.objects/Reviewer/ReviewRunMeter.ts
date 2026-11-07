@@ -3,6 +3,7 @@ import type { IsoPriceWords } from 'iso-price';
 import type { AttributionGrade } from '@src/domain.objects/Reviewer/AttributionGrade';
 import type { PromptSectionChars } from '@src/domain.objects/Reviewer/PromptSectionChars';
 import type { ReviewRunIdentity } from '@src/domain.objects/Reviewer/ReviewRunIdentity';
+import type { ReviewRunMeet } from '@src/domain.objects/Reviewer/ReviewRunMeet';
 import type { ReviewTokens } from '@src/domain.objects/Reviewer/ReviewTokens';
 
 /**
@@ -66,8 +67,10 @@ interface ReviewRunMeterShape {
   /** the guard identity, when the guard ran it; null for a hand or `review.by` run */
   identity: ReviewRunIdentity | null;
   /**
-   * the content digest of the run's prompt head (`getOneReviewRunHead`) — null where
-   * the run wrote none. part of the run's lane, since a new head is a new prefix
+   * the content digest of the run's head span — its instructions and output contract,
+   * never the corpus behind them (`getOneReviewRunHead`) — null where the run wrote none.
+   * part of the run's lane, since new instructions are a new prefix while a repaired
+   * target is not a new lane
    */
   head: string | null;
   /**
@@ -85,6 +88,22 @@ interface ReviewRunMeterShape {
    *        rate grouped by brain alone cannot show that one provider caches naught
    */
   provider: string | null;
+  /**
+   * what the run's level meet did, from `metrics.realized.json` `meet` — null where none
+   * was recorded (a run before the field, or one never metered)
+   *
+   * .why = a run that met a warm peer had a cache to hit whatever its own lane's history,
+   *        so its lane grade and its pair grade both read this (`isRunMeetWarm`)
+   */
+  meet: ReviewRunMeet | null;
+  /**
+   * the brain call's wall time in minutes, from `metrics.realized.json` `time` — null where
+   * none was recorded
+   *
+   * .why = a run's last send is its mint plus this, and the cache reach runs from there
+   *        (`getOneMinutesSincePriorSend`)
+   */
+  minutesOfCall: number | null;
   /** how much of the spend is proven — see ReviewRunGrade */
   grade: ReviewRunGrade;
   /**
