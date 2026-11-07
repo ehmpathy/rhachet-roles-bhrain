@@ -1,0 +1,400 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t0] a write into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t0b] a write into native memory behind a \`>\` look-alike fires the hook then: it is blocked, exit 2, for \`2>&1\` and a quoted \`=>\` 1`] = `
+{
+  "arrow": {
+    "exitCode": 2,
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+  },
+  "fdDup": {
+    "exitCode": 2,
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+  },
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t1] a call that touches no memory path fires the hook then: it is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t1b] a Write and an Edit outside native memory fire the hook then: each is allowed, exit 0, silent 1`] = `
+{
+  "edit": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  "write": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t2] a read of native memory with \`2>&1\` fires the hook then: it is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t2b] a read of native memory with a quoted arrow fires the hook then: it is allowed, exit 0, silent, for \`=>\` and \`->\` 1`] = `
+{
+  "fat": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  "thin": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t3] a copy into native memory behind a loop fires the hook then: it is blocked, exit 2 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t4] a memory read redirected to a relative path, cwd sent then: it is allowed, exit 0, silent: the target lands in the tree 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t4b] a memory read redirected to a relative path, no cwd sent then: it is blocked, exit 2, with the unplaced nudge: the target may land in memory 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: an unplaced write beside claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ only a read?
+   │  ├─ a $var redirect may land in memory
+   │  ├─ so may a relative one, with no cwd known
+   │  └─ redirect to an absolute path outside memory
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t4c] a relative write, with the memory dir sent as the cwd then: it is blocked, exit 2: the target lands in memory 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/a.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t5] a Write tool call into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t6] an Edit tool call into native memory fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t7] a copy out of native memory fires the hook then: it is blocked, exit 2, with the copy nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: a copy beside claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ only a read?
+   │  ├─ a cp or mv beside memory blocks, either direction
+   │  └─ read it with cat, or redirect to an absolute path outside memory
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t8] a redirect through a var beside the memory dir fires the hook then: it is blocked, exit 2, with the unplaced nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: an unplaced write beside claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory
+   │
+   ├─ only a read?
+   │  ├─ a $var redirect may land in memory
+   │  ├─ so may a relative one, with no cwd known
+   │  └─ redirect to an absolute path outside memory
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t9] a malformed json payload fires the hook then: it is allowed, exit 0, silent: never 2 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t9b] a memory note piped to tee fires the hook then: into a durable brief with cwd sent: allowed; into memory after a cd: blocked 1`] = `
+{
+  "intoBrief": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  "intoMemory": {
+    "exitCode": 2,
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/a.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+  },
+}
+`;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t10] an empty payload fires the hook then: it is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
