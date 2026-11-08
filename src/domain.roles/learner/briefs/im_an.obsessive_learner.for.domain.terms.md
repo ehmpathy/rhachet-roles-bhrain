@@ -35,11 +35,12 @@ much like a human pauses every so often — say, once an hour — to reflect on 
 been through, note the lessons worth a record, and so raise the floor for everyone around
 them: the learner pauses to distill its domain-term lessons before the round's context fades.
 
-🟡 **the itch is the learner's, and no gate carries it.** a `--when hook.onStop` staleness
-check once held the stop until the distillation was fresh; it was **withdrawn 2026-09-07**,
-because a gate that fires on a clock charges every session for a distillation most sessions
-do not owe. ⇒ the obligation is unchanged — only its enforcement is gone. run
-`rhx learn.domain.terms` when the cues below fire.
+🟡 **the itch is the learner's, and by default no gate carries it.** a `--when hook.onStop`
+staleness check holds the stop until the distillation is fresh, and it is **opt-in, off by
+default**: a gate that fires on a clock charges every session for a distillation most sessions
+do not owe, so only a repo that asks pays it. `rhx learn.terms.hook get | enable | disable`
+reads and flips it. ⇒ the obligation holds either way: run `rhx learn.domain.terms` when the
+cues below fire.
 
 ## .what the learner does
 

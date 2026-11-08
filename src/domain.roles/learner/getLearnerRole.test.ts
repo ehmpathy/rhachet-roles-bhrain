@@ -39,9 +39,9 @@ describe('getLearnerRole', () => {
       const onStopHooks = ROLE_LEARNER.hooks?.onBrain?.onStop ?? [];
 
       then('it registers no onStop hook at all', () => {
-        // the domain-term sweephook was withdrawn: a staleness nudge that holds
-        // the stop charges every session for a distillation most sessions do not
-        // owe. the learner's obligation lives in its briefs, never in a gate.
+        // the term hook is opt-in via `learn.terms.hook`, default off: a staleness
+        // nudge that holds the stop charges every session for a distillation most
+        // sessions do not owe, so the role declares none and only a repo that asks pays.
         expect(onStopHooks).toHaveLength(0);
       });
     });
