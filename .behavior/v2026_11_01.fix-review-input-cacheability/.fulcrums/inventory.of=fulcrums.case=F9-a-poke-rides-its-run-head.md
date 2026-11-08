@@ -32,4 +32,5 @@ from it, which the old author may also have meant to forbid.
 
 ## .verdict
 
-open, best-guessed A.
+ruled 2026-11-06 by the director: **A**, the best guess stands. a clean rework that touches no
+credential and no prod write.

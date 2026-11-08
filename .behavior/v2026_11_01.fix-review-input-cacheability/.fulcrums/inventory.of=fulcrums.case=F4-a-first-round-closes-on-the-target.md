@@ -33,4 +33,5 @@ shape the bar did not foresee, and the addition only restores where the prompt c
 
 ## .verdict
 
-open — for the director at the end of the route.
+ruled 2026-11-06 by the director: **A**, the best guess stands. a clean rework that touches no
+credential and no prod write.

@@ -32,4 +32,5 @@ on the guard and the human gate, not on the model.
 
 ## .verdict
 
-open — for the director at the end of the route.
+ruled 2026-11-06 by the director: **A**, the best guess stands. a clean rework that touches no
+credential and no prod write.
