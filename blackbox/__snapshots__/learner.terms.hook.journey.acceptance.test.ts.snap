@@ -1,0 +1,335 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t0] rhx init --roles learner --hooks runs then: the framed init block matches the snapshot: rhx init --roles learner --hooks - no term hook 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=learner
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=learner/readme.md
+   │  ├─ + .agent/repo=bhrain/role=learner/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=learner/briefs
+   │  └─ + .agent/repo=bhrain/role=learner/skills
+   └─ stats
+      ├─ $N brief(s)
+      └─ $N skill(s)
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+🔭 search for linked roles with hooks...
+   └─ bhrain/learner
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t1] get runs before any enable then: the output matches the snapshot: get - disabled 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 stillness
+
+📜 learn.terms.hook get
+   ├─ status = disabled
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ effect when on = a session's stop is held until it distills its terms; a fresh distill quiets it for 60 min
+   └─ to turn it on: rhx learn.terms.hook enable
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t2] enable runs then: the output matches the snapshot: enable - added 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 so it is
+
+📜 learn.terms.hook enable
+   ├─ status = enabled (added)
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ hook = Stop → learn.domain.terms --when hook.onStop, guarded on the learner link
+   ├─ effect = a session's stop is held until it distills its terms; a fresh distill quiets it for 60 min
+   ├─ reaches = sessions enrolled via rhx enroll that hold the learner
+   ├─ plain claude = not reached; with .claude split per actor, it reads no repo settings
+   ├─ takes effect = at each session's next start; a live session keeps its old settings
+   └─ share it: commit .agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
+      └─ linked from = .claude/settings.of.repo.json
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t3] enable runs again then: the output matches the snapshot: enable - already enabled 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 so it is
+
+📜 learn.terms.hook enable
+   ├─ status = already enabled
+   └─ settings = .claude/settings.of.repo.json
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t4] rhx init --hooks re-syncs the roles then: the framed re-init block matches the snapshot: rhx init --hooks - re-sync, hooks need no change 1`] = `
+"🔭 search for linked roles with hooks...
+   └─ bhrain/learner
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t4] rhx init --hooks re-syncs the roles then: the get output matches the snapshot: get - enabled 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 stillness
+
+📜 learn.terms.hook get
+   ├─ status = enabled
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ hook = Stop → learn.domain.terms --when hook.onStop, guarded on the learner link
+   ├─ effect = a session's stop is held until it distills its terms; a fresh distill quiets it for 60 min
+   ├─ reaches = sessions enrolled via rhx enroll that hold the learner
+   ├─ plain claude = not reached; with .claude split per actor, it reads no repo settings
+   ├─ takes effect = at each session's next start; a live session keeps its old settings
+   └─ to turn it off: rhx learn.terms.hook disable
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t5] disable runs then: the output matches the snapshot: disable - removed 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 as leaves fall
+
+📜 learn.terms.hook disable
+   ├─ status = disabled (removed)
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ takes effect = at each session's next start; a live session keeps its old settings
+   └─ share it: commit .agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
+      └─ linked from = .claude/settings.of.repo.json
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t6] disable runs again then: the output matches the snapshot: disable - already disabled 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 as leaves fall
+
+📜 learn.terms.hook disable
+   ├─ status = already disabled
+   └─ settings = .claude/settings.of.repo.json
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t7] an unknown verb runs then: the stderr matches the snapshot, its banner shown once: unknown verb 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: unknown verb \`toggle\`
+   ├─ verbs
+   │  ├─ get      report whether the term hook is on in this repo
+   │  ├─ enable   add the onStop term hook
+   │  └─ disable  remove it
+   └─ help: rhx learn.terms.hook --help
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links the learner when: [t8] --help runs then: the output matches the snapshot: help 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 tend the terms
+
+📜 learn.terms.hook
+   ├─ what = turn the learner's onStop term hook on or off for this repo
+   ├─ usage = rhx learn.terms.hook <verb>
+   ├─ verbs
+   │  ├─ get      report whether the term hook is on in this repo
+   │  ├─ enable   add the onStop term hook
+   │  └─ disable  remove it
+   ├─ default = disabled; no repo pays for the hook until it asks
+   ├─ effect when on = a session's stop is held until it distills its terms; a fresh distill quiets it for 60 min
+   ├─ examples
+   │  ├─ rhx learn.terms.hook get       # is it on here?
+   │  └─ rhx learn.terms.hook enable    # turn it on, then commit the file it names
+   ├─ exit = 0 done · 1 malfunction · 2 refused, with its fix
+   └─ cleanup after the learner is unlinked
+      ├─ relink the learner, then rhx learn.terms.hook disable
+      └─ or delete the one Stop entry by toggle=learn.terms.hook/role=learner
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case2] an enabled repo whose learner is later unlinked when: [t0] the hook command a session would run fires, with no learner link then: the quiet stop matches the snapshot, an empty frame: hook command - learner unlinked, quiet 1`] = `
+{
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case3] a repo layer that is not valid json when: [t0] enable runs over the broken file then: the stderr matches the snapshot: enable - refused, not valid json 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: the settings target is not valid json, so learn.terms.hook will not read or rewrite it
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ parse = Expected double-quoted property name in JSON at position 15 (line 1 column 16)
+   └─ fix: repair the json, then rerun the command
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case4] a repo layer that is a link when: [t0] enable runs over the link then: the stderr matches the snapshot: enable - refused, a link 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: the settings target is a link, so learn.terms.hook will not read or write through it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: replace the link with a real file, then rerun the command
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case5] a repo layer whose hooks shape no verb can walk when: [t0] enable runs over it then: the stderr matches the snapshot: enable - refused, unwalkable 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: the settings target holds a shape learn.terms.hook cannot walk, so it will not read or rewrite it
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ found = hooks.Stop is a string, not a list
+   └─ fix: make hooks map each event to a list of { matcher, hooks }, then rerun
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case6] a dir at the repo layer path when: [t0] enable runs over it then: the stderr matches the snapshot: enable - refused, dir 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: the settings target is a dir, so learn.terms.hook cannot read or write it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: replace the dir with a settings json file, then rerun the command
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case7] a .claude dir that resolves outside the repo when: [t0] enable runs over it then: the stderr matches the snapshot: enable - refused, outside-repo 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: the settings target resolves outside the repo, so learn.terms.hook will not read or write it
+   ├─ settings = .claude/settings.json
+   └─ fix: point .claude at a dir inside the repo, then rerun the command
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case8] an enabled repo whose learner stays linked when: [t0] a stop fires the entry with no fresh distillation on file then: the held stop matches the snapshot: hook command - learner linked, stale, held 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.domain.terms
+   └─ ✋ blocked by constraints
+
+🦉 time again, to tend the terms
+
+📜 learn.domain.terms --when hook.onStop
+   │
+   ├─ the ask — now, before you rest
+   │  └─ review the terms this round touched, then redistill: conform-or-dispute
+   │     the extant ones, and pave the path for any new ones. the steps are below
+   │
+   ├─ the why
+   │  └─ the repo vocabulary compiles hour by hour; a term touched but not tended
+   │     is a lesson lost — the next traveler re-derives it, or drifts to a synonym.
+   │     an hour has passed, so the moment to tend it is now
+   │
+   ├─ do this now — review + redistill the terms this round touched
+   │  ├─ 1. recall — which domain objects & operations did you declare or engage?
+   │  │        split each name into its terms (getStone → verb \`get\` + noun \`stone\`)
+   │  ├─ 2. conform-or-dispute each EXTANT term (already in the glossary):
+   │  │     ├─ your contract uses the canonical word → conform, you are done
+   │  │     └─ you reached for a synonym → rename to the canonical word,
+   │  │           or open a dispute in its \`.reason\` (adhere, or argue — never drift)
+   │  ├─ 3. pave the path for each NEW term (born this round, not yet in the glossary):
+   │  │     ├─ write its \`term=<x>._.choice.*\` cluster:
+   │  │     │     ├─ term=<x>._.choice._.md              (say: chosen word, kind, forbidden synonyms)
+   │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
+   │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
+   │  │     └─ or cite it — point to the extant declaration you reused
+   │  └─ 4. articulate TODAY's progress file — REQUIRED, the last step every round:
+   │        ├─ what you conformed, disputed, and paved this round — and why
+   │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
+   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
+   │        ├─ 🟡 ONE FILE PER DAY — append within today, never across days
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
+   │
+   ├─ the canon — what a term is + why it is kept
+   │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
+   │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
+   │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
+   │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
+   │
+   ├─ the time to capture is now
+   │  └─ your distillation went stale (> 1 hour) — tend it before you rest
+   │
+   └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case8] an enabled repo whose learner stays linked when: [t1] disable runs, then the Stop commands left in the repo layer are read then: the term hook commands left match the snapshot, an empty list: stop commands after disable - none runs the term hook 1`] = `[]`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case9] an enabled repo with a hand copy of the withdrawn hook when: [t0] get, then disable, run over the hand copy then: the disable output matches the snapshot: disable - removed, a hand copy too 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 as leaves fall
+
+📜 learn.terms.hook disable
+   ├─ status = disabled (removed)
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ also removed = an entry the toggle did not write
+   │  └─ by repo=bhrain/role=learner
+   ├─ takes effect = at each session's next start; a live session keeps its old settings
+   └─ share it: commit .agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
+      └─ linked from = .claude/settings.of.repo.json
+"
+`;
+
+exports[`learner.terms.hook.journey.acceptance given: [case9] an enabled repo with a hand copy of the withdrawn hook when: [t0] get, then disable, run over the hand copy then: the get output matches the snapshot: get - enabled, a hand copy as drift 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=learn.terms.hook
+
+🦉 stillness
+
+📜 learn.terms.hook get
+   ├─ status = enabled
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ hook = Stop → learn.domain.terms --when hook.onStop, guarded on the learner link
+   ├─ effect = a session's stop is held until it distills its terms; a fresh distill quiets it for 60 min
+   ├─ reaches = sessions enrolled via rhx enroll that hold the learner
+   ├─ plain claude = not reached; with .claude split per actor, it reads no repo settings
+   ├─ drift = an entry to replace or remove, via rhx learn.terms.hook enable
+   │  └─ by repo=bhrain/role=learner
+   ├─ takes effect = at each session's next start; a live session keeps its old settings
+   └─ to turn it off: rhx learn.terms.hook disable
+"
+`;

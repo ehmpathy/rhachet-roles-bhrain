@@ -26,6 +26,9 @@ ignores:
   - rhachet-roles-ehmpathy
   - rhachet-roles-rhachet
   - rhachet-brains-anthropic
+  - rhachet-brains-fireworksai # brain package, found by name at runtime, never imported
+  - rhachet-brains-xai # brain package, found by name at runtime, never imported
+  - rhachet-roles-ghlitch # role package, enrolled at runtime
   - vitest # test asset via symlink
   - uuid # test asset via symlink
   - "@jest/reporters" # test asset via symlink
