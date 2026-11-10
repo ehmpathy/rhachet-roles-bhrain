@@ -1,11 +1,9 @@
-import * as fs from 'fs/promises';
-import { BadRequestError } from 'helpful-errors';
-import * as path from 'path';
-
 import { delRouteStatusLineCacheOrWarn } from '@src/domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn';
+import { setRouteStatusLineFileOrWarn } from '@src/domain.operations/route/statusLine/file/setRouteStatusLineFileOrWarn';
+import { setRouteStatusLinePointerAsMultiBindOrWarn } from '@src/domain.operations/route/statusLine/file/setRouteStatusLinePointerAsMultiBindOrWarn';
 
-import { asRouteBindFlagName } from './asRouteBindFlagName';
-import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
+import { isRouteBindMultiBindFault } from './isRouteBindMultiBindFault';
+import { setRouteBindFlag } from './setRouteBindFlag';
 
 /**
  * .what = binds a route to the current branch via flag file
@@ -14,68 +12,43 @@ import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
  * .note = every bind drops the status line cache, a re-bind of the same route included, so
  *         the next repaint names the bound route at once. the drop is idempotent, so it runs
  *         from one exit, after the flag is settled
+ * .note = a multi-bind found by the flag write marks the branch's status line pointer before
+ *         the fault propagates, so the bash reader prints the fault line, the same mark
+ *         route.drive leaves on the lookup's fault
  */
 export const setRouteBind = async (input: {
   route: string;
 }): Promise<{ route: string; flagPath: string }> => {
-  const bound = await setRouteBindFlag({ route: input.route });
-  await delRouteStatusLineCacheOrWarn({ cwd: process.cwd() });
+  const cwd = process.cwd();
+  const bound = await setRouteBindFlagOrMarkMultiBind({
+    route: input.route,
+    cwd,
+  });
+  await delRouteStatusLineCacheOrWarn({ cwd });
+
+  // write the bound route's status file and name it in the branch pointer: the bind ran the
+  // repo-wide lookup, so its route is the one answer
+  await setRouteStatusLineFileOrWarn({
+    route: bound.route,
+    pointerAuthority: 'lookup',
+  });
   return bound;
 };
 
 /**
- * .what = writes the bind flag for the current branch, or finds the one that stands
- * .why = the flag is the bind; a second bind of the same route is idempotent, and a bind of
- *        another route while one stands is refused
+ * .what = the flag write, with the status line pointer marked on a multi-bind
+ * .note = the catch allowlists only the multi-bind fault, and rethrows it after the mark;
+ *         every other error rethrows untouched (rule.forbid.failhide)
  */
-const setRouteBindFlag = async (input: {
+const setRouteBindFlagOrMarkMultiBind = async (input: {
   route: string;
+  cwd: string;
 }): Promise<{ route: string; flagPath: string }> => {
-  // validate route directory found
-  const routeAbsolute = path.resolve(input.route);
   try {
-    await fs.access(routeAbsolute);
-  } catch {
-    throw new BadRequestError(`route directory does not exist: ${input.route}`);
+    return await setRouteBindFlag(input);
+  } catch (error) {
+    if (isRouteBindMultiBindFault({ error }))
+      await setRouteStatusLinePointerAsMultiBindOrWarn({ cwd: input.cwd });
+    throw error;
   }
-
-  // scan for pre-bound flags for this branch
-  const { branch, flagFiles: flagFilesFound } = await getAllBindFlagsByBranch({
-    branch: null,
-  });
-
-  // reject protected branches
-  const protectedBranches = ['main', 'master'];
-  if (protectedBranches.includes(branch))
-    throw new BadRequestError('cannot bind route on protected branch', {
-      branch,
-    });
-
-  // if found, check if same route or different
-  const routeRelative = path.relative(process.cwd(), routeAbsolute) || '.';
-  if (flagFilesFound.length > 0) {
-    const flagPathFound = flagFilesFound[0]!;
-    const routeDirFound =
-      path.relative(process.cwd(), path.dirname(path.dirname(flagPathFound))) ||
-      '.';
-
-    // same route → idempotent return
-    if (routeDirFound === routeRelative)
-      return { route: routeRelative, flagPath: flagPathFound };
-
-    // different route → error
-    throw new BadRequestError(
-      `already bound to ${routeDirFound}. use route.bind --del first`,
-    );
-  }
-
-  // ensure .route/ directory found
-  const routeStateDir = path.join(routeAbsolute, '.route');
-  await fs.mkdir(routeStateDir, { recursive: true });
-
-  // write flag file
-  const flagPath = path.join(routeStateDir, asRouteBindFlagName({ branch }));
-  const flagContent = `branch: ${branch}\nbound_by: route.bind skill\n`;
-  await fs.writeFile(flagPath, flagContent);
-  return { route: routeRelative, flagPath };
 };

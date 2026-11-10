@@ -11,14 +11,16 @@ exports[`route.status.line.show.integration given: [case1] a human who asks the 
 #
 # usage:
 #   rhx route.status.line.show                 # one repaint via the subpath
-#   rhx route.status.line.show --drop          # drop the cache first (a cold repaint)
+#   rhx route.status.line.show --drop          # drop the node records first (a cold repaint)
 #   rhx route.status.line.show --via legacy    # the cli/route export, as an unmigrated seat
 #   rhx route.status.line.show --unbound       # repaint as a seat in a repo with no route bound
 #   rhx route.status.line.show --line-arg --help   # pass an arg to the status line itself
 #
 # guarantee:
-#   - runs the exact command the driver init writes into a seat's settings
-#   - never writes route state; only --drop removes the gitignored cache dir
+#   - runs the node entry still used by a seat whose settings predate the
+#     bash reader (the driver init now binds the bash reader instead)
+#   - never writes route state; --drop removes only the node branch=*.json
+#     records, and keeps the bash reader's branch=*.route pointers in that dir
 #   - reports \`hit\` when the cache file was not rewritten, \`miss\` when it was,
 #     \`untouched\` for a --line-arg run that wrote no cache, and \`(not reached)\`
 #     for a repaint that faulted before any cache write
@@ -148,20 +150,26 @@ exports[`route.status.line.show.integration given: [case8] an arg passed through
    │  │    a repaint whose render inputs did not change prints the line already computed,
    │  │    from .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/ (per branch).
    │  │    the legacy cli/route export forwards here, so it is cached too, yet still loads
-   │  │    the whole barrel first; re-run the driver init to move a seat to the subpath.
+   │  │    the whole barrel first; re-run the driver init to move a seat to the bash reader.
    │  │    a fault that prints no line is never cached; a degraded line is cached with its
    │  │    stderr row, and each repaint prints that row again. an unreadable or unwritable
    │  │    cache is reported on stderr, and the line still prints. a cached line is at most
    │  │    30s old; a passage, a meter row, a promise, or a route.bind.set shows on
    │  │    the next repaint. a bind flag that arrives any other way (a pull, a hand edit)
-   │  │    shows within 30s. to force a fresh line, delete that dir
+   │  │    shows within 30s. to force a fresh line, drop the node records:
+   │  │      rm -f .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=*.json
+   │  │    keep the branch=*.route files in that dir: they are the bash reader's pointers.
+   │  │    without them, a route under .behavior/ is found by a glob, and a route bound
+   │  │    elsewhere reads a blank line until its next drive or bind
    │  │
    │  │  note:
-   │  │    the claude code harness runs this with cwd = project root and renders stdout
-   │  │    as the status line. it is invoked via the node -e command that
-   │  │    init.claude.status-line.sh writes into the repo's claude settings (the file
-   │  │    .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
-   │  │    not via rhx, whose banner would pollute the single-line output
+   │  │    the claude code harness runs the status line with cwd = project root and
+   │  │    renders stdout as the line. the driver init binds the bash reader,
+   │  │    which spawns no node per repaint and reads the status file the route writers
+   │  │    keep beside the route:
+   │  │      BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh || printf '%s\\n' '🗿 status line reader not found, rhx init --roles driver'
+   │  │    this node entry serves a seat whose settings predate the bash reader; re-run
+   │  │    the driver init to move that seat to the bash reader
    │  │
    │  │  examples:
    │  │    node -e "import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
@@ -195,6 +203,21 @@ exports[`route.status.line.show.integration given: [case9] an unmigrated seat, r
    ├─ cwd = <seat>
    ├─ cold = false
    ├─ cache = hit
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout = (blank line)
+   └─ stderr = (none)
+"
+`;
+
+exports[`route.status.line.show.integration given: [case10] a seat whose cache dir holds a bash reader pointer when: [t0] the repaint runs with the cache dropped then: the repaint renders as its snapshot, volatile bytes masked 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route.status.line
+   ├─ cwd = <seat>
+   ├─ cold = true
+   ├─ cache = miss
    ├─ cpu = <cpu>s
    ├─ exit = 0
    ├─ stdout = (blank line)

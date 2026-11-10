@@ -73,7 +73,12 @@ const config: Config = {
   ],
 
   // use 50% of threads to leave headroom for other processes
-  maxWorkers: '50%', // https://stackoverflow.com/questions/71287710/why-does-jest-run-faster-with-maxworkers-50
+  // .note = INTEGRATION_WORKERS caps the pool on a shared host; jest sizes '50%' from every
+  //         core and ignores cpu affinity, so a run pinned to few cores sets this to match
+  //         (.agent/repo=.this/role=any/skills/test.integration.capped.sh)
+  maxWorkers: process.env.INTEGRATION_WORKERS
+    ? Number(process.env.INTEGRATION_WORKERS)
+    : '50%', // https://stackoverflow.com/questions/71287710/why-does-jest-run-faster-with-maxworkers-50
 };
 
 // eslint-disable-next-line import/no-default-export
