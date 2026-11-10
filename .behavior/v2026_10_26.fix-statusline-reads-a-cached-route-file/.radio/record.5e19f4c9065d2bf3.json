@@ -1,0 +1,19 @@
+{
+  "key": "5e19f4c9065d2bf3",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(init): the grove settings symlink holds a host-absolute path in a tracked file",
+  "description": "## the defect\n\n`rhachet init` writes `.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.grove.json` as a\nsymlink to the host's absolute `$HOME/.claude/settings.json` (`setRepoActorBrainDir`,\n`setBrainDirSettingsLayout`). the path is tracked by git. so every install on a host whose `$HOME`\ndiffers from the one that committed it repoints the symlink, and the tree reads dirty:\n\n```\n-/home/camper/.claude/settings.json\n+/home/vlad/.claude/settings.json\n```\n\n`settings.of.repo.json` drifts the same way on its `claudeMdExcludes` entry\n(`/home/<user>/.claude/CLAUDE.md`).\n\n## the cost, measured\n\nehmpathy/rhachet-roles-bhrain#728, 2026-11-06. `rhx git.branch.rebase begin` refuses on unstaged\nchanges, and a lockfile refresh mid-rebase re-runs the install, so the rebase blocked twice on this\none file. a clone holds no paved way to put a symlink back (symlink and cpsafe refuse a target\noutside the repo; git write commands are not paved), so each block needed a human reset. that reset\nalso reset the index, and silently dropped a staged change of the rebased commit to\n`settings.of.repo.json`; only an integration test caught it.\n\n## the shape of the fix\n\na host-absolute path never lands in a tracked file. either:\n- the grove symlink is gitignored (it is host state by nature), or\n- it is written relative, or resolved at read time from `$HOME`, so its bytes match on every host\n\nand the same for the `claudeMdExcludes` home entry. the clamp: init on two hosts with different\n`$HOME` leaves `git status` clean on both.\n\n## related, other owners\n\n- ehmpathy/rhachet-roles-ehmpathy `git.branch.rebase`: no way to set host-local files aside, so one\n  drifted symlink halts the whole rebase\n- ehmpathy/rhachet-roles-bhuild `git.crew.reset --what settings`: a reset mid-rebase also drops\n  staged changes to those files; it should refuse, or preserve the index, while a rebase is open",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 41,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "725"
+}
