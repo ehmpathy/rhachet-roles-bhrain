@@ -15,6 +15,7 @@ each row reads from its entry's frontmatter; the entry is the record.
 | F9 | the repo's extant conventions (`assert*` prefix, optional cli flags) are kept, not reformed here | clean | open | human | 0.75 |
 | F10 | the route's record stands as approved: F1–F7 entries exist; the vision is not amended | clean | open | human | 0.80 |
 | F11 | the verdict ledger is tracked at `.fulcrums/verdicts.jsonl`, beside the yaml it proves | clean | held | none | 0.80 |
+| F12 | four concerns grade code absent from the reviewed tree; reflected as ehmpathy/rhachet-roles-bhrain#804 | clean | open | reflect | 0.97 |
 
 F1, F2, F4–F7 are design calls the wisher settled at a stone gate. each verdict lives in its
 entry's `.verdict` section; the yaml `verdict` stays `null`, since a design call owes no dispute

@@ -6,7 +6,7 @@ const FULCRUM_F44 = 'inventory.of=fulcrums.case=F44-rename-table.md';
 
 const TEST_CASES = [
   {
-    description: 'maps a dispute to the stone it was raised on',
+    description: 'maps a dispute to the stone it was raised on, by case id',
     given: {
       reports: [
         new PassageReport({
@@ -16,11 +16,15 @@ const TEST_CASES = [
         }),
       ],
     },
-    expect: { output: [[FULCRUM_F44, ['3.blueprint']]] },
+    expect: {
+      output: [
+        ['F44', { stones: ['3.blueprint'], path: `.fulcrums/${FULCRUM_F44}` }],
+      ],
+    },
   },
   {
     description:
-      'keys by basename, so a route-relative and a repo-relative path meet',
+      'keys by case id, so a route-relative and a repo-relative path meet',
     given: {
       reports: [
         new PassageReport({
@@ -35,7 +39,41 @@ const TEST_CASES = [
         }),
       ],
     },
-    expect: { output: [[FULCRUM_F44, ['3.blueprint', '5.1.execution']]] },
+    expect: {
+      output: [
+        [
+          'F44',
+          {
+            stones: ['3.blueprint', '5.1.execution'],
+            path: `.fulcrums/${FULCRUM_F44}`,
+          },
+        ],
+      ],
+    },
+  },
+  {
+    description:
+      '🔴 clamp. keys by case id, so a change to the title segment cannot orphan a dispute',
+    given: {
+      reports: [
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: '.fulcrums/inventory.of=fulcrums.case=F44-old-title.md',
+        }),
+      ],
+    },
+    expect: {
+      output: [
+        [
+          'F44',
+          {
+            stones: ['3.blueprint'],
+            path: '.fulcrums/inventory.of=fulcrums.case=F44-old-title.md',
+          },
+        ],
+      ],
+    },
   },
   {
     description: 'names a stone once, however many disputes it raised there',
@@ -53,7 +91,56 @@ const TEST_CASES = [
         }),
       ],
     },
-    expect: { output: [[FULCRUM_F44, ['3.blueprint']]] },
+    expect: {
+      output: [
+        ['F44', { stones: ['3.blueprint'], path: `.fulcrums/${FULCRUM_F44}` }],
+      ],
+    },
+  },
+  {
+    description:
+      '🔴 clamp. a later rewind of the stone retires its dispute; a rewind of another stone does not',
+    given: {
+      reports: [
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+        }),
+        new PassageReport({
+          stone: '5.1.execution',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+        }),
+        new PassageReport({ stone: '3.blueprint', status: 'rewound' }),
+      ],
+    },
+    expect: {
+      output: [
+        [
+          'F44',
+          { stones: ['5.1.execution'], path: `.fulcrums/${FULCRUM_F44}` },
+        ],
+      ],
+    },
+  },
+  {
+    description: 'a dispute raised after a rewind of its stone stays live',
+    given: {
+      reports: [
+        new PassageReport({ stone: '3.blueprint', status: 'rewound' }),
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+        }),
+      ],
+    },
+    expect: {
+      output: [
+        ['F44', { stones: ['3.blueprint'], path: `.fulcrums/${FULCRUM_F44}` }],
+      ],
+    },
   },
   {
     description:

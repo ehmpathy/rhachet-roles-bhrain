@@ -931,4 +931,123 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
       );
     });
   });
+
+  // the refusal teaches a block to paste; a block the same check then refuses is a fix that
+  // re-breaks the file. so the round trip is clamped: paste what the refusal printed, re-dispute
+  given(
+    '[case5] a dispute refused for a bare fulcrum, then its paste block applied',
+    () => {
+      let tempDir: string;
+
+      beforeAll(async () => {
+        tempDir = path.join(
+          process.cwd(),
+          '.tmp',
+          `test-stanced-fulcrum-paste-${Date.now()}`,
+        );
+        await fs.mkdir(path.join(tempDir, '.fulcrums'), { recursive: true });
+        execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+        await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
+        await fs.writeFile(
+          path.join(tempDir, '1.test.guard'),
+          [
+            'artifacts:',
+            '  - "$route/1.test*.md"',
+            'reviews:',
+            '  peer:',
+            '    - slug: limited',
+            '      run: echo "blockers: 1\\nnitpicks: 0\\ntest review"',
+            '      budget: 5',
+            '      level: 1',
+            'judges:',
+            '  - echo "passed: false\\nreason: blockers found"',
+          ].join('\n'),
+        );
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
+        await setStoneAsPassed(
+          { stone: '1.test', route: tempDir },
+          noopContext,
+        );
+        await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the driver pastes the block the refusal printed', () => {
+        then('🔴 the re-dispute is accepted', async () => {
+          const why = '.fulcrums/inventory.of=fulcrums.case=F030-pasted.md';
+          const dispute = () =>
+            setStoneAsConcernAbsorbed({
+              stone: '1.test',
+              route: tempDir,
+              as: 'disputed',
+              with: 'limited',
+              about: 'blocker.1',
+              why,
+            });
+          await fs.writeFile(path.join(tempDir, why), '# F030 — prose alone');
+          const error = await getError(dispute());
+          const block = error.message
+            .split('\n')
+            .filter((line) => line.startsWith('         │  '))
+            .map((line) => line.slice('         │  '.length))
+            .join('\n')
+            .replace('<iteration>', 'i001');
+          await fs.writeFile(
+            path.join(tempDir, why),
+            `${block}\n\n# F030 — the pasted block\n`,
+          );
+          await dispute();
+        });
+      });
+
+      when('[t1] the driver mistypes --with', () => {
+        then(
+          '🔴 the refusal names the reviewer, never a hold to add for it',
+          async () => {
+            const error = await getError(
+              setStoneAsConcernAbsorbed({
+                stone: '1.test',
+                route: tempDir,
+                as: 'disputed',
+                with: 'limitedd',
+                about: 'blocker.1',
+                why: '.fulcrums/inventory.of=fulcrums.case=F030-pasted.md',
+              }),
+            );
+            expect(error.message).toContain(
+              'invalid peer reviewer slug: "limitedd"',
+            );
+            expect(error.message).not.toContain('does not hold');
+          },
+        );
+      });
+
+      when('[t2] the --why file name declares no case', () => {
+        then(
+          '🔴 the refusal names the file name, as the linter does',
+          async () => {
+            const why = '.fulcrums/F47.deferral.md';
+            await fs.writeFile(path.join(tempDir, why), '# F47 — misnamed');
+            const error = await getError(
+              setStoneAsConcernAbsorbed({
+                stone: '1.test',
+                route: tempDir,
+                as: 'disputed',
+                with: 'limited',
+                about: 'blocker.1',
+                why,
+              }),
+            );
+            expect(error.message).toContain(
+              'file name (inventory.of=fulcrums.case=<id>-<slug>.md)',
+            );
+            expect(error.message).not.toContain('case (equal to the file id');
+          },
+        );
+      });
+    },
+  );
 });

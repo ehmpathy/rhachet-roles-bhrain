@@ -96,7 +96,7 @@ describe('setStoneAsApproved, at the dispute gate', () => {
         const error = await getError(
           setStoneAsApproved({ stone: '1.vision', route }, { isTTY: true }),
         );
-        return { error };
+        return { error, route };
       });
 
       then(
@@ -107,6 +107,16 @@ describe('setStoneAsApproved, at the dispute gate', () => {
           );
         },
       );
+
+      // the pinned fact is that this path refuses, even where its bytes match [t0]
+      then('the re-approval refusal is pinned', () => {
+        expect(
+          asStableRefusal({
+            message: result.error.message,
+            route: result.route,
+          }),
+        ).toMatchSnapshot();
+      });
     });
   });
 });

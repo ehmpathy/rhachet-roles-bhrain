@@ -1,8 +1,7 @@
 import { BadRequestError } from 'helpful-errors';
 
 import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
-import { asRouteFulcrumCommandRows } from './asRouteFulcrumCommandRows';
-import { asRouteFulcrumDisputeLines } from './asRouteFulcrumDisputeLines';
+import { asRouteFulcrumDisputeRefusalLines } from './asRouteFulcrumDisputeRefusalLines';
 import { getAllRouteFulcrumRuleCommands } from './getAllRouteFulcrumRuleCommands';
 import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
 import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
@@ -24,14 +23,12 @@ export const assertRouteFulcrumDisputesRuled = async (input: {
   // render the refusal: the open disputes, then the commands that clear them
   const ruleCommands = getAllRouteFulcrumRuleCommands({ state });
   const grantCommand = `${asRouteStoneSetCommandHead({ stone: input.stone })} --as ${input.grant}`;
-  const lines = [
-    `🗿 route.stone.set --as ${input.grant}: refused, disputes owe a verdict`,
-    ...asRouteFulcrumDisputeLines({ state }).map((line) => `   ${line}`),
-    `   └─ rule on each, repair each unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
-    ...asRouteFulcrumCommandRows({
-      commands: [...ruleCommands, grantCommand],
-    }).map((row) => `      ${row}`),
-  ];
+  const lines = asRouteFulcrumDisputeRefusalLines({
+    headline: `route.stone.set --as ${input.grant}: refused, disputes owe a verdict`,
+    state,
+    closer: `rule on each, repair each unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
+    commands: [...ruleCommands, grantCommand],
+  });
   throw new BadRequestError(lines.join('\n'), {
     route: input.route,
     stone: input.stone,

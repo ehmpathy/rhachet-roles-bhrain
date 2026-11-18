@@ -218,6 +218,92 @@ describe('asRouteFulcrumDisputeState, a disputed entry hand-edited to owe none',
   });
 });
 
+/**
+ * .what = a live dispute row that cites F1, as the passage log records it
+ */
+const genDisputeOfF1 = (input: { fulcrum: string }): PassageReport =>
+  new PassageReport({
+    stone: '1.vision',
+    status: 'disputed',
+    reviewer: 'rules',
+    about: 'blocker.1',
+    given: 'r001.rules.md',
+    fulcrum: input.fulcrum,
+    reason: 'disputed review.peer: rules blocker.1',
+  });
+
+describe('asRouteFulcrumDisputeState, a typed field cannot retire a live dispute', () => {
+  // the passage log is the one record the driver cannot rewrite in place; a typed `status` or a
+  // file rename must not hide a dispute it records. remove the log read and these go red
+  test('🔴 a cited entry hand-edited to superseded still owes the human', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [
+        genFulcrum({ case: 'F1', owed: 'human', status: 'superseded' }),
+      ],
+      rows: [],
+      reports: [
+        genDisputeOfF1({
+          fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+        }),
+      ],
+    });
+    expect(state.owedHuman.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
+  });
+
+  test('🔴 a cited entry whose file is gone is named unreadable', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [],
+      rows: [],
+      reports: [
+        genDisputeOfF1({
+          fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+        }),
+      ],
+    });
+    expect(state.unreadable).toEqual([
+      {
+        path: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+        slug: 'F1',
+      },
+    ]);
+  });
+
+  test('a cited entry whose title segment changed is still matched by case', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [genFulcrum({ case: 'F1', owed: 'human' })],
+      rows: [],
+      reports: [
+        genDisputeOfF1({
+          fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-old-title.md',
+        }),
+      ],
+    });
+    expect(state.owedHuman.map((entry) => entry.raisedOn)).toEqual([
+      ['1.vision'],
+    ]);
+    expect(state.unreadable).toEqual([]);
+  });
+
+  test('a superseded entry whose dispute was rewound lands in no bucket', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [
+        genFulcrum({ case: 'F1', owed: 'human', status: 'superseded' }),
+      ],
+      rows: [],
+      reports: [
+        genDisputeOfF1({
+          fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+        }),
+        new PassageReport({ stone: '1.vision', status: 'rewound' }),
+      ],
+    });
+    expect(state.owedHuman).toEqual([]);
+    expect(state.unreadable).toEqual([]);
+  });
+});
+
 describe('asRouteFulcrumDisputeState', () => {
   TEST_CASES.map((thisCase) =>
     test(thisCase.description, () => {

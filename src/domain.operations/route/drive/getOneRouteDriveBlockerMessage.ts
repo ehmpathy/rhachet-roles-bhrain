@@ -1,8 +1,8 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
+import { asRouteFulcrumApprovalDisputeLines } from '../fulcrum/asRouteFulcrumApprovalDisputeLines';
 import { asRouteFulcrumCommandRows } from '../fulcrum/asRouteFulcrumCommandRows';
-import { asRouteFulcrumDisputeLines } from '../fulcrum/asRouteFulcrumDisputeLines';
 import type { RouteFulcrumDisputeState } from '../fulcrum/asRouteFulcrumDisputeState';
 import { getAllRouteFulcrumRuleCommands } from '../fulcrum/getAllRouteFulcrumRuleCommands';
 import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
@@ -277,13 +277,12 @@ const formatRouteDriveNeedsApproval = (input: {
     ? getAllRouteFulcrumRuleCommands({ state: input.disputes.state })
     : [];
   const askCmds = [...ruleCmds, approveCmd];
-  const disputeLines = input.disputes.state
-    ? asRouteFulcrumDisputeLines({ state: input.disputes.state })
-    : asRouteFulcrumDisputeRefusalLines({ refusal: input.disputes.refusal });
   return [
     ...formatRouteDriveHeader(input),
     `   └─ halted, human approval required`,
-    ...disputeLines.map((line) => `      ${line}`),
+    ...asRouteFulcrumApprovalDisputeLines({ disputes: input.disputes }).map(
+      (line) => `      ${line}`,
+    ),
     ruleCmds.length
       ? `      ├─ please ask a human to rule on each, then approve`
       : `      ├─ please ask a human to`,
@@ -294,22 +293,4 @@ const formatRouteDriveNeedsApproval = (input: {
     `      └─ once they do, run`,
     `         └─ ${passCmd}`,
   ].join('\n');
-};
-
-/**
- * .what = the dispute branch of the approval halt when the dispute record cannot be read
- * .why = the approval will refuse on the same fault, so the human must see it, and its fix,
- *        before they try to approve
- */
-const asRouteFulcrumDisputeRefusalLines = (input: {
-  refusal: string;
-}): string[] => {
-  // the refusal's headline is a leaf; its own tree (indented under it) hangs beneath
-  const [headline, ...body] = input.refusal.split('\n');
-  return [
-    `├─ the dispute record cannot be read; approval is refused until it is repaired`,
-    `│  └─ ${headline}`,
-    ...body.map((line) => `│  ${line}`),
-    `│`,
-  ];
 };

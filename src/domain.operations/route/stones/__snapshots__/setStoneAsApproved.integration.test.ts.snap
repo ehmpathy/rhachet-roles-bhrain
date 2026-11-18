@@ -17,3 +17,21 @@ exports[`setStoneAsApproved, at the dispute gate given: [case1] a route with an 
   "stone": "1.vision"
 }"
 `;
+
+exports[`setStoneAsApproved, at the dispute gate given: [case1] a route with an open dispute that owes the human when: [t1] the dispute was raised after the human approved then: the re-approval refusal is pinned 1`] = `
+"BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
+   ├─ 1 dispute owes your verdict
+   │  └─ F44 · rename-table · 70%
+   │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
+   │     ├─ lean: x
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   │
+   └─ rule on each, repair each unreadable fulcrum, then approve
+      ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+      └─ rhx route.stone.set --stone 1.vision --as approved
+
+{
+  "route": "<route>",
+  "stone": "1.vision"
+}"
+`;

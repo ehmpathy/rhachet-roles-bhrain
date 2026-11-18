@@ -133,6 +133,9 @@ describe('assertRouteFulcrumDisputesRuled', () => {
           }),
         );
         expect(error.message).toContain('no human lever wrote');
+        expect(
+          asStableRefusal({ message: error.message, route }),
+        ).toMatchSnapshot();
       });
     });
   });

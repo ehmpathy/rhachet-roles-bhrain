@@ -1,14 +1,16 @@
+import { BadRequestError } from 'helpful-errors';
+
 import { getAllPassageReportsRaw } from '../passage/getAllPassageReportsRaw';
-import {
-  FULCRUM_FRONTMATTER_FIELDS_REQUIRED,
-  type FulcrumFrontmatterParse,
-} from './asFulcrumFrontmatter';
 import { asFulcrumFrontmatterDefectLines } from './asFulcrumFrontmatterDefectLines';
+import { asFulcrumRefusalReason } from './asFulcrumRefusalReason';
 import {
   asRouteFulcrumDisputeState,
   type RouteFulcrumDisputeEntry,
 } from './asRouteFulcrumDisputeState';
-import { getAllFulcrumVerdictRows } from './getAllFulcrumVerdictRows';
+import {
+  type FulcrumVerdictRow,
+  getAllFulcrumVerdictRows,
+} from './getAllFulcrumVerdictRows';
 import { getAllRouteFulcrums, type RouteFulcrum } from './getAllRouteFulcrums';
 
 /**
@@ -24,17 +26,28 @@ export const getOneRouteFulcrumLintMessage = async (input: {
   route: string;
 }): Promise<string | null> => {
   // read the route's fulcrums, ledger, and passage once
-  const [fulcrums, rows, reports] = await Promise.all([
+  const [fulcrums, ledger, reports] = await Promise.all([
     getAllRouteFulcrums({ route: input.route }),
-    getAllFulcrumVerdictRows({ route: input.route }),
+    getAllFulcrumVerdictRowsOrRefusal({ route: input.route }),
     getAllPassageReportsRaw({ route: input.route }),
   ]);
-  const state = asRouteFulcrumDisputeState({ fulcrums, rows, reports });
+  const state = asRouteFulcrumDisputeState({
+    fulcrums,
+    rows: ledger.rows ?? [],
+    reports,
+  });
+  const cases = new Set(fulcrums.map((fulcrum) => fulcrum.slug));
 
-  // one block per unreadable entry, then one per forged verdict
+  // one block per unreadable entry, per orphaned dispute, then the ledger or each forged verdict;
+  // a ledger that cannot be read proves no verdict, so it is named once in place of forgeries
   const blocks = [
     ...fulcrums.flatMap((fulcrum) => asFulcrumLintBlockUnreadable({ fulcrum })),
-    ...state.forged.map((entry) => asFulcrumLintBlockForged({ entry })),
+    ...state.unreadable
+      .filter((entry) => !cases.has(entry.slug))
+      .map((entry) => asFulcrumLintBlockOrphaned({ entry })),
+    ...(ledger.refusal
+      ? [asFulcrumLintBlockLedger({ refusal: ledger.refusal })]
+      : state.forged.map((entry) => asFulcrumLintBlockForged({ entry }))),
   ];
 
   // a clean route holds no stop
@@ -46,6 +59,58 @@ export const getOneRouteFulcrumLintMessage = async (input: {
 };
 
 /**
+ * .what = the route's verdict rows, or the refusal that names why the ledger cannot be read
+ * .why = a corrupt ledger must hold the stop as a named lint block, the same as every other
+ *        defect, never escape the lint as a throw
+ * .note = only a BadRequestError (a constraint a human repairs) is caught; all else rises
+ */
+const getAllFulcrumVerdictRowsOrRefusal = async (input: {
+  route: string;
+}): Promise<
+  { rows: FulcrumVerdictRow[]; refusal: null } | { rows: null; refusal: string }
+> => {
+  try {
+    const rows = await getAllFulcrumVerdictRows({ route: input.route });
+    return { rows, refusal: null };
+  } catch (error) {
+    if (!(error instanceof BadRequestError)) throw error;
+    return {
+      rows: null,
+      refusal: asFulcrumRefusalReason({ message: error.message }),
+    };
+  }
+};
+
+/**
+ * .what = the lint block for a verdict ledger that cannot be read
+ * .why = the refusal already names the line and its fix; the block hangs it under one header
+ */
+const asFulcrumLintBlockLedger = (input: { refusal: string }): string => {
+  const [headline, ...body] = input.refusal.split('\n');
+  return [
+    '',
+    `🗿 route.fulcrum lint: the verdict ledger cannot be read`,
+    `   └─ ${headline}`,
+    // the refusal body already leads with its own 3-space trunk, so it nests under the headline
+    ...body.map((line) => `   ${line}`),
+  ].join('\n');
+};
+
+/**
+ * .what = the lint block for a case a live dispute cites whose fulcrum file is gone
+ * .why = a deleted or renamed entry must not orphan its dispute; the passage log still records it
+ */
+const asFulcrumLintBlockOrphaned = (input: {
+  entry: { path: string; slug: string };
+}): string =>
+  [
+    '',
+    `🗿 route.fulcrum lint: ${input.entry.slug} is cited by a live dispute, and its file is gone`,
+    `   ├─ cited: ${input.entry.path}`,
+    `   └─ fix: restore the file, or rewind the stone whose dispute cites it`,
+  ].join('\n');
+
+/**
  * .what = the lint block for one entry whose name or frontmatter cannot be read, or none
  * .why = names the file, the fields it lacks or holds out of their closed sets, and the block to
  *        paste — the same fix the dispute-time refusal teaches
@@ -53,32 +118,18 @@ export const getOneRouteFulcrumLintMessage = async (input: {
 const asFulcrumLintBlockUnreadable = (input: {
   fulcrum: RouteFulcrum;
 }): string[] => {
-  const defects = asFulcrumParseDefects({ parse: input.fulcrum.parse });
-  if (!defects) return [];
+  if (input.fulcrum.parse.kind === 'valid') return [];
   return [
     [
       '',
       `🗿 route.fulcrum lint: ${input.fulcrum.slug} has unreadable frontmatter`,
       ...asFulcrumFrontmatterDefectLines({
         path: input.fulcrum.path,
-        slug: input.fulcrum.slug,
-        ...defects,
+        parse: input.fulcrum.parse,
+        dispute: null,
       }),
     ].join('\n'),
   ];
-};
-
-/**
- * .what = the fields a failed parse lacks and holds malformed, or null for a valid parse
- * .why = an absent block lacks every field; an invalid one names its own
- */
-const asFulcrumParseDefects = (input: {
-  parse: FulcrumFrontmatterParse;
-}): { absent: string[]; malformed: string[] } | null => {
-  if (input.parse.kind === 'valid') return null;
-  if (input.parse.kind === 'absent')
-    return { absent: [...FULCRUM_FRONTMATTER_FIELDS_REQUIRED], malformed: [] };
-  return { absent: input.parse.absent, malformed: input.parse.malformed };
 };
 
 /**

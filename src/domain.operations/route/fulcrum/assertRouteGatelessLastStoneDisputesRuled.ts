@@ -2,8 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { asRouteFulcrumCommandRows } from './asRouteFulcrumCommandRows';
-import { asRouteFulcrumDisputeLines } from './asRouteFulcrumDisputeLines';
+import { asRouteFulcrumDisputeRefusalLines } from './asRouteFulcrumDisputeRefusalLines';
 import { getAllRouteFulcrumRuleCommands } from './getAllRouteFulcrumRuleCommands';
 import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
 import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
@@ -31,13 +30,12 @@ export const assertRouteGatelessLastStoneDisputesRuled = async (input: {
   // refuse while a dispute owes the human, and name each
   const state = await getOneRouteFulcrumDisputeState({ route: input.route });
   if (!isRouteFulcrumDisputeStateBlocked({ state })) return;
-  const commands = getAllRouteFulcrumRuleCommands({ state });
-  const lines = [
-    `🗿 route.stone.set --as passed: refused, the last stone has no human gate and disputes owe a verdict`,
-    ...asRouteFulcrumDisputeLines({ state }).map((line) => `   ${line}`),
-    `   └─ a human must rule on each before the route can finish`,
-    ...asRouteFulcrumCommandRows({ commands }).map((row) => `      ${row}`),
-  ];
+  const lines = asRouteFulcrumDisputeRefusalLines({
+    headline: `route.stone.set --as passed: refused, the last stone has no human gate and disputes owe a verdict`,
+    state,
+    closer: 'a human must rule on each before the route can finish',
+    commands: getAllRouteFulcrumRuleCommands({ state }),
+  });
   throw new BadRequestError(lines.join('\n'), {
     route: input.route,
     stone: input.stone.name,

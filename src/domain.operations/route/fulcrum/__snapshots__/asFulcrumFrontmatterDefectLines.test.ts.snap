@@ -17,8 +17,31 @@ exports[`asFulcrumFrontmatterDefectLines names the file, each absent and malform
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─"
+`;
+
+exports[`asFulcrumFrontmatterDefectLines 🔴 clamp. for a dispute, the block teaches the derived owed and the disputed concern 1`] = `
+"   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ owed
+   │  └─ holds
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
+         │  holds: [rules/<iteration>/blocker.2]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---

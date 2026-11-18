@@ -6,7 +6,7 @@ const FULCRUM_REWORKS = ['clean', 'dirty'] as const;
 const FULCRUM_GROUNDS = ['wrong', 'dirty'] as const;
 const FULCRUM_STATUSES = ['open', 'held', 'ruled', 'superseded'] as const;
 const FULCRUM_OWEDS = ['human', 'reflect', 'none'] as const;
-const FULCRUM_RULINGS = ['upheld', 'conceded'] as const;
+const FULCRUM_VERDICTS = ['upheld', 'conceded'] as const;
 
 /**
  * .what = the frontmatter of one fulcrum entry — the one home of a deferral's attributes
@@ -34,7 +34,7 @@ export interface FulcrumFrontmatter {
 export interface FulcrumVerdict {
   by: 'human';
   at: string;
-  ruled: (typeof FULCRUM_RULINGS)[number];
+  ruled: (typeof FULCRUM_VERDICTS)[number];
 }
 
 /**
@@ -207,7 +207,7 @@ const asFulcrumVerdictField = (input: {
   if (input.value === null || input.value === undefined) return { value: null };
   if (typeof input.value !== 'object') return null;
   const verdict: Record<string, unknown> = { ...input.value };
-  const ruled = asOneOf({ value: verdict.ruled, values: FULCRUM_RULINGS });
+  const ruled = asOneOf({ value: verdict.ruled, values: FULCRUM_VERDICTS });
   const at = asVerdictDate({ value: verdict.at });
   if (verdict.by !== 'human' || !ruled || !at) return null;
   return { value: { by: 'human', at, ruled } };

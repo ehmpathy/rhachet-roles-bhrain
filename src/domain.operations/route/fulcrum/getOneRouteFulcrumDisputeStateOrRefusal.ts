@@ -1,5 +1,6 @@
 import { BadRequestError } from 'helpful-errors';
 
+import { asFulcrumRefusalReason } from './asFulcrumRefusalReason';
 import type { RouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
 import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
 
@@ -24,15 +25,7 @@ export const getOneRouteFulcrumDisputeStateOrRefusal = async (input: {
     if (!(error instanceof BadRequestError)) throw error;
     return {
       state: null,
-      refusal: asRefusalReason({ message: error.message }),
+      refusal: asFulcrumRefusalReason({ message: error.message }),
     };
   }
 };
-
-/**
- * .what = a refusal's message with the class lead helpful-errors writes cut off
- * .why = the halt renders the reason as a leaf under its own header, so the class word would
- *        read as a second header
- */
-const asRefusalReason = (input: { message: string }): string =>
-  input.message.replace(/^(?:BadRequestError|✋ ConstraintError): /, '');

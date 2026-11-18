@@ -42,6 +42,8 @@ exports[`getOneRouteDriveBlockerMessage given: [case2c] the approval halt, with 
       │     ├─ line: {"case": "F44", "ruled": "upheld"
       │     └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
       │
+      ├─ first, the driver repairs each fault above; approval is refused until then
+      │
       ├─ please ask a human to
       │  └─ rhx route.stone.set --stone 1.vision --as approved
       │

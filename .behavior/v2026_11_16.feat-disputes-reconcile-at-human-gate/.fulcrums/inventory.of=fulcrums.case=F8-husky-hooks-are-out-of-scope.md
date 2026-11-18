@@ -5,7 +5,7 @@ ground: dirty
 confidence: 0.85
 status: open
 owed: human
-holds: [arch-hazards-maintenance/i001/blocker.8, arch-hazards-maintenance/i001/nitpick.1, arch-hazards-maintenance/i001/nitpick.4, ergo-friction-hazards/i001/nitpick.2, ergo-friction-hazards/i001/nitpick.3, mech-failhides/i002/nitpick.3]
+holds: [arch-hazards-maintenance/i001/blocker.8, arch-hazards-maintenance/i001/nitpick.1, arch-hazards-maintenance/i001/nitpick.4, ergo-friction-hazards/i001/nitpick.2, ergo-friction-hazards/i001/nitpick.3, mech-failhides/i002/nitpick.3, mech-failhides/i003/nitpick.1, ergo-friction-hazards/i003/nitpick.1]
 lean: leave the .husky hooks to the change that authored them; this route ships the dispute gate only
 verdict: null
 ---

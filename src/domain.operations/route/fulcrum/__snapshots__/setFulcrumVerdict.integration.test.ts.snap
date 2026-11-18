@@ -26,8 +26,8 @@ exports[`setFulcrumVerdict given: [case4] a fulcrum whose frontmatter case diffe
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -57,5 +57,40 @@ exports[`setFulcrumVerdict given: [case8] a design-call fulcrum that owes none w
 {
   "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md",
   "owed": "none"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case9] a fulcrum with no frontmatter at all when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 has unreadable frontmatter; the driver repairs it before a verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ case
+   │  ├─ rework
+   │  ├─ ground
+   │  ├─ confidence
+   │  ├─ status
+   │  ├─ owed
+   │  ├─ holds
+   │  ├─ lean
+   │  └─ verdict
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
 }"
 `;

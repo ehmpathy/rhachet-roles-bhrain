@@ -488,7 +488,7 @@ export const stepRouteDrive = async (
     if (fulcrumLint)
       return {
         emit: {
-          stdout: fulcrumLint,
+          stdout: asStopped(fulcrumLint, 'halt'),
           stderr: { reason: fulcrumLint, code: 2 },
         },
       };

@@ -19,11 +19,11 @@ import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { ROUTE_INFLIGHT_FRESH_BOUND_LABEL } from '@src/domain.operations/route/drive/asRouteInflightFreshness';
+import { asRouteFulcrumApprovalDisputeLines } from '@src/domain.operations/route/fulcrum/asRouteFulcrumApprovalDisputeLines';
 import { asRouteFulcrumCommandRows } from '@src/domain.operations/route/fulcrum/asRouteFulcrumCommandRows';
-import { asRouteFulcrumDisputeLines } from '@src/domain.operations/route/fulcrum/asRouteFulcrumDisputeLines';
 import { asRouteFulcrumRuleStdout } from '@src/domain.operations/route/fulcrum/asRouteFulcrumRuleStdout';
 import { getAllRouteFulcrumRuleCommands } from '@src/domain.operations/route/fulcrum/getAllRouteFulcrumRuleCommands';
-import { getOneRouteFulcrumDisputeState } from '@src/domain.operations/route/fulcrum/getOneRouteFulcrumDisputeState';
+import { getOneRouteFulcrumDisputeStateOrRefusal } from '@src/domain.operations/route/fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
 import { setFulcrumVerdict } from '@src/domain.operations/route/fulcrum/setFulcrumVerdict';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
@@ -1371,18 +1371,21 @@ const judgeApproved = async (input: {
   if (!approval) {
     const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
     const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
-    const disputes = await getOneRouteFulcrumDisputeState({
+    // a corrupt dispute record renders as a refusal, the same block the drive halt shows
+    const disputes = await getOneRouteFulcrumDisputeStateOrRefusal({
       route: input.route,
     });
     const askCmds = [
-      ...getAllRouteFulcrumRuleCommands({ state: disputes }),
+      ...(disputes.state
+        ? getAllRouteFulcrumRuleCommands({ state: disputes.state })
+        : []),
       approveCmd,
     ];
     console.log('passed: false');
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
-    asRouteFulcrumDisputeLines({ state: disputes }).forEach((line) =>
+    asRouteFulcrumApprovalDisputeLines({ disputes }).forEach((line) =>
       console.log(`   ${line}`),
     );
     console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);

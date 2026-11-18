@@ -150,3 +150,57 @@ reason: wait for human approval
       └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;
+
+exports[`driver.route.dispute-passage.journey.acceptance given: [case2b] the same route, its verdict ledger corrupt when: [t0] the \`approved?\` judge runs then: the judge output a human reads is pinned: the approved judge on a corrupt ledger 1`] = `
+"passed: false
+reason: wait for human approval
+
+✋ halted, human approval required
+   ├─ the dispute record cannot be read; approval is refused until it is repaired
+   │  └─ fulcrum verdict ledger holds an unreadable row at line 1
+   │     ├─ ledger: .fulcrums/verdicts.jsonl
+   │     ├─ line: not json
+   │     └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+   │
+   ├─ first, the driver repairs each fault above; approval is refused until then
+   │
+   ├─ please ask your human to
+   │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │
+   └─ after human approves, run
+      └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.dispute-passage.journey.acceptance given: [case3] a human gate, approved before the driver disputes a concern when: [t1] the driver tries to pass the approved stone then: the refusal a driver reads is pinned: an approval before the dispute cannot pass it 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: lane (l1, 1/3)
+   │   ├─ rejected, cached — set aside by dispute
+   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.3369aa581cf72ce2db.r001._.given.by_peer.lane.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.3369aa581cf72ce2db.r001._.taken.by_self.lane.md
+   │
+   ├─ ✓ judge.1 - allowed [TIME]
+   │
+   └─ ✓ judge.2 - allowed [TIME]
+
+---
+✋ ConstraintError: 🗿 route.stone.set --as passed: refused, a dispute owes the human at this stone's gate
+
+route: .
+stone: 1.vision
+
+├─ 1 dispute owes your verdict
+│  └─ F001 · the-shape-is-deliberate · 80%
+│     ├─ holds: lane/i001/blocker.1
+│     ├─ lean: keep the extant shape
+│     ├─ raised on: 1.vision
+│     └─ read: .fulcrums/inventory.of=fulcrums.case=F001-the-shape-is-deliberate.md
+│
+└─ a human must rule on each before the stone can pass
+   └─ rhx route.fulcrum.rule --case F001 --as upheld|conceded
+"
+`;

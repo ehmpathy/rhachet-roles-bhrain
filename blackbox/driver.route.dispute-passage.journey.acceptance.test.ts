@@ -303,4 +303,161 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
       });
     });
   });
+
+  // the third surface of the one render, on a fault: the judge must name a corrupt ledger and its
+  // fix as the drive halt does, never throw a bare constraint with no verdict
+  given('[case2b] the same route, its verdict ledger corrupt', () => {
+    when('[t0] the `approved?` judge runs', () => {
+      const result = useThen('the judge reports', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'dispute-passage-ledger',
+          clone: ASSETS_DIR,
+        });
+        await fs.writeFile(
+          path.join(tempDir, '.fulcrums', 'verdicts.jsonl'),
+          'not json\n',
+        );
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        return invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { mechanism: 'approved?', stone: '1.vision', route: '.' },
+          cwd: tempDir,
+        });
+      });
+
+      then('🔴 the judge renders a verdict that names the ledger and its repair', () => {
+        expect(result.stdout).toContain('passed: false');
+        expect(result.stdout).toContain(
+          'the dispute record cannot be read; approval is refused until it is repaired',
+        );
+        expect(result.stdout).toContain('restore the line from git');
+      });
+
+      then('the judge output a human reads is pinned', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
+          'the approved judge on a corrupt ledger',
+        );
+      });
+    });
+  });
+
+  // invariant 2 at a human gate: an approval granted BEFORE a dispute was raised cannot carry the
+  // stone past it. the `approved?` judge reads the dispute state on every run, never only at the
+  // moment of approval, so a stale approval is no verdict on a dispute it never saw
+  given('[case3] a human gate, approved before the driver disputes a concern', () => {
+    const gated = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'dispute-passage-gated',
+        clone: ASSETS_DIR,
+      });
+      const guard = await fs.readFile(
+        path.join(tempDir, '1.vision.guard'),
+        'utf-8',
+      );
+      await fs.writeFile(
+        path.join(tempDir, '1.vision.guard'),
+        `${guard}  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route\n`,
+      );
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-dispute-passage-gated', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] the lane holds, the human approves, then the driver disputes and absorbs', () => {
+      const setup = useThen('each step is accepted', async () => {
+        const arrived = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: gated.tempDir,
+        });
+        // the fulcrum is written only after the approval, so the human approved a stone with
+        // no dispute on it
+        const fulcrumPath = path.join(gated.tempDir, FULCRUM_REL);
+        const fulcrum = await fs.readFile(fulcrumPath, 'utf-8');
+        await fs.rm(fulcrumPath);
+        const approved = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'approved' },
+          cwd: gated.tempDir,
+        });
+        await fs.writeFile(fulcrumPath, fulcrum);
+        const peerDir = path.join(gated.tempDir, '.reviews', 'peer');
+        const nameGiven = (await fs.readdir(peerDir)).find((name) =>
+          isRouteGuardReviewPeerGivenPath({ pathGiven: name }),
+        )!;
+        await fs.writeFile(
+          path.join(
+            peerDir,
+            getRouteGuardReviewPeerPathTaken({ pathGiven: nameGiven }),
+          ),
+          '[REFUTE] the shape is deliberate — see the fulcrum\n',
+        );
+        const disputed = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'disputed',
+            with: 'lane',
+            about: 'blocker.1',
+            why: FULCRUM_REL,
+          },
+          cwd: gated.tempDir,
+        });
+        const absorbed = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'absorbed', that: 'lane' },
+          cwd: gated.tempDir,
+        });
+        return { arrived, approved, disputed, absorbed };
+      });
+
+      then('the lane held, and the approval, dispute, and absorb each landed', () => {
+        expect(setup.arrived.code).toEqual(2);
+        expect(setup.approved.code).toEqual(0);
+        expect(setup.disputed.code).toEqual(0);
+        expect(setup.absorbed.code).toEqual(0);
+      });
+    });
+
+    when('[t1] the driver tries to pass the approved stone', () => {
+      const result = useThen('the gate is refused', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: gated.tempDir,
+        }),
+      );
+
+      then('🔴 the stone is HELD — the approval predates the dispute it would settle', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('both judges allow, so the passage dispute check is the one that refuses', () => {
+        expect(result.stdout).toContain('judge.1 - allowed');
+        expect(result.stdout).toContain('judge.2 - allowed');
+        expect(result.stderr).toContain(
+          "a dispute owes the human at this stone's gate",
+        );
+      });
+
+      then('the refusal names the dispute and its verdict command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('F001');
+        expect(output).toContain(
+          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        );
+      });
+
+      then('the refusal a driver reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('an approval before the dispute cannot pass it');
+      });
+    });
+  });
 });

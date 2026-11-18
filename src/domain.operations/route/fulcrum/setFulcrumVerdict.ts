@@ -5,7 +5,7 @@ import * as path from 'path';
 
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
 import {
-  FULCRUM_FRONTMATTER_FIELDS_REQUIRED,
+  asFulcrumFrontmatter,
   type FulcrumFrontmatter,
   type FulcrumVerdict,
 } from './asFulcrumFrontmatter';
@@ -77,13 +77,8 @@ export const setFulcrumVerdict = async (
         `fulcrum ${input.case} has unreadable frontmatter; the driver repairs it before a verdict`,
         ...asFulcrumFrontmatterDefectLines({
           path: fulcrum.path,
-          slug: fulcrum.slug,
-          absent:
-            fulcrum.parse.kind === 'absent'
-              ? [...FULCRUM_FRONTMATTER_FIELDS_REQUIRED]
-              : fulcrum.parse.absent,
-          malformed:
-            fulcrum.parse.kind === 'absent' ? [] : fulcrum.parse.malformed,
+          parse: fulcrum.parse,
+          dispute: null,
         }),
       ].join('\n'),
       { path: fulcrum.path },
@@ -118,20 +113,23 @@ export const setFulcrumVerdict = async (
       on: verdictOnRecord.at,
     };
 
-  // rewrite the frontmatter with the verdict, body intact
+  // findsert the ledger row that proves this lever wrote it, keyed on the canonical case
+  // .why = the row lands BEFORE the yaml: a run cut off between the two leaves an entry that still
+  //        reads unruled (owed, and a re-run completes it), never a yaml verdict with no row, which
+  //        every gate would read as forged
   const on: string = today();
+  await setFulcrumVerdictRow({
+    route: input.route,
+    row: { case: frontmatter.case, ruled: input.ruled, on },
+  });
+
+  // rewrite the frontmatter with the verdict, body intact
   const filePath = path.join(input.route, fulcrum.path);
   const content = await fs.readFile(filePath, 'utf8');
   await fs.writeFile(
     filePath,
     asContentWithVerdict({ content, ruled: input.ruled, on }),
   );
-
-  // findsert the ledger row that proves this lever wrote it, keyed on the canonical case
-  await setFulcrumVerdictRow({
-    route: input.route,
-    row: { case: frontmatter.case, ruled: input.ruled, on },
-  });
   return { outcome: 'ruled', case: frontmatter.case, path: fulcrum.path, on };
 };
 
@@ -174,11 +172,15 @@ const asContentWithVerdict = (input: {
   ruled: 'upheld' | 'conceded';
   on: string;
 }): string => {
-  // the caller parsed this block as valid; a file that lost it since is a race, never a skip
+  // the caller parsed this block as valid; a file that lost it, or broke it, since is a race,
+  // never a skip — and never a raw yaml fault, so the fresh content is parsed again first
   const match = input.content.match(FRONTMATTER_BLOCK_PATTERN);
-  if (!match?.[1])
+  if (
+    !match?.[1] ||
+    asFulcrumFrontmatter({ content: input.content }).kind !== 'valid'
+  )
     throw new MalfunctionError(
-      'fulcrum frontmatter vanished between its parse and its verdict write',
+      'fulcrum frontmatter vanished or broke between its parse and its verdict write',
       { hint: 'rerun rhx route.fulcrum.rule; another writer touched the file' },
     );
 

@@ -69,8 +69,8 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
+         │  holds: [limited/<iteration>/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -97,8 +97,8 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
+         │  holds: [limited/<iteration>/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -208,8 +208,8 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
+         │  holds: [limited/<iteration>/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---

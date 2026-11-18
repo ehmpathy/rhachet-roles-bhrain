@@ -1,5 +1,3 @@
-import * as path from 'path';
-
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
@@ -80,7 +78,10 @@ export const asRouteFulcrumDisputeState = (input: {
     owedHuman: humanOwed.filter((entry) => !isProven(entry)),
     ruled: humanOwed.filter(isProven),
     reflected: live.filter((entry) => entry.frontmatter.owed === 'reflect'),
-    unreadable: asAllFulcrumsUnreadable({ fulcrums: input.fulcrums }),
+    unreadable: [
+      ...asAllFulcrumsUnreadable({ fulcrums: input.fulcrums }),
+      ...asAllFulcrumDisputesOrphaned({ fulcrums: input.fulcrums, raisedOn }),
+    ],
     forged: live.filter(
       (entry) => entry.frontmatter.verdict !== null && !isProven(entry),
     ),
@@ -101,17 +102,34 @@ const asAllFulcrumsUnreadable = (input: {
   );
 
 /**
- * .what = each readable, not superseded fulcrum, as the entry the gate presents
- * .why = a superseded entry holds no debt; every other readable one is sorted by what it owes
+ * .what = each case a live dispute cites with no fulcrum file on the route, as the path it cited
+ * .why = a deleted or renamed entry must not orphan its dispute; the gate names the absent file,
+ *        so the dispute still refuses approval until the file is restored
+ */
+const asAllFulcrumDisputesOrphaned = (input: {
+  fulcrums: RouteFulcrum[];
+  raisedOn: Map<string, { stones: string[]; path: string }>;
+}): { path: string; slug: string }[] => {
+  const cases = new Set(input.fulcrums.map((fulcrum) => fulcrum.slug));
+  return [...input.raisedOn.entries()].flatMap(([slug, cited]) =>
+    cases.has(slug) ? [] : [{ path: cited.path, slug }],
+  );
+};
+
+/**
+ * .what = each readable fulcrum that holds a debt, as the entry the gate presents
+ * .why = a superseded entry holds no debt — unless a live dispute still cites it. the passage log,
+ *        not the typed `status`, decides that a dispute was taken back (a `rewound` row)
  */
 const asAllFulcrumDisputeEntriesLive = (input: {
   fulcrums: RouteFulcrum[];
-  raisedOn: Map<string, string[]>;
+  raisedOn: Map<string, { stones: string[]; path: string }>;
 }): RouteFulcrumDisputeEntry[] =>
   input.fulcrums.flatMap((fulcrum) => {
     if (fulcrum.parse.kind !== 'valid') return [];
-    if (fulcrum.parse.frontmatter.status === 'superseded') return [];
-    const raisedOn = input.raisedOn.get(path.basename(fulcrum.path)) ?? [];
+    const raisedOn = input.raisedOn.get(fulcrum.slug)?.stones ?? [];
+    const isSuperseded = fulcrum.parse.frontmatter.status === 'superseded';
+    if (isSuperseded && !raisedOn.length) return [];
     return [
       {
         path: fulcrum.path,

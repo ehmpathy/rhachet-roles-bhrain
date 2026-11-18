@@ -2,11 +2,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { asAllFulcrumFilesDeclared } from './asAllFulcrumFilesDeclared';
-import {
-  asFulcrumFrontmatter,
-  type FulcrumFrontmatterParse,
-} from './asFulcrumFrontmatter';
-import { asFulcrumParseFitToFileCase } from './asFulcrumParseFitToFileCase';
+import { asAllFulcrumsCaseUnique } from './asAllFulcrumsCaseUnique';
+import type { FulcrumFrontmatterParse } from './asFulcrumFrontmatter';
+import { getOneRouteFulcrumOfFile } from './getOneRouteFulcrumOfFile';
 
 /**
  * .what = one fulcrum entry on a route, with its frontmatter parse
@@ -31,9 +29,6 @@ export interface RouteFulcrum {
   parse: FulcrumFrontmatterParse;
 }
 
-const FULCRUM_FILE_NAME_MALFORMED =
-  'file name (inventory.of=fulcrums.case=<id>-<slug>.md)';
-
 /**
  * .what = reads and parses every fulcrum entry of a route
  * .why = invariant 5 makes the fulcrum file the one home of a deferral; every enforcer reads it
@@ -52,32 +47,12 @@ export const getAllRouteFulcrums = async (input: {
     });
 
   // read each entry; a file whose name declares no case is still listed, as unreadable
-  return Promise.all(
-    asAllFulcrumFilesDeclared({ names }).map(
-      async (file): Promise<RouteFulcrum> => {
-        const filePath = path.join('.fulcrums', file.name);
-        if (!file.declared)
-          return {
-            path: filePath,
-            slug: file.name,
-            title: file.name,
-            parse: {
-              kind: 'invalid',
-              absent: [],
-              malformed: [FULCRUM_FILE_NAME_MALFORMED],
-            },
-          };
-        const content = await fs.readFile(path.join(dir, file.name), 'utf8');
-        return {
-          path: filePath,
-          slug: file.declared.slug,
-          title: file.declared.title,
-          parse: asFulcrumParseFitToFileCase({
-            parse: asFulcrumFrontmatter({ content }),
-            slug: file.declared.slug,
-          }),
-        };
-      },
+  const fulcrums = await Promise.all(
+    asAllFulcrumFilesDeclared({ names }).map((file) =>
+      getOneRouteFulcrumOfFile({ dir, file }),
     ),
   );
+
+  // two files under one case id are each named unreadable, never resolved by order
+  return asAllFulcrumsCaseUnique({ fulcrums });
 };

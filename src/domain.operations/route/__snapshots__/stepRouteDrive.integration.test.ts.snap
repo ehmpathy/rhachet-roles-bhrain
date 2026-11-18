@@ -1419,8 +1419,8 @@ exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the o
          │  ground: wrong            # wrong | dirty
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
-         │  owed: human              # human | reflect | none
-         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -1435,4 +1435,22 @@ exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the o
    ├─ verdict carries no ledger row; only rhx route.fulcrum.rule writes it
    └─ fix: set \`verdict: null\` and \`status: open\`, then ask a human to run
       └─ rhx route.fulcrum.rule --case F1 --as upheld|conceded"
+`;
+
+exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t3] the verdict ledger holds a line that cannot be read then: the ledger lint matches snapshot 1`] = `
+"✋ ConstraintError: a fulcrum is unreadable or forged; repair each before the stop
+
+🗿 route.fulcrum lint: the verdict ledger cannot be read
+   └─ fulcrum verdict ledger holds an unreadable row at line 1
+      ├─ ledger: <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case37-ledger.<hash>/.fulcrums/verdicts.jsonl
+      ├─ line: not json
+      └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger"
+`;
+
+exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t4] a live dispute cites a fulcrum whose file is gone then: the orphan lint matches snapshot 1`] = `
+"✋ ConstraintError: a fulcrum is unreadable or forged; repair each before the stop
+
+🗿 route.fulcrum lint: F2 is cited by a live dispute, and its file is gone
+   ├─ cited: .fulcrums/inventory.of=fulcrums.case=F2-gone.md
+   └─ fix: restore the file, or rewind the stone whose dispute cites it"
 `;

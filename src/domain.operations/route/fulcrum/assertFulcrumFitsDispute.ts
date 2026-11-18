@@ -2,18 +2,13 @@ import { readFile } from 'fs/promises';
 import { ConstraintError } from 'helpful-errors';
 import { basename } from 'path';
 
-import { asFulcrumCaseFromFileName } from './asFulcrumCaseFromFileName';
-import {
-  asFulcrumFrontmatter,
-  FULCRUM_FRONTMATTER_FIELDS_REQUIRED,
-  type FulcrumFrontmatter,
-} from './asFulcrumFrontmatter';
+import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asFulcrumFrontmatterDefectLines } from './asFulcrumFrontmatterDefectLines';
 import {
   asFulcrumOwed,
   FULCRUM_REFLECT_CONFIDENCE_FLOOR,
 } from './asFulcrumOwed';
-import { asFulcrumParseFitToFileCase } from './asFulcrumParseFitToFileCase';
+import { asFulcrumParseOfFile } from './asFulcrumParseOfFile';
 import { isFulcrumHoldsOfConcern } from './isFulcrumHoldsOfConcern';
 
 /**
@@ -31,13 +26,11 @@ export const assertFulcrumFitsDispute = async (input: {
   reflect: string | null;
   concern: { reviewer: string; about: string };
 }): Promise<FulcrumFrontmatter> => {
-  // read and parse the entry the dispute cites; its case must equal the file id
-  const content = await readFile(input.pathResolved, 'utf8');
-  const name = basename(input.pathResolved);
-  const slug = asFulcrumCaseFromFileName({ name })?.slug ?? name;
-  const parse = asFulcrumParseFitToFileCase({
-    parse: asFulcrumFrontmatter({ content }),
-    slug,
+  // read and parse the entry the dispute cites; its name must declare a case, and its
+  // frontmatter's case must equal it
+  const parse = asFulcrumParseOfFile({
+    name: basename(input.pathResolved),
+    content: await readFile(input.pathResolved, 'utf8'),
   });
   if (parse.kind !== 'valid')
     throw new ConstraintError(
@@ -45,12 +38,8 @@ export const assertFulcrumFitsDispute = async (input: {
         `the fulcrum this dispute cites has ${parse.kind === 'absent' ? 'no' : 'an invalid'} frontmatter`,
         ...asFulcrumFrontmatterDefectLines({
           path: input.pathResolved,
-          slug,
-          absent:
-            parse.kind === 'absent'
-              ? [...FULCRUM_FRONTMATTER_FIELDS_REQUIRED]
-              : parse.absent,
-          malformed: parse.kind === 'absent' ? [] : parse.malformed,
+          parse,
+          dispute: input.concern,
         }),
       ].join('\n'),
       { path: input.pathResolved, reflect: input.reflect },

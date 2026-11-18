@@ -241,6 +241,41 @@ describe('setFulcrumVerdict', () => {
     },
   );
 
+  given('[case9] a fulcrum with no frontmatter at all', () => {
+    when('[t0] a human tries to rule it', () => {
+      const result = useThen('it is refused', async () => {
+        const scene = await genRouteWithFulcrum({
+          slug: 'fulcrum-verdict-absent',
+          owed: 'human',
+          verdict: 'null',
+        });
+        await fs.writeFile(scene.file, '# F44 · rename-table\n\nprose only.\n');
+        const error = await getError(
+          setFulcrumVerdict(
+            { route: scene.route, case: 'F44', ruled: 'upheld' },
+            { isTTY: true },
+          ),
+        );
+        const rows = await getAllFulcrumVerdictRows({ route: scene.route });
+        return { error, rows, route: scene.route };
+      });
+
+      then('🔴 the refusal names every field as absent', () => {
+        expect(result.error.message).toContain('unreadable frontmatter');
+        expect(result.error.message).toContain('├─ absent');
+        expect(result.error.message).toContain('owed: none');
+      });
+
+      then('no ledger row is written', () => {
+        expect(result.rows).toHaveLength(0);
+      });
+
+      then('the refusal a human reads is pinned', () => {
+        expect(asStableRefusal(result)).toMatchSnapshot();
+      });
+    });
+  });
+
   given('[case7] a case id with no fulcrum on the route', () => {
     when('[t0] a human rules it', () => {
       const result = useThen('it is refused', async () => {

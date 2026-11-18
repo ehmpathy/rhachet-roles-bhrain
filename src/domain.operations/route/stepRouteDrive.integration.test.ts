@@ -3042,5 +3042,69 @@ describe('stepRouteDrive.integration', () => {
         expect(result.emit?.stdout).toContain('are you here?');
       });
     });
+
+    when('[t3] the verdict ledger holds a line that cannot be read', () => {
+      const result = useThen('onStop blocks the stop', async () => {
+        const tempDir = await genRoute({
+          slug: 'drive-int-case37-ledger',
+          fulcrum: FULCRUM_VALID,
+        });
+        await fs.writeFile(
+          path.join(tempDir, '.fulcrums', 'verdicts.jsonl'),
+          'not json\n',
+        );
+        return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+      });
+
+      then('the stop is held with code 2', () => {
+        expect(result.emit?.stderr?.code).toEqual(2);
+      });
+
+      then('🔴 the linter names the ledger, never crashes on it', () => {
+        expect(result.emit?.stdout).toContain(
+          'the verdict ledger cannot be read',
+        );
+      });
+
+      then('the ledger lint matches snapshot', () => {
+        expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t4] a live dispute cites a fulcrum whose file is gone', () => {
+      const result = useThen('onStop blocks the stop', async () => {
+        const tempDir = await genRoute({
+          slug: 'drive-int-case37-orphan',
+          fulcrum: FULCRUM_VALID,
+        });
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          `${JSON.stringify({
+            stone: '1',
+            status: 'disputed',
+            reviewer: 'rules',
+            about: 'blocker.1',
+            given: 'r001.rules.md',
+            fulcrum: '.fulcrums/inventory.of=fulcrums.case=F2-gone.md',
+            reason: 'disputed review.peer: rules blocker.1',
+          })}\n`,
+        );
+        return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+      });
+
+      then('the stop is held with code 2', () => {
+        expect(result.emit?.stderr?.code).toEqual(2);
+      });
+
+      then('🔴 the linter names the orphaned dispute and its repair', () => {
+        expect(result.emit?.stdout).toContain('its file is gone');
+        expect(result.emit?.stdout).toContain('F2');
+      });
+
+      then('the orphan lint matches snapshot', () => {
+        expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot();
+      });
+    });
   });
 });

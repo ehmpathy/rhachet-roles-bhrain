@@ -147,17 +147,6 @@ export const setStoneAsConcernAbsorbed = async (input: {
       })
     : null;
 
-  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect
-  if (input.as === 'disputed' && fulcrumPathResolved)
-    await assertFulcrumFitsDispute({
-      pathResolved: fulcrumPathResolved,
-      reflect: input.reflect ?? null,
-      concern: {
-        reviewer: asSanitizedPeerReviewSlug({ slug: input.with }),
-        about,
-      },
-    });
-
   // the shared readiness computation, scoped to this one reviewer. it reports every slug
   // that has SPOKEN, which the slug check reads — one corpus read rather than two
   const slug = asSanitizedPeerReviewSlug({ slug: input.with });
@@ -167,11 +156,21 @@ export const setStoneAsConcernAbsorbed = async (input: {
     scope: { slug },
   });
 
+  // the reviewer must exist BEFORE its fulcrum is judged: a typo'd --with must meet "no reviewer
+  // named", never a fulcrum-hold refusal that scripts a hold for a reviewer that does not exist
   assertValidPeerReviewSlug({
     slug,
     stone: stoneMatched,
     slugsSpoken: status.slugsSpoken,
   });
+
+  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect
+  if (input.as === 'disputed' && fulcrumPathResolved)
+    await assertFulcrumFitsDispute({
+      pathResolved: fulcrumPathResolved,
+      reflect: input.reflect ?? null,
+      concern: { reviewer: slug, about },
+    });
 
   // R1 — answer first
   asAbsorptionIsAnswered({
