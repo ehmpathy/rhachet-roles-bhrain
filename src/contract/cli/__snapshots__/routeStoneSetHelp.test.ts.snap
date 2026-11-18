@@ -40,6 +40,10 @@ options:
                        urgent = a shipped harm — earns more budget, warns the human
                        (security | safety | monetary | reputation | behavioral)
                        better = code idealism / maintenance — the floor, never earns budget
+  --reflect <ref>    the upstream reflection a sure misread owes: <owner>/<repo>#<n>
+                       (REQUIRED for --as disputed when the fulcrum derives owed: reflect —
+                        ground wrong, confidence 0.9 or above; must match its frontmatter.
+                        refused on dirty ground, which a human always rules)
   --into <path>      the path you wrote your articulation to — copy it from the prompt
                        (REQUIRED for --as promised)
                        a diff needs both paths: with one, a mismatch reads "absent";

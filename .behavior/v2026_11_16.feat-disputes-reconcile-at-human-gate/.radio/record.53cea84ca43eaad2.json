@@ -1,0 +1,19 @@
+{
+  "key": "53cea84ca43eaad2",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrain"
+  },
+  "exid": null,
+  "title": "fix(review): arch-hazards-behavior lane graded code absent from the reviewed tree",
+  "description": "## what\n\na peer review lane returned a given whose every concern grades code absent from the reviewed tree.\n\n- route: `.behavior/v2026_11_16.feat-disputes-reconcile-at-human-gate` (branch `beav/feat-disputes-reconcile-at-human-gate`)\n- lane: `arch-hazards-behavior`, stone `5.1.execution.from_vision`, round i002, given r007\n- blocker.1 says `asFulcrumFrontmatter.test.ts` imports `assertFulcrumOwedMatches`, and calls it \"the pytest\". the file imports only `asFulcrumFrontmatter` and `asFulcrumOwed`; no symbol `assertFulcrumOwedMatches` exists in the repo\n- blocker.2, blocker.3, nitpick.1, nitpick.2 grade a `NotFoundError` user lookup, a line-total lookup, `parseOrder`, `totalCurrency`, `daysBetween`. a repo-wide search finds none of them\n\n## why it matters\n\na fabricated given counts 3 blockers against a stone that no fix can clear. the driver can only dispute it, and the lane spends a paid round each time.\n\n## the ask\n\n- find why the brain graded content outside its prompt (a prompt mix-up across concurrent lanes? a response cached from another tree?)\n- consider a guard that refuses a given whose cited locations do not exist in the target tree, as a malfunction rather than a verdict",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 43,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

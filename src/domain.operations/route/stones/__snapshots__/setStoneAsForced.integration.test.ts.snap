@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsForced, at the dispute gate given: [case1] a route with an open dispute that owes the human when: [t0] a human forces the stone then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: 🗿 route.stone.set --as forced: refused, disputes owe a verdict
+   ├─ 1 dispute owes your verdict
+   │  └─ F44 · rename-table · 70%
+   │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
+   │     ├─ lean: x
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   │
+   └─ rule on each, repair each unreadable fulcrum, then force
+      ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+      └─ rhx route.stone.set --stone 1.vision --as forced
+
+{
+  "route": "<route>",
+  "stone": "1.vision"
+}"
+`;

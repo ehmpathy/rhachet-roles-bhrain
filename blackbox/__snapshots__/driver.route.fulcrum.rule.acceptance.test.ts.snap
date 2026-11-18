@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one disputed fulcrum, F001 when: [t0] the caller omits --case then: the refusal is pinned: refused, --case absent 1`] = `
+"✋ ConstraintError: --case is required
+
+└─ fix: name the fulcrum to rule, e.g.
+   └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+"
+`;
+
+exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one disputed fulcrum, F001 when: [t1] the caller passes a verdict outside the closed set then: the refusal is pinned: refused, --as outside upheld|conceded 1`] = `
+"✋ ConstraintError: --as must be upheld or conceded, not maybe
+
+├─ upheld: the driver's call stands
+├─ conceded: the reviewer's concern stands, and its repair is owed
+└─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded
+"
+`;
+
+exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one disputed fulcrum, F001 when: [t2] a spawned caller with no tty rules F001 then: the refusal is pinned: refused, the caller holds no tty 1`] = `
+"✋ ConstraintError: only a human can rule on a dispute
+
+case: F001
+
+└─ fix: ask a human to run this at their own terminal
+   └─ rhx route.fulcrum.rule --case F001 --as upheld
+"
+`;
+
+exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one disputed fulcrum, F001 when: [t3] the caller asks for --help then: the help is pinned: route.fulcrum.rule --help 1`] = `
+"
+route.fulcrum.rule - a human rules on one disputed fulcrum
+
+usage:
+  route.fulcrum.rule --case <id> --as upheld|conceded [options]
+
+options:
+  --case <id>       the fulcrum case id, e.g. F44 (required)
+  --as <verdict>    upheld (the driver's call stands) | conceded (the reviewer's concern stands) (required)
+  --route <path>    path to route directory (uses bound route if absent)
+  --help            show this help
+
+example:
+  route.fulcrum.rule --case F44 --as upheld
+
+"
+`;

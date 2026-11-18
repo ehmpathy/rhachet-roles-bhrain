@@ -5,6 +5,7 @@ import { getError, given, then, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { genFulcrumEntryContent } from '../__test_assets__/genFulcrumEntryContent';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
@@ -23,8 +24,9 @@ const noopContext = genContextReviewBrainSupplyDemo();
  * 🔴 each `then` below goes RED under a real regression:
  *      - drop the `alreadyOnRecord` guard → [t2] finds two conceded rows, not one
  *      - drop `asAbsorptionIsNotContrary` → [t3] records a row instead of a throw
- *      - drop the `severity ?? 'better'` default → [t1] reads severity undefined
- *      - store `--why` on a concede → [t4] finds a fulcrum on a concede row
+ *      - accept an ungraded concede → [case2 t1] records a row instead of a throw
+ *      - accept a dispute with no `--why` → [case2 t0] records a row instead of a throw
+ *      - drop `assertFulcrumFitsDispute` → [case4] records each dispute it should refuse
  *    so the suite clamps the write, not merely the parse.
  */
 describe('setStoneAsConcernAbsorbed.integration', () => {
@@ -82,15 +84,11 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
 
       await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
 
-      // a fulcrum entry a dispute can cite. no brackets in the name — a glob
-      // metacharacter in a filename is forbidden (rule.forbid.brackets-in-filenames)
-      const fulcrumsDir = path.join(tempDir, '.fulcrums');
-      await fs.mkdir(fulcrumsDir, { recursive: true });
+      // the fulcrum path a dispute can cite. no brackets in the name — a glob
+      // metacharacter in a filename is forbidden (rule.forbid.brackets-in-filenames).
+      // the entry itself is written AFTER the first round ([t0]): an open human-owed dispute
+      // on a route with no human gate refuses the last stone's passage
       fulcrumRel = '.fulcrums/inventory.of=fulcrums.case=F001-test.md';
-      await fs.writeFile(
-        path.join(tempDir, fulcrumRel),
-        '# F001 — the argument the council reads',
-      );
     });
 
     afterAll(async () => {
@@ -111,6 +109,13 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
               route: tempDir,
               stone: '1.test',
             });
+            await fs.mkdir(path.join(tempDir, '.fulcrums'), {
+              recursive: true,
+            });
+            await fs.writeFile(
+              path.join(tempDir, fulcrumRel),
+              genFulcrumEntryContent({ case: 'F001-test' }),
+            );
             return { passed, pathsTaken };
           },
         );
@@ -395,13 +400,8 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
         );
         await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
 
-        const fulcrumsDir = path.join(tempDir, '.fulcrums');
-        await fs.mkdir(fulcrumsDir, { recursive: true });
+        // the entry is written after the round ([t0]), so the lane's own passage is not held
         fulcrumRel = '.fulcrums/inventory.of=fulcrums.case=F001-test.md';
-        await fs.writeFile(
-          path.join(tempDir, fulcrumRel),
-          '# F001 — the argument the council reads',
-        );
       });
 
       afterAll(async () => {
@@ -411,8 +411,20 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
       when('[t0] the reviewer runs and its verdict holds the road', () => {
         const outcome = useThen(
           'the round runs and the lane approves',
-          async () =>
-            setStoneAsPassed({ stone: '1.test', route: tempDir }, noopContext),
+          async () => {
+            const passed = await setStoneAsPassed(
+              { stone: '1.test', route: tempDir },
+              noopContext,
+            );
+            await fs.mkdir(path.join(tempDir, '.fulcrums'), {
+              recursive: true,
+            });
+            await fs.writeFile(
+              path.join(tempDir, fulcrumRel),
+              genFulcrumEntryContent({ case: 'F001-test' }),
+            );
+            return passed;
+          },
         );
 
         then(
@@ -493,7 +505,7 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
       fulcrumRel = '.fulcrums/inventory.of=fulcrums.case=F001-test.md';
       await fs.writeFile(
         path.join(tempDir, fulcrumRel),
-        '# F001 — the argument the council reads',
+        genFulcrumEntryContent({ case: 'F001-test' }),
       );
     });
 
@@ -583,5 +595,340 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
         });
       },
     );
+  });
+
+  /**
+   * 🔴 the clamp for invariants 3 and 5 at dispute time — each refusal goes red without its
+   *    check in `assertFulcrumFitsDispute`, and the two acceptances go red if a check over-reaches
+   */
+  given('[case4] a dispute whose fulcrum must carry it', () => {
+    let tempDir: string;
+
+    const writeFulcrum = async (input: {
+      name: string;
+      content: string;
+    }): Promise<string> => {
+      const rel = `.fulcrums/inventory.of=fulcrums.case=${input.name}.md`;
+      await fs.writeFile(path.join(tempDir, rel), input.content);
+      return rel;
+    };
+
+    const disputeWith = (input: {
+      about: string;
+      why: string;
+      reflect?: string;
+    }) =>
+      setStoneAsConcernAbsorbed({
+        stone: '1.test',
+        route: tempDir,
+        as: 'disputed',
+        with: 'limited',
+        about: input.about,
+        why: input.why,
+        reflect: input.reflect,
+      });
+
+    // each refusal is snapped by byte; the temp route is masked so the bytes stay stable
+    const asStableRefusal = (input: { message: string }): string =>
+      input.message.split(tempDir).join('<route>');
+
+    beforeAll(async () => {
+      tempDir = path.join(
+        process.cwd(),
+        '.tmp',
+        `test-stanced-fulcrum-fit-${Date.now()}`,
+      );
+      await fs.mkdir(path.join(tempDir, '.fulcrums'), { recursive: true });
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+      await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
+      await fs.writeFile(
+        path.join(tempDir, '1.test.guard'),
+        [
+          'artifacts:',
+          '  - "$route/1.test*.md"',
+          'reviews:',
+          '  peer:',
+          '    - slug: limited',
+          '      run: echo "blockers: 2\\nnitpicks: 0\\ntest review"',
+          '      budget: 5',
+          '      level: 1',
+          'judges:',
+          '  - echo "passed: false\\nreason: blockers found"',
+        ].join('\n'),
+      );
+      await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
+
+      // the round runs and its given is answered, so R1 passes for the accepted cases
+      await setStoneAsPassed({ stone: '1.test', route: tempDir }, noopContext);
+      await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] the fulcrum has no frontmatter', () => {
+      then(
+        'the dispute is refused, and the fix names every field',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F010-bare',
+            content: '# F010 — prose alone',
+          });
+          const error = await getError(
+            disputeWith({ about: 'blocker.1', why }),
+          );
+          expect(error.message).toContain('has no frontmatter');
+          expect(error.message).toContain('confidence');
+          expect(error.message).toContain('case: F010\n');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when('[t1] the fulcrum frontmatter holds a value outside its set', () => {
+      then(
+        'the dispute is refused, and the malformed field is named',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F011-bad-ground',
+            content: genFulcrumEntryContent({
+              case: 'F011-bad-ground',
+            }).replace('ground: wrong', 'ground: maybe'),
+          });
+          const error = await getError(
+            disputeWith({ about: 'blocker.1', why }),
+          );
+          expect(error.message).toContain('has an invalid frontmatter');
+          expect(error.message).toContain('malformed');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when(
+      '[t2] the fulcrum declares an owed its ground and confidence do not derive',
+      () => {
+        then(
+          'the dispute is refused, and the derived owed is named',
+          async () => {
+            const why = await writeFulcrum({
+              name: 'F012-owed-lie',
+              content: genFulcrumEntryContent({
+                case: 'F012-owed-lie',
+                confidence: 0.95,
+                owed: 'human',
+              }),
+            });
+            const error = await getError(
+              disputeWith({ about: 'blocker.1', why }),
+            );
+            expect(error.message).toContain('derive owed: reflect');
+            expect(asStableRefusal(error)).toMatchSnapshot();
+          },
+        );
+      },
+    );
+
+    when('[t3] a sure misread is disputed with no --reflect', () => {
+      then(
+        'the dispute is refused, and the fix names the reflect ref',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F013-sure',
+            content: genFulcrumEntryContent({
+              case: 'F013-sure',
+              confidence: 0.95,
+              owed: 'reflect',
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+            }),
+          });
+          const error = await getError(
+            disputeWith({ about: 'blocker.1', why }),
+          );
+          expect(error.message).toContain('--reflect is required');
+          expect(error.message).toContain(
+            '--reflect ehmpathy/rhachet-roles-ehmpathy#12',
+          );
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when(
+      '[t4] a sure misread is disputed with a --reflect that differs',
+      () => {
+        then('the dispute is refused as a mismatch', async () => {
+          const why = await writeFulcrum({
+            name: 'F014-sure',
+            content: genFulcrumEntryContent({
+              case: 'F014-sure',
+              confidence: 0.95,
+              owed: 'reflect',
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+            }),
+          });
+          const error = await getError(
+            disputeWith({
+              about: 'blocker.1',
+              why,
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#99',
+            }),
+          );
+          expect(error.message).toContain('does not match');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        });
+      },
+    );
+
+    when('[t5] a dispute on dirty ground carries a --reflect', () => {
+      then(
+        'the dispute is refused — a human always rules dirty ground',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F015-dirty',
+            content: genFulcrumEntryContent({
+              case: 'F015-dirty',
+              ground: 'dirty',
+              confidence: 0.95,
+            }),
+          });
+          const error = await getError(
+            disputeWith({
+              about: 'blocker.1',
+              why,
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+            }),
+          );
+          expect(error.message).toContain(
+            'refused for a dispute on dirty ground',
+          );
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when('[t6] a human-owed dispute carries a --reflect', () => {
+      then(
+        'the dispute is refused — only a sure misread owes one',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F016-unsure',
+            content: genFulcrumEntryContent({ case: 'F016-unsure' }),
+          });
+          const error = await getError(
+            disputeWith({
+              about: 'blocker.1',
+              why,
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+            }),
+          );
+          expect(error.message).toContain('owes a human');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when('[t7] the fulcrum declares owed: none', () => {
+      then(
+        'the dispute is refused — a dispute owes a human or a reflection',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F017-none',
+            content: genFulcrumEntryContent({
+              case: 'F017-none',
+              owed: 'none',
+            }),
+          });
+          const error = await getError(
+            disputeWith({ about: 'blocker.1', why }),
+          );
+          expect(error.message).toContain('owed: none');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
+
+    when('[t8] a sure misread is disputed with the matched --reflect', () => {
+      const result = useThen('the dispute is accepted', async () =>
+        disputeWith({
+          about: 'blocker.1',
+          why: await writeFulcrum({
+            name: 'F018-sure',
+            content: genFulcrumEntryContent({
+              case: 'F018-sure',
+              confidence: 0.95,
+              owed: 'reflect',
+              reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+            }),
+          }),
+          reflect: 'ehmpathy/rhachet-roles-ehmpathy#12',
+        }),
+      );
+
+      then('the op reports a dispute, recorded and never halted', () => {
+        expect(result.disputed).toBe(true);
+      });
+    });
+
+    when('[t9] an unsure misread is disputed with no --reflect', () => {
+      const result = useThen('the dispute is accepted', async () =>
+        disputeWith({
+          about: 'blocker.2',
+          why: await writeFulcrum({
+            name: 'F019-unsure',
+            content: genFulcrumEntryContent({ case: 'F019-unsure' }),
+          }),
+        }),
+      );
+
+      then('the op reports a dispute, owed to the human', () => {
+        expect(result.disputed).toBe(true);
+      });
+    });
+
+    when(
+      '[t10] the fulcrum does not hold the concern the dispute backs',
+      () => {
+        then(
+          'the dispute is refused, and the fix names the hold to add',
+          async () => {
+            const why = await writeFulcrum({
+              name: 'F020-holds-other',
+              content: genFulcrumEntryContent({
+                case: 'F020-holds-other',
+                holds: ['limited/i001/blocker.2'],
+              }),
+            });
+            const error = await getError(
+              disputeWith({ about: 'blocker.1', why }),
+            );
+            expect(error.message).toContain('does not hold limited blocker.1');
+            expect(error.message).toContain('limited/<iteration>/blocker.1');
+            expect(asStableRefusal(error)).toMatchSnapshot();
+          },
+        );
+      },
+    );
+
+    when('[t11] the fulcrum case differs from its file id', () => {
+      then(
+        'the dispute is refused, and the malformed case names the file id',
+        async () => {
+          const why = await writeFulcrum({
+            name: 'F021-renamed',
+            content: genFulcrumEntryContent({ case: 'F021-renamed' }).replace(
+              'case: F021',
+              'case: F099',
+            ),
+          });
+          const error = await getError(
+            disputeWith({ about: 'blocker.1', why }),
+          );
+          expect(error.message).toContain('case (equal to the file id, F021)');
+          expect(asStableRefusal(error)).toMatchSnapshot();
+        },
+      );
+    });
   });
 });

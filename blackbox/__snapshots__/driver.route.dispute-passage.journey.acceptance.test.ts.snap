@@ -52,6 +52,27 @@ exports[`driver.route.dispute-passage.journey.acceptance given: [case1] a lane t
 "
 `;
 
+exports[`driver.route.dispute-passage.journey.acceptance given: [case1] a lane that rejects and cannot be satisfied by a fix when: [t1b] the \`approved?\` judge runs while the dispute is open then: the judge output a human reads is pinned: the approved judge names the open dispute 1`] = `
+"passed: false
+reason: wait for human approval
+
+✋ halted, human approval required
+   ├─ 1 dispute owes your verdict
+   │  └─ F001 · the-shape-is-deliberate · 80%
+   │     ├─ holds: lane/i001/blocker.1
+   │     ├─ lean: keep the extant shape
+   │     ├─ raised on: 1.vision
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F001-the-shape-is-deliberate.md
+   │
+   ├─ please ask your human to
+   │  ├─ rhx route.fulcrum.rule --case F001 --as upheld|conceded
+   │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │
+   └─ after human approves, run
+      └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
 exports[`driver.route.dispute-passage.journey.acceptance given: [case1] a lane that rejects and cannot be satisfied by a fix when: [t2] the driver absorbs the feedback then: the absorbed ack is pinned: the feedback absorption ack 1`] = `
 "🦉 the way speaks for itself
 
@@ -93,5 +114,39 @@ exports[`driver.route.dispute-passage.journey.acceptance given: [case1] a lane t
    │
    └─ the way continues, run
       └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.dispute-passage.journey.acceptance given: [case1] a lane that rejects and cannot be satisfied by a fix when: [t4] the driver tries to pass the last stone, the dispute still open then: the refusal a driver reads is pinned: the gateless last stone refuses past a dispute 1`] = `
+"🦉 the way speaks for itself
+
+---
+✋ ConstraintError: 🗿 route.stone.set --as passed: refused, the last stone has no human gate and disputes owe a verdict
+
+route: .
+stone: 2.ship
+
+├─ 1 dispute owes your verdict
+│  └─ F001 · the-shape-is-deliberate · 80%
+│     ├─ holds: lane/i001/blocker.1
+│     ├─ lean: keep the extant shape
+│     ├─ raised on: 1.vision
+│     └─ read: .fulcrums/inventory.of=fulcrums.case=F001-the-shape-is-deliberate.md
+│
+└─ a human must rule on each before the route can finish
+   └─ rhx route.fulcrum.rule --case F001 --as upheld|conceded
+"
+`;
+
+exports[`driver.route.dispute-passage.journey.acceptance given: [case2] the same route, with no fulcrum on it when: [t0] the \`approved?\` judge runs then: the judge output a human reads is pinned: the approved judge on a clean route 1`] = `
+"passed: false
+reason: wait for human approval
+
+✋ halted, human approval required
+   ├─ please ask your human to
+   │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │
+   └─ after human approves, run
+      └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;

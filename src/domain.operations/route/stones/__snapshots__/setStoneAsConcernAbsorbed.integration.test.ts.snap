@@ -45,3 +45,178 @@ and pass either the ROUTE-relative path (canonical), or the repo-root-relative o
   --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
   --why <tempDir>/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md"
 `;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t0] the fulcrum has no frontmatter then: the dispute is refused, and the fix names every field 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites has no frontmatter
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F010-bare.md
+   ├─ absent
+   │  ├─ case
+   │  ├─ rework
+   │  ├─ ground
+   │  ├─ confidence
+   │  ├─ status
+   │  ├─ owed
+   │  ├─ holds
+   │  ├─ lean
+   │  └─ verdict
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F010
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F010-bare.md",
+  "reflect": null
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t1] the fulcrum frontmatter holds a value outside its set then: the dispute is refused, and the malformed field is named 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites has an invalid frontmatter
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F011-bad-ground.md
+   ├─ malformed
+   │  └─ ground (wrong | dirty)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F011
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F011-bad-ground.md",
+  "reflect": null
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t2] the fulcrum declares an owed its ground and confidence do not derive then: the dispute is refused, and the derived owed is named 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites declares owed: human, but its ground and confidence derive owed: reflect
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F012-owed-lie.md
+   ├─ rule: owed = reflect only when ground is wrong and confidence is 0.9 or above; else human
+   └─ fix: set owed: reflect
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F012-owed-lie.md",
+  "reflect": null
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t3] a sure misread is disputed with no --reflect then: the dispute is refused, and the fix names the reflect ref 1`] = `
+"✋ ConstraintError: --reflect is required for a dispute at confidence 0.9 or above
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F013-sure.md
+   ├─ a sure misread is a defect in the rubric, owed upstream as a reflection
+   └─ fix: pass --reflect ehmpathy/rhachet-roles-ehmpathy#12
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F013-sure.md",
+  "reflect": null
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t4] a sure misread is disputed with a --reflect that differs then: the dispute is refused as a mismatch 1`] = `
+"✋ ConstraintError: --reflect ehmpathy/rhachet-roles-ehmpathy#99 does not match the fulcrum's reflect: ehmpathy/rhachet-roles-ehmpathy#12
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F014-sure.md
+   ├─ a sure misread is a defect in the rubric, owed upstream as a reflection
+   └─ fix: pass --reflect ehmpathy/rhachet-roles-ehmpathy#12
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F014-sure.md",
+  "reflect": "ehmpathy/rhachet-roles-ehmpathy#99"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t5] a dispute on dirty ground carries a --reflect then: the dispute is refused — a human always rules dirty ground 1`] = `
+"✋ ConstraintError: --reflect is refused for a dispute on dirty ground
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F015-dirty.md
+   ├─ dirty ground means the rework would be a teardown, so a human always rules it
+   └─ fix: drop --reflect; the dispute waits for a human at the gate
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F015-dirty.md",
+  "reflect": "ehmpathy/rhachet-roles-ehmpathy#12"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t6] a human-owed dispute carries a --reflect then: the dispute is refused — only a sure misread owes one 1`] = `
+"✋ ConstraintError: --reflect is refused for a dispute that owes a human
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F016-unsure.md
+   ├─ only a dispute on wrong ground at confidence 0.9 or above owes a reflection
+   └─ fix: drop --reflect; the dispute waits for a human at the gate
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F016-unsure.md",
+  "reflect": "ehmpathy/rhachet-roles-ehmpathy#12"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t7] the fulcrum declares owed: none then: the dispute is refused — a dispute owes a human or a reflection 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites declares owed: none
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F017-none.md
+   ├─ owed: none marks a fulcrum that holds no dispute
+   └─ fix: set owed to human, derived from ground wrong at 0.65
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F017-none.md",
+  "reflect": null
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t10] the fulcrum does not hold the concern the dispute backs then: the dispute is refused, and the fix names the hold to add 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites does not hold limited blocker.1
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F020-holds-other.md
+   ├─ holds: limited/i001/blocker.2
+   └─ fix: add the concern to its holds, e.g. limited/<iteration>/blocker.1
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F020-holds-other.md"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fulcrum must carry it when: [t11] the fulcrum case differs from its file id then: the dispute is refused, and the malformed case names the file id 1`] = `
+"✋ ConstraintError: the fulcrum this dispute cites has an invalid frontmatter
+   ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F021-renamed.md
+   ├─ malformed
+   │  └─ case (equal to the file id, F021)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F021
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F021-renamed.md",
+  "reflect": null
+}"
+`;

@@ -54,6 +54,7 @@ const asFlagOwnership = (input: {
     about?: string;
     why?: string;
     severity?: string;
+    reflect?: string;
     that?: string;
     into?: string;
   };
@@ -111,6 +112,19 @@ const asFlagOwnership = (input: {
     takesNone: `you passed --as ${input.as}, which takes no absorption flags.`,
     hint: ABSORPTION_HINT,
   },
+  // --reflect: names the upstream reflection a sure misread owes, so only a dispute carries it
+  {
+    flag: '--reflect',
+    value: input.flags.reflect,
+    allowedFor: ['disputed'],
+    refusal: `--reflect is only accepted for --as disputed`,
+    takesNone: `you passed --as ${input.as}, which takes no --reflect.`,
+    hint: [
+      ``,
+      `to dispute a sure misread (ground wrong, confidence 0.9 or above):`,
+      `  --as disputed --with <reviewer> --about <concern> --why <fulcrum-path> --reflect <owner>/<repo>#<n>`,
+    ],
+  },
   // --that: a `--as passed --that architect` silently read the passed branch, and a
   // `--as disputed --that architect` silently read only with/about/why/severity, so a
   // mistyped verb on the --that side never told the driver (r002 nitpick.1, i005)
@@ -150,6 +164,7 @@ export const getStrayFlagRefusal = (input: {
     about?: string;
     why?: string;
     severity?: string;
+    reflect?: string;
     that?: string;
     into?: string;
   };

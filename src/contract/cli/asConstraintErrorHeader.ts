@@ -42,7 +42,7 @@ export const asConstraintErrorHeader = (input: {
 
   // part the first line of the message from the body beneath it
   const [lead, ...bodyLines] = parts.headline.split('\n');
-  const body = bodyLines.join('\n').trim();
+  const body = asBodyDedented({ lines: bodyLines });
 
   // render each field but the hint as one compact line, directly under the lead line
   const contextLines = asMetadataContextLines({ metadata: parts.metadata });
@@ -52,6 +52,32 @@ export const asConstraintErrorHeader = (input: {
   const bodyBlock = body ? `\n\n${body}` : '';
   const hintBlock = parts.hint ? `\n\nhint: ${parts.hint}` : '';
   return `✋ ConstraintError: ${lead}${contextBlock}${bodyBlock}${hintBlock}`;
+};
+
+/**
+ * .what = the body beneath the lead line, blank edges cut and its common indent removed
+ * .why = a throw site often writes its body as a tree indented under the lead
+ *        (`   ├─ x` / `   └─ y`). a bare trim cut the indent of the first line alone, so
+ *        the first branch sat at column 0 and its peers at column 3 — a broken tree. a
+ *        common-indent cut moves the whole tree left as one, and leaves a body that already
+ *        starts at column 0 as written
+ */
+const asBodyDedented = (input: { lines: string[] }): string => {
+  // cut blank lines from both edges
+  const isLineFilled = (line: string): boolean => line.trim().length > 0;
+  const indexFirst = input.lines.findIndex(isLineFilled);
+  if (indexFirst === -1) return '';
+  const indexLast =
+    input.lines.length - 1 - [...input.lines].reverse().findIndex(isLineFilled);
+  const linesKept = input.lines.slice(indexFirst, indexLast + 1);
+
+  // remove the indent every filled line shares
+  const indentCommon = Math.min(
+    ...linesKept
+      .filter(isLineFilled)
+      .map((line) => line.length - line.trimStart().length),
+  );
+  return linesKept.map((line) => line.slice(indentCommon)).join('\n');
 };
 
 /**

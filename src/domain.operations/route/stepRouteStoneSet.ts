@@ -94,6 +94,13 @@ export const stepRouteStoneSet = async (
      */
     severity?: 'better' | 'urgent';
     /**
+     * the upstream reflection a sure misread owes, as `<owner>/<repo>#<n>` (only for --as disputed)
+     *
+     * .why = invariant 3 — a dispute on wrong ground at 0.90 or above owes a reflection, and the
+     *        command must name the same one the fulcrum's frontmatter names
+     */
+    reflect?: string;
+    /**
      * the path the driver declares they wrote their articulation to (only for --as promised)
      *
      * .why = a check with one operand reports a failure; it takes two to report a DIFFERENCE.
@@ -137,6 +144,7 @@ export const stepRouteStoneSet = async (
       about: input.about,
       why: input.why,
       severity: input.severity,
+      reflect: input.reflect,
       that: input.that,
       into: input.into,
     },
@@ -432,6 +440,7 @@ export const stepRouteStoneSet = async (
       about: input.about,
       why: input.why,
       severity: input.severity,
+      reflect: input.reflect,
     });
     // setStoneAsConcernAbsorbed either throws (a refused declaration) or fully succeeds — its
     // success path never returns disputed:false / conceded:false — so a declaration that

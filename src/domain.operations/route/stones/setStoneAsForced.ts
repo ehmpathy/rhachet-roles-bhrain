@@ -1,6 +1,7 @@
 import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { assertRouteFulcrumDisputesRuled } from '../fulcrum/assertRouteFulcrumDisputesRuled';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
 import { getOneStoneGuardLevelState } from '../guard/review/getOneStoneGuardLevelState';
 import { getOneStoneGuardOverruleTarget } from '../guard/review/getOneStoneGuardOverruleTarget';
@@ -81,6 +82,15 @@ export const setStoneAsForced = async (
     !levelState.hasLevels ||
     levelState.activeLevel === null ||
     levelState.activeLevel === levelState.terminalLevel;
+
+  // refuse a force that would approve while a dispute owes a verdict, before any write
+  // .why = a force grants approval, so it meets the same gate `--as approved` does (invariant 2)
+  if (atTerminalLevel)
+    await assertRouteFulcrumDisputesRuled({
+      route: input.route,
+      stone: stoneMatched.name,
+      grant: 'forced',
+    });
 
   // overrule the active level — but only when a level genuinely blocks (the
   // shouldOverrule guard skips the spurious overrule of an already-clear stone)

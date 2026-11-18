@@ -59,7 +59,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
       );
 
       then('the stone is HELD — one blocker against a zero allowance', () => {
-        expect(result.code).not.toEqual(0);
+        expect(result.code).toEqual(2);
       });
 
       then('the lane wrote a given', async () => {
@@ -112,6 +112,17 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
+      // invariant 6: a dispute is settled by a human or a reflection, never by another paid read
+      then('🔴 the dispute triggers no re-run — the lane still holds one given', async () => {
+        const entries = await fs.readdir(
+          path.join(scene.tempDir, '.reviews', 'peer'),
+        );
+        const givens = entries.filter((name) =>
+          isRouteGuardReviewPeerGivenPath({ pathGiven: name }),
+        );
+        expect(givens).toHaveLength(1);
+      });
+
       then('the ack names the fulcrum, and the absorb that comes next', () => {
         expect(result.stdout).toContain(FULCRUM_REL);
         expect(result.stdout).toContain('the council will read it');
@@ -130,6 +141,32 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
       then('the dispute ack is pinned', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
           'the dispute ack names the fulcrum and the absorb that comes next',
+        );
+      });
+    });
+
+    // the third surface of the one render: the `approved?` judge a human gate runs. it must name
+    // the same dispute and the same verdict command the halt and the approval refusal do
+    when('[t1b] the `approved?` judge runs while the dispute is open', () => {
+      const result = useThen('the judge reports', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { mechanism: 'approved?', stone: '1.vision', route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('🔴 the judge names the dispute and its verdict command', () => {
+        expect(result.stdout).toContain('passed: false');
+        expect(result.stdout).toContain('1 dispute owes your verdict');
+        expect(result.stdout).toContain(
+          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        );
+      });
+
+      then('the judge output a human reads is pinned', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
+          'the approved judge names the open dispute',
         );
       });
     });
@@ -189,6 +226,79 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
       then('the emit a driver reads is pinned', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
           'dispute clears the tally, stone passes',
+        );
+      });
+    });
+
+    // invariant 1 lets the dispute ride past 1.vision; this route has no `approved?` judge
+    // anywhere, so its LAST stone is the one place the open dispute must surface (fulcrum F5).
+    // 2.ship carries no guard, so this pins the no-guard passage branch of `setStoneAsPassed`.
+    // the leaf asserts are pinned whole at integration grain; the two judged branches share the
+    // one `assertPassageDisputesRuled` closure this branch calls
+    when('[t4] the driver tries to pass the last stone, the dispute still open', () => {
+      const result = useThen('the last stone is refused', async () => {
+        await fs.writeFile(
+          path.join(scene.tempDir, '2.ship.yield.md'),
+          'shipped.\n',
+        );
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '2.ship', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('🔴 the last stone is refused — a gateless route cannot finish past a dispute', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal names the dispute and the verdict command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('the last stone has no human gate');
+        expect(output).toContain('F001');
+        expect(output).toContain(
+          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        );
+      });
+
+      then('the refusal a driver reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('the gateless last stone refuses past a dispute');
+      });
+    });
+  });
+
+  given('[case2] the same route, with no fulcrum on it', () => {
+    when('[t0] the `approved?` judge runs', () => {
+      const result = useThen('the judge reports', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'dispute-passage-clean',
+          clone: ASSETS_DIR,
+        });
+        await fs.rm(path.join(tempDir, '.fulcrums'), {
+          recursive: true,
+          force: true,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        return invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { mechanism: 'approved?', stone: '1.vision', route: '.' },
+          cwd: tempDir,
+        });
+      });
+
+      then('the judge asks only for the approval, with no dispute lines', () => {
+        expect(result.stdout).toContain('passed: false');
+        expect(result.stdout).not.toContain('dispute');
+        expect(result.stdout).toContain('--as approved');
+      });
+
+      then('the judge output a human reads is pinned', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
+          'the approved judge on a clean route',
         );
       });
     });

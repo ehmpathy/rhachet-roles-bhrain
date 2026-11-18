@@ -1393,3 +1393,46 @@ exports[`stepRouteDrive.integration given: [case35] a guarded stone with a lates
       └─ when ready to continue, run:
          └─ rhx route.stone.set --stone 1.test --as passed"
 `;
+
+exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t0] a fulcrum lacks its frontmatter then: the lint output matches snapshot 1`] = `
+"✋ ConstraintError: a fulcrum is unreadable or forged; repair each before the stop
+
+🗿 route.fulcrum lint: F1 has unreadable frontmatter
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F1-keep.md
+   ├─ absent
+   │  ├─ case
+   │  ├─ rework
+   │  ├─ ground
+   │  ├─ confidence
+   │  ├─ status
+   │  ├─ owed
+   │  ├─ holds
+   │  ├─ lean
+   │  └─ verdict
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F1
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─"
+`;
+
+exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t1] a fulcrum carries a verdict no human lever wrote then: the forged-verdict lint matches snapshot 1`] = `
+"✋ ConstraintError: a fulcrum is unreadable or forged; repair each before the stop
+
+🗿 route.fulcrum lint: F1 carries a forged verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F1-keep.md
+   ├─ verdict carries no ledger row; only rhx route.fulcrum.rule writes it
+   └─ fix: set \`verdict: null\` and \`status: open\`, then ask a human to run
+      └─ rhx route.fulcrum.rule --case F1 --as upheld|conceded"
+`;

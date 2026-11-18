@@ -19,6 +19,12 @@ import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { ROUTE_INFLIGHT_FRESH_BOUND_LABEL } from '@src/domain.operations/route/drive/asRouteInflightFreshness';
+import { asRouteFulcrumCommandRows } from '@src/domain.operations/route/fulcrum/asRouteFulcrumCommandRows';
+import { asRouteFulcrumDisputeLines } from '@src/domain.operations/route/fulcrum/asRouteFulcrumDisputeLines';
+import { asRouteFulcrumRuleStdout } from '@src/domain.operations/route/fulcrum/asRouteFulcrumRuleStdout';
+import { getAllRouteFulcrumRuleCommands } from '@src/domain.operations/route/fulcrum/getAllRouteFulcrumRuleCommands';
+import { getOneRouteFulcrumDisputeState } from '@src/domain.operations/route/fulcrum/getOneRouteFulcrumDisputeState';
+import { setFulcrumVerdict } from '@src/domain.operations/route/fulcrum/setFulcrumVerdict';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 import { isStoneMatchedByName } from '@src/domain.operations/route/guard/isStoneMatchedByName';
@@ -391,6 +397,10 @@ options:
                        urgent = a shipped harm — earns more budget, warns the human
                        (${asUrgentHarmSet({ separator: ' | ' })})
                        better = code idealism / maintenance — the floor, never earns budget
+  --reflect <ref>    the upstream reflection a sure misread owes: <owner>/<repo>#<n>
+                       (REQUIRED for --as disputed when the fulcrum derives owed: reflect —
+                        ground wrong, confidence 0.9 or above; must match its frontmatter.
+                        refused on dirty ground, which a human always rules)
   --into <path>      the path you wrote your articulation to — copy it from the prompt
                        (REQUIRED for --as promised)
                        a diff needs both paths: with one, a mismatch reads "absent";
@@ -1073,6 +1083,7 @@ export const routeStoneSet = async (): Promise<void> =>
           about: options.about,
           why: options.why,
           severity: asConcedeSeverity({ raw: options.severity }),
+          reflect: options.reflect,
           into: options.into,
           yield: yieldMode,
         },
@@ -1156,6 +1167,71 @@ export const routeStoneDel = async (): Promise<void> => {
     throw error;
   }
 };
+
+/**
+ * .what = prints help for route.fulcrum.rule
+ * .why = a human reads how to rule on a dispute from the surface itself
+ */
+const printFulcrumRuleHelp = (): void => {
+  console.log(`
+route.fulcrum.rule - a human rules on one disputed fulcrum
+
+usage:
+  route.fulcrum.rule --case <id> --as upheld|conceded [options]
+
+options:
+  --case <id>       the fulcrum case id, e.g. F44 (required)
+  --as <verdict>    upheld (the driver's call stands) | conceded (the reviewer's concern stands) (required)
+  --route <path>    path to route directory (uses bound route if absent)
+  --help            show this help
+
+example:
+  route.fulcrum.rule --case F44 --as upheld
+`);
+};
+
+/**
+ * .what = cli entrypoint for route.fulcrum.rule skill
+ * .why = the one human lever that rules a dispute; it writes the yaml verdict and the ledger row
+ *        that proves a human wrote it
+ */
+export const routeFulcrumRule = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
+    if (options.help) {
+      printFulcrumRuleHelp();
+      return;
+    }
+
+    // validate the case and the verdict
+    if (!options.case)
+      throw new BadRequestError(
+        [
+          '--case is required',
+          '   └─ fix: name the fulcrum to rule, e.g.',
+          '      └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+        ].join('\n'),
+      );
+    if (options.as !== 'upheld' && options.as !== 'conceded')
+      throw new BadRequestError(
+        [
+          `--as must be upheld or conceded, not ${options.as ?? '(absent)'}`,
+          `   ├─ upheld: the driver's call stands`,
+          `   ├─ conceded: the reviewer's concern stands, and its repair is owed`,
+          `   └─ fix: rhx route.fulcrum.rule --case ${options.case} --as upheld|conceded`,
+        ].join('\n'),
+      );
+
+    // rule the dispute; a human holds a tty on stdin, a spawned clone holds a pipe
+    // .note = no env hatch, as route.mutate grant: a verdict a test env could self-grant would
+    //         let a clone forge the very verdict the ledger exists to prove
+    const route = await getRouteOrThrow({ route: options.route });
+    const result = await setFulcrumVerdict(
+      { route, case: options.case, ruled: options.as },
+      { isTTY: process.stdin.isTTY === true },
+    );
+    console.log(asRouteFulcrumRuleStdout({ ...result, ruled: options.as }));
+  });
 
 /**
  * .what = cli entrypoint for route.stone.add skill
@@ -1295,12 +1371,24 @@ const judgeApproved = async (input: {
   if (!approval) {
     const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
     const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+    const disputes = await getOneRouteFulcrumDisputeState({
+      route: input.route,
+    });
+    const askCmds = [
+      ...getAllRouteFulcrumRuleCommands({ state: disputes }),
+      approveCmd,
+    ];
     console.log('passed: false');
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
+    asRouteFulcrumDisputeLines({ state: disputes }).forEach((line) =>
+      console.log(`   ${line}`),
+    );
     console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);
-    console.log(`   │  └─ ${approveCmd}`);
+    asRouteFulcrumCommandRows({ commands: askCmds }).forEach((row) =>
+      console.log(`   │  ${row}`),
+    );
     console.log('   │');
     console.log('   └─ after human approves, run');
     console.log(`      └─ ${passCmd}`);

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asFulcrumFrontmatterDefectLines names the file, each absent and malformed field, then the block to paste 1`] = `
+"   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ owed
+   │  └─ verdict
+   ├─ malformed
+   │  └─ ground (wrong | dirty)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─"
+`;

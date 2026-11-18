@@ -30,6 +30,7 @@ import { getRouteInflight } from './drive/getRouteInflight';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { isRouteStoneBlockerArticulated } from './drive/isRouteStoneBlockerArticulated';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
+import { getOneRouteFulcrumLintMessage } from './fulcrum/getOneRouteFulcrumLintMessage';
 import { getOneStoneByName } from './getOneStoneByName';
 import { asGuardMalfunctionReasonLines } from './guard/asGuardMalfunctionReasonLines';
 import { formatGuardMalfunctionClearLines } from './guard/formatGuardMalfunctionClearLines';
@@ -479,6 +480,18 @@ export const stepRouteDrive = async (
     // .note = `applyStoneBrainOnEntry` marks the entry, so a stone that halts straight to
     //         blocked does not re-dispatch per tick; the block count is untouched
     const asStopped = asRendered;
+
+    // lint the route's fulcrums; a malformed entry or a forged verdict holds the stop
+    // .why = invariant 5: the driver can repair a fulcrum file now, so the stop blocks (code 2)
+    //        before any wait that would let the session end with a defect on record
+    const fulcrumLint = await getOneRouteFulcrumLintMessage({ route });
+    if (fulcrumLint)
+      return {
+        emit: {
+          stdout: fulcrumLint,
+          stderr: { reason: fulcrumLint, code: 2 },
+        },
+      };
 
     // read the driver's repairs-in-flight watermark for this stone
     // .why = a driver that delegated the round's repairs waits on them; arrived, passed, and

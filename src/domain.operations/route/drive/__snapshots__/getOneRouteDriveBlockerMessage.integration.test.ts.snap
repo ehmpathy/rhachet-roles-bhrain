@@ -1,5 +1,54 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`getOneRouteDriveBlockerMessage given: [case2b] the approval halt, with a dispute at 70% that owes the human when: [t0] the dispatcher runs with the approval blocker then: the halt a human reads is pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <route>
+   │  └─ stone = 1.vision
+   │
+   └─ halted, human approval required
+      ├─ 1 dispute owes your verdict
+      │  └─ F44 · rename-table · 70%
+      │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
+      │     ├─ lean: x
+      │     ├─ raised on: 0.prior
+      │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+      │
+      ├─ 1 ruled
+      │  └─ F47 · cache-scope · conceded, repair owed: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
+      │
+      ├─ please ask a human to rule on each, then approve
+      │  ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+      │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`getOneRouteDriveBlockerMessage given: [case2c] the approval halt, with a corrupt verdict ledger when: [t0] the dispatcher runs with the approval blocker then: the halt a human reads is pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <route>
+   │  └─ stone = 1.vision
+   │
+   └─ halted, human approval required
+      ├─ the dispute record cannot be read; approval is refused until it is repaired
+      │  └─ fulcrum verdict ledger holds an unreadable row at line 1
+      │     ├─ ledger: <route>/.fulcrums/verdicts.jsonl
+      │     ├─ line: {"case": "F44", "ruled": "upheld"
+      │     └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+      │
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
 exports[`getOneRouteDriveBlockerMessage given: [case3] feedbackUnabsorbed with an absent taken when: [t0] the dispatcher runs with the feedbackUnabsorbed blocker then: matches snapshot — the held stop, as a driver reads it: stophook - held stop, reply owed 1`] = `
 "🦉 the reviewers await your reply
 

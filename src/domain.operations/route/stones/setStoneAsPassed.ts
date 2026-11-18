@@ -18,6 +18,8 @@ import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { assertRouteGatedStoneDisputesRuled } from '../fulcrum/assertRouteGatedStoneDisputesRuled';
+import { assertRouteGatelessLastStoneDisputesRuled } from '../fulcrum/assertRouteGatelessLastStoneDisputesRuled';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
 import { asFailedJudgeReasons } from '../guard/asFailedJudgeReasons';
@@ -187,8 +189,25 @@ export const setStoneAsPassed = async (
     );
   }
 
+  // a dispute that owes the human refuses passage of the last stone of a gateless route, and of
+  // any stone with its own human gate (a dispute raised after the human approved)
+  // .note = checked at each passage write, so it refuses only a pass that would land; a stone
+  //         some other gate holds reports that gate first
+  const assertPassageDisputesRuled = async () => {
+    await assertRouteGatelessLastStoneDisputesRuled({
+      route: input.route,
+      stone: stoneMatched,
+      stones,
+    });
+    await assertRouteGatedStoneDisputesRuled({
+      route: input.route,
+      stone: stoneMatched,
+    });
+  };
+
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
+    await assertPassageDisputesRuled();
     await setStonePassage({ stone: stoneMatched, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
@@ -367,6 +386,7 @@ export const setStoneAsPassed = async (
   // if guard has no reviews and no judges, auto-pass (guard only customizes artifact detection)
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
+    await assertPassageDisputesRuled();
     await setStonePassage({ stone: stoneMatched, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
@@ -1135,6 +1155,7 @@ export const setStoneAsPassed = async (
       });
     }
 
+    await assertPassageDisputesRuled();
     await setRoundOutput(() =>
       setStonePassage({ stone: stoneMatched, route: input.route }),
     );

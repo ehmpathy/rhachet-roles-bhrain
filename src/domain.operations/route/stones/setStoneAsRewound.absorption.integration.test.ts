@@ -9,6 +9,7 @@ import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/
 
 import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { genFulcrumEntryContent } from '../__test_assets__/genFulcrumEntryContent';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';
 import { setStoneAsPassed } from './setStoneAsPassed';
 import { setStoneAsRewound } from './setStoneAsRewound';
@@ -87,13 +88,9 @@ describe('setStoneAsRewound.absorption.integration', () => {
       );
       await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
 
-      const fulcrumsDir = path.join(tempDir, '.fulcrums');
-      await fs.mkdir(fulcrumsDir, { recursive: true });
+      // the entry is written after the round ([t0]): an open human-owed dispute on a route
+      // with no human gate refuses the last stone's passage
       fulcrumRel = '.fulcrums/inventory.of=fulcrums.case=F001-test.md';
-      await fs.writeFile(
-        path.join(tempDir, fulcrumRel),
-        '# F001 — the argument the council reads',
-      );
     });
 
     afterAll(async () => {
@@ -109,6 +106,11 @@ describe('setStoneAsRewound.absorption.integration', () => {
             noopContext,
           );
           await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+          await fs.mkdir(path.join(tempDir, '.fulcrums'), { recursive: true });
+          await fs.writeFile(
+            path.join(tempDir, fulcrumRel),
+            genFulcrumEntryContent({ case: 'F001-test' }),
+          );
           return setStoneAsConcernAbsorbed({
             stone: '1.test',
             route: tempDir,
@@ -187,9 +189,20 @@ describe('setStoneAsRewound.absorption.integration', () => {
     });
 
     when('[t2] the driver re-arrives after the rewind', () => {
-      const reran = useThen('the lane runs again', async () =>
-        setStoneAsPassed({ stone: '1.test', route: tempDir }, noopContext),
-      );
+      const reran = useThen('the lane runs again', async () => {
+        // the regretted dispute's fulcrum is marked superseded, as a driver who rewinds it
+        // owes — else the open human-owed entry holds the last stone of an ungated route
+        const fulcrumPath = path.join(tempDir, fulcrumRel);
+        const content = await fs.readFile(fulcrumPath, 'utf-8');
+        await fs.writeFile(
+          fulcrumPath,
+          content.replace('status: open', 'status: superseded'),
+        );
+        return setStoneAsPassed(
+          { stone: '1.test', route: tempDir },
+          noopContext,
+        );
+      });
 
       then('the stone is held again — the lane re-raised its blocker', () => {
         // the whole point of the rewind: the lens returns. a stance keyed to

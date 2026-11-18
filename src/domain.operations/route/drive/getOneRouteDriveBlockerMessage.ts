@@ -1,6 +1,11 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
+import { asRouteFulcrumCommandRows } from '../fulcrum/asRouteFulcrumCommandRows';
+import { asRouteFulcrumDisputeLines } from '../fulcrum/asRouteFulcrumDisputeLines';
+import type { RouteFulcrumDisputeState } from '../fulcrum/asRouteFulcrumDisputeState';
+import { getAllRouteFulcrumRuleCommands } from '../fulcrum/getAllRouteFulcrumRuleCommands';
+import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asStoneGuardPartitionGapLines } from '../guard/partition/asStoneGuardPartitionGapLines';
 import { getAllStoneGuardPartitionGaps } from '../guard/partition/getAllStoneGuardPartitionGaps';
@@ -67,12 +72,14 @@ export const getOneRouteDriveBlockerMessage = async (input: {
     const approvalArtifact = await getOneStoneGuardApproval({ stone, route });
     // approval granted → no message; caller falls through (generic guidance / block-stop)
     if (approvalArtifact) return null;
+    const disputes = await getOneRouteFulcrumDisputeStateOrRefusal({ route });
     return {
       stdout: formatRouteDriveNeedsApproval({
         route,
         stone: stone.name,
         brain,
         effort,
+        disputes,
       }),
       blocksStop: false,
     };
@@ -259,17 +266,50 @@ const formatRouteDriveNeedsApproval = (input: {
   stone: string;
   brain: string | null;
   effort: string | null;
+  disputes:
+    | { state: RouteFulcrumDisputeState; refusal: null }
+    | { state: null; refusal: string };
 }): string => {
   const head = asRouteStoneSetCommandHead({ stone: input.stone });
   const approveCmd = `${head} --as approved`;
   const passCmd = `${head} --as passed`;
+  const ruleCmds = input.disputes.state
+    ? getAllRouteFulcrumRuleCommands({ state: input.disputes.state })
+    : [];
+  const askCmds = [...ruleCmds, approveCmd];
+  const disputeLines = input.disputes.state
+    ? asRouteFulcrumDisputeLines({ state: input.disputes.state })
+    : asRouteFulcrumDisputeRefusalLines({ refusal: input.disputes.refusal });
   return [
     ...formatRouteDriveHeader(input),
     `   └─ halted, human approval required`,
-    `      ├─ please ask a human to`,
-    `      │  └─ ${approveCmd}`,
+    ...disputeLines.map((line) => `      ${line}`),
+    ruleCmds.length
+      ? `      ├─ please ask a human to rule on each, then approve`
+      : `      ├─ please ask a human to`,
+    ...asRouteFulcrumCommandRows({ commands: askCmds }).map(
+      (row) => `      │  ${row}`,
+    ),
     `      │`,
     `      └─ once they do, run`,
     `         └─ ${passCmd}`,
   ].join('\n');
+};
+
+/**
+ * .what = the dispute branch of the approval halt when the dispute record cannot be read
+ * .why = the approval will refuse on the same fault, so the human must see it, and its fix,
+ *        before they try to approve
+ */
+const asRouteFulcrumDisputeRefusalLines = (input: {
+  refusal: string;
+}): string[] => {
+  // the refusal's headline is a leaf; its own tree (indented under it) hangs beneath
+  const [headline, ...body] = input.refusal.split('\n');
+  return [
+    `├─ the dispute record cannot be read; approval is refused until it is repaired`,
+    `│  └─ ${headline}`,
+    ...body.map((line) => `│  ${line}`),
+    `│`,
+  ];
 };

@@ -58,7 +58,23 @@ settled?"* — `S05` had settled it, on the page, one day earlier.
 
 ## .disputes
 
-_(none open)_
+### dispute: "no gate reads the entry's content" (invariant 4)  —  raised 2026-11-17  —  status: RESOLVED (overturned at the approval gate; held at the passage gate)
+- raised.by  = the driver of `v2026_11_16.feat-disputes-reconcile-at-human-gate`
+- claim      = the invariant says no gate reads a dispute's fulcrum. an incident showed the cost: a
+  driver disputed a class of concerns onto one held fulcrum, the passage tally read clean, and the
+  approval halt showed no deferral, so the human approved what the halt showed and found the
+  deferred defects by hand. a gate that does not read the entry cannot name what was left to the human
+- counter    = the original reason holds for the passage gate: a gate that checks the argument's
+  content cannot improve a mechanism whose action completes before any reader arrives, and it
+  turns a nudge into a toll. a content check at passage would also push drivers to write for the
+  check rather than the reader
+- resolution = split by gate. the **passage** gate (`reviewed?`) still reads no content: a dispute
+  sheds its one concern, and the tally is unchanged. the **approval** gate now reads the fulcrum's
+  yaml frontmatter, never its prose: it lists each dispute with `owed: human` and `verdict: null`,
+  and refuses `--as approved` and `--as forced` until a human rules on each. the reader the
+  invariant lacked is the human at the gate, and the data the gate reads is structured so it never
+  judges the argument. the invariant's text is amended in place in the `._.choice._.md` say file.
+  law: `define.invariant.review.peer.dispute.reconciled-at-the-human-gate`
 
 ## .evidence
 

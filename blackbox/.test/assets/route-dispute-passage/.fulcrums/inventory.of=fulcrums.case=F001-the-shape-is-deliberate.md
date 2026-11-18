@@ -1,8 +1,16 @@
-# F001 — the shape is deliberate
+---
+case: F001
+rework: clean
+ground: wrong
+confidence: 0.8
+status: open
+owed: human
+holds: [lane/i001/blocker.1]
+lean: keep the extant shape
+verdict: null
+---
 
-- rework: clean
-- status: open
-- confidence: 80%
+# F001 — the shape is deliberate
 
 ## the fork
 

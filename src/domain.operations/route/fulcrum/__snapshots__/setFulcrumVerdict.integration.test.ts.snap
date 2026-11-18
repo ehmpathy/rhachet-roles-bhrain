@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setFulcrumVerdict given: [case3] a fulcrum that owes reflect, not a human when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 owes reflect, not a human verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ fix: none owed here; its reflection is tracked upstream at ehmpathy/demo#1
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md",
+  "owed": "reflect"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case4] a fulcrum whose frontmatter case differs from its file case id when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 has unreadable frontmatter; the driver repairs it before a verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ malformed
+   │  └─ case (equal to the file id, F44)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # human | reflect | none
+         │  holds: []                # <lane>/<round>/<ordinal>, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case7] a case id with no fulcrum on the route when: [t0] a human rules it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: no fulcrum found for case F45
+   ├─ looked in: <route>/.fulcrums
+   └─ fix: name a case whose entry lives at .fulcrums/inventory.of=fulcrums.case=<id>-<slug>.md
+
+{
+  "route": "<route>",
+  "case": "F45"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case8] a design-call fulcrum that owes none when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 owes none, not a human verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ fix: none owed here; a fulcrum with owed: none holds no dispute
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md",
+  "owed": "none"
+}"
+`;

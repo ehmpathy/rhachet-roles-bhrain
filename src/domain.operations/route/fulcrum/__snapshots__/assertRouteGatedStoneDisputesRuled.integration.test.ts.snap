@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertRouteGatedStoneDisputesRuled given: [case1] a human-gated stone, approved before a dispute was raised when: [t0] the stone passes while the dispute owes the human then: 🔴 it is refused — the gate the human opened does not wave a later dispute through 1`] = `
+"BadRequestError: 🗿 route.stone.set --as passed: refused, a dispute owes the human at this stone's gate
+   ├─ 1 dispute owes your verdict
+   │  └─ F44 · rename-table · 70%
+   │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
+   │     ├─ lean: x
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   │
+   └─ a human must rule on each before the stone can pass
+      └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+
+{
+  "route": "<route>",
+  "stone": "1.vision"
+}"
+`;

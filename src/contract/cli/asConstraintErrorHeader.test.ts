@@ -80,6 +80,29 @@ const TEST_CASES: Array<{
     },
   },
   {
+    description:
+      '🔴 clamp. a body tree indented under the lead moves left as one, every branch kept aligned',
+    given: {
+      error: new BadRequestError(
+        [
+          '--as must be upheld or conceded, not maybe',
+          `   ├─ upheld: the driver's call stands`,
+          '   └─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          '      └─ a child branch',
+        ].join('\n'),
+      ),
+    },
+    expect: {
+      output: [
+        '✋ ConstraintError: --as must be upheld or conceded, not maybe',
+        '',
+        `├─ upheld: the driver's call stands`,
+        '└─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        '   └─ a child branch',
+      ].join('\n'),
+    },
+  },
+  {
     description: 'leaves a class word inside the body as written',
     given: {
       error: new BadRequestError('a BadRequestError: was named in the body'),

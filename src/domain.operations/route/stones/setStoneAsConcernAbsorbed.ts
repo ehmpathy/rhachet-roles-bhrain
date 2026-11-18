@@ -4,6 +4,7 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asUrgentHarmSet } from '../asUrgentHarmSet';
+import { assertFulcrumFitsDispute } from '../fulcrum/assertFulcrumFitsDispute';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asAbsorptionIsAnswered } from '../guard/review/peer/asAbsorptionIsAnswered';
 import { asAbsorptionIsNotContrary } from '../guard/review/peer/asAbsorptionIsNotContrary';
@@ -68,6 +69,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   about: string;
   why?: string;
   severity?: 'better' | 'urgent';
+  reflect?: string;
 }): Promise<{
   disputed?: boolean;
   conceded?: boolean;
@@ -137,11 +139,23 @@ export const setStoneAsConcernAbsorbed = async (input: {
     });
 
   // the fulcrum path is checked BEFORE any state moves, so a refusal mutates naught
-  if (input.why)
-    assertFulcrumPathExists({
-      why: input.why,
-      route: input.route,
-      repoRoot: await getRepoRootWithFallback({ from: input.route }),
+  const fulcrumPathResolved = input.why
+    ? assertFulcrumPathExists({
+        why: input.why,
+        route: input.route,
+        repoRoot: await getRepoRootWithFallback({ from: input.route }),
+      })
+    : null;
+
+  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect
+  if (input.as === 'disputed' && fulcrumPathResolved)
+    await assertFulcrumFitsDispute({
+      pathResolved: fulcrumPathResolved,
+      reflect: input.reflect ?? null,
+      concern: {
+        reviewer: asSanitizedPeerReviewSlug({ slug: input.with }),
+        about,
+      },
     });
 
   // the shared readiness computation, scoped to this one reviewer. it reports every slug
