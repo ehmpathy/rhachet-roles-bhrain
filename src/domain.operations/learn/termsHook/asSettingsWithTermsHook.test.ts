@@ -8,7 +8,7 @@ import {
 import { TERMS_HOOK_DECLARED } from './TERMS_HOOK_DECLARED';
 
 /**
- * .what = the entry `enable` writes, as a block
+ * .what = the entry `set on` writes, as a block
  */
 const BLOCK_DECLARED = {
   matcher: '*',
@@ -51,7 +51,7 @@ const TEST_CASES: {
 }[] = [
   {
     description:
-      'an absent file: enable writes one entry; disable has naught to drop',
+      'an absent file: set on writes one entry; set off has naught to drop',
     given: { settings: null },
     expect: {
       stateBefore: { status: 'off', found: 0 },
@@ -81,7 +81,7 @@ const TEST_CASES: {
   },
   {
     description:
-      'the declared entry already present: current, and enable converges to the same',
+      'the declared entry already present: current, and set on converges to the same',
     given: { settings: { hooks: { Stop: [BLOCK_DRIVER, BLOCK_DECLARED] } } },
     expect: {
       stateBefore: { status: 'current', found: 1 },
@@ -91,7 +91,7 @@ const TEST_CASES: {
   },
   {
     description:
-      'a hand copy inside a shared block: drift; enable replaces it, disable drops only it',
+      'a hand copy inside a shared block: drift; set on replaces it, set off drops only it',
     given: {
       settings: {
         hooks: {
@@ -109,7 +109,7 @@ const TEST_CASES: {
   },
   {
     description:
-      'two copies: drift; disable drops both and the events they leave empty',
+      'two copies: drift; set off drops both and the events they leave empty',
     given: {
       settings: {
         hooks: {

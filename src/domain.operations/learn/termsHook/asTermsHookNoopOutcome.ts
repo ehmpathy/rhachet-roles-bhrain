@@ -6,12 +6,11 @@ import type { TermsHookStatus } from './getOneTermsHookState';
  *        re-read under the hold that decides for real
  */
 export const asTermsHookNoopOutcome = (input: {
-  mode: 'enable' | 'disable';
+  mode: 'on' | 'off';
   status: TermsHookStatus;
 }): 'already-enabled' | 'already-disabled' | null => {
-  if (input.mode === 'enable' && input.status === 'current')
+  if (input.mode === 'on' && input.status === 'current')
     return 'already-enabled';
-  if (input.mode === 'disable' && input.status === 'off')
-    return 'already-disabled';
+  if (input.mode === 'off' && input.status === 'off') return 'already-disabled';
   return null;
 };

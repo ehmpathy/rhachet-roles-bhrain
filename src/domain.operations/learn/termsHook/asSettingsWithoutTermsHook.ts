@@ -21,8 +21,8 @@ const asBlocksWithoutTermsHook = (input: {
 
 /**
  * .what = a settings object with every inner hook that runs the term hook removed
- * .why = `disable` promises that no stop runs the term hook, whoever wrote the entry; and
- *        `enable` starts from this same clean slate before it adds the one declared entry
+ * .why = `set off` promises that no stop runs the term hook, whoever wrote the entry; and
+ *        `set on` starts from this same clean slate before it adds the one declared entry
  *
  * .note = a block or an event is dropped only when this removal emptied it. every other key,
  *         block, event, and hook is carried through untouched, an empty one included

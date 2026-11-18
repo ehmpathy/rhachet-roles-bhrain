@@ -1,5 +1,5 @@
 /**
- * .what = the one Stop hook entry that `learn.terms.hook enable` writes
+ * .what = the one Stop hook entry that `learn.terms.hook set on` writes
  * .why = one source for the author, the command, and the fragment every verb matches on, so
  *        the writer and the readers can never drift apart
  *
@@ -30,7 +30,7 @@ export const TERMS_HOOK_DECLARED = {
   timeoutSeconds: TIMEOUT_SECONDS,
 
   /**
-   * .what = the inner hook object exactly as `enable` writes it
+   * .what = the inner hook object exactly as `set on` writes it
    * .why = the writer spreads it and the state read compares against it whole, so a field
    *        added here reaches both, and `current` can never drift from what was written
    */

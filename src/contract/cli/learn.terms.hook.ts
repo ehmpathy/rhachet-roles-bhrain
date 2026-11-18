@@ -6,8 +6,9 @@
  *
  * verbs:
  *   get     → report whether this repo's stops run the term hook (never writes)
- *   enable  → add the onStop term hook to this repo's claude settings
- *   disable → remove it, whoever wrote it
+ *   set on  → add the onStop term hook to this repo's claude settings
+ *   set off → remove it, whoever wrote it
+ *   del     → an alias of `set off`
  */
 import { existsSync } from 'fs';
 import { ConstraintError } from 'helpful-errors';
@@ -30,18 +31,24 @@ import {
 import { TERMS_HOOK_DECLARED } from '@src/domain.operations/learn/termsHook/TERMS_HOOK_DECLARED';
 
 /**
- * .what = the three verbs, each with its one-line sense
- * .why = one list feeds the refusal, the help, and the parse, so they never disagree
+ * .what = the verbs, each with its one-line sense and the state it sets
+ * .why = one list feeds the refusal, the help, and the parse, so they never disagree. the
+ *        verbs are the get/set/del of every rhachet toggle; `del` reads as `set off`
  */
 const VERBS = [
-  { verb: 'get', sense: 'report whether the term hook is on in this repo' },
-  { verb: 'enable', sense: 'add the onStop term hook' },
-  { verb: 'disable', sense: 'remove it' },
+  {
+    verb: 'get',
+    sense: 'report whether the term hook is on in this repo',
+    mode: null,
+  },
+  { verb: 'set on', sense: 'add the onStop term hook', mode: 'on' },
+  { verb: 'set off', sense: 'remove it', mode: 'off' },
+  { verb: 'del', sense: 'remove it (an alias of set off)', mode: 'off' },
 ] as const;
-type Verb = (typeof VERBS)[number]['verb'];
+type Verb = (typeof VERBS)[number];
 
 /**
- * .what = the shared tree of the three verbs
+ * .what = the shared tree of the verbs
  * .why = the bad-verb refusal and the help render the same list
  */
 const asVerbTreeLines = (input: { indent: string }): string[] =>
@@ -55,6 +62,10 @@ const asVerbTreeLines = (input: { indent: string }): string[] =>
  */
 const asVerbRefusalReason = (input: { args: string[] }): string => {
   if (input.args.length === 0) return 'no verb given';
+  if (input.args[0] === 'set' && input.args.length === 1)
+    return '`set` needs a value: on or off';
+  if (input.args[0] === 'set' && input.args.length === 2)
+    return `unknown value \`${input.args[1]}\` for set; use on or off`;
   if (input.args.length > 1)
     return `unexpected arg(s): ${input.args.join(' ')}`;
   return `unknown verb \`${input.args[0]}\``;
@@ -63,13 +74,13 @@ const asVerbRefusalReason = (input: { args: string[] }): string => {
 /**
  * .what = parse argv into a verb, a help request, or a refusal
  * .why = a bare call or an unknown token never defaults to a write; it refuses and names the
- *        three verbs (case=7)
+ *        verbs (case=7)
  */
 const asVerbOrHelp = (input: { argv: string[] }): Verb | 'help' => {
   const args = getOwnInvocationArgs(input.argv);
   if (args.some((arg) => arg === '--help' || arg === '-h')) return 'help';
-  const verbFound = VERBS.find((item) => item.verb === args[0]);
-  if (args.length === 1 && verbFound) return verbFound.verb;
+  const verbFound = VERBS.find((item) => item.verb === args.join(' '));
+  if (verbFound) return verbFound;
   throw new ConstraintError(asVerbRefusalReason({ args }), { args });
 };
 
@@ -153,7 +164,7 @@ const runGet = async (input: { repoRoot: string }): Promise<void> => {
       `   ├─ settings = ${asSettingsShownText({ pathShown: target.pathShown, isFound: settings !== null })}`,
     );
     console.log(`   ├─ effect when on = ${EFFECT_TEXT}`);
-    console.log('   └─ to turn it on: rhx learn.terms.hook enable');
+    console.log('   └─ to turn it on: rhx learn.terms.hook set on');
     return;
   }
 
@@ -168,7 +179,7 @@ const runGet = async (input: { repoRoot: string }): Promise<void> => {
       }),
     );
   console.log(TAKES_EFFECT_LEAF);
-  console.log('   └─ to turn it off: rhx learn.terms.hook disable');
+  console.log('   └─ to turn it off: rhx learn.terms.hook set off');
 };
 
 /**
@@ -197,16 +208,21 @@ const asShareItLeaf = (input: {
       ].join('\n');
 
 /**
- * .what = run `enable` or `disable`, then report what changed
+ * .what = run `set on`, `set off`, or `del`, then report what changed
+ * .why = the header names the verb as typed, so a `del` reads back as `del`
  */
 const runToggle = async (input: {
   repoRoot: string;
-  mode: 'enable' | 'disable';
+  mode: 'on' | 'off';
+  verb: string;
 }): Promise<void> => {
-  const result = await setTermsHookToggle(input);
+  const result = await setTermsHookToggle({
+    repoRoot: input.repoRoot,
+    mode: input.mode,
+  });
   const isWrite = isOutcomeWrite({ outcome: result.outcome });
-  const vibe = input.mode === 'enable' ? 'so it is' : 'as leaves fall';
-  emitHeader({ vibe, command: `learn.terms.hook ${input.mode}` });
+  const vibe = input.mode === 'on' ? 'so it is' : 'as leaves fall';
+  emitHeader({ vibe, command: `learn.terms.hook ${input.verb}` });
   console.log(`   ├─ status = ${STATUS_OF_OUTCOME[result.outcome]}`);
 
   // a no-op names the file and stops
@@ -219,7 +235,7 @@ const runToggle = async (input: {
 
   // a write names the file, the hook, any foreign authors it removed, and how it spreads
   console.log(`   ├─ settings = ${result.target.pathShown}`);
-  if (input.mode === 'enable')
+  if (input.mode === 'on')
     asHookLeaves({ layout: result.target.layout }).forEach((line) =>
       console.log(line),
     );
@@ -250,11 +266,11 @@ const emitHelp = (): void => {
   console.log('   ├─ examples');
   console.log('   │  ├─ rhx learn.terms.hook get       # is it on here?');
   console.log(
-    '   │  └─ rhx learn.terms.hook enable    # turn it on, then commit the file it names',
+    '   │  └─ rhx learn.terms.hook set on    # turn it on, then commit the file it names',
   );
   console.log('   ├─ exit = 0 done · 1 malfunction · 2 refused, with its fix');
   console.log('   └─ cleanup after the learner is unlinked');
-  console.log('      ├─ relink the learner, then rhx learn.terms.hook disable');
+  console.log('      ├─ relink the learner, then rhx learn.terms.hook set off');
   console.log(
     `      └─ or delete the one Stop entry by ${TERMS_HOOK_DECLARED.author}`,
   );
@@ -291,7 +307,7 @@ const emitRefusal = (input: { error: ConstraintError }): void => {
     return;
   }
 
-  // a verb refusal lists the three verbs
+  // a verb refusal lists the verbs
   if (Array.isArray(parts.metadata?.args)) {
     console.error('   ├─ verbs');
     asVerbTreeLines({ indent: '   │  ' }).forEach((line) =>
@@ -317,8 +333,8 @@ export const learnTermsHook = async (): Promise<void> => {
   try {
     const verb = asVerbOrHelp({ argv: process.argv });
     if (verb === 'help') return emitHelp();
-    if (verb === 'get') return await runGet({ repoRoot });
-    return await runToggle({ repoRoot, mode: verb });
+    if (verb.mode === null) return await runGet({ repoRoot });
+    return await runToggle({ repoRoot, mode: verb.mode, verb: verb.verb });
   } catch (error) {
     if (!(error instanceof ConstraintError)) throw error;
     emitRefusal({ error });

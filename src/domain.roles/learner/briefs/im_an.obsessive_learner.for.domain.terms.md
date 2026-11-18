@@ -38,7 +38,7 @@ them: the learner pauses to distill its domain-term lessons before the round's c
 🟡 **the itch is the learner's, and by default no gate carries it.** a `--when hook.onStop`
 staleness check holds the stop until the distillation is fresh, and it is **opt-in, off by
 default**: a gate that fires on a clock charges every session for a distillation most sessions
-do not owe, so only a repo that asks pays it. `rhx learn.terms.hook get | enable | disable`
+do not owe, so only a repo that asks pays it. `rhx learn.terms.hook get | set on | set off`
 reads and flips it. ⇒ the obligation holds either way: run `rhx learn.domain.terms` when the
 cues below fire.
 

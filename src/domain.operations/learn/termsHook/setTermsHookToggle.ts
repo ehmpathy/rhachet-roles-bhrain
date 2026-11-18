@@ -14,7 +14,7 @@ import { setTermsHookSettings } from './setTermsHookSettings';
 import { withTermsHookSettingsHold } from './withTermsHookSettingsHold';
 
 /**
- * .what = what one enable or disable did
+ * .what = what one `set on` or `set off` did
  * .why = the cli names the outcome, the file, and any foreign authors it removed
  */
 export type TermsHookToggleOutcome =
@@ -29,8 +29,8 @@ export type TermsHookToggleOutcome =
  * .why = the one write path for both verbs: read, decide, and write inside rhachet's hold on
  *        the file, so a concurrent `rhx init` or a second toggle never interleaves
  *
- * .note = idempotent: `enable` on a current entry and `disable` on no entry write naught,
- *         and an absent target is never created by `disable`
+ * .note = idempotent: `set on` over a current entry and `set off` over no entry write naught,
+ *         and an absent target is never created by `set off`
  * .note = the target is picked to choose the key, then picked again under the hold. a layout
  *         that flipped between the two (a concurrent `rhx init` that split it) is refused, so
  *         the write never lands on a path rhachet no longer reads
@@ -40,7 +40,7 @@ export type TermsHookToggleOutcome =
  */
 export const setTermsHookToggle = async (input: {
   repoRoot: string;
-  mode: 'enable' | 'disable';
+  mode: 'on' | 'off';
 }): Promise<{
   outcome: TermsHookToggleOutcome;
   target: TermsHookTarget;
@@ -86,8 +86,8 @@ export const setTermsHookToggle = async (input: {
       });
       if (noop) return { outcome: noop, target, authorsRemoved: [] };
 
-      // enable: converge to the one declared entry; any copy it replaced is named
-      if (input.mode === 'enable') {
+      // on: converge to the one declared entry; any copy it replaced is named
+      if (input.mode === 'on') {
         await setTermsHookSettings({
           path: target.path,
           settings: asSettingsWithTermsHook({ settings }),
@@ -99,7 +99,7 @@ export const setTermsHookToggle = async (input: {
         };
       }
 
-      // disable: remove every entry that runs the term hook
+      // off: remove every entry that runs the term hook
       await setTermsHookSettings({
         path: target.path,
         settings: asSettingsWithoutTermsHook({ settings }),

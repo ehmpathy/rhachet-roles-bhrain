@@ -8,13 +8,14 @@
 #
 # usage:
 #   ./learn.terms.hook.sh get       # is this repo's term hook on?
-#   ./learn.terms.hook.sh enable    # add the onStop term hook
-#   ./learn.terms.hook.sh disable   # remove it
+#   ./learn.terms.hook.sh set on    # add the onStop term hook
+#   ./learn.terms.hook.sh set off   # remove it
+#   ./learn.terms.hook.sh del       # an alias of set off
 #   ./learn.terms.hook.sh --help
 #
 # guarantee:
 #   - get never writes
-#   - enable and disable are idempotent, and write under rhachet's own
+#   - set on, set off, and del are idempotent, and write under rhachet's own
 #     lock on the settings file, via temp + rename
 #   - a link or unparseable settings file is refused, exit 2, no write
 #

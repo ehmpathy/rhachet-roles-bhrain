@@ -4,7 +4,7 @@ import { TERMS_HOOK_DECLARED } from './TERMS_HOOK_DECLARED';
 
 /**
  * .what = a settings object that holds exactly one term hook entry, the declared one
- * .why = `enable` converges: an older body, a second copy, or a hand copy under another
+ * .why = `set on` converges: an older body, a second copy, or a hand copy under another
  *        author is replaced, so after any run the file holds one entry rhachet will not prune
  *
  * .note = the entry rides in its own `{ matcher, hooks }` block at the end of the Stop list,

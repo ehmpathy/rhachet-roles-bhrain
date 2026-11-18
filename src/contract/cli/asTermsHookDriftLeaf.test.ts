@@ -13,7 +13,7 @@ const TEST_CASES: {
       'one entry reads as an entry, with the full repair command and its author',
     authors: [LEARNER],
     expected: [
-      '   ├─ drift = an entry to replace or remove, via rhx learn.terms.hook enable',
+      '   ├─ drift = an entry to replace or remove, via rhx learn.terms.hook set on',
       `   │  └─ by ${LEARNER}`,
     ].join('\n'),
   },
@@ -22,7 +22,7 @@ const TEST_CASES: {
       'more than one reads as their count, each author once, an absent one in words',
     authors: [LEARNER, TOGGLE, '(no author)'],
     expected: [
-      '   ├─ drift = 3 entries to replace or remove, via rhx learn.terms.hook enable',
+      '   ├─ drift = 3 entries to replace or remove, via rhx learn.terms.hook set on',
       `   │  ├─ by ${LEARNER}`,
       `   │  ├─ by ${TOGGLE}`,
       '   │  └─ with no author',

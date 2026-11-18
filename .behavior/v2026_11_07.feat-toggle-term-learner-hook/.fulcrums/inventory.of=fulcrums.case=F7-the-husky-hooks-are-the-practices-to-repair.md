@@ -17,8 +17,8 @@ practice upgrade, which rewrites both at once. a hand edit here is a workaround 
 `declapract apply` reverts it, and every other repo on the practice keeps the defect
 (`rule.forbid.workarounds`, `rule.require.solve-at-cause`).
 
-the concerns are sound and are carried, whole, to the source: dream
-`v2026_11_07.reseed.declapract-husky-lock-fails-open`.
+the concerns are sound and are carried, whole, to the source:
+ehmpathy/declapract-typescript-ehmpathy#810.
 
 ## .rework — clean
 

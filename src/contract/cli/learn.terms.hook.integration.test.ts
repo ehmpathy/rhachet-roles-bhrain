@@ -9,7 +9,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 /**
- * .what = integration clamps for `rhx learn.terms.hook get | enable | disable`
+ * .what = integration clamps for `rhx learn.terms.hook get | set on | set off | del`
  * .why = the toggle writes a file rhachet also owns. so each verb is driven through the real
  *        skill wrapper, in a fixture repo that the REAL rhachet cli lays out, re-syncs, and
  *        derives; the clamps prove the entry survives rhachet itself, not a hand-built layout
@@ -292,7 +292,7 @@ const getRhachetRepoMutex = (): (<T>(
       'rhachet no longer ships withRepoMutex at the path this clamp loads',
       {
         lockPath,
-        hint: 'find where rhachet now keeps withRepoMutex (or its export, per dream v2026_11_07.reseed.rhachet-export-with-repo-mutex), then repoint this clamp and withTermsHookSettingsHold',
+        hint: 'find where rhachet now keeps withRepoMutex (or its export, per ehmpathy/rhachet#776), then repoint this clamp and withTermsHookSettingsHold',
       },
     );
   return require(lockPath).withRepoMutex;
@@ -376,7 +376,7 @@ describe('learn.terms.hook.integration', () => {
       genFixture({ slug: 'terms-hook-case1', layout: 'split' }),
     );
 
-    when('[t0] get runs before any enable', () => {
+    when('[t0] get runs before any set on', () => {
       const out = useBeforeAll(async () => {
         const before = getSettingsRaw(scene);
         const result = runToggle({ scene, args: ['get'] });
@@ -386,7 +386,7 @@ describe('learn.terms.hook.integration', () => {
       then('it exits 0 and reports disabled', () => {
         expect(out.exitCode).toEqual(0);
         expect(out.stdout).toContain('status = disabled');
-        expect(out.stdout).toContain('rhx learn.terms.hook enable');
+        expect(out.stdout).toContain('rhx learn.terms.hook set on');
       });
 
       then('the settings file is byte-identical', () => {
@@ -398,14 +398,14 @@ describe('learn.terms.hook.integration', () => {
       });
     });
 
-    when('[t1] enable runs', () => {
+    when('[t1] set on runs', () => {
       const out = useBeforeAll(async () => {
         const before = getSettings({
           repo: scene.repo,
           file: 'settings.of.repo.json',
         });
         const beforeRaw = getSettingsRaw(scene);
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         const after = getSettings({
           repo: scene.repo,
           file: 'settings.of.repo.json',
@@ -420,7 +420,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the file diff is the one hook block alone', () => {
         expect(isDiffAnInsertAlone({ diff: out.diff })).toEqual(true);
-        expect(out.diff).toMatchSnapshot('enable - the diff, split layout');
+        expect(out.diff).toMatchSnapshot('set on - the diff, split layout');
       });
 
       then('it exits 0 and reports enabled (added)', () => {
@@ -475,11 +475,11 @@ describe('learn.terms.hook.integration', () => {
       );
 
       then('the stdout matches the snapshot', () => {
-        expect(out.stdout).toMatchSnapshot('enable - added');
+        expect(out.stdout).toMatchSnapshot('set on - added');
       });
     });
 
-    when('[t2] get runs after enable', () => {
+    when('[t2] get runs after set on', () => {
       const out = useBeforeAll(async () => runToggle({ scene, args: ['get'] }));
 
       then('it reports enabled, the hook, and whose stops it reaches', () => {
@@ -502,10 +502,10 @@ describe('learn.terms.hook.integration', () => {
       });
     });
 
-    when('[t3] enable runs again', () => {
+    when('[t3] set on runs again', () => {
       const out = useBeforeAll(async () => {
         const before = getSettingsRaw(scene);
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         return { ...result, before, after: getSettingsRaw(scene) };
       });
 
@@ -516,13 +516,13 @@ describe('learn.terms.hook.integration', () => {
       });
 
       then('the stdout matches the snapshot', () => {
-        expect(out.stdout).toMatchSnapshot('enable - already enabled');
+        expect(out.stdout).toMatchSnapshot('set on - already enabled');
       });
     });
 
-    when('[t4] disable runs', () => {
+    when('[t4] set off runs', () => {
       const out = useBeforeAll(async () => {
-        const result = runToggle({ scene, args: ['disable'] });
+        const result = runToggle({ scene, args: ['set', 'off'] });
         return {
           ...result,
           after: getSettings({
@@ -542,14 +542,14 @@ describe('learn.terms.hook.integration', () => {
       );
 
       then('the stdout matches the snapshot', () => {
-        expect(out.stdout).toMatchSnapshot('disable - removed');
+        expect(out.stdout).toMatchSnapshot('set off - removed');
       });
     });
 
-    when('[t5] disable runs again', () => {
+    when('[t5] set off runs again', () => {
       const out = useBeforeAll(async () => {
         const before = getSettingsRaw(scene);
-        const result = runToggle({ scene, args: ['disable'] });
+        const result = runToggle({ scene, args: ['set', 'off'] });
         return { ...result, before, after: getSettingsRaw(scene) };
       });
 
@@ -560,11 +560,52 @@ describe('learn.terms.hook.integration', () => {
       });
 
       then('the stdout matches the snapshot', () => {
-        expect(out.stdout).toMatchSnapshot('disable - already disabled');
+        expect(out.stdout).toMatchSnapshot('set off - already disabled');
       });
     });
 
-    when('[t6] get runs through the documented entry, rhx', () => {
+    when('[t6] set on runs, then del, the alias of set off', () => {
+      const out = useBeforeAll(async () => {
+        const on = runToggle({ scene, args: ['set', 'on'] });
+        const del = runToggle({ scene, args: ['del'] });
+        return {
+          on,
+          del,
+          after: getSettings({
+            repo: scene.repo,
+            file: 'settings.of.repo.json',
+          }),
+        };
+      });
+
+      then('del reports disabled (removed), as set off does', () => {
+        expect(out.on.exitCode).toEqual(0);
+        expect(out.del.exitCode).toEqual(0);
+        expect(out.del.stdout).toContain('📜 learn.terms.hook del');
+        expect(out.del.stdout).toContain('status = disabled (removed)');
+        expect(getTermsHooks({ settings: out.after })).toEqual([]);
+      });
+
+      then('the stdout matches the snapshot', () => {
+        expect(out.del.stdout).toMatchSnapshot('del - removed');
+      });
+    });
+
+    when('[t7] del runs again', () => {
+      const out = useBeforeAll(async () => {
+        const before = getSettingsRaw(scene);
+        const result = runToggle({ scene, args: ['del'] });
+        return { ...result, before, after: getSettingsRaw(scene) };
+      });
+
+      then('it reports already disabled and writes naught', () => {
+        expect(out.exitCode).toEqual(0);
+        expect(out.stdout).toContain('status = already disabled');
+        expect(out.after).toEqual(out.before);
+      });
+    });
+
+    when('[t8] get runs through the documented entry, rhx', () => {
       // the other steps exec the wrapper; this one proves rhx finds and dispatches the skill
       // in a repo where rhachet linked the learner
       const out = useBeforeAll(async () =>
@@ -589,7 +630,7 @@ describe('learn.terms.hook.integration', () => {
   });
 
   given('[case2] a repo with the learner linked and no .claude dir', () => {
-    // the key derive once realpathed a dir that was not there: enable crashed, exit 1
+    // the key derive once realpathed a dir that was not there: set on crashed, exit 1
     const scene = useBeforeAll(async () =>
       genFixture({ slug: 'terms-hook-case2', layout: 'none' }),
     );
@@ -611,9 +652,9 @@ describe('learn.terms.hook.integration', () => {
       });
     });
 
-    when('[t1] disable runs', () => {
+    when('[t1] set off runs', () => {
       const out = useBeforeAll(async () => ({
-        ...runToggle({ scene, args: ['disable'] }),
+        ...runToggle({ scene, args: ['set', 'off'] }),
         claudeDirFound: fs.existsSync(path.join(scene.repo, '.claude')),
         locksDirFound: fs.existsSync(
           path.join(scene.repo, '.agent', '.actors', '.locks'),
@@ -632,14 +673,14 @@ describe('learn.terms.hook.integration', () => {
 
       then('the stdout matches the snapshot', () => {
         expect(out.stdout).toMatchSnapshot(
-          'disable - already disabled, no file',
+          'set off - already disabled, no file',
         );
       });
     });
 
-    when('[t2] enable runs', () => {
+    when('[t2] set on runs', () => {
       const out = useBeforeAll(async () => {
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         return {
           ...result,
           after: getSettings({ repo: scene.repo, file: 'settings.json' }),
@@ -666,12 +707,12 @@ describe('learn.terms.hook.integration', () => {
       });
 
       then('the stdout matches the snapshot', () => {
-        expect(out.stdout).toMatchSnapshot('enable - added, file created');
+        expect(out.stdout).toMatchSnapshot('set on - added, file created');
       });
     });
   });
 
-  given('[case4] enable over a drifted file', () => {
+  given('[case4] set on over a drifted file', () => {
     const scene = useBeforeAll(async () => {
       const fixture = genFixture({ slug: 'terms-hook-case4', layout: 'old' });
       const file = path.join(fixture.repo, '.claude', 'settings.json');
@@ -723,9 +764,9 @@ describe('learn.terms.hook.integration', () => {
       return fixture;
     });
 
-    when('[t0] enable runs', () => {
+    when('[t0] set on runs', () => {
       const out = useBeforeAll(async () => {
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         return {
           ...result,
           after: getSettings({ repo: scene.repo, file: 'settings.json' }),
@@ -764,7 +805,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the stdout matches the snapshot', () => {
         expect(out.stdout).toMatchSnapshot(
-          'enable - updated, a hand copy replaced',
+          'set on - updated, a hand copy replaced',
         );
       });
     });
@@ -800,10 +841,10 @@ describe('learn.terms.hook.integration', () => {
     // `repo=bhrain/role=learner` and t0 turns red; revert it to a bare toggle author and t1 does
     const scene = useBeforeAll(async () => {
       const fixture = genFixture({ slug: 'terms-hook-case3', layout: 'split' });
-      const enable = runToggle({ scene: fixture, args: ['enable'] });
-      if (enable.exitCode !== 0)
-        throw new MalfunctionError('enable failed in the case3 fixture', {
-          stderr: enable.stderr,
+      const setOn = runToggle({ scene: fixture, args: ['set', 'on'] });
+      if (setOn.exitCode !== 0)
+        throw new MalfunctionError('set on failed in the case3 fixture', {
+          stderr: setOn.stderr,
           hint: 'run npm run build, then rerun the suite',
         });
 
@@ -1060,9 +1101,9 @@ describe('learn.terms.hook.integration', () => {
       });
     });
 
-    when('[t5] disable runs, then rhachet re-derives the peers', () => {
+    when('[t5] set off runs, then rhachet re-derives the peers', () => {
       const out = useBeforeAll(async () => {
-        const disable = runToggle({ scene, args: ['disable'] });
+        const setOff = runToggle({ scene, args: ['set', 'off'] });
         const derive = run({
           cmd: RHACHET_BIN,
           args: ['init', '--hooks'],
@@ -1070,14 +1111,14 @@ describe('learn.terms.hook.integration', () => {
           home: scene.home,
         });
         return {
-          disable,
+          setOff,
           derive,
           peer: scene.getPeerSettings({ hash: '1a1a1a1a' }),
         };
       });
 
       then('both exit 0', () => {
-        expect(out.disable.exitCode).toEqual(0);
+        expect(out.setOff.exitCode).toEqual(0);
         expect(out.derive.exitCode).toEqual(0);
       });
 
@@ -1090,7 +1131,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the derived term hooks match the snapshot', () => {
         expect(getTermsHooks({ settings: out.peer })).toMatchSnapshot(
-          'derived - a learner peer after disable',
+          'derived - a learner peer after set off',
         );
       });
     });
@@ -1164,9 +1205,9 @@ describe('learn.terms.hook.integration', () => {
       });
     });
 
-    when('[t1] disable runs', () => {
+    when('[t1] set off runs', () => {
       const out = useBeforeAll(async () => {
-        const result = runToggle({ scene, args: ['disable'] });
+        const result = runToggle({ scene, args: ['set', 'off'] });
         return {
           ...result,
           after: getSettings({ repo: scene.repo, file: 'settings.json' }),
@@ -1208,7 +1249,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the stdout matches the snapshot', () => {
         expect(out.stdout).toMatchSnapshot(
-          'disable - removed, a hand copy too',
+          'set off - removed, a hand copy too',
         );
       });
     });
@@ -1229,15 +1270,15 @@ describe('learn.terms.hook.integration', () => {
           path.join(fixture.repo, '.claude', 'settings.of.repo.json'),
         );
         return {
-          enable: runToggle({ scene: fixture, args: ['enable'] }),
-          disable: runToggle({ scene: fixture, args: ['disable'] }),
+          setOn: runToggle({ scene: fixture, args: ['set', 'on'] }),
+          setOff: runToggle({ scene: fixture, args: ['set', 'off'] }),
           get: runToggle({ scene: fixture, args: ['get'] }),
           elsewhere: fs.readFileSync(elsewhere, 'utf-8'),
         };
       });
 
       then('each verb exits 2 with the qualified header and the fix', () => {
-        for (const result of [out.enable, out.disable, out.get]) {
+        for (const result of [out.setOn, out.setOff, out.get]) {
           expect(result.exitCode).toEqual(2);
           expect(result.stdout).toEqual('');
           expect(result.stderr).toContain(
@@ -1254,8 +1295,8 @@ describe('learn.terms.hook.integration', () => {
       });
 
       then('the stderr of each verb matches the snapshot', () => {
-        expect(out.enable.stderr).toMatchSnapshot('enable - refused, a link');
-        expect(out.disable.stderr).toMatchSnapshot('disable - refused, a link');
+        expect(out.setOn.stderr).toMatchSnapshot('set on - refused, a link');
+        expect(out.setOff.stderr).toMatchSnapshot('set off - refused, a link');
         expect(out.get.stderr).toMatchSnapshot('get - refused, a link');
       });
     });
@@ -1270,15 +1311,15 @@ describe('learn.terms.hook.integration', () => {
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, '{ "hooks": {}, }');
         return {
-          enable: runToggle({ scene: fixture, args: ['enable'] }),
-          disable: runToggle({ scene: fixture, args: ['disable'] }),
+          setOn: runToggle({ scene: fixture, args: ['set', 'on'] }),
+          setOff: runToggle({ scene: fixture, args: ['set', 'off'] }),
           get: runToggle({ scene: fixture, args: ['get'] }),
           after: fs.readFileSync(file, 'utf-8'),
         };
       });
 
       then('each verb exits 2 with the qualified header and the fix', () => {
-        for (const result of [out.enable, out.disable, out.get]) {
+        for (const result of [out.setOn, out.setOff, out.get]) {
           expect(result.exitCode).toEqual(2);
           expect(result.stdout).toEqual('');
           expect(result.stderr).toContain(
@@ -1311,15 +1352,15 @@ describe('learn.terms.hook.integration', () => {
           fs.mkdirSync(path.dirname(file), { recursive: true });
           fs.writeFileSync(file, body);
           return {
-            enable: runToggle({ scene: fixture, args: ['enable'] }),
-            disable: runToggle({ scene: fixture, args: ['disable'] }),
+            setOn: runToggle({ scene: fixture, args: ['set', 'on'] }),
+            setOff: runToggle({ scene: fixture, args: ['set', 'off'] }),
             get: runToggle({ scene: fixture, args: ['get'] }),
             after: fs.readFileSync(file, 'utf-8'),
           };
         });
 
         then('each verb refuses with exit 2, never a crash', () => {
-          for (const result of [out.enable, out.disable, out.get]) {
+          for (const result of [out.setOn, out.setOff, out.get]) {
             expect(result.exitCode).toEqual(2);
             expect(result.stdout).toEqual('');
             expect(result.stderr).toContain(
@@ -1337,8 +1378,8 @@ describe('learn.terms.hook.integration', () => {
         });
 
         then('the stderr matches the snapshot', () => {
-          expect(out.enable.stderr).toMatchSnapshot(
-            'enable - refused, a hooks shape no verb can walk',
+          expect(out.setOn.stderr).toMatchSnapshot(
+            'set on - refused, a hooks shape no verb can walk',
           );
         });
       },
@@ -1354,14 +1395,14 @@ describe('learn.terms.hook.integration', () => {
           recursive: true,
         });
         return {
-          enable: runToggle({ scene: fixture, args: ['enable'] }),
-          disable: runToggle({ scene: fixture, args: ['disable'] }),
+          setOn: runToggle({ scene: fixture, args: ['set', 'on'] }),
+          setOff: runToggle({ scene: fixture, args: ['set', 'off'] }),
           get: runToggle({ scene: fixture, args: ['get'] }),
         };
       });
 
       then('each verb refuses with exit 2, never a crash', () => {
-        for (const result of [out.enable, out.disable, out.get]) {
+        for (const result of [out.setOn, out.setOff, out.get]) {
           expect(result.exitCode).toEqual(2);
           expect(result.stdout).toEqual('');
           expect(result.stderr).toContain(
@@ -1385,15 +1426,15 @@ describe('learn.terms.hook.integration', () => {
         fs.mkdirSync(outside, { recursive: true });
         fs.symlinkSync(outside, path.join(fixture.repo, '.claude'));
         return {
-          enable: runToggle({ scene: fixture, args: ['enable'] }),
-          disable: runToggle({ scene: fixture, args: ['disable'] }),
+          setOn: runToggle({ scene: fixture, args: ['set', 'on'] }),
+          setOff: runToggle({ scene: fixture, args: ['set', 'off'] }),
           get: runToggle({ scene: fixture, args: ['get'] }),
           outsideEntries: fs.readdirSync(outside),
         };
       });
 
       then('each verb refuses with exit 2', () => {
-        for (const result of [out.enable, out.disable, out.get]) {
+        for (const result of [out.setOn, out.setOff, out.get]) {
           expect(result.exitCode).toEqual(2);
           expect(result.stdout).toEqual('');
           expect(result.stderr).toContain(
@@ -1407,8 +1448,8 @@ describe('learn.terms.hook.integration', () => {
       });
 
       then('the stderr matches the snapshot', () => {
-        expect(out.enable.stderr).toMatchSnapshot(
-          'enable - refused, a target outside the repo',
+        expect(out.setOn.stderr).toMatchSnapshot(
+          'set on - refused, a target outside the repo',
         );
       });
     });
@@ -1421,19 +1462,45 @@ describe('learn.terms.hook.integration', () => {
 
     when('[t0] an unknown verb, no verb, two verbs, and --help run', () => {
       const out = useBeforeAll(async () => ({
-        unknown: runToggle({ scene, args: ['on'] }),
+        unknown: runToggle({ scene, args: ['enable'] }),
         absent: runToggle({ scene, args: [] }),
-        extra: runToggle({ scene, args: ['get', 'enable'] }),
-        flagged: runToggle({ scene, args: ['enable', '--mode', 'apply'] }),
+        setBare: runToggle({ scene, args: ['set'] }),
+        setUnknown: runToggle({ scene, args: ['set', 'yes'] }),
+        extra: runToggle({ scene, args: ['get', 'set', 'on'] }),
+        flagged: runToggle({
+          scene,
+          args: ['set', 'on', '--mode', 'apply'],
+        }),
         help: runToggle({ scene, args: ['--help'] }),
         helpShort: runToggle({ scene, args: ['-h'] }),
-        helpOfVerb: runToggle({ scene, args: ['enable', '--help'] }),
+        helpOfVerb: runToggle({ scene, args: ['set', '--help'] }),
         claudeDirFound: fs.existsSync(path.join(scene.repo, '.claude')),
       }));
 
       then('no refusal prints to stdout', () => {
-        for (const result of [out.unknown, out.absent, out.extra, out.flagged])
+        for (const result of [
+          out.unknown,
+          out.absent,
+          out.setBare,
+          out.setUnknown,
+          out.extra,
+          out.flagged,
+        ])
           expect(result.stdout).toEqual('');
+      });
+
+      then('set with no value exits 2 and names on and off', () => {
+        expect(out.setBare.exitCode).toEqual(2);
+        expect(out.setBare.stderr).toContain(
+          '✋ ConstraintError: `set` needs a value: on or off',
+        );
+      });
+
+      then('set with an unknown value exits 2 and names on and off', () => {
+        expect(out.setUnknown.exitCode).toEqual(2);
+        expect(out.setUnknown.stderr).toContain(
+          '✋ ConstraintError: unknown value `yes` for set; use on or off',
+        );
       });
 
       then(
@@ -1447,12 +1514,12 @@ describe('learn.terms.hook.integration', () => {
         },
       );
 
-      then('an unknown verb exits 2 and names the three verbs', () => {
+      then('an unknown verb exits 2 and names the verbs', () => {
         expect(out.unknown.exitCode).toEqual(2);
         expect(out.unknown.stderr).toContain(
-          '✋ ConstraintError: unknown verb `on`',
+          '✋ ConstraintError: unknown verb `enable`',
         );
-        for (const verb of ['get', 'enable', 'disable'])
+        for (const verb of ['get', 'set on', 'set off', 'del'])
           expect(out.unknown.stderr).toContain(verb);
       });
 
@@ -1466,7 +1533,7 @@ describe('learn.terms.hook.integration', () => {
       then('two verbs exit 2 and name the extra args', () => {
         expect(out.extra.exitCode).toEqual(2);
         expect(out.extra.stderr).toContain(
-          '✋ ConstraintError: unexpected arg(s): get enable',
+          '✋ ConstraintError: unexpected arg(s): get set on',
         );
         expect(out.extra.stderr).toContain('help: rhx learn.terms.hook --help');
       });
@@ -1476,7 +1543,7 @@ describe('learn.terms.hook.integration', () => {
         () => {
           expect(out.flagged.exitCode).toEqual(2);
           expect(out.flagged.stderr).toContain(
-            '✋ ConstraintError: unexpected arg(s): enable --mode apply',
+            '✋ ConstraintError: unexpected arg(s): set on --mode apply',
           );
         },
       );
@@ -1496,6 +1563,10 @@ describe('learn.terms.hook.integration', () => {
       then('the outputs match the snapshot', () => {
         expect(out.unknown.stderr).toMatchSnapshot('unknown verb');
         expect(out.absent.stderr).toMatchSnapshot('no verb given');
+        expect(out.setBare.stderr).toMatchSnapshot('set with no value');
+        expect(out.setUnknown.stderr).toMatchSnapshot(
+          'set with an unknown value',
+        );
         expect(out.extra.stderr).toMatchSnapshot('unexpected args');
         expect(out.flagged.stderr).toMatchSnapshot(
           'unexpected args, a verb with a flag',
@@ -1581,13 +1652,13 @@ describe('learn.terms.hook.integration', () => {
       );
 
       when(
-        '[t0] enable starts while the key is held, then the hold ends',
+        '[t0] set on starts while the key is held, then the hold ends',
         () => {
           const out = useBeforeAll(async () => {
             const held = await runToggleUnderRhachetHold({
               scene,
               file: path.join(scene.repo, '.claude', 'settings.of.repo.json'),
-              args: ['enable'],
+              args: ['set', 'on'],
               whileHeld: () =>
                 getTermsHooks({
                   settings: getSettings({
@@ -1634,7 +1705,7 @@ describe('learn.terms.hook.integration', () => {
 
           then('the frame after the release matches the snapshot', () => {
             expect({ stdout: out.stdout, stderr: out.stderr }).toMatchSnapshot(
-              'enable - after the rhachet hold ends',
+              'set on - after the rhachet hold ends',
             );
           });
         },
@@ -1642,7 +1713,7 @@ describe('learn.terms.hook.integration', () => {
     },
   );
 
-  given('[case12] enable on a file a human formatted', () => {
+  given('[case12] set on over a file a human formatted', () => {
     // four-space indent and no trailer newline: a write in rhachet's own form would reformat
     // every line, and the hook block would hide inside it
     const scene = useBeforeAll(async () => {
@@ -1659,10 +1730,10 @@ describe('learn.terms.hook.integration', () => {
       return { ...fixture, file };
     });
 
-    when('[t0] enable runs', () => {
+    when('[t0] set on runs', () => {
       const out = useBeforeAll(async () => {
         const before = fs.readFileSync(scene.file, 'utf-8');
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         const after = fs.readFileSync(scene.file, 'utf-8');
         return {
           ...result,
@@ -1687,13 +1758,13 @@ describe('learn.terms.hook.integration', () => {
 
       then('the diff matches the snapshot', () => {
         expect(out.diff).toMatchSnapshot(
-          'enable - the diff, a hand-formatted file',
+          'set on - the diff, a hand-formatted file',
         );
       });
     });
   });
 
-  given('[case13] two enables run at once', () => {
+  given('[case13] two set-on calls run at once', () => {
     // both may pass the lock-free look before either writes, so the second must settle as a
     // no-op under the hold. without the re-read under the hold, a run whose look overlapped
     // the other's would report `updated` over a write it did not make
@@ -1701,11 +1772,11 @@ describe('learn.terms.hook.integration', () => {
       genFixture({ slug: 'terms-hook-case13', layout: 'split' }),
     );
 
-    when('[t0] two enables start together', () => {
+    when('[t0] two set-on calls start together', () => {
       const out = useBeforeAll(async () => {
         const runs = await Promise.all([
-          runToggleChild({ scene, args: ['enable'] }),
-          runToggleChild({ scene, args: ['enable'] }),
+          runToggleChild({ scene, args: ['set', 'on'] }),
+          runToggleChild({ scene, args: ['set', 'on'] }),
         ]);
         return {
           runs,
@@ -1745,7 +1816,7 @@ describe('learn.terms.hook.integration', () => {
       then('the two frames match the snapshot, in a fixed order', () => {
         // which run wins the key varies per run, so the frames are sorted before the snap
         const frames = out.runs.map((one) => one.stdout).sort();
-        expect(frames).toMatchSnapshot('enable - two at once, one adds');
+        expect(frames).toMatchSnapshot('set on - two at once, one adds');
       });
     });
   });
@@ -1837,9 +1908,9 @@ describe('learn.terms.hook.integration', () => {
       return fixture;
     });
 
-    when('[t0] enable runs', () => {
+    when('[t0] set on runs', () => {
       const out = useBeforeAll(async () => {
-        const result = runToggle({ scene, args: ['enable'] });
+        const result = runToggle({ scene, args: ['set', 'on'] });
         return {
           ...result,
           after: getSettings({ repo: scene.repo, file: 'settings.json' }),
@@ -1862,7 +1933,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the stdout matches the snapshot', () => {
         expect(out.stdout).toMatchSnapshot(
-          'enable - updated, its own older body',
+          'set on - updated, its own older body',
         );
       });
     });
@@ -1908,7 +1979,7 @@ describe('learn.terms.hook.integration', () => {
     );
 
     when(
-      '[t0] enable waits on the old-layout key, and the split file appears',
+      '[t0] set on waits on the old-layout key, and the split file appears',
       () => {
         const out = useBeforeAll(async () => {
           const fileOld = path.join(scene.repo, '.claude', 'settings.json');
@@ -1921,7 +1992,7 @@ describe('learn.terms.hook.integration', () => {
           const held = await runToggleUnderRhachetHold({
             scene,
             file: fileOld,
-            args: ['enable'],
+            args: ['set', 'on'],
             whileHeld: () => fs.writeFileSync(fileSplit, '{}'),
             holdMs: 4000,
           });
@@ -1950,7 +2021,7 @@ describe('learn.terms.hook.integration', () => {
 
         then('the stderr matches the snapshot', () => {
           expect(out.stderr).toMatchSnapshot(
-            'enable - refused, the layout changed under the hold',
+            'set on - refused, the layout changed under the hold',
           );
         });
       },
@@ -1966,9 +2037,9 @@ describe('learn.terms.hook.integration', () => {
       return fixture;
     });
 
-    when('[t0] enable runs', () => {
+    when('[t0] set on runs', () => {
       const out = useBeforeAll(async () => ({
-        ...runToggle({ scene, args: ['enable'] }),
+        ...runToggle({ scene, args: ['set', 'on'] }),
         after: fs.readFileSync(path.join(scene.repo, '.claude'), 'utf-8'),
       }));
 
@@ -1991,7 +2062,7 @@ describe('learn.terms.hook.integration', () => {
             .split(scene.repo)
             .join('$REPO');
           expect(header).toMatchSnapshot(
-            'enable - malfunction, .claude is a plain file',
+            'set on - malfunction, .claude is a plain file',
           );
         },
       );
@@ -2008,14 +2079,14 @@ describe('learn.terms.hook.integration', () => {
       genFixture({ slug: 'terms-hook-case17', layout: 'split' }),
     );
 
-    when('[t0] enable runs while the key stays held past the wait', () => {
+    when('[t0] set on runs while the key stays held past the wait', () => {
       const out = useBeforeAll(async () => {
         const file = path.join(scene.repo, '.claude', 'settings.of.repo.json');
         const before = fs.readFileSync(file, 'utf-8');
         const held = await runToggleUnderRhachetHold({
           scene,
           file,
-          args: ['enable'],
+          args: ['set', 'on'],
           whileHeld: () => undefined,
           holdMs: 130000,
         });
@@ -2039,7 +2110,7 @@ describe('learn.terms.hook.integration', () => {
 
       then('the stderr matches the snapshot', () => {
         expect(out.stderr).toMatchSnapshot(
-          'enable - refused, the settings file stays held',
+          'set on - refused, the settings file stays held',
         );
       });
     });

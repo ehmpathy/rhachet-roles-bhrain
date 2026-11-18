@@ -98,7 +98,7 @@ const getTermsHookCommandsAnyAuthor = (input: { tempDir: string }): string[] => 
 
 /**
  * .what = acceptance journey: the learner's term hook toggle, through the published cli
- * .why = the wish: `rhx learn.terms.hook get | enable | disable`, default off, each verb
+ * .why = the wish: `rhx learn.terms.hook get | set on | set off | del`, default off, each verb
  *        idempotent. this drives the real `npx rhx` in a repo rhachet laid out, so skill
  *        discovery, the cli subpath, and the write to the committed settings file are all real
  * .note = the layout flip under the hold (case=11) is clamped only at the integration grain:
@@ -137,7 +137,7 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
     });
 
-    when('[t1] get runs before any enable', () => {
+    when('[t1] get runs before any set on', () => {
       const result = useThen('get runs', async () =>
         runRhx({
           cmd: 'npx rhx learn.terms.hook get',
@@ -158,10 +158,10 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
     });
 
-    when('[t2] enable runs', () => {
-      const result = useThen('enable runs', async () =>
+    when('[t2] set on runs', () => {
+      const result = useThen('set on runs', async () =>
         runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         }),
@@ -181,14 +181,14 @@ describe('learner.terms.hook.journey.acceptance', () => {
       then('the output matches the snapshot', () => {
         expect(
           asFramedOutput({ text: `${result.stdout}${result.stderr}`, scene }),
-        ).toMatchSnapshot('enable - added');
+        ).toMatchSnapshot('set on - added');
       });
     });
 
-    when('[t3] enable runs again', () => {
-      const result = useThen('enable runs again', async () =>
+    when('[t3] set on runs again', () => {
+      const result = useThen('set on runs again', async () =>
         runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         }),
@@ -203,7 +203,7 @@ describe('learner.terms.hook.journey.acceptance', () => {
       then('the output matches the snapshot', () => {
         expect(
           asFramedOutput({ text: `${result.stdout}${result.stderr}`, scene }),
-        ).toMatchSnapshot('enable - already enabled');
+        ).toMatchSnapshot('set on - already enabled');
       });
     });
 
@@ -249,10 +249,10 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
     });
 
-    when('[t5] disable runs', () => {
-      const result = useThen('disable runs', async () =>
+    when('[t5] set off runs', () => {
+      const result = useThen('set off runs', async () =>
         runRhx({
-          cmd: 'npx rhx learn.terms.hook disable',
+          cmd: 'npx rhx learn.terms.hook set off',
           cwd: scene.tempDir,
           home: scene.home,
         }),
@@ -267,14 +267,14 @@ describe('learner.terms.hook.journey.acceptance', () => {
       then('the output matches the snapshot', () => {
         expect(
           asFramedOutput({ text: `${result.stdout}${result.stderr}`, scene }),
-        ).toMatchSnapshot('disable - removed');
+        ).toMatchSnapshot('set off - removed');
       });
     });
 
-    when('[t6] disable runs again', () => {
-      const result = useThen('disable runs again', async () =>
+    when('[t6] set off runs again', () => {
+      const result = useThen('set off runs again', async () =>
         runRhx({
-          cmd: 'npx rhx learn.terms.hook disable',
+          cmd: 'npx rhx learn.terms.hook set off',
           cwd: scene.tempDir,
           home: scene.home,
         }),
@@ -288,7 +288,7 @@ describe('learner.terms.hook.journey.acceptance', () => {
       then('the output matches the snapshot', () => {
         expect(
           asFramedOutput({ text: `${result.stdout}${result.stderr}`, scene }),
-        ).toMatchSnapshot('disable - already disabled');
+        ).toMatchSnapshot('set off - already disabled');
       });
     });
 
@@ -301,14 +301,15 @@ describe('learner.terms.hook.journey.acceptance', () => {
         }),
       );
 
-      then('it exits 2 and names the three verbs', () => {
+      then('it exits 2 and names the verbs', () => {
         // each verb is matched as its own row of the tree, so a word that merely holds
         //   the verb (`target`, `disabled`) cannot pass for it
         expect(result.code).toEqual(2);
         expect(result.stderr).toContain('unknown verb `toggle`');
         expect(result.stderr).toMatch(/─ get\s+report/);
-        expect(result.stderr).toMatch(/─ enable\s+add/);
-        expect(result.stderr).toMatch(/─ disable\s+remove/);
+        expect(result.stderr).toMatch(/─ set on\s+add/);
+        expect(result.stderr).toMatch(/─ set off\s+remove/);
+        expect(result.stderr).toMatch(/─ del\s+remove it \(an alias of set off\)/);
       });
 
       then('the stderr matches the snapshot, its banner shown once', () => {
@@ -332,7 +333,7 @@ describe('learner.terms.hook.journey.acceptance', () => {
         expect(result.code).toEqual(0);
         expect(result.stdout).toContain('what = turn the learner');
         expect(result.stdout).toContain('usage = rhx learn.terms.hook <verb>');
-        expect(result.stdout).toMatch(/─ rhx learn\.terms\.hook enable\s+#/);
+        expect(result.stdout).toMatch(/─ rhx learn\.terms\.hook set on\s+#/);
         expect(result.stdout).toMatch(/─ get\s+report/);
         expect(result.stdout).toContain('default = disabled');
       });
@@ -343,6 +344,35 @@ describe('learner.terms.hook.journey.acceptance', () => {
         ).toMatchSnapshot('help');
       });
     });
+
+    when('[t9] set on runs, then del, the alias of set off', () => {
+      const out = useThen('set on, then del', async () => {
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
+          cwd: scene.tempDir,
+          home: scene.home,
+        });
+        const del = await runRhx({
+          cmd: 'npx rhx learn.terms.hook del',
+          cwd: scene.tempDir,
+          home: scene.home,
+        });
+        return { setOn, del };
+      });
+
+      then('del exits 0, reports removed, and the entry is gone', () => {
+        expect(out.setOn.code).toEqual(0);
+        expect(out.del.code).toEqual(0);
+        expect(out.del.stdout).toContain('status = disabled (removed)');
+        expect(getTermsHookEntries(scene)).toEqual([]);
+      });
+
+      then('the del output matches the snapshot', () => {
+        expect(
+          asFramedOutput({ text: `${out.del.stdout}${out.del.stderr}`, scene }),
+        ).toMatchSnapshot('del - removed');
+      });
+    });
   });
 
   given('[case2] an enabled repo whose learner is later unlinked', () => {
@@ -351,14 +381,14 @@ describe('learner.terms.hook.journey.acceptance', () => {
     );
 
     when('[t0] the hook command a session would run fires, with no learner link', () => {
-      const out = useThen('init, enable, unlink, then the hook fires', async () => {
+      const out = useThen('init, set on, unlink, then the hook fires', async () => {
         const init = await runRhx({
           cmd: 'npx rhx init --roles learner --hooks',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        const enable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         });
@@ -368,12 +398,12 @@ describe('learner.terms.hook.journey.acceptance', () => {
           recursive: true,
         });
         const fired = await runRhx({ cmd: command, cwd: scene.tempDir, home: scene.home });
-        return { init, enable, command, fired };
+        return { init, setOn, command, fired };
       });
 
       then('the setup ran clean and the entry holds the guarded command', () => {
         expect(out.init.code).toEqual(0);
-        expect(out.enable.code).toEqual(0);
+        expect(out.setOn.code).toEqual(0);
         expect(out.command).toContain('[ ! -e .agent/repo=bhrain/role=learner ] ||');
       });
 
@@ -398,30 +428,30 @@ describe('learner.terms.hook.journey.acceptance', () => {
     );
     const BODY_BAD = '{ "hooks": {}, }';
 
-    when('[t0] enable runs over the broken file', () => {
-      const out = useThen('init, break the file, then enable', async () => {
+    when('[t0] set on runs over the broken file', () => {
+      const out = useThen('init, break the file, then set on', async () => {
         const init = await runRhx({
           cmd: 'npx rhx init --roles learner --hooks',
           cwd: scene.tempDir,
           home: scene.home,
         });
         fs.writeFileSync(asRepoLayerPath(scene), BODY_BAD);
-        const enable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        return { init, enable, after: fs.readFileSync(asRepoLayerPath(scene), 'utf8') };
+        return { init, setOn, after: fs.readFileSync(asRepoLayerPath(scene), 'utf8') };
       });
 
       then('it exits 2 with the qualified header and the fix', () => {
         expect(out.init.code).toEqual(0);
-        expect(out.enable.code).toEqual(2);
-        expect(out.enable.stderr).toContain(
+        expect(out.setOn.code).toEqual(2);
+        expect(out.setOn.stderr).toContain(
           '✋ ConstraintError: the settings target is not valid json',
         );
-        expect(out.enable.stderr).toContain('├─ parse = ');
-        expect(out.enable.stderr).toContain('fix: repair the json, then rerun');
+        expect(out.setOn.stderr).toContain('├─ parse = ');
+        expect(out.setOn.stderr).toContain('fix: repair the json, then rerun');
       });
 
       then('the file is byte-identical', () => {
@@ -429,8 +459,8 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
 
       then('the stderr matches the snapshot', () => {
-        expect(asFramedOutput({ text: out.enable.stderr, scene })).toMatchSnapshot(
-          'enable - refused, not valid json',
+        expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
+          'set on - refused, not valid json',
         );
       });
     });
@@ -441,8 +471,8 @@ describe('learner.terms.hook.journey.acceptance', () => {
       genScene({ slug: 'learner-terms-hook-link' }),
     );
 
-    when('[t0] enable runs over the link', () => {
-      const out = useThen('init, swap the file for a link, then enable', async () => {
+    when('[t0] set on runs over the link', () => {
+      const out = useThen('init, swap the file for a link, then set on', async () => {
         const init = await runRhx({
           cmd: 'npx rhx init --roles learner --hooks',
           cwd: scene.tempDir,
@@ -452,21 +482,21 @@ describe('learner.terms.hook.journey.acceptance', () => {
         fs.writeFileSync(elsewhere, '{}');
         fs.rmSync(asRepoLayerPath(scene));
         fs.symlinkSync(elsewhere, asRepoLayerPath(scene));
-        const enable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        return { init, enable, elsewhere: fs.readFileSync(elsewhere, 'utf8') };
+        return { init, setOn, elsewhere: fs.readFileSync(elsewhere, 'utf8') };
       });
 
       then('it exits 2 with the qualified header and the fix', () => {
         expect(out.init.code).toEqual(0);
-        expect(out.enable.code).toEqual(2);
-        expect(out.enable.stderr).toContain(
+        expect(out.setOn.code).toEqual(2);
+        expect(out.setOn.stderr).toContain(
           '✋ ConstraintError: the settings target is a link',
         );
-        expect(out.enable.stderr).toContain('fix: replace the link with a real file');
+        expect(out.setOn.stderr).toContain('fix: replace the link with a real file');
       });
 
       then('the file behind the link is untouched', () => {
@@ -474,8 +504,8 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
 
       then('the stderr matches the snapshot', () => {
-        expect(asFramedOutput({ text: out.enable.stderr, scene })).toMatchSnapshot(
-          'enable - refused, a link',
+        expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
+          'set on - refused, a link',
         );
       });
     });
@@ -527,37 +557,37 @@ describe('learner.terms.hook.journey.acceptance', () => {
         genScene({ slug: `learner-terms-hook-${refusal.slug}` }),
       );
 
-      when('[t0] enable runs over it', () => {
-        const out = useThen('init, tamper, then enable', async () => {
+      when('[t0] set on runs over it', () => {
+        const out = useThen('init, tamper, then set on', async () => {
           const init = await runRhx({
             cmd: 'npx rhx init --roles learner --hooks',
             cwd: scene.tempDir,
             home: scene.home,
           });
           refusal.tamper(scene);
-          const enable = await runRhx({
-            cmd: 'npx rhx learn.terms.hook enable',
+          const setOn = await runRhx({
+            cmd: 'npx rhx learn.terms.hook set on',
             cwd: scene.tempDir,
             home: scene.home,
           });
-          return { init, enable };
+          return { init, setOn };
         });
 
         then('it exits 2 with the qualified header and the fix', () => {
           expect(out.init.code).toEqual(0);
-          expect(out.enable.code).toEqual(2);
-          expect(out.enable.stderr).toContain(refusal.header);
-          expect(out.enable.stderr).toContain(refusal.fix);
+          expect(out.setOn.code).toEqual(2);
+          expect(out.setOn.stderr).toContain(refusal.header);
+          expect(out.setOn.stderr).toContain(refusal.fix);
         });
 
         then('stdout holds no toggle output, only rhachet’s run banner', () => {
-          expect(out.enable.stdout).not.toContain('learn.terms.hook enable');
-          expect(out.enable.stdout).not.toContain('status =');
+          expect(out.setOn.stdout).not.toContain('learn.terms.hook set on');
+          expect(out.setOn.stdout).not.toContain('status =');
         });
 
         then('the stderr matches the snapshot', () => {
-          expect(asFramedOutput({ text: out.enable.stderr, scene })).toMatchSnapshot(
-            `enable - refused, ${refusal.slug}`,
+          expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
+            `set on - refused, ${refusal.slug}`,
           );
         });
       });
@@ -570,25 +600,25 @@ describe('learner.terms.hook.journey.acceptance', () => {
     );
 
     when('[t0] a stop fires the entry with no fresh distillation on file', () => {
-      const out = useThen('init, enable, then the hook fires', async () => {
+      const out = useThen('init, set on, then the hook fires', async () => {
         const init = await runRhx({
           cmd: 'npx rhx init --roles learner --hooks',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        const enable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         });
         const command = getTermsHookEntries(scene)[0]?.command ?? '';
         const fired = await runRhx({ cmd: command, cwd: scene.tempDir, home: scene.home });
-        return { init, enable, fired };
+        return { init, setOn, fired };
       });
 
       then('the setup ran clean', () => {
         expect(out.init.code).toEqual(0);
-        expect(out.enable.code).toEqual(0);
+        expect(out.setOn.code).toEqual(0);
       });
 
       then('the stop is held, exit 2, with the term nudge', () => {
@@ -603,24 +633,24 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
     });
 
-    when('[t1] disable runs, then the Stop commands left in the repo layer are read', () => {
-      const out = useThen('disable, then collect every Stop command that runs it', async () => {
-        const disable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook disable',
+    when('[t1] set off runs, then the Stop commands left in the repo layer are read', () => {
+      const out = useThen('set off, then collect every Stop command that runs it', async () => {
+        const setOff = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set off',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        return { disable, commandsLeft: getTermsHookCommandsAnyAuthor(scene) };
+        return { setOff, commandsLeft: getTermsHookCommandsAnyAuthor(scene) };
       });
 
-      then('disable exits 0 and no Stop command runs the term hook, under any author', () => {
-        expect(out.disable.code).toEqual(0);
+      then('set off exits 0 and no Stop command runs the term hook, under any author', () => {
+        expect(out.setOff.code).toEqual(0);
         expect(out.commandsLeft).toEqual([]);
       });
 
       then('the term hook commands left match the snapshot, an empty list', () => {
         expect(out.commandsLeft).toMatchSnapshot(
-          'stop commands after disable - none runs the term hook',
+          'stop commands after set off - none runs the term hook',
         );
       });
     });
@@ -631,15 +661,15 @@ describe('learner.terms.hook.journey.acceptance', () => {
       genScene({ slug: 'learner-terms-hook-hand-copy' }),
     );
 
-    when('[t0] get, then disable, run over the hand copy', () => {
-      const out = useThen('init, enable, paste a hand copy, then get and disable', async () => {
+    when('[t0] get, then set off, run over the hand copy', () => {
+      const out = useThen('init, set on, paste a hand copy, then get and set off', async () => {
         const init = await runRhx({
           cmd: 'npx rhx init --roles learner --hooks',
           cwd: scene.tempDir,
           home: scene.home,
         });
-        const enable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook enable',
+        const setOn = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set on',
           cwd: scene.tempDir,
           home: scene.home,
         });
@@ -679,23 +709,23 @@ describe('learner.terms.hook.journey.acceptance', () => {
           cwd: scene.tempDir,
           home: scene.home,
         });
-        const disable = await runRhx({
-          cmd: 'npx rhx learn.terms.hook disable',
+        const setOff = await runRhx({
+          cmd: 'npx rhx learn.terms.hook set off',
           cwd: scene.tempDir,
           home: scene.home,
         });
         return {
           init,
-          enable,
+          setOn,
           get,
-          disable,
+          setOff,
           commandsLeft: getTermsHookCommandsAnyAuthor(scene),
         };
       });
 
       then('the setup ran clean', () => {
         expect(out.init.code).toEqual(0);
-        expect(out.enable.code).toEqual(0);
+        expect(out.setOn.code).toEqual(0);
       });
 
       then('get reports enabled and names the hand copy as drift, with its repair', () => {
@@ -704,13 +734,13 @@ describe('learner.terms.hook.journey.acceptance', () => {
         expect(out.get.stdout).toContain('drift = an entry');
       });
 
-      then('disable removes both entries and names the one it did not write', () => {
-        expect(out.disable.code).toEqual(0);
-        expect(out.disable.stdout).toContain('status = disabled (removed)');
-        expect(out.disable.stdout).toContain(
+      then('set off removes both entries and names the one it did not write', () => {
+        expect(out.setOff.code).toEqual(0);
+        expect(out.setOff.stdout).toContain('status = disabled (removed)');
+        expect(out.setOff.stdout).toContain(
           'also removed = an entry the toggle did not write',
         );
-        expect(out.disable.stdout).toContain('└─ by repo=bhrain/role=learner');
+        expect(out.setOff.stdout).toContain('└─ by repo=bhrain/role=learner');
         expect(out.commandsLeft).toEqual([]);
       });
 
@@ -720,10 +750,10 @@ describe('learner.terms.hook.journey.acceptance', () => {
         ).toMatchSnapshot('get - enabled, a hand copy as drift');
       });
 
-      then('the disable output matches the snapshot', () => {
+      then('the set off output matches the snapshot', () => {
         expect(
-          asFramedOutput({ text: `${out.disable.stdout}${out.disable.stderr}`, scene }),
-        ).toMatchSnapshot('disable - removed, a hand copy too');
+          asFramedOutput({ text: `${out.setOff.stdout}${out.setOff.stderr}`, scene }),
+        ).toMatchSnapshot('set off - removed, a hand copy too');
       });
     });
   });

@@ -54,7 +54,7 @@ const genOneTermsHookMutexCache = (input: {
 /**
  * .what = a path with its nearest extant dir followed through every link, the absent tail kept
  * .why = rhachet realpaths the file's dir, which always exists on its side; the toggle may
- *        lock a target whose dir is not yet made (`enable` in a repo with no `.claude`), so it
+ *        lock a target whose dir is not yet made (`set on` in a repo with no `.claude`), so it
  *        walks up to the first dir that exists. where the dir exists the result equals
  *        rhachet's, so both sides still land on one key
  */

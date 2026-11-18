@@ -14,7 +14,7 @@ and drop the entry. C ships that same race until an upstream release. A is the o
 holds today: same dir, same key rule, same package pins, so both sides take turns.
 
 the reach-in is real, and named: rhachet does not export the lock. the remedy is at the source —
-dream `v2026_11_07.reseed.rhachet-export-with-repo-mutex` — and `case10` holds rhachet's own key
+ehmpathy/rhachet#776 — and `case10` holds rhachet's own key
 from outside and asserts the toggle waits, so a split of the two locks turns the suite red.
 
 ## .rework — clean

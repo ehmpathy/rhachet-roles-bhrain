@@ -3,43 +3,43 @@ import type { TermsHookStatus } from './getOneTermsHookState';
 
 const TEST_CASES: {
   description: string;
-  mode: 'enable' | 'disable';
+  mode: 'on' | 'off';
   status: TermsHookStatus;
   expected: 'already-enabled' | 'already-disabled' | null;
 }[] = [
   {
-    description: 'enable on the current entry is a no-op',
-    mode: 'enable',
+    description: 'set on over the current entry is a no-op',
+    mode: 'on',
     status: 'current',
     expected: 'already-enabled',
   },
   {
-    description: 'enable on drift owes a write',
-    mode: 'enable',
+    description: 'set on over drift owes a write',
+    mode: 'on',
     status: 'drifted',
     expected: null,
   },
   {
-    description: 'enable on no entry owes a write',
-    mode: 'enable',
+    description: 'set on over no entry owes a write',
+    mode: 'on',
     status: 'off',
     expected: null,
   },
   {
-    description: 'disable on no entry is a no-op',
-    mode: 'disable',
+    description: 'set off over no entry is a no-op',
+    mode: 'off',
     status: 'off',
     expected: 'already-disabled',
   },
   {
-    description: 'disable on the current entry owes a write',
-    mode: 'disable',
+    description: 'set off over the current entry owes a write',
+    mode: 'off',
     status: 'current',
     expected: null,
   },
   {
-    description: 'disable on drift owes a write',
-    mode: 'disable',
+    description: 'set off over drift owes a write',
+    mode: 'off',
     status: 'drifted',
     expected: null,
   },
