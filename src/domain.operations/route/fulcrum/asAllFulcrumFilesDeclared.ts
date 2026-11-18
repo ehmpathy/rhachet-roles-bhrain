@@ -1,3 +1,5 @@
+import { compareStrings } from '@src/utils/compareStrings';
+
 import { asFulcrumCaseFromFileName } from './asFulcrumCaseFromFileName';
 import { FULCRUM_VERDICT_LEDGER_NAME } from './getAllFulcrumVerdictRows';
 
@@ -19,5 +21,5 @@ export const asAllFulcrumFilesDeclared = (input: {
       (name) =>
         name !== FULCRUM_SUMMARY_NAME && name !== FULCRUM_VERDICT_LEDGER_NAME,
     )
-    .sort((a, b) => a.localeCompare(b))
+    .sort(compareStrings)
     .map((name) => ({ name, declared: asFulcrumCaseFromFileName({ name }) }));

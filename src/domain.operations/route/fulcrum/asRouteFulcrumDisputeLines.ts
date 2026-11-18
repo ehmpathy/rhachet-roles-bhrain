@@ -35,7 +35,7 @@ export const asRouteFulcrumDisputeLines = (input: {
               : []),
             ...(forgedCases.has(entry.frontmatter.case)
               ? [
-                  `⚠️ its yaml carries a verdict no human lever wrote, read as unruled`,
+                  `🟡 its yaml carries a verdict no human lever wrote, read as unruled`,
                 ]
               : []),
             `read: ${entry.path}`,
