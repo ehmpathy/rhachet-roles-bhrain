@@ -398,3 +398,38 @@ exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learne
   "stderr": "",
 }
 `;
+
+exports[`learner.memory-guard.hook.acceptance given: [case1] a repo whose learner role was linked by rhachet when: [t11] a payload past the 128KB env cap fires the hook then: it is judged: a memory write blocks, exit 2; a read passes, exit 0 1`] = `
+{
+  "read": {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  "write": {
+    "exitCode": 2,
+    "stderr": "[0m[31m[0m
+[0m[31m🪨 run solid skill repo=bhrain/role=learner/skill=memory.guard[0m
+[0m[31m   └─ ✋ blocked by constraints[0m
+[0m[31m[0m
+[0m[31m🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next[0m
+",
+  },
+}
+`;

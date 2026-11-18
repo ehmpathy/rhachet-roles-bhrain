@@ -6,8 +6,8 @@
  *   - a tool: a JSON object with a string `tool_name`
  *   - neither: empty stdin, a harness hiccup with no call to judge (silent allow)
  *   - a cause: a payload with bytes the guard cannot read as a call (malformed
- *     JSON, a non-object, no string `tool_name`); the call proceeds, but the guard
- *     names its blind spot, since a renamed harness field would else go dark
+ *     JSON, a non-object, no string `tool_name`); the cast names it, and the
+ *     guard lets the call proceed, silent, exit 0
  */
 export const asToolInvocation = (input: {
   raw: string;

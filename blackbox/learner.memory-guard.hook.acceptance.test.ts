@@ -95,9 +95,8 @@ const asHookSnap = async (input: {
 
 /**
  * .what = the hook against a learner linked by rhachet itself, never by hand
- * .why = the integration clamps build the link layout by hand; this proves a real
- *        `rhachet roles link` lays the skill where the hook command looks, and that the
- *        skill finds its cli from the role package through that link
+ * .why = proves the exact command the role registers judges each call through a real
+ *        `rhachet roles link`: a memory write exits 2, all else exits 0
  */
 describe('learner.memory-guard.hook.acceptance', () => {
   given('[case1] a repo whose learner role was linked by rhachet', () => {
@@ -392,6 +391,30 @@ describe('learner.memory-guard.hook.acceptance', () => {
         expect(
           await asHookSnap({ result, tree: scene.tree }),
         ).toMatchSnapshot();
+      });
+    });
+
+    when('[t11] a payload past the 128KB env cap fires the hook', () => {
+      then('it is judged: a memory write blocks, exit 2; a read passes, exit 0', async () => {
+        // 160KB: past the cap linux puts on one env string, so an exported payload fails the exec
+        const BULK = 'x'.repeat(160_000);
+        const results = {
+          write: runBash({
+            tree: scene.tree,
+            command: `echo ${BULK} > ${MEMORY_PATH}`,
+          }),
+          read: runBash({
+            tree: scene.tree,
+            command: `grep ${BULK} ${MEMORY_PATH}`,
+          }),
+        };
+        expect(results.write.exitCode).toEqual(2);
+        expect(results.write.stderr).toContain('memory would fade');
+        expect(results.read).toEqual({ exitCode: 0, stderr: '' });
+        expect({
+          write: await asHookSnap({ result: results.write, tree: scene.tree }),
+          read: await asHookSnap({ result: results.read, tree: scene.tree }),
+        }).toMatchSnapshot();
       });
     });
   });
