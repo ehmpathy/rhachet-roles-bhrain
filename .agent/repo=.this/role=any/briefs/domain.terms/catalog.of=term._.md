@@ -30,6 +30,7 @@ never a license to coin a synonym.
 | `itemization` | catalog · census · coordinate · inventory · itemize |
 | `git` | grove · tree |
 | `fs.error` | absence · denial |
+| `learn.terms.hook` | hook · drift · hold · reach · state · target · toggle |
 | — (flat) | active · breaker · crash · daemon · display · emit · fault · glyph · jitter · orphan · reminder · slug · stdout.body · survival |
 
 a row's first entry equal to its root's last word is the root term itself (e.g. `route.guard.review`).

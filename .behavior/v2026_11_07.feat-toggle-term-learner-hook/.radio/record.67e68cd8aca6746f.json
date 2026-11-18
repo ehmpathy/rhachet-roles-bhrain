@@ -1,0 +1,19 @@
+{
+  "key": "67e68cd8aca6746f",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "declapract-typescript-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(husky): the timestamp lock fails open, and its hooks ship with no clamp",
+  "description": "# 🌙 dream: the husky practice's timestamp lock fails open, and its hooks ship with no clamp\n\n- kind: reseed\n- owner: ehmpathy/declapract-typescript-ehmpathy (practice `husky`)\n- caught 2026-11-07\n\n## .the cue that fired\n\nthe peer review of `feat-toggle-term-learner-hook` stone 5.1 read the practice's `.husky` files in\nthe tree and raised five concerns. the lock forbids a hand edit (only a practice upgrade may\nchange it), so the fix belongs to the practice.\n\n## .the gap, precisely\n\nin `.husky/check.timestamps.lock.sh`:\n\n1. no `set -eu`, unlike its peers `check.timestamps.sh` and `check.secrets.sh`\n2. `git hash-object` is unguarded: a git fault yields an empty id, and the lock reports\n   `✋ ConstraintError: … was changed` (exit 2) for what is a malfunction (exit 1)\n3. an empty `git ls-files -s` passes: a staged deletion (`git rm --cached .husky/check.timestamps.sh`)\n   keeps the hook on disk, drops it from the commit, and the lock lets it through\n4. the hook path is built from `$0`, the hook that sources the lock, so a wrapper outside\n   `.husky/` breaks it\n\nand across `check.secrets.sh` / `check.timestamps.sh`: the refusals a human meets at commit carry\nno harness test and no snapshot.\n\n## .the shape of the fix\n\n- `set -eu` with the peers' rationale comment\n- `TIMESTAMPS_LOCK_DISK=$(git hash-object -- \"$TIMESTAMPS_LOCK_HOOK\") || timestamps_lock_malfunction`\n- halt when the index entry is absent: `[ -n \"$TIMESTAMPS_LOCK_INDEX\" ] || timestamps_lock_halt 'absent' 'in the index'`\n- locate the lock by its own path (a `BASH_SOURCE` read, with a POSIX fallback)\n- a small harness that stages a secret and a timestamp, and snaps each refusal's stderr\n\n## .why it is not done in this round\n\nthe files are the practice's output; the lock itself forbids a hand edit, and the next\n`declapract apply` would revert one. the toggle's nano bound excludes them too (fulcrum F7).",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 44,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "810"
+}

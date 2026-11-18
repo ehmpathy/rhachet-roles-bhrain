@@ -124,6 +124,8 @@ always:
       # cited by name where its cues fire: the jest integration config's lookahead and the
       # skills `not` list above; its boot path line is not worth a share of the cap
       - briefs/rule.require.agent-skill-tests-collocated.md
+      - briefs/domain.terms/term=*._.choice.reason.md
+      - briefs/domain.terms/term=*._.choice.example=*.md
 
     ref:
       # the glyph catalog — ref, not say: read once, when a glyph is claimed,

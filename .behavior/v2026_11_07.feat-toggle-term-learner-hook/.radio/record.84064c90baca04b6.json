@@ -1,0 +1,19 @@
+{
+  "key": "84064c90baca04b6",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "feat(lock): export withRepoMutex, so a role that writes a settings file rhachet rewrites can share its lock",
+  "description": "# 🌙 dream: rhachet owes an export of its `withRepoMutex`, so a peer writer of a settings file shares its lock by contract\n\n- kind = reseed\n- owner = ehmpathy/rhachet\n- caught 2026-11-07, on `.behavior/v2026_11_07.feat-toggle-term-learner-hook`\n\n## .the cue that fired\n\n`withTermsHookSettingsHold.ts` restates rhachet's lock dir, key rule, and package pins, with a\n`.note` that a change on rhachet's side splits the two locks. the clamp loads rhachet's lock by its\ndist file path, past the `exports` map.\n\n## .the gap, precisely\n\nrhachet rewrites `.claude/settings.of.repo.json` whole (hook sync, enroll derive) under\n`withRepoMutex`: a `withSimpleMutex` over a `simple-on-disk-cache` at\n`<repo real>/.agent/.actors/.locks/`, keyed on the file path relative to the real repo root. a role\nskill that also writes the file must take the same key, or a concurrent `rhx init` writes from a\nstale read and drops the role's entry in silence. `withRepoMutex` is not exported, so the role\nrestates it:\n\n- the dir and its `*` ignore\n- the key rule (dir realpathed, path relative to the real root)\n- the pins `with-simple-mutex@0.1.1` and `simple-on-disk-cache@1.8.1`, which must match on both sides\n\n## .the shape of the fix\n\nexport `withRepoMutex` (or a narrower `withRepoSettingsHold({ repoPath, path }, logic)`) from a\npublic subpath, e.g. `rhachet/sdk/lock`. the learner's `withTermsHookSettingsHold` then becomes one\ncall to it, and the clamp imports it by name.\n\n## .why it is not done in this round\n\nit is another repo's contract, and the wish's nano bound keeps this round to the toggle. the\nrestated lock is clamped from the outside, so a split shows red.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 41,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "730"
+}

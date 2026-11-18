@@ -1,0 +1,19 @@
+{
+  "key": "d3d4aaac7c03d1a3",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrain"
+  },
+  "exid": null,
+  "title": "feat(learner): a repo-level flag turns the term hook on by default",
+  "description": "## .outcome\n\na repo can declare, once and in a committed file, that the learner's onStop term hook is **on by default** there. every clone and every fresh `rhx init` of that repo then holds the hook, with no `rhx learn.terms.hook set on` by hand.\n\n## .context\n\n- `rhx learn.terms.hook get | set on | set off | del` ships in #777, off by default\n- `set on` writes one Stop entry into the repo's committed settings file, so a repo that commits it already shares the hook\n- the gap: the intent is not declared. a rewrite of the settings file (a layout split, a fresh `rhx init`, a hand reset) loses the entry, and naught says it should come back\n\n## .the ask\n\n- a repo-level flag that declares the toggle's default, e.g. a key under `.agent/` (or the rhachet repo config) such as `learner.terms.hook: on`\n- `rhx init --hooks` (or the learner's own init) reads the flag and converges the settings to it: on → the declared entry is present; absent or off → today's default, no entry\n- `rhx learn.terms.hook get` names the flag and whether the settings match it\n- `set on | set off` stay the per-repo override; say plainly which wins when they disagree\n\n## .bounds\n\n- the term-distill logic does not change\n- once rhachet ships a native opt-in hook (`optin:` on a role hook), the flag should ride that instead of a learner-only key\n- off stays the default for every repo that does not declare the flag\n\n## .done means\n\n- a repo with the flag set has the hook after `rhx init` on a clean clone; a repo without it does not\n- each path is clamped, red before the fix and green after",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 43,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "807"
+}

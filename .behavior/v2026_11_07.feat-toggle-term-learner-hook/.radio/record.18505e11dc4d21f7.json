@@ -1,0 +1,19 @@
+{
+  "key": "18505e11dc4d21f7",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "feat(hooks): let a role declare an opt-in hook a repo toggles, so a toggle need not thread the sync and prune read rules",
+  "description": "# 🌙 dream: rhachet owes a native opt-in hook, so a role need not thread an author past three read rules\n\n- kind = reseed\n- owner = ehmpathy/rhachet\n- caught 2026-11-07, on `.behavior/v2026_11_07.feat-toggle-term-learner-hook`\n\n## .the cue that fired\n\nthe vision for `learn.terms.hook` wrote the line *\"a rhachet-native opt-in hook would be cleaner\"*.\n\n## .the gap, precisely\n\na role can declare a hook (always on, in every repo that links it) or not at all. it cannot\ndeclare a hook that a repo opts into. to toggle one per repo, the learner writes a Stop entry by\nhand under `toggle=learn.terms.hook/role=learner`. that author is picked to thread three rhachet\n1.51 read rules, none declared as a contract:\n\n- `syncOneRoleHooksIntoOneBrainRepl` deletes undeclared entries under exactly `repo=X/role=Y`\n- `pruneOrphanedRoleHooksFromOneBrain` deletes `^repo=.+/role=.+$` authors no linked role holds\n- `getSettingsForRoles` keeps a hook for a peer actor only if its `role=` segment is held\n\na change to any one rule silently breaks the toggle.\n\n## .the shape of the fix\n\na role declares `hooks.onBrain.onStop: [{ command, timeout, optin: 'learn.terms.hook' }]`. rhachet\nsyncs it only where the repo has opted in (a key in `.agent/` or the repo settings), under the\nrole's normal author, and offers `rhx roles hooks optin get|set|del` (or the role's own skill\ncalls a rhachet sdk). the per-role sync, prune, and narrow then treat it as any declared hook.\n\n## .why it is not done in this round\n\nit is another repo's contract, and the wish's nano bound keeps this round to the toggle. the\nlearner's toggle can migrate to the native form once it ships.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 42,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "731"
+}
