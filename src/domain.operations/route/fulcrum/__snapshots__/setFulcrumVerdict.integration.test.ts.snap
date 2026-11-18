@@ -1,14 +1,27 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`setFulcrumVerdict given: [case3] a fulcrum that owes reflect, not a human when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
-"BadRequestError: fulcrum F44 owes reflect, not a human verdict
-   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
-   └─ fix: none owed here; its reflection is tracked upstream at ehmpathy/demo#1
+exports[`setFulcrumVerdict given: [case1] an open human-owed dispute when: [t0] a human rules it upheld then: 🔴 every line but status and verdict stays as written, comments and key order included 1`] = `
+"---
+case: F44
+rework: clean
+ground: wrong
+confidence: 0.65
+status: ruled
+owed: human
+holds:
+  - rules/i003/blocker.2
+# the driver's note, which the verdict write must keep
+lean: keep the table as written
+verdict:
+  by: human
+  at: 2026-11-18
+  ruled: upheld
+---
 
-{
-  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md",
-  "owed": "reflect"
-}"
+# F44 · rename-table
+
+the body stays as written.
+"
 `;
 
 exports[`setFulcrumVerdict given: [case4] a fulcrum whose frontmatter case differs from its file case id when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
@@ -50,13 +63,12 @@ exports[`setFulcrumVerdict given: [case7] a case id with no fulcrum on the route
 `;
 
 exports[`setFulcrumVerdict given: [case8] a design-call fulcrum that owes none when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
-"BadRequestError: fulcrum F44 owes none, not a human verdict
+"BadRequestError: fulcrum F44 holds no dispute a human can rule
    ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
-   └─ fix: none owed here; a fulcrum with owed: none holds no dispute
+   └─ fix: none owed here; a fulcrum no dispute cites, with owed: none, is a design call
 
 {
-  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md",
-  "owed": "none"
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
 }"
 `;
 

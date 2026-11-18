@@ -19,10 +19,8 @@ import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { ROUTE_INFLIGHT_FRESH_BOUND_LABEL } from '@src/domain.operations/route/drive/asRouteInflightFreshness';
-import { asRouteFulcrumApprovalDisputeLines } from '@src/domain.operations/route/fulcrum/asRouteFulcrumApprovalDisputeLines';
-import { asRouteFulcrumCommandRows } from '@src/domain.operations/route/fulcrum/asRouteFulcrumCommandRows';
+import { asRouteApprovalHaltBranches } from '@src/domain.operations/route/fulcrum/asRouteApprovalHaltBranches';
 import { asRouteFulcrumRuleStdout } from '@src/domain.operations/route/fulcrum/asRouteFulcrumRuleStdout';
-import { getAllRouteFulcrumRuleCommands } from '@src/domain.operations/route/fulcrum/getAllRouteFulcrumRuleCommands';
 import { getOneRouteFulcrumDisputeStateOrRefusal } from '@src/domain.operations/route/fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
 import { setFulcrumVerdict } from '@src/domain.operations/route/fulcrum/setFulcrumVerdict';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
@@ -64,7 +62,6 @@ import {
   getStoneLiveUrgentConcessionSlugs,
 } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
 import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
-import { JUDGE_HALT_ASK_HUMAN_LABEL } from '@src/domain.operations/route/guard/review/peer/JUDGE_HALT_ASK_HUMAN_LABEL';
 import { asBudgetGrantWarrantLines } from '@src/domain.operations/route/guard/review/peer/meter/asBudgetGrantWarrantLines';
 import { asGuardBudgetHeadLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetHeadLines';
 import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
@@ -373,7 +370,8 @@ options:
                        promised - review.self promise made
                        absorbed - peer review response articulated
                        conceded - the reviewer is right on ONE concern; you will fix it
-                       disputed - ONE concern is fine to continue; a council will rule
+                       disputed - ONE concern is fine to continue; a human rules it at
+                                  the next human gate, or a sure misread is reflected upstream
                        blocked  - stuck, need help
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
@@ -390,7 +388,9 @@ options:
                        within that reviewer's latest report: blocker.1, nitpick.4
                        (required for --as disputed / --as conceded)
   --why <path>       path to a fulcrum/justification entry
-                       (required for --as disputed — the argument a council reads;
+                       (required for --as disputed — the fulcrum entry a human reads at the
+                        gate; its frontmatter must hold the concern. the human rules it with
+                        rhx route.fulcrum.rule --case <id> --as upheld|conceded;
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
@@ -412,7 +412,8 @@ note:
   --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
   --as forced is shorthand for --as approved + --as overruled
   --as conceded is the DEFAULT absorption of a concern: fix it, then re-arrive.
-    --as disputed is an escalation — it asks a human council to rule at the close.
+    --as disputed is an escalation — a human rules it at the next human gate. it never
+    halts a stone that has no human gate.
 
 examples:
   route.stone.set --stone 1.vision --as arrived
@@ -1367,34 +1368,19 @@ const judgeApproved = async (input: {
     route: input.route,
   });
 
-  // halt until a human approves
+  // halt until a human approves; the same branches the drive halt shows, from one render
   if (!approval) {
-    const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
-    const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
-    // a corrupt dispute record renders as a refusal, the same block the drive halt shows
+    // a corrupt dispute record renders as a refusal, never a throw
     const disputes = await getOneRouteFulcrumDisputeStateOrRefusal({
       route: input.route,
     });
-    const askCmds = [
-      ...(disputes.state
-        ? getAllRouteFulcrumRuleCommands({ state: disputes.state })
-        : []),
-      approveCmd,
-    ];
     console.log('passed: false');
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
-    asRouteFulcrumApprovalDisputeLines({ disputes }).forEach((line) =>
-      console.log(`   ${line}`),
+    asRouteApprovalHaltBranches({ stone: input.stone, disputes }).forEach(
+      (line) => console.log(`   ${line}`),
     );
-    console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);
-    asRouteFulcrumCommandRows({ commands: askCmds }).forEach((row) =>
-      console.log(`   │  ${row}`),
-    );
-    console.log('   │');
-    console.log('   └─ after human approves, run');
-    console.log(`      └─ ${passCmd}`);
     process.exit(2);
   }
 

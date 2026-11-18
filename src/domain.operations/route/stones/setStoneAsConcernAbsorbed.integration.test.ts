@@ -904,7 +904,8 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
               disputeWith({ about: 'blocker.1', why }),
             );
             expect(error.message).toContain('does not hold limited blocker.1');
-            expect(error.message).toContain('limited/<iteration>/blocker.1');
+            // the round the driver read, never an `<iteration>` placeholder to hand-fill
+            expect(error.message).toContain('limited/i001/blocker.1');
             expect(asStableRefusal(error)).toMatchSnapshot();
           },
         );

@@ -15,7 +15,7 @@ export const asRouteFulcrumApprovalDisputeLines = (input: {
 }): string[] => {
   const disputeLines = input.disputes.state
     ? asRouteFulcrumDisputeLines({ state: input.disputes.state })
-    : asRouteFulcrumDisputeRefusalLines({ refusal: input.disputes.refusal });
+    : asFulcrumRecordUnreadableLines({ refusal: input.disputes.refusal });
 
   // an unreadable fulcrum or record is the driver's to repair; approval refuses until it is
   const isRepairOwed =
@@ -34,7 +34,7 @@ export const asRouteFulcrumApprovalDisputeLines = (input: {
  * .why = the approval will refuse on the same fault, so the human must see it, and its fix,
  *        before they try to approve
  */
-const asRouteFulcrumDisputeRefusalLines = (input: {
+const asFulcrumRecordUnreadableLines = (input: {
   refusal: string;
 }): string[] => {
   // the refusal's headline is a leaf; its own tree (indented under it) hangs beneath

@@ -1,11 +1,6 @@
-import { BadRequestError } from 'helpful-errors';
-
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { asRouteFulcrumDisputeRefusalLines } from './asRouteFulcrumDisputeRefusalLines';
-import { getAllRouteFulcrumRuleCommands } from './getAllRouteFulcrumRuleCommands';
-import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
-import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
+import { assertRouteFulcrumDisputeStateUnblocked } from './assertRouteFulcrumDisputeStateUnblocked';
 import { isStoneGatedByHuman } from './isStoneGatedByHuman';
 
 /**
@@ -23,16 +18,13 @@ export const assertRouteGatedStoneDisputesRuled = async (input: {
   if (!isStoneGatedByHuman({ stone: input.stone })) return;
 
   // refuse while a dispute owes the human, and name each
-  const state = await getOneRouteFulcrumDisputeState({ route: input.route });
-  if (!isRouteFulcrumDisputeStateBlocked({ state })) return;
-  const lines = asRouteFulcrumDisputeRefusalLines({
-    headline: `route.stone.set --as passed: refused, a dispute owes the human at this stone's gate`,
-    state,
-    closer: 'a human must rule on each before the stone can pass',
-    commands: getAllRouteFulcrumRuleCommands({ state }),
-  });
-  throw new BadRequestError(lines.join('\n'), {
+  await assertRouteFulcrumDisputeStateUnblocked({
     route: input.route,
-    stone: input.stone.name,
+    refusal: {
+      headline: `route.stone.set --as passed: refused, a dispute owes the human at this stone's gate`,
+      closer: 'a human must rule on each before the stone can pass',
+      commandsAfter: [],
+    },
+    metadata: { stone: input.stone.name },
   });
 };

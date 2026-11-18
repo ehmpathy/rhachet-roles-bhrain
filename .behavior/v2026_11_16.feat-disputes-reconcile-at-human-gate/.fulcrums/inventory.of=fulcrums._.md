@@ -16,10 +16,14 @@ each row reads from its entry's frontmatter; the entry is the record.
 | F10 | the route's record stands as approved: F1–F7 entries exist; the vision is not amended | clean | open | human | 0.80 |
 | F11 | the verdict ledger is tracked at `.fulcrums/verdicts.jsonl`, beside the yaml it proves | clean | held | none | 0.80 |
 | F12 | four concerns grade code absent from the reviewed tree; reflected as ehmpathy/rhachet-roles-bhrain#804 | clean | open | reflect | 0.97 |
+| F13 | the summary-row derive ships in its own route; the linter enforces the frontmatter here | dirty | open | human | 0.70 |
+| F14 | the lever's verdict words are `upheld \| conceded` | dirty | open | human | 0.60 |
+| F15 | the `--reflect` ref is checked by shape, never by a live lookup | dirty | open | human | 0.65 |
+| F16 | the frontmatter keeps `rework`, `status`, and `holds` typed, as the wish lists them | dirty | open | human | 0.70 |
 
 F1, F2, F4–F7 are design calls the wisher settled at a stone gate. each verdict lives in its
 entry's `.verdict` section; the yaml `verdict` stays `null`, since a design call owes no dispute
 and no human lever wrote a row the ledger could prove.
 
-F8–F10 hold the concerns disputed at 5.1. they owe a human verdict, so 5.1 cannot pass until a
+F8–F10 and F13–F16 hold the concerns disputed at 5.1. they owe a human verdict, so 5.1 cannot pass until a
 human runs `rhx route.fulcrum.rule` on each.

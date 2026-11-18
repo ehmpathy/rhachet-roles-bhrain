@@ -10,6 +10,6 @@ exports[`getAllFulcrumVerdictRows given: [case3] a ledger with a line that is no
 exports[`getAllFulcrumVerdictRows given: [case4] a ledger row with a verdict outside its closed set when: [t0] the rows are read then: the refusal a human reads is pinned 1`] = `
 "BadRequestError: fulcrum verdict ledger holds an unreadable row at line 1
    ├─ ledger: <route>/.fulcrums/verdicts.jsonl
-   ├─ line: {"case":"F44","ruled":"waived","on":"2026-11-17"}
+   ├─ line: {"case":"F44","ruled":"waived","on":"2026-11-17","seen":"hash-read"}
    └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger"
 `;

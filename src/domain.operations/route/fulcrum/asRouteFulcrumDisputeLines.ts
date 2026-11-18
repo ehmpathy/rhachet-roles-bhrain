@@ -16,8 +16,12 @@ import type {
 export const asRouteFulcrumDisputeLines = (input: {
   state: RouteFulcrumDisputeState;
 }): string[] => {
-  const { owedHuman, ruled, unreadable, reflected, forged } = input.state;
+  const { owedHuman, ruled, unreadable, reflected, forged, reopened } =
+    input.state;
   const forgedCases = new Set(forged.map((entry) => entry.frontmatter.case));
+  const reopenedCases = new Set(
+    reopened.map((entry) => entry.frontmatter.case),
+  );
 
   // disputes that owe the human a verdict — each one holds approval
   const owedLines = owedHuman.length
@@ -38,6 +42,11 @@ export const asRouteFulcrumDisputeLines = (input: {
                   `🟡 its yaml carries a verdict no human lever wrote, read as unruled`,
                 ]
               : []),
+            ...(reopenedCases.has(entry.frontmatter.case)
+              ? [
+                  `🟡 edited since a human ruled it ${entry.frontmatter.verdict?.ruled ?? ''}; read as unruled`,
+                ]
+              : []),
             `read: ${entry.path}`,
           ],
         }),
@@ -45,16 +54,22 @@ export const asRouteFulcrumDisputeLines = (input: {
       ]
     : [];
 
-  // disputes a human already ruled — informational; a conceded one names the repair it owes
+  // disputes a human already ruled — informational; a conceded one names the repair it owes,
+  // and the driver's next command, until an approval after it answers the repair
   const ruledLines = ruled.length
     ? [
         `├─ ${ruled.length} ruled`,
-        ...asLeafRows({
-          rows: ruled.map((entry) =>
-            entry.frontmatter.verdict?.ruled === 'conceded'
-              ? `${entry.frontmatter.case} · ${entry.title} · conceded, repair owed: ${asHoldsText({ entry })}`
-              : `${entry.frontmatter.case} · ${entry.title} · upheld`,
-          ),
+        ...asEntryBranches({
+          entries: ruled,
+          asHead: (entry) =>
+            `${entry.frontmatter.case} · ${entry.title} · ${asRuledText({ entry })}`,
+          asLeaves: (entry) =>
+            entry.frontmatter.verdict?.ruled === 'conceded' && !entry.approvedOn
+              ? [
+                  `repair owed: ${asHoldsText({ entry })}`,
+                  `next: the driver repairs it in the current diff, then runs rhx route.drive`,
+                ]
+              : [],
         }),
         `│`,
       ]
@@ -63,7 +78,7 @@ export const asRouteFulcrumDisputeLines = (input: {
   // entries the gate cannot read — never skipped, each one holds approval
   const unreadableLines = unreadable.length
     ? [
-        `├─ ${unreadable.length} ${unreadable.length === 1 ? 'fulcrum is' : 'fulcrums are'} unreadable, owe repair`,
+        `├─ ${unreadable.length} ${unreadable.length === 1 ? 'fulcrum is unreadable and owes' : 'fulcrums are unreadable and owe'} repair`,
         ...asLeafRows({
           rows: unreadable.map((entry) => `${entry.slug} · ${entry.path}`),
         }),
@@ -86,6 +101,18 @@ export const asRouteFulcrumDisputeLines = (input: {
     : [];
 
   return [...owedLines, ...unreadableLines, ...ruledLines, ...reflectedLines];
+};
+
+/**
+ * .what = renders a ruled entry's verdict: upheld, conceded and owed, or conceded and answered
+ * .why = a conceded verdict whose repair an approval already answered must not read as a debt at
+ *        every later gate, or the human learns to skip the line
+ */
+const asRuledText = (input: { entry: RouteFulcrumDisputeEntry }): string => {
+  if (input.entry.frontmatter.verdict?.ruled !== 'conceded') return 'upheld';
+  return input.entry.approvedOn
+    ? `conceded, repair answered at ${input.entry.approvedOn} approval`
+    : 'conceded';
 };
 
 /**

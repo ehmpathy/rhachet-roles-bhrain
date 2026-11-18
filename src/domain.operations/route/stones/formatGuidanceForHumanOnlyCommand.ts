@@ -28,7 +28,7 @@ export const formatGuidanceForHumanOnlyCommand = (input: {
     '   ├─ `--as passed` to signal work complete, proceed',
     '   ├─ `--as arrived` to signal work complete, request review',
     '   ├─ `--as conceded` to take a reviewer concern and repair it',
-    '   ├─ `--as disputed` to escalate ONE concern to the council',
+    '   ├─ `--as disputed` to hold ONE concern fine; a human rules it at the next human gate',
     '   └─ `--as blocked` to escalate a genuine wall',
     '',
     // 🔴 the qualifier carries the weight here, never a courtesy. `--as blocked`

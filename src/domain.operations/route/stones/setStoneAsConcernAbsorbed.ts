@@ -1,10 +1,13 @@
 import { ConstraintError } from 'helpful-errors';
+import { basename } from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asUrgentHarmSet } from '../asUrgentHarmSet';
+import { asFulcrumOwed } from '../fulcrum/asFulcrumOwed';
 import { assertFulcrumFitsDispute } from '../fulcrum/assertFulcrumFitsDispute';
+import { asGuardArtifactIteration } from '../guard/artifact/asGuardArtifactIteration';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asAbsorptionIsAnswered } from '../guard/review/peer/asAbsorptionIsAnswered';
 import { asAbsorptionIsNotContrary } from '../guard/review/peer/asAbsorptionIsNotContrary';
@@ -84,7 +87,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
       [
         `--why is required for --as disputed`,
         ``,
-        `a dispute is a guarantee to the council, so it must cite the argument they will read.`,
+        `a dispute is a guarantee to a human at the next human gate, so it must cite the argument they will read.`,
         `write the entry first, then point at it:`,
         `  .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
@@ -164,14 +167,6 @@ export const setStoneAsConcernAbsorbed = async (input: {
     slugsSpoken: status.slugsSpoken,
   });
 
-  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect
-  if (input.as === 'disputed' && fulcrumPathResolved)
-    await assertFulcrumFitsDispute({
-      pathResolved: fulcrumPathResolved,
-      reflect: input.reflect ?? null,
-      concern: { reviewer: slug, about },
-    });
-
   // R1 — answer first
   asAbsorptionIsAnswered({
     stone: stoneMatched.name,
@@ -243,6 +238,23 @@ export const setStoneAsConcernAbsorbed = async (input: {
         } in its latest given, so the ordinal must be 1..${raisedOfKind}.`,
       ].join('\n'),
     );
+
+  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect.
+  // read here, once the given is known, so a refusal teaches the round the driver read
+  const fulcrumOfDispute =
+    input.as === 'disputed' && fulcrumPathResolved
+      ? await assertFulcrumFitsDispute({
+          pathResolved: fulcrumPathResolved,
+          reflect: input.reflect ?? null,
+          concern: {
+            reviewer: slug,
+            iteration: asGuardArtifactIteration({
+              filename: basename(given.pathGiven),
+            }),
+            about,
+          },
+        })
+      : null;
 
   // R3 — a contrary stance on this concern of this given is refused
   asAbsorptionIsNotContrary({
@@ -344,6 +356,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
         slug,
         concern,
         why: input.why ?? null,
+        owed: fulcrumOfDispute ? asFulcrumOwed(fulcrumOfDispute) : null,
         severity: severity ?? null,
         meter: {
           level: reviewConfigured?.level ?? LEVEL_OF_UNMAPPED_REVIEW,

@@ -3,6 +3,8 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 import { genTempDir, getError, given, then, useThen, when } from 'test-fns';
 
+import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
+
 import { asFulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { getAllFulcrumVerdictRows } from './getAllFulcrumVerdictRows';
 import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
@@ -35,6 +37,7 @@ const genRouteWithFulcrum = async (input: {
       ...(input.owed === 'reflect' ? ['reflect: ehmpathy/demo#1'] : []),
       'holds:',
       '  - rules/i003/blocker.2',
+      "# the driver's note, which the verdict write must keep",
       'lean: keep the table as written',
       `verdict: ${input.verdict}`,
       '---',
@@ -99,6 +102,29 @@ describe('setFulcrumVerdict', () => {
       then('the body stays intact', () => {
         expect(result.content).toContain('the body stays as written.');
       });
+
+      then(
+        '🔴 every line but status and verdict stays as written, comments and key order included',
+        () => {
+          expect(result.content).toContain(
+            "holds:\n  - rules/i003/blocker.2\n# the driver's note, which the verdict write must keep\nlean: keep the table as written",
+          );
+          expect(result.content).toMatchSnapshot();
+        },
+      );
+
+      then(
+        'the ledger row binds the verdict to the content the human read',
+        () => {
+          const parse = asFulcrumFrontmatter({ content: result.content });
+          if (parse.kind !== 'valid')
+            throw new UnexpectedCodePathError(
+              'the ruled fulcrum should parse valid',
+              { parse, hint: 'the verdict write broke the frontmatter block' },
+            );
+          expect(result.rows[0]?.seen).toEqual(parse.seen);
+        },
+      );
 
       then('the ledger holds one row for the case', () => {
         expect(result.rows).toHaveLength(1);
@@ -173,29 +199,98 @@ describe('setFulcrumVerdict', () => {
   });
 
   given('[case3] a fulcrum that owes reflect, not a human', () => {
-    when('[t0] a human tries to rule it', () => {
-      const result = useThen('it is refused', async () => {
+    when('[t0] a human overturns the sure dispute', () => {
+      const result = useThen('it writes the verdict', async () => {
         const scene = await genRouteWithFulcrum({
           slug: 'fulcrum-verdict-reflect',
           owed: 'reflect',
           verdict: 'null',
         });
-        const error = await getError(
-          setFulcrumVerdict(
-            { route: scene.route, case: 'F44', ruled: 'upheld' },
-            { isTTY: true },
+        const outcome = await setFulcrumVerdict(
+          { route: scene.route, case: 'F44', ruled: 'conceded' },
+          { isTTY: true },
+        );
+        const state = await getOneRouteFulcrumDisputeState({
+          route: scene.route,
+        });
+        return { outcome, state };
+      });
+
+      then(
+        '🔴 a human may rule a reflect-owed dispute; the 0.90 line is the driver grade',
+        () => {
+          expect(result.outcome.outcome).toEqual('ruled');
+        },
+      );
+
+      then('the entry reads as ruled, no longer as reflected', () => {
+        expect(result.state.ruled.map((e) => e.frontmatter.case)).toEqual([
+          'F44',
+        ]);
+        expect(result.state.reflected).toHaveLength(0);
+      });
+    });
+  });
+
+  given('[case10] a ruled fulcrum the driver edits afterward', () => {
+    when('[t0] a concern is added to holds, then the state is read', () => {
+      const result = useThen('it reads the state', async () => {
+        const scene = await genRouteWithFulcrum({
+          slug: 'fulcrum-verdict-reopened',
+          owed: 'human',
+          verdict: 'null',
+        });
+        await setFulcrumVerdict(
+          { route: scene.route, case: 'F44', ruled: 'upheld' },
+          { isTTY: true },
+        );
+        const content = await fs.readFile(scene.file, 'utf8');
+        await fs.writeFile(
+          scene.file,
+          content.replace(
+            '  - rules/i003/blocker.2',
+            '  - rules/i003/blocker.2\n  - rules/i004/blocker.1',
           ),
         );
-        return { error, route: scene.route };
+        const state = await getOneRouteFulcrumDisputeState({
+          route: scene.route,
+        });
+        const again = await setFulcrumVerdict(
+          { route: scene.route, case: 'F44', ruled: 'upheld' },
+          { isTTY: true },
+        );
+        const rows = await getAllFulcrumVerdictRows({ route: scene.route });
+        const stateAfter = await getOneRouteFulcrumDisputeState({
+          route: scene.route,
+        });
+        return { state, again, rows, stateAfter };
       });
 
-      then('the refusal names what it owes', () => {
-        expect(result.error.message).toContain('owes reflect');
-      });
+      then(
+        '🔴 the new concern reaches a human: the entry owes again, read as reopened',
+        () => {
+          expect(result.state.owedHuman.map((e) => e.frontmatter.case)).toEqual(
+            ['F44'],
+          );
+          expect(result.state.reopened.map((e) => e.frontmatter.case)).toEqual([
+            'F44',
+          ]);
+          expect(result.state.forged).toHaveLength(0);
+          expect(result.state.ruled).toHaveLength(0);
+        },
+      );
 
-      then('the refusal a human reads is pinned', () => {
-        expect(asStableRefusal(result)).toMatchSnapshot();
-      });
+      then(
+        'a re-rule on the edited content appends a row and proves it',
+        () => {
+          expect(result.again.outcome).toEqual('ruled');
+          expect(result.rows).toHaveLength(2);
+          expect(result.stateAfter.owedHuman).toHaveLength(0);
+          expect(
+            result.stateAfter.ruled.map((e) => e.frontmatter.case),
+          ).toEqual(['F44']);
+        },
+      );
     });
   });
 
@@ -320,8 +415,10 @@ describe('setFulcrumVerdict', () => {
         return { error, route: scene.route };
       });
 
-      then('the refusal names that it owes no human verdict', () => {
-        expect(result.error.message).toContain('owes none');
+      then('the refusal names that it holds no dispute to rule', () => {
+        expect(result.error.message).toContain(
+          'holds no dispute a human can rule',
+        );
       });
 
       then('the refusal a human reads is pinned', () => {
@@ -382,7 +479,12 @@ describe('setFulcrumVerdict', () => {
     when('[t0] the same verdict row is set again', () => {
       const result = useThen('it is found, not appended', async () => {
         const route = genTempDir({ slug: 'fulcrum-verdict-row-twice' });
-        const row = { case: 'F44', ruled: 'upheld' as const, on: '2026-11-17' };
+        const row: FulcrumVerdictRow = {
+          case: 'F44',
+          ruled: 'upheld',
+          on: '2026-11-17',
+          seen: 'hash-read',
+        };
         const first = await setFulcrumVerdictRow({ route, row });
         const second = await setFulcrumVerdictRow({ route, row });
         const rows = await getAllFulcrumVerdictRows({ route });

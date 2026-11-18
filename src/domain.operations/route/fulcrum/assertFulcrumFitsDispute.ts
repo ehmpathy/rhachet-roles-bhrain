@@ -4,6 +4,7 @@ import { basename } from 'path';
 
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asFulcrumFrontmatterDefectLines } from './asFulcrumFrontmatterDefectLines';
+import { asFulcrumHoldOfConcern } from './asFulcrumHoldOfConcern';
 import {
   asFulcrumOwed,
   FULCRUM_REFLECT_CONFIDENCE_FLOOR,
@@ -24,7 +25,7 @@ import { isFulcrumHoldsOfConcern } from './isFulcrumHoldsOfConcern';
 export const assertFulcrumFitsDispute = async (input: {
   pathResolved: string;
   reflect: string | null;
-  concern: { reviewer: string; about: string };
+  concern: { reviewer: string; iteration: number | null; about: string };
 }): Promise<FulcrumFrontmatter> => {
   // read and parse the entry the dispute cites; its name must declare a case, and its
   // frontmatter's case must equal it
@@ -47,7 +48,7 @@ export const assertFulcrumFitsDispute = async (input: {
   const frontmatter = parse.frontmatter;
 
   // the fulcrum must name the concern it backs, so the halt shows the human what it holds
-  const holdExample = `${input.concern.reviewer}/<iteration>/${input.concern.about}`;
+  const holdExample = asFulcrumHoldOfConcern(input.concern);
   if (
     !isFulcrumHoldsOfConcern({
       holds: frontmatter.holds,

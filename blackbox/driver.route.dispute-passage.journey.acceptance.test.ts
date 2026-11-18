@@ -2,6 +2,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { asFulcrumSeenOfContent } from '../src/domain.operations/route/__test_assets__/asFulcrumSeenOfContent';
+import { asFulcrumContentWithVerdict } from '../src/domain.operations/route/fulcrum/asFulcrumContentWithVerdict';
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
@@ -79,6 +81,59 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
       });
     });
 
+    // invariant 5 at the cli: a human-owed dispute names no reflection, so a `--reflect` on it is
+    // refused before any row is written — the dispute in [t1] then lands as the first stance
+    when('[t0b] the driver answers, then disputes with a --reflect the fulcrum does not owe', () => {
+      const result = useThen('the dispute is refused', async () => {
+        const peerDir = path.join(scene.tempDir, '.reviews', 'peer');
+        const nameGiven = (await fs.readdir(peerDir)).find((name) =>
+          isRouteGuardReviewPeerGivenPath({ pathGiven: name }),
+        )!;
+        await fs.writeFile(
+          path.join(
+            peerDir,
+            getRouteGuardReviewPeerPathTaken({ pathGiven: nameGiven }),
+          ),
+          '[REFUTE] the shape is deliberate — see the fulcrum\n',
+        );
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'disputed',
+            with: 'lane',
+            about: 'blocker.1',
+            why: FULCRUM_REL,
+            reflect: 'ehmpathy/rhachet-roles-bhrain#1',
+          },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('🔴 it exits 2, and no stance is on the ledger', async () => {
+        expect(result.code).toEqual(2);
+        const passage = await fs.readFile(
+          path.join(scene.tempDir, '.route', 'passage.jsonl'),
+          'utf-8',
+        );
+        expect(passage).not.toContain('"disputed"');
+      });
+
+      then('the refusal names why and the fix', () => {
+        expect(result.stderr).toContain(
+          '--reflect is refused for a dispute that owes a human',
+        );
+        expect(result.stderr).toContain('fix: drop --reflect');
+      });
+
+      then('the refusal a driver reads is pinned', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot(
+          'a --reflect on a human-owed dispute is refused',
+        );
+      });
+    });
+
     when('[t1] the driver answers, then DISPUTES the one concern', () => {
       const result = useThen('the dispute is accepted', async () => {
         const peerDir = path.join(scene.tempDir, '.reviews', 'peer');
@@ -125,7 +180,9 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
 
       then('the ack names the fulcrum, and the absorb that comes next', () => {
         expect(result.stdout).toContain(FULCRUM_REL);
-        expect(result.stdout).toContain('the council will read it');
+        expect(result.stdout).toContain(
+          'the drive goes on; a human rules it at the next human gate',
+        );
         // the lane's last concern now has a stance, so the next move is to absorb the lane
         // (the .taken gate opens) and re-arrive — never a bare `--as passed`, which would
         // send the driver past the absorb that [t2] performs
@@ -457,6 +514,229 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(
           sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
         ).toMatchSnapshot('an approval before the dispute cannot pass it');
+      });
+    });
+
+    // invariant 3: approval is refused while any dispute owes the human, so a human cannot wave
+    // a dispute through by approval alone — they rule it first
+    when('[t2] the human tries to approve while the dispute is open', () => {
+      const result = useThen('the approval is refused', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'approved' },
+          cwd: gated.tempDir,
+        }),
+      );
+
+      then('🔴 it exits 2 — an approval is no verdict on a dispute', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal names the dispute and its verdict command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('refused, disputes owe a verdict');
+        expect(output).toContain(
+          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        );
+      });
+
+      then('the refusal a human reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('an approval is refused while a dispute is open');
+      });
+    });
+
+    // the full reconcile: verdict, approval, pass. the verdict lever needs a human tty, which no
+    // spawned test holds, so the fixture writes exactly what the lever writes — the same pure
+    // edit of the frontmatter and a ledger row bound to the content the human read. the lever's
+    // own write is proven at integration grain (`setFulcrumVerdict.integration.test.ts`)
+    when('[t4] the human upholds the dispute, then approves, and the driver passes', () => {
+      const result = useThen('the stone passes', async () => {
+        const fulcrumPath = path.join(gated.tempDir, FULCRUM_REL);
+        const content = await fs.readFile(fulcrumPath, 'utf-8');
+        const on = '2026-11-18';
+        await fs.writeFile(
+          path.join(gated.tempDir, '.fulcrums', 'verdicts.jsonl'),
+          `${JSON.stringify({
+            case: 'F001',
+            ruled: 'upheld',
+            on,
+            seen: asFulcrumSeenOfContent({ content }),
+          })}\n`,
+        );
+        await fs.writeFile(
+          fulcrumPath,
+          asFulcrumContentWithVerdict({ content, ruled: 'upheld', on })!,
+        );
+        const approved = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'approved' },
+          cwd: gated.tempDir,
+        });
+        const passed = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: gated.tempDir,
+        });
+        return { approved, passed };
+      });
+
+      then('the approval is accepted once the dispute is ruled', () => {
+        expect(result.approved.code).toEqual(0);
+      });
+
+      then('🔴 the stone PASSES — the verdict and the approval reconciled it', () => {
+        expect(result.passed.code).toEqual(0);
+      });
+
+      then('the pass a driver reads is pinned', () => {
+        expect(sanitizeTimeForSnapshot(result.passed.stdout)).toMatchSnapshot(
+          'a ruled dispute and a later approval let the stone pass',
+        );
+      });
+    });
+  });
+
+  // invariant 2: at a human gate not yet approved, the drive halt is where the human meets the
+  // dispute — the verdict ask before the approval ask, so they rule before they approve
+  given('[case5] a human gate, never approved, with an open dispute', () => {
+    const held = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'dispute-passage-halt',
+        clone: ASSETS_DIR,
+      });
+      const guard = await fs.readFile(
+        path.join(tempDir, '1.vision.guard'),
+        'utf-8',
+      );
+      await fs.writeFile(
+        path.join(tempDir, '1.vision.guard'),
+        `${guard}  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route\n`,
+      );
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-dispute-passage-halt', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] the driver disputes, absorbs, and tries to pass', () => {
+      const result = useThen('the gate waits on the human', async () => {
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: held.tempDir,
+        });
+        const peerDir = path.join(held.tempDir, '.reviews', 'peer');
+        const nameGiven = (await fs.readdir(peerDir)).find((name) =>
+          isRouteGuardReviewPeerGivenPath({ pathGiven: name }),
+        )!;
+        await fs.writeFile(
+          path.join(
+            peerDir,
+            getRouteGuardReviewPeerPathTaken({ pathGiven: nameGiven }),
+          ),
+          '[REFUTE] the shape is deliberate — see the fulcrum\n',
+        );
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'disputed',
+            with: 'lane',
+            about: 'blocker.1',
+            why: FULCRUM_REL,
+          },
+          cwd: held.tempDir,
+        });
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'absorbed', that: 'lane' },
+          cwd: held.tempDir,
+        });
+        const passed = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: held.tempDir,
+        });
+        const halt = await invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.', when: 'hook.onStop' },
+          cwd: held.tempDir,
+        });
+        return { passed, halt };
+      });
+
+      then('the pass is held at the human gate', () => {
+        expect(result.passed.code).toEqual(2);
+      });
+
+      then('🔴 the halt names the verdict ask before the approval ask', () => {
+        const output = result.halt.stdout + result.halt.stderr;
+        expect(output).toContain('1 dispute owes your verdict');
+        const atRule = output.indexOf(
+          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        );
+        const atApprove = output.indexOf(
+          'rhx route.stone.set --stone 1.vision --as approved',
+        );
+        expect(atRule).toBeGreaterThan(-1);
+        expect(atApprove).toBeGreaterThan(atRule);
+      });
+
+      then('the halt a human reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(
+            `${result.halt.stdout}\n---\n${result.halt.stderr}`,
+          ),
+        ).toMatchSnapshot('the drive halt at a human gate with an open dispute');
+      });
+    });
+  });
+
+  // invariant 5's backstop: the onStop linter holds the stop on any fulcrum it cannot read
+  given('[case4] a route with a fulcrum that has no frontmatter', () => {
+    when('[t0] the stop hook runs route.drive', () => {
+      const result = useThen('the stop is held', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'dispute-passage-lint',
+          clone: ASSETS_DIR,
+        });
+        await fs.writeFile(
+          path.join(
+            tempDir,
+            '.fulcrums',
+            'inventory.of=fulcrums.case=F002-no-frontmatter.md',
+          ),
+          '# F002 — a deferral kept as prose\n\nno block here.\n',
+        );
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        return invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.', when: 'hook.onStop' },
+          cwd: tempDir,
+        });
+      });
+
+      then('🔴 it exits 2 — the stop holds', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the lint names the file and the block to paste', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('F002-no-frontmatter');
+        expect(output).toContain('unreadable frontmatter');
+        expect(output).toContain('paste, at the head of the file');
+      });
+
+      then('the lint a driver reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('the stop holds on a fulcrum with no frontmatter');
       });
     });
   });

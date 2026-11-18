@@ -10,6 +10,7 @@ import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
+import { asFulcrumSeenOfContent } from '../__test_assets__/asFulcrumSeenOfContent';
 import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
 import { genFulcrumEntryContent } from '../__test_assets__/genFulcrumEntryContent';
 import { setFulcrumVerdictRow } from '../fulcrum/setFulcrumVerdictRow';
@@ -200,20 +201,29 @@ describe('getOneRouteDriveBlockerMessage', () => {
         });
 
         // F47 a human already conceded: listed under ruled, with the repair it owes
+        const contentF47 = genFulcrumEntryContent({
+          case: 'F47',
+          confidence: 0.8,
+        }).replace(
+          'verdict: null',
+          'verdict: { by: human, at: 2026-11-17, ruled: conceded }',
+        );
         await fs.writeFile(
           path.join(
             sceneBase.route,
             '.fulcrums',
             'inventory.of=fulcrums.case=F47-cache-scope.md',
           ),
-          genFulcrumEntryContent({ case: 'F47', confidence: 0.8 }).replace(
-            'verdict: null',
-            'verdict: { by: human, at: 2026-11-17, ruled: conceded }',
-          ),
+          contentF47,
         );
         await setFulcrumVerdictRow({
           route: sceneBase.route,
-          row: { case: 'F47', ruled: 'conceded', on: '2026-11-17' },
+          row: {
+            case: 'F47',
+            ruled: 'conceded',
+            on: '2026-11-17',
+            seen: asFulcrumSeenOfContent({ content: contentF47 }),
+          },
         });
         return sceneBase;
       });
@@ -255,8 +265,12 @@ describe('getOneRouteDriveBlockerMessage', () => {
           'a ruled dispute is listed apart, a conceded one with its repair owed',
           () => {
             expect(result.stdout).toContain('1 ruled');
+            expect(result.stdout).toContain('F47 · cache-scope · conceded');
             expect(result.stdout).toContain(
-              'F47 · cache-scope · conceded, repair owed',
+              'repair owed: limited/i001/blocker.1',
+            );
+            expect(result.stdout).toContain(
+              'next: the driver repairs it in the current diff, then runs rhx route.drive',
             );
             expect(result.stdout).not.toContain('--case F47');
           },

@@ -7,6 +7,7 @@ import {
   FULCRUM_FRONTMATTER_FIELDS_REQUIRED,
   type FulcrumFrontmatterParse,
 } from './asFulcrumFrontmatter';
+import { asFulcrumHoldOfConcern } from './asFulcrumHoldOfConcern';
 
 /**
  * .what = the fields a failed parse lacks and holds malformed
@@ -36,12 +37,12 @@ const asFulcrumCaseOfPasteBlock = (input: { path: string }): string =>
  *        disputed concern, or the dispute path refuses the very block it printed
  */
 const asFulcrumDisputeLinesOfPasteBlock = (input: {
-  dispute: { reviewer: string; about: string } | null;
+  dispute: { reviewer: string; iteration: number | null; about: string } | null;
 }): string[] =>
   input.dispute
     ? [
         `         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human`,
-        `         │  holds: [${input.dispute.reviewer}/<iteration>/${input.dispute.about}]`,
+        `         │  holds: [${asFulcrumHoldOfConcern(input.dispute)}]`,
       ]
     : [
         `         │  owed: none               # none, until a dispute cites it: then human | reflect`,
@@ -58,7 +59,7 @@ const asFulcrumDisputeLinesOfPasteBlock = (input: {
 export const asFulcrumFrontmatterDefectLines = (input: {
   path: string;
   parse: Exclude<FulcrumFrontmatterParse, { kind: 'valid' }>;
-  dispute: { reviewer: string; about: string } | null;
+  dispute: { reviewer: string; iteration: number | null; about: string } | null;
 }): string[] => {
   const { absent, malformed } = asFulcrumParseDefects({ parse: input.parse });
   const branches = [

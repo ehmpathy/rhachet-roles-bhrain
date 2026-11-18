@@ -1,3 +1,5 @@
+import { asJudgeMechanism } from '../../../../judges/asJudgeMechanism';
+
 /**
  * .what = extracts thresholds from the guard's reviewed? judge command
  * .why = enables per-reviewer verdict with same thresholds as aggregate judge
@@ -7,8 +9,7 @@ export const getReviewedJudgeThresholds = (input: {
 }): { allowBlockers: number; allowNitpicks: number } | null => {
   // find the reviewed? judge command
   const reviewedJudge = input.judges.find(
-    (cmd) =>
-      cmd.includes('--mechanism reviewed?') || cmd.includes('--type reviewed?'),
+    (judge) => asJudgeMechanism({ judge }) === 'reviewed?',
   );
 
   if (!reviewedJudge) return null;

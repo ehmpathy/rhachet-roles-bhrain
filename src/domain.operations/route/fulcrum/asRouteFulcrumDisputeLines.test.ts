@@ -5,7 +5,7 @@ import type {
   RouteFulcrumDisputeEntry,
   RouteFulcrumDisputeState,
 } from './asRouteFulcrumDisputeState';
-import { getAllRouteFulcrumRuleCommands } from './getAllRouteFulcrumRuleCommands';
+import { getAllRouteFulcrumVerdictCommands } from './getAllRouteFulcrumVerdictCommands';
 import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
 
 /**
@@ -16,10 +16,13 @@ const genEntry = (input: {
   title: string;
   frontmatter: Partial<FulcrumFrontmatter>;
   raisedOn: string[];
+  approvedOn?: string;
 }): RouteFulcrumDisputeEntry => ({
   path: `.fulcrums/inventory.of=fulcrums.case=${input.case}-${input.title}.md`,
   title: input.title,
   raisedOn: input.raisedOn,
+  approvedOn: input.approvedOn ?? null,
+  seen: 'hash-read',
   frontmatter: {
     case: input.case,
     rework: 'clean',
@@ -67,16 +70,38 @@ const STATE_EMPTY: RouteFulcrumDisputeState = {
   reflected: [],
   unreadable: [],
   forged: [],
+  reopened: [],
 };
 
+const ENTRY_RULED_ANSWERED = genEntry({
+  case: 'F48',
+  title: 'log-shape',
+  frontmatter: {
+    status: 'ruled',
+    verdict: { by: 'human', at: '2026-11-17', ruled: 'conceded' },
+  },
+  raisedOn: ['3.blueprint'],
+  approvedOn: '3.blueprint',
+});
+const ENTRY_REOPENED = genEntry({
+  case: 'F49',
+  title: 'retry-bound',
+  frontmatter: {
+    status: 'ruled',
+    verdict: { by: 'human', at: '2026-11-17', ruled: 'upheld' },
+  },
+  raisedOn: ['5.1.execution'],
+});
+
 const STATE_FULL: RouteFulcrumDisputeState = {
-  owedHuman: [ENTRY_OWED],
-  ruled: [ENTRY_RULED],
+  owedHuman: [ENTRY_OWED, ENTRY_REOPENED],
+  ruled: [ENTRY_RULED, ENTRY_RULED_ANSWERED],
   reflected: [ENTRY_REFLECTED],
   unreadable: [
     { slug: 'F46', path: '.fulcrums/inventory.of=fulcrums.case=F46-bare.md' },
   ],
   forged: [ENTRY_OWED],
+  reopened: [ENTRY_REOPENED],
 };
 
 describe('asRouteFulcrumDisputeLines', () => {
@@ -90,8 +115,19 @@ describe('asRouteFulcrumDisputeLines', () => {
     expect(lines.join('\n')).toContain('raised on: 3.blueprint');
     expect(lines.join('\n')).toContain('no human lever wrote');
     expect(lines.join('\n')).toContain('F46 · .fulcrums/');
+    expect(lines.join('\n')).toContain('F47 · cache-scope · conceded');
+    expect(lines.join('\n')).toContain('repair owed: rules/i003/blocker.2');
     expect(lines.join('\n')).toContain(
-      'F47 · cache-scope · conceded, repair owed',
+      'next: the driver repairs it in the current diff, then runs rhx route.drive',
+    );
+    expect(lines.join('\n')).toContain(
+      'F48 · log-shape · conceded, repair answered at 3.blueprint approval',
+    );
+    expect(lines.join('\n')).toContain(
+      'edited since a human ruled it upheld; read as unruled',
+    );
+    expect(lines.join('\n')).toContain(
+      '1 fulcrum is unreadable and owes repair',
     );
     expect(lines.join('\n')).toContain('reflect: ehmpathy/rhachet#1');
     expect(lines.join('\n')).toMatchSnapshot();
@@ -140,10 +176,11 @@ describe('isRouteFulcrumDisputeStateBlocked', () => {
   );
 });
 
-describe('getAllRouteFulcrumRuleCommands', () => {
+describe('getAllRouteFulcrumVerdictCommands', () => {
   test('one rule command per owed dispute, none for ruled or reflected', () => {
-    expect(getAllRouteFulcrumRuleCommands({ state: STATE_FULL })).toEqual([
+    expect(getAllRouteFulcrumVerdictCommands({ state: STATE_FULL })).toEqual([
       'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+      'rhx route.fulcrum.rule --case F49 --as upheld|conceded',
     ]);
   });
 });

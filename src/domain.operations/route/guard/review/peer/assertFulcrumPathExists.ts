@@ -43,7 +43,7 @@ export const assertFulcrumPathExists = (input: {
       [
         `no fulcrum entry at "${input.why}"`,
         ``,
-        `a dispute cites an argument the council will read, so the entry must exist first.`,
+        `a dispute cites an argument a human will read, so the entry must exist first.`,
         `write it there, then re-run this command:`,
         `  ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
@@ -64,7 +64,7 @@ export const assertFulcrumPathExists = (input: {
       `   route-relative     = ${asRouteRelative}`,
       `   repo-root-relative = ${asRepoRootRelative}`,
       ``,
-      `a dispute cites an argument the council will read, so the entry must exist first.`,
+      `a dispute cites an argument a human will read, so the entry must exist first.`,
       `write it there, then re-run this command:`,
       `  ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ``,

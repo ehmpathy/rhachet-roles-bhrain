@@ -1,11 +1,13 @@
+import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
+import { asFulcrumApprovedAfterDisputes } from './asFulcrumApprovedAfterDisputes';
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asFulcrumOwed } from './asFulcrumOwed';
 import { asFulcrumRaisedOnStones } from './asFulcrumRaisedOnStones';
-import type { FulcrumVerdictRow } from './getAllFulcrumVerdictRows';
 import type { RouteFulcrum } from './getAllRouteFulcrums';
 import { isFulcrumVerdictProven } from './isFulcrumVerdictProven';
+import { isFulcrumVerdictReopened } from './isFulcrumVerdictReopened';
 
 /**
  * .what = one readable fulcrum, as the gate presents it
@@ -22,6 +24,16 @@ export interface RouteFulcrumDisputeEntry {
    * the stones whose disputes cite this fulcrum — where it was raised (vision case=4)
    */
   raisedOn: string[];
+  /**
+   * the first stone a human approved after the newest dispute that cites this fulcrum, or null.
+   * a conceded verdict reads as answered once one follows (F6: the human holds approval until
+   * the repair lands)
+   */
+  approvedOn: string | null;
+  /**
+   * the content hash a verdict row must carry to prove this entry (`asFulcrumContentSeen`)
+   */
+  seen: string;
   frontmatter: FulcrumFrontmatter;
 }
 
@@ -33,16 +45,17 @@ export interface RouteFulcrumDisputeEntry {
  */
 export interface RouteFulcrumDisputeState {
   /**
-   * `owed: human`, not superseded, and no proven verdict — each one refuses approval
+   * `owed: human`, live, and no proven verdict — each one refuses approval
    */
   owedHuman: RouteFulcrumDisputeEntry[];
   /**
-   * `owed: human` with a proven verdict — shown under "ruled", never refuses approval. a
-   * conceded one names the repair it owes (vision case=2 [t3], case=4 [t1'])
+   * a live entry with a proven verdict, human- or reflect-owed — shown under "ruled", never
+   * refuses approval. a conceded one names the repair it owes until an approval answers it
    */
   ruled: RouteFulcrumDisputeEntry[];
   /**
-   * `owed: reflect` — shown apart, informational, never refuses approval
+   * `owed: reflect` with no proven verdict — shown apart, informational, never refuses approval.
+   * a human may still rule one, which moves it to `ruled`
    */
   reflected: RouteFulcrumDisputeEntry[];
   /**
@@ -50,10 +63,15 @@ export interface RouteFulcrumDisputeState {
    */
   unreadable: { path: string; slug: string }[];
   /**
-   * any live entry whose yaml verdict the newest ledger row does not prove — a hand edit. the
-   * linter holds the stop on each; a human-owed one also stays owed
+   * any live entry whose yaml verdict no ledger row ever proved — a hand edit. the linter holds
+   * the stop on each; a human-owed one also stays owed
    */
   forged: RouteFulcrumDisputeEntry[];
+  /**
+   * any live entry whose verdict the lever DID write, edited since — the row no longer matches
+   * what the entry says. it owes the human again, and the gate says why; it is no forgery
+   */
+  reopened: RouteFulcrumDisputeEntry[];
 }
 
 /**
@@ -70,21 +88,27 @@ export const asRouteFulcrumDisputeState = (input: {
   const live = asAllFulcrumDisputeEntriesLive({
     fulcrums: input.fulcrums,
     raisedOn,
+    approvedOn: asFulcrumApprovedAfterDisputes({ reports: input.reports }),
   });
-  const humanOwed = live.filter((entry) => entry.frontmatter.owed === 'human');
   const isProven = (entry: RouteFulcrumDisputeEntry): boolean =>
-    isFulcrumDisputeEntryProven({ entry, rows: input.rows });
+    isFulcrumDisputeEntryVerdict({ entry, rows: input.rows, is: 'proven' });
+  const isReopened = (entry: RouteFulcrumDisputeEntry): boolean =>
+    isFulcrumDisputeEntryVerdict({ entry, rows: input.rows, is: 'reopened' });
+  const unproven = live.filter((entry) => !isProven(entry));
   return {
-    owedHuman: humanOwed.filter((entry) => !isProven(entry)),
-    ruled: humanOwed.filter(isProven),
-    reflected: live.filter((entry) => entry.frontmatter.owed === 'reflect'),
+    owedHuman: unproven.filter((entry) => entry.frontmatter.owed === 'human'),
+    ruled: live.filter(
+      (entry) => entry.frontmatter.owed !== 'none' && isProven(entry),
+    ),
+    reflected: unproven.filter((entry) => entry.frontmatter.owed === 'reflect'),
     unreadable: [
       ...asAllFulcrumsUnreadable({ fulcrums: input.fulcrums }),
       ...asAllFulcrumDisputesOrphaned({ fulcrums: input.fulcrums, raisedOn }),
     ],
-    forged: live.filter(
-      (entry) => entry.frontmatter.verdict !== null && !isProven(entry),
+    forged: unproven.filter(
+      (entry) => entry.frontmatter.verdict !== null && !isReopened(entry),
     ),
+    reopened: unproven.filter(isReopened),
   };
 };
 
@@ -124,6 +148,7 @@ const asAllFulcrumDisputesOrphaned = (input: {
 const asAllFulcrumDisputeEntriesLive = (input: {
   fulcrums: RouteFulcrum[];
   raisedOn: Map<string, { stones: string[]; path: string }>;
+  approvedOn: Map<string, string | null>;
 }): RouteFulcrumDisputeEntry[] =>
   input.fulcrums.flatMap((fulcrum) => {
     if (fulcrum.parse.kind !== 'valid') return [];
@@ -135,6 +160,8 @@ const asAllFulcrumDisputeEntriesLive = (input: {
         path: fulcrum.path,
         title: fulcrum.title,
         raisedOn,
+        approvedOn: input.approvedOn.get(fulcrum.slug) ?? null,
+        seen: fulcrum.parse.seen,
         frontmatter: asFulcrumFrontmatterOwedAsDisputed({
           frontmatter: fulcrum.parse.frontmatter,
           raisedOn,
@@ -160,17 +187,25 @@ const asFulcrumFrontmatterOwedAsDisputed = (input: {
     : input.frontmatter;
 
 /**
- * .what = decides whether an entry carries a verdict the newest ledger row proves
- * .why = an entry with no verdict is unruled, and one whose verdict the ledger disagrees with is
- *        forged; only a proven verdict lifts a dispute
+ * .what = decides whether an entry's yaml verdict is proven by the ledger on its current content,
+ *         or was proven once and then outlived by an edit
+ * .why = an entry with no verdict is neither; only a proven verdict lifts a dispute, and a
+ *        reopened one reads apart from a forged one
  */
-const isFulcrumDisputeEntryProven = (input: {
+const isFulcrumDisputeEntryVerdict = (input: {
   entry: RouteFulcrumDisputeEntry;
   rows: FulcrumVerdictRow[];
-}): boolean =>
-  input.entry.frontmatter.verdict !== null &&
-  isFulcrumVerdictProven({
+  is: 'proven' | 'reopened';
+}): boolean => {
+  const verdict = input.entry.frontmatter.verdict;
+  if (!verdict) return false;
+  const check = {
     case: input.entry.frontmatter.case,
-    ruled: input.entry.frontmatter.verdict.ruled,
+    ruled: verdict.ruled,
+    seen: input.entry.seen,
     rows: input.rows,
-  });
+  };
+  return input.is === 'proven'
+    ? isFulcrumVerdictProven(check)
+    : isFulcrumVerdictReopened(check);
+};

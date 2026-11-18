@@ -4,33 +4,30 @@ import { today } from 'iso-time';
 import * as path from 'path';
 
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import {
-  asFulcrumFrontmatter,
-  type FulcrumFrontmatter,
-  type FulcrumVerdict,
-} from './asFulcrumFrontmatter';
+import { getAllPassageReportsRaw } from '../passage/getAllPassageReportsRaw';
+import { asFulcrumContentWithVerdict } from './asFulcrumContentWithVerdict';
+import { asFulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asFulcrumFrontmatterDefectLines } from './asFulcrumFrontmatterDefectLines';
 import {
-  type FulcrumVerdictRow,
-  getAllFulcrumVerdictRows,
-} from './getAllFulcrumVerdictRows';
+  asRouteFulcrumDisputeState,
+  type RouteFulcrumDisputeEntry,
+  type RouteFulcrumDisputeState,
+} from './asRouteFulcrumDisputeState';
+import { getAllFulcrumVerdictRows } from './getAllFulcrumVerdictRows';
 import { getAllRouteFulcrums, type RouteFulcrum } from './getAllRouteFulcrums';
 import { isFulcrumVerdictProven } from './isFulcrumVerdictProven';
 import { setFulcrumVerdictRow } from './setFulcrumVerdictRow';
 
-// .note = js-yaml ships no types; required as the rest of src does (asReviewRubricsConfig.ts)
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const yaml = require('js-yaml');
-
-const FRONTMATTER_BLOCK_PATTERN = /^---\r?\n([\s\S]*?)\r?\n---\s*(\r?\n|$)/;
-
 /**
  * .what = records a human's verdict on one disputed fulcrum: the yaml verdict plus a ledger row
  * .why = invariant 2: only a human rules a dispute. the ledger row is what proves the yaml verdict
- *        came from this lever, so a hand edit of the yaml alone reads as forged at every gate
+ *        came from this lever, on the content the human read, so a hand edit of the yaml alone
+ *        reads as forged and an edit after the verdict reads as reopened at every gate
  *
- * .note = `--case` may name the file's case id or the frontmatter's; the ledger row always keys
- *         on the frontmatter's, the one id every reader proves against
+ * .note = `--case` names the file's case id; the frontmatter's must equal it, or the entry is
+ *         unreadable and refused below
+ * .note = a reflect-owed dispute may be ruled too: the 0.90 line is the driver's own grade, so a
+ *         human who reads a "sure misread" as wrong must have a lever on it (vision R36, R39)
  */
 export const setFulcrumVerdict = async (
   input: {
@@ -60,7 +57,11 @@ export const setFulcrumVerdict = async (
     );
 
   // find the fulcrum by its case id, and refuse one the gate cannot read
-  const fulcrums = await getAllRouteFulcrums({ route: input.route });
+  const [fulcrums, rows, reports] = await Promise.all([
+    getAllRouteFulcrums({ route: input.route }),
+    getAllFulcrumVerdictRows({ route: input.route }),
+    getAllPassageReportsRaw({ route: input.route }),
+  ]);
   const fulcrum = getOneFulcrumByCase({ fulcrums, case: input.case });
   if (!fulcrum)
     throw new BadRequestError(
@@ -84,53 +85,85 @@ export const setFulcrumVerdict = async (
       { path: fulcrum.path },
     );
 
-  // refuse an entry that owes no human verdict
-  const frontmatter = fulcrum.parse.frontmatter;
-  if (frontmatter.owed !== 'human')
+  // refuse an entry that holds no dispute — read from the same state every gate reads, so the
+  // lever accepts exactly the entries the gate asks a human to rule
+  const state = asRouteFulcrumDisputeState({ fulcrums, rows, reports });
+  const entry = getOneDisputeEntryRulable({ state, case: input.case });
+  if (!entry)
     throw new BadRequestError(
       [
-        `fulcrum ${frontmatter.case} owes ${frontmatter.owed}, not a human verdict`,
+        `fulcrum ${input.case} holds no dispute a human can rule`,
         `   ├─ file: ${fulcrum.path}`,
-        frontmatter.owed === 'reflect'
-          ? `   └─ fix: none owed here; its reflection is tracked upstream at ${frontmatter.reflect}`
-          : `   └─ fix: none owed here; a fulcrum with owed: none holds no dispute`,
+        `   └─ fix: none owed here; a fulcrum no dispute cites, with owed: none, is a design call`,
       ].join('\n'),
-      { path: fulcrum.path, owed: frontmatter.owed },
+      { path: fulcrum.path },
     );
 
-  // the same verdict, already proven by the newest ledger row, is a no-op
-  const rows = await getAllFulcrumVerdictRows({ route: input.route });
-  const verdictOnRecord = getOneFulcrumVerdictOnRecord({
-    frontmatter,
-    ruled: input.ruled,
-    rows,
-  });
-  if (verdictOnRecord)
+  // the same verdict, already proven on this content, is a no-op
+  const verdict = entry.frontmatter.verdict;
+  if (
+    verdict?.ruled === input.ruled &&
+    isFulcrumVerdictProven({
+      case: entry.frontmatter.case,
+      ruled: input.ruled,
+      seen: entry.seen,
+      rows,
+    })
+  )
     return {
       outcome: 'unchanged',
-      case: frontmatter.case,
-      path: fulcrum.path,
-      on: verdictOnRecord.at,
+      case: entry.frontmatter.case,
+      path: entry.path,
+      on: verdict.at,
     };
 
-  // findsert the ledger row that proves this lever wrote it, keyed on the canonical case
+  // the content to write, checked to still be the content the human was shown
+  const filePath = path.join(input.route, entry.path);
+  const on: string = today();
+  const content = await fs.readFile(filePath, 'utf8');
+  const contentNext = asFulcrumContentWithVerdict({
+    content,
+    ruled: input.ruled,
+    on,
+  });
+  const parseFresh = asFulcrumFrontmatter({ content });
+  if (
+    !contentNext ||
+    parseFresh.kind !== 'valid' ||
+    parseFresh.seen !== entry.seen
+  )
+    throw new MalfunctionError(
+      'fulcrum changed between its read and its verdict write',
+      {
+        path: entry.path,
+        hint: 'rerun rhx route.fulcrum.rule; another writer touched the file',
+      },
+    );
+
+  // findsert the ledger row that proves this lever wrote it, on this content
   // .why = the row lands BEFORE the yaml: a run cut off between the two leaves an entry that still
   //        reads unruled (owed, and a re-run completes it), never a yaml verdict with no row, which
   //        every gate would read as forged
-  const on: string = today();
   await setFulcrumVerdictRow({
     route: input.route,
-    row: { case: frontmatter.case, ruled: input.ruled, on },
+    row: {
+      case: entry.frontmatter.case,
+      ruled: input.ruled,
+      on,
+      seen: entry.seen,
+    },
   });
 
-  // rewrite the frontmatter with the verdict, body intact
-  const filePath = path.join(input.route, fulcrum.path);
-  const content = await fs.readFile(filePath, 'utf8');
-  await fs.writeFile(
-    filePath,
-    asContentWithVerdict({ content, ruled: input.ruled, on }),
-  );
-  return { outcome: 'ruled', case: frontmatter.case, path: fulcrum.path, on };
+  // write the verdict atomically: a crash mid-write must never truncate the argument body
+  const fileTemp = `${filePath}.${process.pid}.tmp`;
+  await fs.writeFile(fileTemp, contentNext);
+  await fs.rename(fileTemp, filePath);
+  return {
+    outcome: 'ruled',
+    case: entry.frontmatter.case,
+    path: entry.path,
+    on,
+  };
 };
 
 /**
@@ -145,57 +178,16 @@ const getOneFulcrumByCase = (input: {
   input.fulcrums.find((entry) => entry.slug === input.case) ?? null;
 
 /**
- * .what = the entry's verdict when it already equals the asked one and the ledger proves it, or null
- * .why = a repeat of a verdict on record writes naught — neither the yaml nor a second ledger row
+ * .what = the live dispute entry a human may rule for a case: owed, reflected, or already ruled
+ * .why = an owed one awaits a verdict, a reflected one may be overturned, and a ruled one may be
+ *        re-ruled; a design call (`owed: none`, cited by no dispute) holds naught to rule
  */
-const getOneFulcrumVerdictOnRecord = (input: {
-  frontmatter: FulcrumFrontmatter;
-  ruled: 'upheld' | 'conceded';
-  rows: FulcrumVerdictRow[];
-}): FulcrumVerdict | null => {
-  const verdict = input.frontmatter.verdict;
-  if (verdict?.ruled !== input.ruled) return null;
-  const proven = isFulcrumVerdictProven({
-    case: input.frontmatter.case,
-    ruled: input.ruled,
-    rows: input.rows,
-  });
-  return proven ? verdict : null;
-};
-
-/**
- * .what = swaps a fulcrum's frontmatter for one with `status: ruled` and the human verdict
- * .why = keeps the orchestrator above a narrative; the body below the block stays byte-identical
- */
-const asContentWithVerdict = (input: {
-  content: string;
-  ruled: 'upheld' | 'conceded';
-  on: string;
-}): string => {
-  // the caller parsed this block as valid; a file that lost it, or broke it, since is a race,
-  // never a skip — and never a raw yaml fault, so the fresh content is parsed again first
-  const match = input.content.match(FRONTMATTER_BLOCK_PATTERN);
-  if (
-    !match?.[1] ||
-    asFulcrumFrontmatter({ content: input.content }).kind !== 'valid'
-  )
-    throw new MalfunctionError(
-      'fulcrum frontmatter vanished or broke between its parse and its verdict write',
-      { hint: 'rerun rhx route.fulcrum.rule; another writer touched the file' },
-    );
-
-  // the block already parsed valid, so it loads as a map of fields
-  const loaded: unknown = yaml.load(match[1]);
-  const raw: Record<string, unknown> =
-    typeof loaded === 'object' && loaded !== null ? { ...loaded } : {};
-  const block = yaml.dump(
-    {
-      ...raw,
-      status: 'ruled',
-      verdict: { by: 'human', at: input.on, ruled: input.ruled },
-    },
-    { lineWidth: -1 },
-  );
-  const body = input.content.slice(match[0].length);
-  return `---\n${block}---\n${body}`;
-};
+const getOneDisputeEntryRulable = (input: {
+  state: RouteFulcrumDisputeState;
+  case: string;
+}): RouteFulcrumDisputeEntry | null =>
+  [
+    ...input.state.owedHuman,
+    ...input.state.reflected,
+    ...input.state.ruled,
+  ].find((entry) => entry.frontmatter.case === input.case) ?? null;

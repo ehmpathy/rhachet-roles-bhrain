@@ -39,7 +39,7 @@ exports[`assertRouteFulcrumDisputesRuled given: [case3] a yaml verdict with no l
 
 exports[`assertRouteFulcrumDisputesRuled given: [case4] only a reflect-owed dispute, and an unreadable entry when: [t0] a human approves then: the unreadable entry refuses the grant; the reflect is listed apart 1`] = `
 "BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
-   ├─ 1 fulcrum is unreadable, owe repair
+   ├─ 1 fulcrum is unreadable and owes repair
    │  └─ F46 · .fulcrums/inventory.of=fulcrums.case=F46-no-frontmatter.md
    │
    ├─ 1 reflected upstream, informational

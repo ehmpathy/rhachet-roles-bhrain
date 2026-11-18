@@ -25,4 +25,20 @@ describe('asRouteFulcrumRuleStdout', () => {
     expect(stdout).toContain('so it was. this verdict already stands');
     expect(stdout).toMatchSnapshot();
   });
+
+  test('🔴 an upheld and a conceded verdict never read alike: a concede names the repair owed', () => {
+    const given = {
+      outcome: 'ruled' as const,
+      case: 'F44',
+      on: '2026-11-17',
+      path: '.fulcrums/inventory.of=fulcrums.case=F44-rename-table.md',
+    };
+    const upheld = asRouteFulcrumRuleStdout({ ...given, ruled: 'upheld' });
+    const conceded = asRouteFulcrumRuleStdout({ ...given, ruled: 'conceded' });
+    expect(upheld).toContain('next: the dispute stands');
+    expect(conceded).toContain(
+      'next: the driver repairs each held concern in the current diff, then runs rhx route.drive',
+    );
+    expect(conceded).toMatchSnapshot();
+  });
 });

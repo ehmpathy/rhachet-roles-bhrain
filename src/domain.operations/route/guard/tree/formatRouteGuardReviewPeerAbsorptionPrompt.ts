@@ -82,7 +82,7 @@ export const formatRouteGuardReviewPeerAbsorptionPrompt = (input: {
         `a budget ends a disagreement when it runs out, not by a verdict on`,
         `who is right. a stance is that verdict: you own each concern — fix`,
         `it, or hold that it is fine to continue — and it goes on record`,
-        `where a council can rule on it.`,
+        `where a human can rule on it.`,
       ],
     }),
   );
@@ -115,10 +115,10 @@ export const formatRouteGuardReviewPeerAbsorptionPrompt = (input: {
     ...asBranchBodyLines({
       indent: `      `,
       body: [
-        `this ONE concern is fine to continue, and you want a human council`,
-        `to rule on it at the close. it costs a fulcrum entry you author and`,
-        `a human's attention, so reach for it where the concern is severe or`,
-        `recurs — never as the default.`,
+        `this ONE concern is fine to continue. the drive goes on, and a human`,
+        `rules it at the next human gate. it costs a fulcrum entry you author`,
+        `and a human's attention, so reach for it where the concern is severe`,
+        `or recurs — never as the default.`,
         ``,
         `${dispute.head} \\`,
         `  ${dispute.stance} \\`,

@@ -10,7 +10,7 @@ exports[`asRouteFulcrumApprovalDisputeLines a record that cannot be read renders
 `;
 
 exports[`asRouteFulcrumApprovalDisputeLines 🔴 clamp. an unreadable entry alone owes the driver a repair before any approval 1`] = `
-"├─ 1 fulcrum is unreadable, owe repair
+"├─ 1 fulcrum is unreadable and owes repair
 │  └─ F46 · .fulcrums/inventory.of=fulcrums.case=F46-bare.md
 │
 ├─ first, the driver repairs each fault above; approval is refused until then

@@ -1,15 +1,12 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
-import { asRouteFulcrumApprovalDisputeLines } from '../fulcrum/asRouteFulcrumApprovalDisputeLines';
-import { asRouteFulcrumCommandRows } from '../fulcrum/asRouteFulcrumCommandRows';
+import { asRouteApprovalHaltBranches } from '../fulcrum/asRouteApprovalHaltBranches';
 import type { RouteFulcrumDisputeState } from '../fulcrum/asRouteFulcrumDisputeState';
-import { getAllRouteFulcrumRuleCommands } from '../fulcrum/getAllRouteFulcrumRuleCommands';
 import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asStoneGuardPartitionGapLines } from '../guard/partition/asStoneGuardPartitionGapLines';
 import { getAllStoneGuardPartitionGaps } from '../guard/partition/getAllStoneGuardPartitionGaps';
-import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
 import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuardExhaustedReason';
 import { getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven } from '../guard/review/peer/getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven';
 import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
@@ -269,28 +266,12 @@ const formatRouteDriveNeedsApproval = (input: {
   disputes:
     | { state: RouteFulcrumDisputeState; refusal: null }
     | { state: null; refusal: string };
-}): string => {
-  const head = asRouteStoneSetCommandHead({ stone: input.stone });
-  const approveCmd = `${head} --as approved`;
-  const passCmd = `${head} --as passed`;
-  const ruleCmds = input.disputes.state
-    ? getAllRouteFulcrumRuleCommands({ state: input.disputes.state })
-    : [];
-  const askCmds = [...ruleCmds, approveCmd];
-  return [
+}): string =>
+  [
     ...formatRouteDriveHeader(input),
     `   └─ halted, human approval required`,
-    ...asRouteFulcrumApprovalDisputeLines({ disputes: input.disputes }).map(
-      (line) => `      ${line}`,
-    ),
-    ruleCmds.length
-      ? `      ├─ please ask a human to rule on each, then approve`
-      : `      ├─ please ask a human to`,
-    ...asRouteFulcrumCommandRows({ commands: askCmds }).map(
-      (row) => `      │  ${row}`,
-    ),
-    `      │`,
-    `      └─ once they do, run`,
-    `         └─ ${passCmd}`,
+    ...asRouteApprovalHaltBranches({
+      stone: input.stone,
+      disputes: input.disputes,
+    }).map((line) => `      ${line}`),
   ].join('\n');
-};

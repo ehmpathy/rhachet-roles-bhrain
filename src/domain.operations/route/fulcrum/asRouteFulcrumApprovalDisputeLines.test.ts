@@ -7,6 +7,7 @@ const STATE_CLEAN: RouteFulcrumDisputeState = {
   reflected: [],
   unreadable: [],
   forged: [],
+  reopened: [],
 };
 
 const REPAIR_LINE =

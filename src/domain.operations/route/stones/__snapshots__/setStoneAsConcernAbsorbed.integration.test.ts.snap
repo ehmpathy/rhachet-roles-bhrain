@@ -9,7 +9,7 @@ the reviewer limited raised 1 blocker in its latest given, so the ordinal must b
 exports[`setStoneAsConcernAbsorbed.integration given: [case2] the flag-shape refusals — each fails before any i/o when: [t0] a dispute with NO --why then: the error names --why as required for a dispute 1`] = `
 "✋ ConstraintError: --why is required for --as disputed
 
-a dispute is a guarantee to the council, so it must cite the argument they will read.
+a dispute is a guarantee to a human at the next human gate, so it must cite the argument they will read.
 write the entry first, then point at it:
   .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md"
 `;
@@ -37,7 +37,7 @@ a relative --why is checked two ways, and neither resolved:
    route-relative     = <tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md
    repo-root-relative = <tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md
 
-a dispute cites an argument the council will read, so the entry must exist first.
+a dispute cites an argument a human will read, so the entry must exist first.
 write it there, then re-run this command:
   <tempDir>/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
 
@@ -70,7 +70,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
-         │  holds: [limited/<iteration>/blocker.1]
+         │  holds: [limited/i001/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -98,7 +98,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
-         │  holds: [limited/<iteration>/blocker.1]
+         │  holds: [limited/i001/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -186,7 +186,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
 "✋ ConstraintError: the fulcrum this dispute cites does not hold limited blocker.1
    ├─ file: <route>/.fulcrums/inventory.of=fulcrums.case=F020-holds-other.md
    ├─ holds: limited/i001/blocker.2
-   └─ fix: add the concern to its holds, e.g. limited/<iteration>/blocker.1
+   └─ fix: add the concern to its holds, e.g. limited/i001/blocker.1
 
 {
   "path": "<route>/.fulcrums/inventory.of=fulcrums.case=F020-holds-other.md"
@@ -209,7 +209,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  confidence: 0.65         # the weakest call it holds, 0 to 1
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
-         │  holds: [limited/<iteration>/blocker.1]
+         │  holds: [limited/i001/blocker.1]
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---

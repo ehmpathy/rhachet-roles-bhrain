@@ -1,19 +1,28 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`asRouteFulcrumDisputeLines every section renders, owed first, each fact on its own leaf 1`] = `
-"├─ 1 dispute owes your verdict
-│  └─ F44 · rename-table · 65%
+"├─ 2 disputes owe your verdict
+│  ├─ F44 · rename-table · 65%
+│  │  ├─ holds: rules/i003/blocker.2
+│  │  ├─ lean: keep the table as written
+│  │  ├─ raised on: 3.blueprint
+│  │  ├─ 🟡 its yaml carries a verdict no human lever wrote, read as unruled
+│  │  └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+│  └─ F49 · retry-bound · 65%
 │     ├─ holds: rules/i003/blocker.2
 │     ├─ lean: keep the table as written
-│     ├─ raised on: 3.blueprint
-│     ├─ 🟡 its yaml carries a verdict no human lever wrote, read as unruled
-│     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+│     ├─ raised on: 5.1.execution
+│     ├─ 🟡 edited since a human ruled it upheld; read as unruled
+│     └─ read: .fulcrums/inventory.of=fulcrums.case=F49-retry-bound.md
 │
-├─ 1 fulcrum is unreadable, owe repair
+├─ 1 fulcrum is unreadable and owes repair
 │  └─ F46 · .fulcrums/inventory.of=fulcrums.case=F46-bare.md
 │
-├─ 1 ruled
-│  └─ F47 · cache-scope · conceded, repair owed: rules/i003/blocker.2
+├─ 2 ruled
+│  ├─ F47 · cache-scope · conceded
+│  │  ├─ repair owed: rules/i003/blocker.2
+│  │  └─ next: the driver repairs it in the current diff, then runs rhx route.drive
+│  └─ F48 · log-shape · conceded, repair answered at 3.blueprint approval
 │
 ├─ 1 reflected upstream, informational
 │  └─ F45 · sure-misread · 95% · reflect: ehmpathy/rhachet#1

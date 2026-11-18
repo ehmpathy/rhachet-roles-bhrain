@@ -257,6 +257,8 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   concern: ReviewConcernRef;
   /** the fulcrum a dispute cites. absent on a concede, which claims no judgment */
   why: string | null;
+  /** who settles a dispute, derived from its fulcrum's ground × confidence. absent on a concede */
+  owed: 'human' | 'reflect' | null;
   /** the concede's graded harm — 'better' or 'urgent' (S14). absent on a dispute */
   severity: 'better' | 'urgent' | null;
   meter: AbsorptionAckMeter;
@@ -308,7 +310,7 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
       `   ├─ also  = ${asCountedNoun({ count: input.concernsElsewhere, one: 'concern on other lanes awaits', many: 'concerns on other lanes await' })} absorption`,
     );
 
-  // a dispute cites the argument a council will read; a concede cites naught
+  // a dispute cites the argument a human will read; a concede cites naught
   if (input.why) lines.push(`   ├─ why   = ${input.why}`);
 
   // an urgent concede ships nameable harm, so the driver owes its human an explanation (S14)
@@ -372,10 +374,14 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   const buysRound =
     input.absorption === 'conceded' && spent && input.severity === 'urgent';
 
-  // the close names what the stance did to the hold; the steps name what is owed next
+  // the close names what the stance did to the hold; the steps name what is owed next.
+  // a dispute never halts here: a human rules it at the next human gate, or a sure misread is
+  // reflected upstream — the close names which, so the driver knows who settles it
   const close =
     input.absorption === 'disputed'
-      ? `the council will read it`
+      ? input.owed === 'reflect'
+        ? `the drive goes on; the misread is owed upstream as a reflection`
+        : `the drive goes on; a human rules it at the next human gate`
       : buysRound
         ? `the hold stands. ${STEP_FIX} the ${input.concern.kind}, buy the round, then ${STEP_REARRIVE}`
         : spent

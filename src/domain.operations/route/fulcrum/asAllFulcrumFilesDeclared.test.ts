@@ -29,9 +29,26 @@ const TEST_CASES = [
     expect: { output: [] },
   },
   {
-    description: 'keeps a misnamed file, with no case, so the gate can name it',
-    given: { names: ['F47.deferral.md'] },
-    expect: { output: [{ name: 'F47.deferral.md', declared: null }] },
+    description:
+      'keeps a misnamed entry under the entry prefix, with no case, so the gate can name it',
+    given: { names: ['inventory.of=fulcrums.F47-deferral.md'] },
+    expect: {
+      output: [
+        { name: 'inventory.of=fulcrums.F47-deferral.md', declared: null },
+      ],
+    },
+  },
+  {
+    description:
+      '🔴 leaves out a file outside the entry prefix, so a stray file cannot hold every stop',
+    given: {
+      names: [
+        '.DS_Store',
+        '.inventory.of=fulcrums.case=F1-a.md.swp',
+        'notes.md',
+      ],
+    },
+    expect: { output: [] },
   },
 ];
 

@@ -1,16 +1,10 @@
-import { BadRequestError } from 'helpful-errors';
-
 import { getAllPassageReportsRaw } from '../passage/getAllPassageReportsRaw';
 import { asFulcrumFrontmatterDefectLines } from './asFulcrumFrontmatterDefectLines';
-import { asFulcrumRefusalReason } from './asFulcrumRefusalReason';
 import {
   asRouteFulcrumDisputeState,
   type RouteFulcrumDisputeEntry,
 } from './asRouteFulcrumDisputeState';
-import {
-  type FulcrumVerdictRow,
-  getAllFulcrumVerdictRows,
-} from './getAllFulcrumVerdictRows';
+import { getAllFulcrumVerdictRowsOrDefect } from './getAllFulcrumVerdictRowsOrDefect';
 import { getAllRouteFulcrums, type RouteFulcrum } from './getAllRouteFulcrums';
 
 /**
@@ -28,7 +22,7 @@ export const getOneRouteFulcrumLintMessage = async (input: {
   // read the route's fulcrums, ledger, and passage once
   const [fulcrums, ledger, reports] = await Promise.all([
     getAllRouteFulcrums({ route: input.route }),
-    getAllFulcrumVerdictRowsOrRefusal({ route: input.route }),
+    getAllFulcrumVerdictRowsOrDefect({ route: input.route }),
     getAllPassageReportsRaw({ route: input.route }),
   ]);
   const state = asRouteFulcrumDisputeState({
@@ -38,15 +32,28 @@ export const getOneRouteFulcrumLintMessage = async (input: {
   });
   const cases = new Set(fulcrums.map((fulcrum) => fulcrum.slug));
 
-  // one block per unreadable entry, per orphaned dispute, then the ledger or each forged verdict;
-  // a ledger that cannot be read proves no verdict, so it is named once in place of forgeries
+  // one block per unreadable entry (the first few, then a count), per orphaned dispute, then the
+  // ledger or each forged verdict; a ledger that cannot be read proves no verdict, so it is
+  // named once in place of forgeries
+  const unreadable = fulcrums.filter(
+    (fulcrum) => fulcrum.parse.kind !== 'valid',
+  );
   const blocks = [
-    ...fulcrums.flatMap((fulcrum) => asFulcrumLintBlockUnreadable({ fulcrum })),
+    ...unreadable
+      .slice(0, LINT_UNREADABLE_SHOWN_MAX)
+      .flatMap((fulcrum) => asFulcrumLintBlockUnreadable({ fulcrum })),
+    ...(unreadable.length > LINT_UNREADABLE_SHOWN_MAX
+      ? [
+          asFulcrumLintBlockUnreadableRest({
+            fulcrums: unreadable.slice(LINT_UNREADABLE_SHOWN_MAX),
+          }),
+        ]
+      : []),
     ...state.unreadable
       .filter((entry) => !cases.has(entry.slug))
       .map((entry) => asFulcrumLintBlockOrphaned({ entry })),
-    ...(ledger.refusal
-      ? [asFulcrumLintBlockLedger({ refusal: ledger.refusal })]
+    ...(ledger.defect !== null
+      ? [asFulcrumLintBlockLedger({ refusal: ledger.defect })]
       : state.forged.map((entry) => asFulcrumLintBlockForged({ entry }))),
   ];
 
@@ -59,27 +66,27 @@ export const getOneRouteFulcrumLintMessage = async (input: {
 };
 
 /**
- * .what = the route's verdict rows, or the refusal that names why the ledger cannot be read
- * .why = a corrupt ledger must hold the stop as a named lint block, the same as every other
- *        defect, never escape the lint as a throw
- * .note = only a BadRequestError (a constraint a human repairs) is caught; all else rises
+ * .what = how many unreadable entries the lint renders in full before it names the rest by path
+ * .why = a route of legacy fulcrums would print a paste block per file; the first few teach the
+ *        fix, and the rest are a list the driver works down
  */
-const getAllFulcrumVerdictRowsOrRefusal = async (input: {
-  route: string;
-}): Promise<
-  { rows: FulcrumVerdictRow[]; refusal: null } | { rows: null; refusal: string }
-> => {
-  try {
-    const rows = await getAllFulcrumVerdictRows({ route: input.route });
-    return { rows, refusal: null };
-  } catch (error) {
-    if (!(error instanceof BadRequestError)) throw error;
-    return {
-      rows: null,
-      refusal: asFulcrumRefusalReason({ message: error.message }),
-    };
-  }
-};
+const LINT_UNREADABLE_SHOWN_MAX = 3;
+
+/**
+ * .what = the lint block that names, by path, each unreadable entry beyond the ones shown in full
+ * .why = every unreadable entry is named, never skipped; only its paste block is withheld
+ */
+const asFulcrumLintBlockUnreadableRest = (input: {
+  fulcrums: RouteFulcrum[];
+}): string =>
+  [
+    '',
+    `🗿 route.fulcrum lint: ${input.fulcrums.length} more ${input.fulcrums.length === 1 ? 'entry has' : 'entries have'} unreadable frontmatter; each takes the block above`,
+    ...input.fulcrums.map(
+      (fulcrum, index) =>
+        `   ${index === input.fulcrums.length - 1 ? '└─' : '├─'} ${fulcrum.path}`,
+    ),
+  ].join('\n');
 
 /**
  * .what = the lint block for a verdict ledger that cannot be read

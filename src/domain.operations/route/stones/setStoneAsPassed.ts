@@ -18,8 +18,6 @@ import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { assertRouteGatedStoneDisputesRuled } from '../fulcrum/assertRouteGatedStoneDisputesRuled';
-import { assertRouteGatelessLastStoneDisputesRuled } from '../fulcrum/assertRouteGatelessLastStoneDisputesRuled';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
 import { asFailedJudgeReasons } from '../guard/asFailedJudgeReasons';
@@ -64,6 +62,7 @@ import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
 import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
 import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
+import { asJudgeMechanism } from '../judges/asJudgeMechanism';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
@@ -189,26 +188,13 @@ export const setStoneAsPassed = async (
     );
   }
 
-  // a dispute that owes the human refuses passage of the last stone of a gateless route, and of
-  // any stone with its own human gate (a dispute raised after the human approved)
-  // .note = checked at each passage write, so it refuses only a pass that would land; a stone
-  //         some other gate holds reports that gate first
-  const assertPassageDisputesRuled = async () => {
-    await assertRouteGatelessLastStoneDisputesRuled({
-      route: input.route,
-      stone: stoneMatched,
-      stones,
-    });
-    await assertRouteGatedStoneDisputesRuled({
-      route: input.route,
-      stone: stoneMatched,
-    });
-  };
+  // .note = a dispute that owes the human refuses passage inside setStonePassage, the one writer
+  //         of a pass, so it refuses only a pass that would land; a stone some other gate holds
+  //         reports that gate first
 
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
-    await assertPassageDisputesRuled();
-    await setStonePassage({ stone: stoneMatched, route: input.route });
+    await setStonePassage({ stone: stoneMatched, stones, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
     await clearBlockedTriggersUpTo({
@@ -386,8 +372,7 @@ export const setStoneAsPassed = async (
   // if guard has no reviews and no judges, auto-pass (guard only customizes artifact detection)
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
-    await assertPassageDisputesRuled();
-    await setStonePassage({ stone: stoneMatched, route: input.route });
+    await setStonePassage({ stone: stoneMatched, stones, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
     await clearBlockedTriggersUpTo({
@@ -1155,9 +1140,8 @@ export const setStoneAsPassed = async (
       });
     }
 
-    await assertPassageDisputesRuled();
     await setRoundOutput(() =>
-      setStonePassage({ stone: stoneMatched, route: input.route }),
+      setStonePassage({ stone: stoneMatched, stones, route: input.route }),
     );
 
     // clear blocked triggers for this stone and all earlier stones
@@ -1405,11 +1389,13 @@ const computeBlockedOn = (input: {
   let hasOtherFailure = false;
 
   for (const judge of input.failedJudges) {
-    const judgeCmd = input.guard.judges[judge.index - 1] ?? '';
+    const mechanism = asJudgeMechanism({
+      judge: input.guard.judges[judge.index - 1] ?? '',
+    });
 
-    if (judgeCmd.includes('--mechanism reviewed?')) {
+    if (mechanism === 'reviewed?') {
       hasReviewFailure = true;
-    } else if (judgeCmd.includes('--mechanism approved?')) {
+    } else if (mechanism === 'approved?') {
       hasApprovalFailure = true;
     } else {
       hasOtherFailure = true;

@@ -47,10 +47,11 @@ describe('asFulcrumFrontmatterDefectLines', () => {
     const lines = asFulcrumFrontmatterDefectLines({
       path: '.fulcrums/inventory.of=fulcrums.case=F44-rename-table.md',
       parse: { kind: 'invalid', absent: ['owed', 'holds'], malformed: [] },
-      dispute: { reviewer: 'rules', about: 'blocker.2' },
+      dispute: { reviewer: 'rules', iteration: 4, about: 'blocker.2' },
     });
     expect(lines.join('\n')).toContain('owed: human ');
-    expect(lines.join('\n')).toContain('holds: [rules/<iteration>/blocker.2]');
+    // the round the driver read, never an `<iteration>` placeholder to hand-fill
+    expect(lines.join('\n')).toContain('holds: [rules/i004/blocker.2]');
     expect(lines.join('\n')).not.toContain('owed: none');
     expect(lines.join('\n')).toMatchSnapshot();
   });

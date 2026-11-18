@@ -66,6 +66,14 @@ dispute the human never saw, and the gate would read it as human-ruled. so a ver
 with a matched entry in the verdict log, which only the human-only lever writes
 (`getDecisionIsCallerHuman`). a hand-forged verdict holds the stop.
 
+🔴 **each log entry binds the verdict to what the human read.** the entry carries `seen`, a hash of
+the frontmatter fields and the body, verdict and status aside. an edit after the verdict changes the
+hash, so the fulcrum reads as reopened, and a human must rule it again.
+
+🟡 **the log is evidence, never a lock.** it is a plain file in the repo. a driver who hand-writes a
+row with the right hash forges a verdict the gate accepts. what stops it is that both files sit in
+the diff a human reviews, so the forgery is visible. it is not prevented.
+
 🔴 **confidence is the weakest held call.** a table of rows at 55 to 90 percent is a 0.55 fulcrum,
 the incident's exact shape. an average would grade it 0.75 and hide the weak rows.
 

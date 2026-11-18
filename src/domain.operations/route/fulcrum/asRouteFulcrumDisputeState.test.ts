@@ -1,8 +1,8 @@
+import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asRouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
-import type { FulcrumVerdictRow } from './getAllFulcrumVerdictRows';
 import type { RouteFulcrum } from './getAllRouteFulcrums';
 
 /**
@@ -13,6 +13,7 @@ const genFulcrum = (input: {
   owed: FulcrumFrontmatter['owed'];
   status?: FulcrumFrontmatter['status'];
   verdict?: FulcrumFrontmatter['verdict'];
+  seen?: string;
 }): RouteFulcrum => ({
   path: `.fulcrums/inventory.of=fulcrums.case=${input.case}-demo.md`,
   slug: input.case,
@@ -31,6 +32,7 @@ const genFulcrum = (input: {
       reflect: input.owed === 'reflect' ? 'ehmpathy/demo#1' : null,
       verdict: input.verdict ?? null,
     },
+    seen: input.seen ?? 'hash-read',
   },
 });
 
@@ -43,6 +45,7 @@ const ROW_UPHELD: FulcrumVerdictRow = {
   case: 'F1',
   ruled: 'upheld',
   on: '2026-11-17',
+  seen: 'hash-read',
 };
 
 /**
@@ -58,6 +61,7 @@ const TEST_CASES: {
     reflected: string[];
     unreadable: string[];
     forged: string[];
+    reopened: string[];
   };
 }[] = [
   {
@@ -69,6 +73,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: [],
+      reopened: [],
     },
   },
   {
@@ -90,6 +95,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: [],
+      reopened: [],
     },
   },
   {
@@ -106,6 +112,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: [],
+      reopened: [],
     },
   },
   {
@@ -120,6 +127,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: [],
+      reopened: [],
     },
   },
   {
@@ -136,6 +144,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: ['F1'],
+      reopened: [],
     },
   },
   {
@@ -151,6 +160,7 @@ const TEST_CASES: {
       reflected: ['F1'],
       unreadable: [],
       forged: [],
+      reopened: [],
     },
   },
   {
@@ -168,6 +178,49 @@ const TEST_CASES: {
       reflected: [],
       unreadable: [],
       forged: ['F1'],
+      reopened: [],
+    },
+  },
+  {
+    description:
+      '🔴 an entry edited after the human ruled it owes the human again, read as reopened, never forged',
+    given: {
+      fulcrums: [
+        genFulcrum({
+          case: 'F1',
+          owed: 'human',
+          status: 'ruled',
+          verdict: VERDICT_UPHELD,
+          seen: 'hash-edited',
+        }),
+      ],
+      rows: [ROW_UPHELD],
+    },
+    expect: {
+      owedHuman: ['F1'],
+      ruled: [],
+      reflected: [],
+      unreadable: [],
+      forged: [],
+      reopened: ['F1'],
+    },
+  },
+  {
+    description:
+      'a reflect-owed entry a human ruled is ruled, no longer listed as reflected',
+    given: {
+      fulcrums: [
+        genFulcrum({ case: 'F1', owed: 'reflect', verdict: VERDICT_UPHELD }),
+      ],
+      rows: [ROW_UPHELD],
+    },
+    expect: {
+      owedHuman: [],
+      ruled: ['F1'],
+      reflected: [],
+      unreadable: [],
+      forged: [],
+      reopened: [],
     },
   },
   {
@@ -189,6 +242,7 @@ const TEST_CASES: {
       reflected: [],
       unreadable: ['F1'],
       forged: [],
+      reopened: [],
     },
   },
 ];
@@ -304,6 +358,56 @@ describe('asRouteFulcrumDisputeState, a typed field cannot retire a live dispute
   });
 });
 
+describe('asRouteFulcrumDisputeState, a conceded verdict reaches an end state', () => {
+  const fulcrumConceded = genFulcrum({
+    case: 'F1',
+    owed: 'human',
+    status: 'ruled',
+    verdict: { by: 'human', at: '2026-11-17', ruled: 'conceded' },
+  });
+  const rowConceded: FulcrumVerdictRow = { ...ROW_UPHELD, ruled: 'conceded' };
+  const dispute = genDisputeOfF1({
+    fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+  });
+  const approval = new PassageReport({
+    stone: '3.blueprint',
+    status: 'approved',
+  });
+
+  test('before any approval follows its dispute, the repair is still owed', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [rowConceded],
+      reports: [dispute],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([null]);
+  });
+
+  test('🔴 an approval after its dispute answers the repair', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [rowConceded],
+      reports: [dispute, approval],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([
+      '3.blueprint',
+    ]);
+  });
+
+  test('a newer dispute on the same case re-opens the debt an approval answered', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [rowConceded],
+      reports: [
+        dispute,
+        approval,
+        new PassageReport({ ...dispute, stone: '5.1.execution' }),
+      ],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([null]);
+  });
+});
+
 describe('asRouteFulcrumDisputeState', () => {
   TEST_CASES.map((thisCase) =>
     test(thisCase.description, () => {
@@ -318,6 +422,7 @@ describe('asRouteFulcrumDisputeState', () => {
         reflected: state.reflected.map((entry) => entry.frontmatter.case),
         unreadable: state.unreadable.map((entry) => entry.slug),
         forged: state.forged.map((entry) => entry.frontmatter.case),
+        reopened: state.reopened.map((entry) => entry.frontmatter.case),
       }).toEqual(thisCase.expect);
     }),
   );

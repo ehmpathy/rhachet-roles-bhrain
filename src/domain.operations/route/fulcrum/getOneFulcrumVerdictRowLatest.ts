@@ -1,4 +1,4 @@
-import type { FulcrumVerdictRow } from './getAllFulcrumVerdictRows';
+import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
 
 /**
  * .what = the newest ledger row for one case, or null when the lever never ruled it

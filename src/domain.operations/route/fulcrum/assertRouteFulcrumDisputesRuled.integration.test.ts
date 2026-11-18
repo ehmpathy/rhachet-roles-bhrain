@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { genTempDir, getError, given, then, when } from 'test-fns';
 
+import { asFulcrumSeenOfContent } from '../__test_assets__/asFulcrumSeenOfContent';
 import { assertRouteFulcrumDisputesRuled } from './assertRouteFulcrumDisputesRuled';
 import { setFulcrumVerdictRow } from './setFulcrumVerdictRow';
 
@@ -84,20 +85,24 @@ describe('assertRouteFulcrumDisputesRuled', () => {
   given(
     '[case2] a route whose dispute a human ruled, with a ledger row',
     () => {
+      const content = asFulcrumFile({
+        slug: 'F44',
+        owed: 'human',
+        verdict: '{ by: human, at: 2026-11-17, ruled: upheld }',
+      });
       const route = genRouteWithFulcrums({
         slug: 'fulcrum-refusal-ruled',
-        files: {
-          'F44-rename-table': asFulcrumFile({
-            slug: 'F44',
-            owed: 'human',
-            verdict: '{ by: human, at: 2026-11-17, ruled: upheld }',
-          }),
-        },
+        files: { 'F44-rename-table': content },
       });
       beforeAll(async () => {
         await setFulcrumVerdictRow({
           route,
-          row: { case: 'F44', ruled: 'upheld', on: '2026-11-17' },
+          row: {
+            case: 'F44',
+            ruled: 'upheld',
+            on: '2026-11-17',
+            seen: asFulcrumSeenOfContent({ content }),
+          },
         });
       });
       when('[t0] a human approves', () => {
@@ -163,7 +168,7 @@ describe('assertRouteFulcrumDisputesRuled', () => {
               grant: 'approved',
             }),
           );
-          expect(error.message).toContain('unreadable, owe repair');
+          expect(error.message).toContain('unreadable and owes repair');
           expect(error.message).toContain('F46');
           expect(error.message).toContain('reflected upstream, informational');
           expect(
@@ -174,14 +179,14 @@ describe('assertRouteFulcrumDisputesRuled', () => {
     });
   });
 
-  given('[case4b] a file in .fulcrums whose name declares no case', () => {
+  given('[case4b] an entry in .fulcrums whose name declares no case', () => {
     const route = genRouteWithFulcrums({
       slug: 'fulcrum-refusal-misnamed',
       files: {},
     });
     beforeAll(() => {
       fs.writeFileSync(
-        path.join(route, '.fulcrums', 'F47.deferral.md'),
+        path.join(route, '.fulcrums', 'inventory.of=fulcrums.F47-deferral.md'),
         asFulcrumFile({ slug: 'F47', owed: 'human', verdict: 'null' }),
       );
     });
@@ -196,8 +201,10 @@ describe('assertRouteFulcrumDisputesRuled', () => {
               grant: 'approved',
             }),
           );
-          expect(error.message).toContain('unreadable, owe repair');
-          expect(error.message).toContain('F47.deferral.md');
+          expect(error.message).toContain('unreadable and owes repair');
+          expect(error.message).toContain(
+            'inventory.of=fulcrums.F47-deferral.md',
+          );
         },
       );
     });

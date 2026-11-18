@@ -1,3 +1,5 @@
+import { asFulcrumContentSeen } from './asFulcrumContentSeen';
+
 // .note = js-yaml ships no types; required as the rest of src does (asReviewRubricsConfig.ts)
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const yaml = require('js-yaml');
@@ -7,6 +9,13 @@ const FULCRUM_GROUNDS = ['wrong', 'dirty'] as const;
 const FULCRUM_STATUSES = ['open', 'held', 'ruled', 'superseded'] as const;
 const FULCRUM_OWEDS = ['human', 'reflect', 'none'] as const;
 const FULCRUM_VERDICTS = ['upheld', 'conceded'] as const;
+
+/**
+ * .what = renders a closed set as the hint a malformed field names, e.g. `clean | dirty`
+ * .why = the hint is read from the same constant the parse checks against, so the two never drift
+ */
+const asFulcrumEnumHint = (input: { values: readonly string[] }): string =>
+  input.values.join(' | ');
 
 /**
  * .what = the frontmatter of one fulcrum entry — the one home of a deferral's attributes
@@ -59,11 +68,25 @@ export const FULCRUM_FRONTMATTER_FIELDS_REQUIRED = [
  * .why = the gate, the linter, the lever, and the dispute-time check each branch on it
  */
 export type FulcrumFrontmatterParse =
-  | { kind: 'valid'; frontmatter: FulcrumFrontmatter }
+  | {
+      kind: 'valid';
+      frontmatter: FulcrumFrontmatter;
+      /**
+       * the hash a verdict row binds to (`asFulcrumContentSeen`); an edit after the verdict moves it
+       */
+      seen: string;
+    }
   | { kind: 'absent' }
   | { kind: 'invalid'; absent: string[]; malformed: string[] };
 
 const REFLECT_REF_PATTERN = /^[\w.-]+\/[\w.-]+#\d+$/;
+
+/**
+ * .what = the yaml block at the head of a fulcrum entry; group 1 is its body
+ * .why = the parser and the verdict writer read the one block the same way
+ */
+export const FULCRUM_FRONTMATTER_BLOCK_PATTERN =
+  /^---\r?\n([\s\S]*?)\r?\n---\s*(\r?\n|$)/;
 
 /**
  * .what = parses and validates the yaml frontmatter at the head of a fulcrum entry
@@ -74,7 +97,7 @@ export const asFulcrumFrontmatter = (input: {
   content: string;
 }): FulcrumFrontmatterParse => {
   // find the frontmatter block; a file that does not open with one has none
-  const match = input.content.match(/^---\r?\n([\s\S]*?)\r?\n---\s*(\r?\n|$)/);
+  const match = input.content.match(FULCRUM_FRONTMATTER_BLOCK_PATTERN);
   if (!match?.[1]) return { kind: 'absent' };
 
   // parse the yaml; a block that does not parse, or parses to no map, is named whole
@@ -127,20 +150,25 @@ export const asFulcrumFrontmatter = (input: {
   )
     return { kind: 'invalid', absent, malformed };
 
+  const frontmatter: FulcrumFrontmatter = {
+    case: fields.case,
+    rework: fields.rework,
+    ground: fields.ground,
+    confidence: fields.confidence,
+    status: fields.status,
+    owed: fields.owed,
+    holds: fields.holds,
+    lean: fields.lean,
+    reflect: fields.reflect.value,
+    verdict: fields.verdict.value,
+  };
   return {
     kind: 'valid',
-    frontmatter: {
-      case: fields.case,
-      rework: fields.rework,
-      ground: fields.ground,
-      confidence: fields.confidence,
-      status: fields.status,
-      owed: fields.owed,
-      holds: fields.holds,
-      lean: fields.lean,
-      reflect: fields.reflect.value,
-      verdict: fields.verdict.value,
-    },
+    frontmatter,
+    seen: asFulcrumContentSeen({
+      frontmatter,
+      body: input.content.slice(match[0].length),
+    }),
   };
 };
 
@@ -273,25 +301,25 @@ const getAllMalformedFields = (input: {
       ? 'lean (one line of text)'
       : null,
     isPresentAndMalformed({ field: 'rework', parsed: fields.rework })
-      ? 'rework (clean | dirty)'
+      ? `rework (${asFulcrumEnumHint({ values: FULCRUM_REWORKS })})`
       : null,
     isPresentAndMalformed({ field: 'ground', parsed: fields.ground })
-      ? 'ground (wrong | dirty)'
+      ? `ground (${asFulcrumEnumHint({ values: FULCRUM_GROUNDS })})`
       : null,
     isPresentAndMalformed({ field: 'confidence', parsed: fields.confidence })
       ? 'confidence (a number from 0 to 1)'
       : null,
     isPresentAndMalformed({ field: 'status', parsed: fields.status })
-      ? 'status (open | held | ruled | superseded)'
+      ? `status (${asFulcrumEnumHint({ values: FULCRUM_STATUSES })})`
       : null,
     isPresentAndMalformed({ field: 'owed', parsed: fields.owed })
-      ? 'owed (human | reflect | none)'
+      ? `owed (${asFulcrumEnumHint({ values: FULCRUM_OWEDS })})`
       : null,
     isPresentAndMalformed({ field: 'holds', parsed: fields.holds })
       ? 'holds (a list)'
       : null,
     fields.verdict === null
-      ? 'verdict (null, or { by: human, at: <date>, ruled: upheld | conceded })'
+      ? `verdict (null, or { by: human, at: <date>, ruled: ${asFulcrumEnumHint({ values: FULCRUM_VERDICTS })} })`
       : null,
     fields.reflect === null ? 'reflect (<owner>/<repo>#<number>)' : null,
     fields.owed === 'reflect' && fields.reflect && !fields.reflect.value

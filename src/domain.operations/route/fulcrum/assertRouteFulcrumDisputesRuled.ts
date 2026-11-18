@@ -1,10 +1,5 @@
-import { BadRequestError } from 'helpful-errors';
-
 import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
-import { asRouteFulcrumDisputeRefusalLines } from './asRouteFulcrumDisputeRefusalLines';
-import { getAllRouteFulcrumRuleCommands } from './getAllRouteFulcrumRuleCommands';
-import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
-import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
+import { assertRouteFulcrumDisputeStateUnblocked } from './assertRouteFulcrumDisputeStateUnblocked';
 
 /**
  * .what = refuses a human grant (`--as approved`, `--as forced`) while any dispute owes a verdict
@@ -16,21 +11,15 @@ export const assertRouteFulcrumDisputesRuled = async (input: {
   route: string;
   stone: string;
   grant: 'approved' | 'forced';
-}): Promise<void> => {
-  const state = await getOneRouteFulcrumDisputeState({ route: input.route });
-  if (!isRouteFulcrumDisputeStateBlocked({ state })) return;
-
-  // render the refusal: the open disputes, then the commands that clear them
-  const ruleCommands = getAllRouteFulcrumRuleCommands({ state });
-  const grantCommand = `${asRouteStoneSetCommandHead({ stone: input.stone })} --as ${input.grant}`;
-  const lines = asRouteFulcrumDisputeRefusalLines({
-    headline: `route.stone.set --as ${input.grant}: refused, disputes owe a verdict`,
-    state,
-    closer: `rule on each, repair each unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
-    commands: [...ruleCommands, grantCommand],
-  });
-  throw new BadRequestError(lines.join('\n'), {
+}): Promise<void> =>
+  assertRouteFulcrumDisputeStateUnblocked({
     route: input.route,
-    stone: input.stone,
+    refusal: {
+      headline: `route.stone.set --as ${input.grant}: refused, disputes owe a verdict`,
+      closer: `rule on each, repair each unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
+      commandsAfter: [
+        `${asRouteStoneSetCommandHead({ stone: input.stone })} --as ${input.grant}`,
+      ],
+    },
+    metadata: { stone: input.stone },
   });
-};
