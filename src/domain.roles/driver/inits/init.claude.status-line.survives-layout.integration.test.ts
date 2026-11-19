@@ -1,6 +1,10 @@
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 
-import { spawnSync } from 'node:child_process';
+import { asRouteStatusLineFilePath } from '@src/domain.operations/route/statusLine/file/asRouteStatusLineFilePath';
+import { asRouteStatusLinePointerPath } from '@src/domain.operations/route/statusLine/file/asRouteStatusLinePointerPath';
+import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
+
+import { execSync, spawnSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -36,35 +40,101 @@ const run = (input: {
   cwd: string;
   home: string;
 }): { stdout: string; stderr: string; exitCode: number | null } => {
-  const env: NodeJS.ProcessEnv = { ...process.env, HOME: input.home };
-  delete env.CLAUDE_CONFIG_DIR;
   const result = spawnSync(input.cmd, input.args, {
     cwd: input.cwd,
     encoding: 'utf-8',
-    env,
+    env: asFixtureEnv({ home: input.home }),
+    timeout: TIMEOUT_OF_RUN_MS,
   });
+  if (result.error) throw result.error;
   return {
     stdout: result.stdout,
     stderr: result.stderr,
     exitCode: result.status,
   };
 };
+const TIMEOUT_OF_RUN_MS = 120_000;
+
+/**
+ * .what = the host env, with HOME at the fixture's home and no CLAUDE_CONFIG_DIR
+ * .why = a host CLAUDE_CONFIG_DIR would name the host's brain dir as the init's target
+ */
+const asFixtureEnv = (input: { home: string }): NodeJS.ProcessEnv => ({
+  ...Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => key !== 'CLAUDE_CONFIG_DIR'),
+  ),
+  HOME: input.home,
+});
+
+/**
+ * .what = runs a setup step, and fails the suite loud if it did not exit 0
+ * .why = a setup step whose result is discarded would let a broken fixture pass as a scene
+ */
+const runSetup = (input: Parameters<typeof run>[0]): ReturnType<typeof run> => {
+  const result = run(input);
+  if (result.exitCode !== 0)
+    throw new Error(
+      `fixture setup failed: ${input.cmd} ${input.args.join(' ')} exited ${result.exitCode}; check that pnpm install and npm run build both pass, then rerun\n${result.stdout}${result.stderr}`,
+    );
+  return result;
+};
+
+/**
+ * .what = the exact statusLine command the init binds: the bash reader, never node
+ * .why = the wish's defect was a node process per repaint; a check for the slug alone passes
+ *        for the old `node -e "import('…/route.status.line')"` command too, so the clamp pins
+ *        the command whole
+ */
+const COMMAND_OF_STATUS_LINE =
+  "BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh || printf '%s\\n' '🗿 status line reader not found, rhx init --roles driver'";
+
+/**
+ * .what = the reader path the bound command names, relative to the repo root
+ */
+const PATH_OF_BOUND_READER =
+  '.agent/repo=bhrain/role=driver/skills/route.status.line.sh';
+
+/**
+ * .what = stderr with bash's own not-found text masked around the path it names
+ * .why = bash words a not-found differently by build (`bash: X: No such file or directory`,
+ *        and the like), so the words are masked and the line, the path, and every other
+ *        line stay under the snapshot
+ */
+const asMaskedBashNotFound = (input: { stderr: string }): string =>
+  input.stderr
+    .split('\n')
+    .map((line) =>
+      line.includes(PATH_OF_BOUND_READER)
+        ? `<bash>: ${PATH_OF_BOUND_READER}: <not found>`
+        : line,
+    )
+    .join('\n');
+
+/**
+ * .what = where rhachet's split layout points `.claude/settings.json`: the grove layer
+ * .why = the bind survives because it lives in settings.of.repo.json, a real file, while the
+ *        name the harness reads is a link rhachet owns; a link to aught else is a layout change
+ */
+const TARGET_OF_SETTINGS_LINK = 'settings.of.grove.json';
 
 /**
  * .what = reads the brain dir's settings as rhachet left them
- * .why = the clamp asserts on the layout itself: which name is a link, which file holds the bind
+ * .why = the clamp asserts on the layout itself: which name is a link, where it points, and
+ *        which file holds the bind
  */
 const getBrainDirSettings = (input: {
   repo: string;
 }): {
   isSettingsLink: boolean;
+  settingsLinkTarget: string | null;
   repoLayer: { statusLine?: { command: string } };
 } => {
   const claudeDir = path.join(input.repo, '.claude');
+  const settingsPath = path.join(claudeDir, 'settings.json');
+  const isSettingsLink = fs.lstatSync(settingsPath).isSymbolicLink();
   return {
-    isSettingsLink: fs
-      .lstatSync(path.join(claudeDir, 'settings.json'))
-      .isSymbolicLink(),
+    isSettingsLink,
+    settingsLinkTarget: isSettingsLink ? fs.readlinkSync(settingsPath) : null,
     repoLayer: JSON.parse(
       fs.readFileSync(path.join(claudeDir, 'settings.of.repo.json'), 'utf-8'),
     ),
@@ -122,8 +192,13 @@ const genFixture = (input: {
   const repo = genTempDir({ slug: input.slug, git: true });
   const home = genTempDir({ slug: `${input.slug}-home` });
   fs.mkdirSync(path.join(repo, 'node_modules'), { recursive: true });
-  for (const [name, target] of Object.entries(ROLE_PACKAGES))
+  for (const [name, target] of Object.entries(ROLE_PACKAGES)) {
+    if (!fs.existsSync(path.join(target, 'package.json')))
+      throw new Error(
+        `fixture role package absent: ${name} at ${target}; run pnpm install, then npm run build`,
+      );
     fs.symlinkSync(target, path.join(repo, 'node_modules', name));
+  }
   fs.writeFileSync(
     path.join(repo, 'package.json'),
     JSON.stringify({
@@ -179,6 +254,9 @@ describe('init.claude.status-line.survives-layout.integration', () => {
         then('rhachet lays out the split layout', () => {
           expect(scene.layout).toMatchObject({ exitCode: 0 });
           expect(scene.afterInit.isSettingsLink).toEqual(true);
+          expect(scene.afterInit.settingsLinkTarget).toEqual(
+            TARGET_OF_SETTINGS_LINK,
+          );
         });
 
         then('the init binds settings.of.repo.json', () => {
@@ -186,8 +264,8 @@ describe('init.claude.status-line.survives-layout.integration', () => {
           expect(scene.init.stdout).toContain(
             'settings = .claude/settings.of.repo.json',
           );
-          expect(scene.afterInit.repoLayer.statusLine?.command).toContain(
-            'routeStatusLine',
+          expect(scene.afterInit.repoLayer.statusLine?.command).toEqual(
+            COMMAND_OF_STATUS_LINE,
           );
         });
 
@@ -217,11 +295,14 @@ describe('init.claude.status-line.survives-layout.integration', () => {
 
           then('settings.json is still a link', () => {
             expect(out.after.isSettingsLink).toEqual(true);
+            expect(out.after.settingsLinkTarget).toEqual(
+              TARGET_OF_SETTINGS_LINK,
+            );
           });
 
           then('the status line survives in settings.of.repo.json', () => {
-            expect(out.after.repoLayer.statusLine?.command).toContain(
-              'routeStatusLine',
+            expect(out.after.repoLayer.statusLine?.command).toEqual(
+              COMMAND_OF_STATUS_LINE,
             );
           });
 
@@ -240,13 +321,12 @@ describe('init.claude.status-line.survives-layout.integration', () => {
   given(
     '[case2] a statusLine written where the published init wrote it, a real settings.json',
     () => {
-      // the cause on record: rhachet replaces a real file where its link belongs, and keeps
-      // naught of it. so a bind in settings.json is lost at the next layout pass
+      // the defect: a layout pass swaps a real settings.json for its link, and the bind is lost
       const scene = useBeforeAll(async () => {
         const fixture = genFixture({
           slug: 'statusline-survives-layout-case2',
         });
-        run({
+        runSetup({
           cmd: RHACHET_BIN,
           args: ['init', '--hooks'],
           ...fixture,
@@ -276,6 +356,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
 
         then('the real settings.json is replaced by the link', () => {
           expect(out.after.isSettingsLink).toEqual(true);
+          expect(out.after.settingsLinkTarget).toEqual(TARGET_OF_SETTINGS_LINK);
         });
 
         then('the status line written there is gone', () => {
@@ -296,14 +377,13 @@ describe('init.claude.status-line.survives-layout.integration', () => {
   given(
     '[case3] a driver clone of a peer actor, a hash actor that holds driver',
     () => {
-      // the wish's symptom sat on such a clone: its settings.of.repo.json is derived whole
-      // from the repo actor's, so the bind must reach it through rhachet's own derivation
+      // a peer clone derives its settings.of.repo.json whole from the repo actor's
       const scene = useBeforeAll(async () => {
         const fixture = genFixture({
           slug: 'statusline-survives-layout-case3',
           rolesExtra: ['mechanic'],
         });
-        run({
+        runSetup({
           cmd: RHACHET_BIN,
           args: ['init', '--hooks'],
           ...fixture,
@@ -368,8 +448,8 @@ describe('init.claude.status-line.survives-layout.integration', () => {
 
         then('the peer actor holds the status line, derived', () => {
           expect(fs.existsSync(out.peerFile)).toEqual(true);
-          expect(out.peerLayer.statusLine?.command).toContain(
-            'routeStatusLine',
+          expect(out.peerLayer.statusLine?.command).toEqual(
+            COMMAND_OF_STATUS_LINE,
           );
         });
 
@@ -387,8 +467,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
   given(
     '[case4] a repo with driver unlinked, driven through the real rhachet init --roles',
     () => {
-      // the contract a human meets: rhachet links driver, then runs its inits, and frames
-      // their output. the init's own suite calls bash direct; this pins the framed journey
+      // the framed journey a human meets: rhachet links driver, runs its inits, frames output
       const scene = useBeforeAll(async () =>
         genFixture({ slug: 'statusline-journey-case4', driverLinked: false }),
       );
@@ -422,8 +501,8 @@ describe('init.claude.status-line.survives-layout.integration', () => {
         });
 
         then('settings.of.repo.json holds the status line', () => {
-          expect(linked.after.repoLayer.statusLine?.command).toContain(
-            'routeStatusLine',
+          expect(linked.after.repoLayer.statusLine?.command).toEqual(
+            COMMAND_OF_STATUS_LINE,
           );
         });
 
@@ -431,6 +510,99 @@ describe('init.claude.status-line.survives-layout.integration', () => {
           expect(
             asFramedInitBlock({ stdout: linked.stdout, scene }),
           ).toMatchSnapshot('rhachet init --roles driver - status line bound');
+        });
+
+        // the bound command itself, run as the harness runs it, against the linked dist reader
+        const repaint = useBeforeAll(async () => {
+          // a branch bound to a route whose writers left a status file and a pointer
+          const branch = 'feat/status-line';
+          execSync(`git checkout -q -b ${branch}`, { cwd: scene.repo });
+          const route = '.behavior/v2026_10_26.feat';
+          const flat = sanitizeBranchName({ branch });
+          fs.mkdirSync(path.join(scene.repo, route, '.route'), {
+            recursive: true,
+          });
+          fs.writeFileSync(
+            path.join(scene.repo, route, '.route', `.bind.${flat}.flag`),
+            '',
+          );
+          fs.writeFileSync(
+            asRouteStatusLineFilePath({ cwd: scene.repo, route }),
+            '{"route":".behavior/v2026_10_26.feat","line":"🗿 1.vision, yield 🌾"}\n',
+          );
+          const pointerPath = asRouteStatusLinePointerPath({
+            cwd: scene.repo,
+            branch,
+          });
+          fs.mkdirSync(path.dirname(pointerPath), { recursive: true });
+          fs.writeFileSync(pointerPath, `${route}\n`);
+          // PATH holds only bash's own dir: the bound command names `bash`, as the harness runs it
+          const bashPath = execSync('command -v bash').toString().trim();
+          const result = spawnSync(bashPath, ['-c', COMMAND_OF_STATUS_LINE], {
+            cwd: scene.repo,
+            encoding: 'utf-8',
+            env: { PATH: path.dirname(bashPath) },
+            timeout: TIMEOUT_OF_RUN_MS,
+          });
+          if (result.error) throw result.error;
+
+          // the same command from a subdir: the relative reader path misses, the fallback speaks
+          const subDir = path.join(scene.repo, 'src', 'deep');
+          fs.mkdirSync(subDir, { recursive: true });
+          const drifted = spawnSync(bashPath, ['-c', COMMAND_OF_STATUS_LINE], {
+            cwd: subDir,
+            encoding: 'utf-8',
+            env: { PATH: path.dirname(bashPath) },
+            timeout: TIMEOUT_OF_RUN_MS,
+          });
+          if (drifted.error) throw drifted.error;
+          return {
+            exitCode: result.status,
+            stdout: result.stdout,
+            stderr: result.stderr,
+            drifted: {
+              exitCode: drifted.status,
+              stdout: drifted.stdout,
+              stderr: drifted.stderr,
+            },
+          };
+        });
+
+        then(
+          'from a subdir, the bound command names its fix, never a silent blank',
+          () => {
+            expect(repaint.drifted).toMatchObject({
+              exitCode: 0,
+              stdout:
+                '🗿 status line reader not found, rhx init --roles driver\n',
+            });
+            expect(repaint.drifted.stderr).toContain(PATH_OF_BOUND_READER);
+          },
+        );
+
+        then('what the subdir repaint shows matches the snapshot', () => {
+          expect({
+            exitCode: repaint.drifted.exitCode,
+            stdout: repaint.drifted.stdout,
+            stderr: asMaskedBashNotFound({ stderr: repaint.drifted.stderr }),
+          }).toMatchSnapshot(
+            'status line repaint after link, from a subdir - the reader path misses',
+          );
+        });
+
+        then('the bound command prints the line via the linked reader', () => {
+          expect(repaint).toMatchObject({
+            exitCode: 0,
+            stdout: '🗿 1.vision, yield 🌾\n',
+            stderr: '',
+          });
+          expect({
+            exitCode: repaint.exitCode,
+            stdout: repaint.stdout,
+            stderr: repaint.stderr,
+          }).toMatchSnapshot(
+            'status line repaint after link - the bound command prints the line',
+          );
         });
       });
 
@@ -459,10 +631,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
       });
 
       when('[t2] the human unlinks driver', () => {
-        // 🟡 rhachet runs a role's inits only when it links that role, never on unlink.
-        //    so the line stays in the repo layer, and the init's own removal branch is not
-        //    reached from here. this pins that gap, so a rhachet that grows an unlink hook
-        //    turns it red (dream: rhachet-unlink-runs-no-role-teardown)
+        // 🟡 pins a gap: rhachet runs no init on unlink (dream: rhachet-unlink-runs-no-role-teardown)
         const unlinked = useBeforeAll(async () => {
           const result = run({
             cmd: RHACHET_BIN,
@@ -470,7 +639,14 @@ describe('init.claude.status-line.survives-layout.integration', () => {
             cwd: scene.repo,
             home: scene.home,
           });
-          return { ...result, after: getBrainDirSettings(scene) };
+          // what the harness runs on the next repaint, from the repo root, as a human sees it
+          const repaint = run({
+            cmd: '/bin/bash',
+            args: ['-c', COMMAND_OF_STATUS_LINE],
+            cwd: scene.repo,
+            home: scene.home,
+          });
+          return { ...result, repaint, after: getBrainDirSettings(scene) };
         });
 
         then('it exits 0, and the driver link is gone', () => {
@@ -483,8 +659,30 @@ describe('init.claude.status-line.survives-layout.integration', () => {
         });
 
         then('the status line stays in settings.of.repo.json', () => {
-          expect(unlinked.after.repoLayer.statusLine?.command).toContain(
-            'routeStatusLine',
+          expect(unlinked.after.repoLayer.statusLine?.command).toEqual(
+            COMMAND_OF_STATUS_LINE,
+          );
+        });
+
+        then(
+          'the repaint finds no reader, and the line names the fix, never a blank',
+          () => {
+            expect(unlinked.repaint.stdout).toEqual(
+              '🗿 status line reader not found, rhx init --roles driver\n',
+            );
+            expect(unlinked.repaint.exitCode).toEqual(0);
+            // bash names the absent reader on stderr, which the harness does not render
+            expect(unlinked.repaint.stderr).toContain(PATH_OF_BOUND_READER);
+          },
+        );
+
+        then('what the repaint shows matches the snapshot', () => {
+          expect({
+            exitCode: unlinked.repaint.exitCode,
+            stdout: unlinked.repaint.stdout,
+            stderr: asMaskedBashNotFound({ stderr: unlinked.repaint.stderr }),
+          }).toMatchSnapshot(
+            'status line repaint after unlink - the reader is gone',
           );
         });
 
@@ -524,7 +722,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
           slug: 'statusline-journey-case5-malformed',
           driverLinked: false,
         });
-        run({
+        runSetup({
           cmd: RHACHET_BIN,
           args: ['init', '--hooks'],
           cwd: malformed.repo,
@@ -554,7 +752,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
           slug: 'statusline-journey-case5-linked',
           driverLinked: false,
         });
-        run({
+        runSetup({
           cmd: RHACHET_BIN,
           args: ['init', '--hooks'],
           cwd: linked.repo,
@@ -635,9 +833,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
         then(
           'both inits warn, named, and rhachet then refuses the linked layer itself',
           () => {
-            // the exit 2 of the run is rhachet's own refusal of a linked repo layer, printed
-            // after the inits ran (its boot.md step), and it names the same fix. the inits
-            // exit 0 and cannot make that refusal exit 0
+            // exit 2 is rhachet's own refusal of a linked layer, after the inits exit 0
             expect(cases.linked.result).toMatchObject({ exitCode: 2 });
             const framed = `${cases.linked.result.stdout}${cases.linked.result.stderr}`;
             expect(framed).toContain('status = not configured');
@@ -670,7 +866,7 @@ describe('init.claude.status-line.survives-layout.integration', () => {
 
         then('the bind ends in the repo layer, which holds the line', () => {
           const held = getBrainDirSettings(cases.upgrade.fixture).repoLayer;
-          expect(held.statusLine?.command).toContain('routeStatusLine');
+          expect(held.statusLine?.command).toEqual(COMMAND_OF_STATUS_LINE);
         });
 
         then('the framed init block matches the snapshot', () => {

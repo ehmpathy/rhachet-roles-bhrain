@@ -3,9 +3,12 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
+import { setRouteStatusLineFileOrWarn } from './statusLine/file/setRouteStatusLineFileOrWarn';
+import { assertRouteFound } from './stones/assertRouteFound';
 import { getAllStones } from './stones/getAllStones';
 import { getContentFromSource } from './stones/getContentFromSource';
 import { isValidStoneName } from './stones/isValidStoneName';
+import { setOneStoneFileExclusive } from './stones/setOneStoneFileExclusive';
 
 /**
  * .what = orchestrates stone creation in a route
@@ -24,17 +27,13 @@ export const stepRouteStoneAdd = async (input: {
   created: boolean;
   emit: { stdout: string } | null;
 }> => {
-  // validate route exists; the headline names the route, so a bag would only repeat it
-  try {
-    await fs.access(input.route);
-  } catch {
-    throw new BadRequestError(`route not found: ${input.route}`);
-  }
+  // validate route exists
+  await assertRouteFound({ route: input.route });
 
   // validate stone name format
   const validation = isValidStoneName({ name: input.stone });
   if (!validation.valid) {
-    throw new BadRequestError(validation.reason!, {});
+    throw new BadRequestError(validation.reason!, { stone: input.stone });
   }
 
   // extract content from source
@@ -89,8 +88,15 @@ export const stepRouteStoneAdd = async (input: {
     };
   }
 
-  // apply mode: create stone file
-  await fs.writeFile(stonePath, content, 'utf-8');
+  // apply mode: create stone file, exclusive, so a concurrent add of the same stone that
+  // passed the collision check above refuses here rather than overwrite the first
+  await setOneStoneFileExclusive({ stone: input.stone, stonePath, content });
+
+  // refresh the status file the status line reads: a new stone may be the next one
+  await setRouteStatusLineFileOrWarn({
+    route: input.route,
+    pointerAuthority: 'flag',
+  });
 
   const stdout = formatRouteStoneEmit({
     operation: 'route.stone.add',
