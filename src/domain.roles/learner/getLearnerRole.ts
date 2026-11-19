@@ -23,7 +23,7 @@ export const ROLE_LEARNER: Role = Role.build({
       // onTool: halt writes to claude native memory, redirect to durable capture.
       // registered as a skill invoked via `rhx <skill> --mode hook` (same pattern
       // as the driver role's route.bounce) — the memory.guard.sh wrapper captures
-      // stdin into RHACHET_STDIN to work around node -e stdin inheritance
+      // stdin and hands it to node on node's own stdin, never via an env var
       onTool: [
         {
           command: './node_modules/.bin/rhx memory.guard --mode hook',
