@@ -14,26 +14,32 @@ const genRouteWithLedger = async (input: {
   lines: string[];
 }): Promise<{ route: string }> => {
   const route = genTempDir({ slug: input.slug });
-  await fs.mkdir(path.join(route, '.fulcrums'), { recursive: true });
+  await fs.mkdir(path.join(route, '.route'), { recursive: true });
   await fs.writeFile(
-    path.join(route, '.fulcrums', FULCRUM_VERDICT_LEDGER_NAME),
+    path.join(route, '.route', FULCRUM_VERDICT_LEDGER_NAME),
     `${input.lines.join('\n')}\n`,
   );
   return { route };
 };
 
-const LINE_F44 = JSON.stringify({
+const ROW_F44 = {
   case: 'F44',
   ruled: 'upheld',
   on: '2026-11-17',
   seen: 'hash-read',
-});
-const LINE_F47 = JSON.stringify({
+  held: ['1.vision:rules:r001.rules.md:blocker.1'],
+  after: 1,
+};
+const ROW_F47 = {
   case: 'F47',
   ruled: 'conceded',
   on: '2026-11-17',
   seen: 'hash-read',
-});
+  held: [],
+  after: 0,
+};
+const LINE_F44 = JSON.stringify(ROW_F44);
+const LINE_F47 = JSON.stringify(ROW_F47);
 
 // .note = each result rides in an object: `useThen` holds a record, so a bare array or error
 //         would lose its shape
@@ -49,15 +55,7 @@ describe('getAllFulcrumVerdictRows', () => {
       });
 
       then('each row is returned, blank lines skipped', () => {
-        expect(result.rows).toEqual([
-          { case: 'F44', ruled: 'upheld', on: '2026-11-17', seen: 'hash-read' },
-          {
-            case: 'F47',
-            ruled: 'conceded',
-            on: '2026-11-17',
-            seen: 'hash-read',
-          },
-        ]);
+        expect(result.rows).toEqual([ROW_F44, ROW_F47]);
       });
     });
   });
@@ -116,14 +114,7 @@ describe('getAllFulcrumVerdictRows', () => {
       const result = useThen('it is refused', async () => {
         const scene = await genRouteWithLedger({
           slug: 'verdict-ledger-shape',
-          lines: [
-            JSON.stringify({
-              case: 'F44',
-              ruled: 'waived',
-              on: '2026-11-17',
-              seen: 'hash-read',
-            }),
-          ],
+          lines: [JSON.stringify({ ...ROW_F44, ruled: 'waived' })],
         });
         const error = await getError(
           getAllFulcrumVerdictRows({ route: scene.route }),
@@ -164,4 +155,26 @@ describe('getAllFulcrumVerdictRows', () => {
       );
     });
   });
+
+  given(
+    '[case6] a ledger row with no record of the disputes it ruled over',
+    () => {
+      when('[t0] the rows are read', () => {
+        then(
+          '🔴 the row is never trusted: a verdict must bind to the disputes the human saw',
+          async () => {
+            const { held: _held, ...rowSansHeld } = ROW_F44;
+            const scene = await genRouteWithLedger({
+              slug: 'verdict-ledger-unheld',
+              lines: [JSON.stringify(rowSansHeld)],
+            });
+            const error = await getError(
+              getAllFulcrumVerdictRows({ route: scene.route }),
+            );
+            expect(error.message).toContain('unreadable row at line 1');
+          },
+        );
+      });
+    },
+  );
 });

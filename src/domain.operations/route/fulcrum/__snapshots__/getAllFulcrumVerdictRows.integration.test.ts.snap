@@ -2,14 +2,16 @@
 
 exports[`getAllFulcrumVerdictRows given: [case3] a ledger with a line that is not json when: [t0] the rows are read then: the refusal a human reads is pinned 1`] = `
 "BadRequestError: fulcrum verdict ledger holds an unreadable row at line 2
-   ├─ ledger: <route>/.fulcrums/verdicts.jsonl
+   ├─ ledger: <route>/.route/fulcrum.verdicts.jsonl
    ├─ line: {"case":"F47",
-   └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger"
+   └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+      └─ the ledger sits under the route seal, so a driver needs a human's rhx route.mutate grant allow first"
 `;
 
 exports[`getAllFulcrumVerdictRows given: [case4] a ledger row with a verdict outside its closed set when: [t0] the rows are read then: the refusal a human reads is pinned 1`] = `
 "BadRequestError: fulcrum verdict ledger holds an unreadable row at line 1
-   ├─ ledger: <route>/.fulcrums/verdicts.jsonl
-   ├─ line: {"case":"F44","ruled":"waived","on":"2026-11-17","seen":"hash-read"}
-   └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger"
+   ├─ ledger: <route>/.route/fulcrum.verdicts.jsonl
+   ├─ line: {"case":"F44","ruled":"waived","on":"2026-11-17","seen":"hash-read","held":["1.vision:rules:r001.rules.md:blocker.1"],"after":1}
+   └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+      └─ the ledger sits under the route seal, so a driver needs a human's rhx route.mutate grant allow first"
 `;

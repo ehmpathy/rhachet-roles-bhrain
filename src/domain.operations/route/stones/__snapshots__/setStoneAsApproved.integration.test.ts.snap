@@ -2,14 +2,16 @@
 
 exports[`setStoneAsApproved, at the dispute gate given: [case1] a route with an open dispute that owes the human when: [t0] a human approves the stone then: the refusal a human reads is pinned 1`] = `
 "BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
-   ├─ 1 dispute owes your verdict
+   ├─ 1 dispute owes a human verdict
+   │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
    │  └─ F44 · rename-table · 70%
+   │     ├─ ground: wrong · 70%
    │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
    │     ├─ lean: x
    │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
    │
-   └─ rule on each, repair each unreadable fulcrum, then approve
-      ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+   └─ rule on each owed dispute, repair any unreadable fulcrum, then approve
+      ├─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
       └─ rhx route.stone.set --stone 1.vision --as approved
 
 {
@@ -20,14 +22,16 @@ exports[`setStoneAsApproved, at the dispute gate given: [case1] a route with an 
 
 exports[`setStoneAsApproved, at the dispute gate given: [case1] a route with an open dispute that owes the human when: [t1] the dispute was raised after the human approved then: the re-approval refusal is pinned 1`] = `
 "BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
-   ├─ 1 dispute owes your verdict
+   ├─ 1 dispute owes a human verdict
+   │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
    │  └─ F44 · rename-table · 70%
+   │     ├─ ground: wrong · 70%
    │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
    │     ├─ lean: x
    │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
    │
-   └─ rule on each, repair each unreadable fulcrum, then approve
-      ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+   └─ rule on each owed dispute, repair any unreadable fulcrum, then approve
+      ├─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
       └─ rhx route.stone.set --stone 1.vision --as approved
 
 {

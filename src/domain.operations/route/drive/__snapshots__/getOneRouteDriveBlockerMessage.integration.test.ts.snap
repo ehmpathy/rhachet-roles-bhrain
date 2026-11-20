@@ -9,8 +9,10 @@ exports[`getOneRouteDriveBlockerMessage given: [case2b] the approval halt, with 
    │  └─ stone = 1.vision
    │
    └─ halted, human approval required
-      ├─ 1 dispute owes your verdict
+      ├─ 1 dispute owes a human verdict
+      │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
       │  └─ F44 · rename-table · 70%
+      │     ├─ ground: wrong · 70%
       │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
       │     ├─ lean: x
       │     ├─ raised on: 0.prior
@@ -18,11 +20,13 @@ exports[`getOneRouteDriveBlockerMessage given: [case2b] the approval halt, with 
       │
       ├─ 1 ruled
       │  └─ F47 · cache-scope · conceded
+      │     ├─ ruled on: 2026-11-17
       │     ├─ repair owed: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
-      │     └─ next: the driver repairs it in the current diff, then runs rhx route.drive
+      │     ├─ next: the driver repairs it in the current diff, then a human approves the stone after it
+      │     └─ 🟡 leave the fulcrum file as is; an edit to it reopens the verdict
       │
-      ├─ please ask your human to rule on each, then approve
-      │  ├─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+      ├─ please ask your human to rule on each, then approve once the repair lands
+      │  ├─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
       │  └─ rhx route.stone.set --stone 1.vision --as approved
       │
       └─ once they do, run
@@ -40,9 +44,10 @@ exports[`getOneRouteDriveBlockerMessage given: [case2c] the approval halt, with 
    └─ halted, human approval required
       ├─ the dispute record cannot be read; approval is refused until it is repaired
       │  └─ fulcrum verdict ledger holds an unreadable row at line 1
-      │     ├─ ledger: <route>/.fulcrums/verdicts.jsonl
+      │     ├─ ledger: <route>/.route/fulcrum.verdicts.jsonl
       │     ├─ line: {"case": "F44", "ruled": "upheld"
       │     └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+      │        └─ the ledger sits under the route seal, so a driver needs a human's rhx route.mutate grant allow first
       │
       ├─ first, the driver repairs each fault above; approval is refused until then
       │

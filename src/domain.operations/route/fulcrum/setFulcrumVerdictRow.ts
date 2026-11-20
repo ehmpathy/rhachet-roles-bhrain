@@ -3,9 +3,11 @@ import * as path from 'path';
 
 import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
 
+import { findsertRouteGitignore } from '../gitignore/findsertRouteGitignore';
 import { FULCRUM_VERDICT_LEDGER_NAME } from './FULCRUM_VERDICT_LEDGER_NAME';
 import { getAllFulcrumVerdictRows } from './getAllFulcrumVerdictRows';
 import { getOneFulcrumVerdictRowLatest } from './getOneFulcrumVerdictRowLatest';
+import { isFulcrumVerdictRowOverDisputes } from './isFulcrumVerdictRowOverDisputes';
 
 /**
  * .what = findserts one verdict row into the route's fulcrum verdict ledger
@@ -18,20 +20,20 @@ export const setFulcrumVerdictRow = async (input: {
   route: string;
   row: FulcrumVerdictRow;
 }): Promise<{ path: string; outcome: 'appended' | 'found' }> => {
-  const ledger = path.join(
-    input.route,
-    '.fulcrums',
-    FULCRUM_VERDICT_LEDGER_NAME,
-  );
+  const ledger = path.join(input.route, '.route', FULCRUM_VERDICT_LEDGER_NAME);
 
   // a verdict already on record as the newest for its case is found, never appended twice
   const rows = await getAllFulcrumVerdictRows({ route: input.route });
   const latest = getOneFulcrumVerdictRowLatest({ case: input.row.case, rows });
-  if (latest?.ruled === input.row.ruled && latest.seen === input.row.seen)
+  if (
+    latest?.ruled === input.row.ruled &&
+    latest.seen === input.row.seen &&
+    isFulcrumVerdictRowOverDisputes({ row: latest, disputes: input.row.held })
+  )
     return { path: ledger, outcome: 'found' };
 
-  // append the new verdict
-  await fs.mkdir(path.dirname(ledger), { recursive: true });
+  // append the new verdict; the route gitignore keeps the ledger tracked
+  await findsertRouteGitignore({ route: input.route });
   await fs.appendFile(ledger, `${JSON.stringify(input.row)}\n`);
   return { path: ledger, outcome: 'appended' };
 };

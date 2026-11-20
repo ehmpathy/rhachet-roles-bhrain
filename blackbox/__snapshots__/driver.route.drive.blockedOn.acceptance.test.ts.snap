@@ -89,7 +89,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
    │  │     │
-   │  │     └─ after human approves, run
+   │  │     └─ once they do, run
    │  │        └─ rhx route.stone.set --stone 1.vision --as passed
    │  │
    │  └─
@@ -137,7 +137,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
    │  └─ stone = 1.vision
    │
    └─ halted, human approval required
-      ├─ please ask a human to
+      ├─ please ask your human to
       │  └─ rhx route.stone.set --stone 1.vision --as approved
       │
       └─ once they do, run
@@ -393,7 +393,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
    │  │     │
-   │  │     └─ after human approves, run
+   │  │     └─ once they do, run
    │  │        └─ rhx route.stone.set --stone 3.blueprint --as passed
    │  │
    │  └─
@@ -549,7 +549,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
    │  │     │
-   │  │     └─ after human approves, run
+   │  │     └─ once they do, run
    │  │        └─ rhx route.stone.set --stone 3.blueprint --as passed
    │  │
    │  └─
@@ -616,7 +616,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  └─ stone = 3.blueprint
    │
    └─ halted, human approval required
-      ├─ please ask a human to
+      ├─ please ask your human to
       │  └─ rhx route.stone.set --stone 3.blueprint --as approved
       │
       └─ once they do, run

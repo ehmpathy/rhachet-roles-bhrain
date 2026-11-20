@@ -16,10 +16,12 @@ export const assertRouteFulcrumDisputesRuled = async (input: {
     route: input.route,
     refusal: {
       headline: `route.stone.set --as ${input.grant}: refused, disputes owe a verdict`,
-      closer: `rule on each, repair each unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
+      closer: `rule on each owed dispute, repair any unreadable fulcrum, then ${input.grant === 'approved' ? 'approve' : 'force'}`,
       commandsAfter: [
         `${asRouteStoneSetCommandHead({ stone: input.stone })} --as ${input.grant}`,
       ],
     },
+    // the approval is what answers a conceded repair, so it is never refused for one
+    repairs: null,
     metadata: { stone: input.stone },
   });

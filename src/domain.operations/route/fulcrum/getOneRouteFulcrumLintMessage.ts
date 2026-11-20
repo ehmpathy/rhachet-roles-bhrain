@@ -155,7 +155,7 @@ const asFulcrumLintBlockForged = (input: {
     ...(input.entry.frontmatter.owed === 'human'
       ? [
           `   └─ fix: set \`verdict: null\` and \`status: open\`, then ask a human to run`,
-          `      └─ rhx route.fulcrum.rule --case ${input.entry.frontmatter.case} --as upheld|conceded`,
+          `      └─ rhx route.fulcrum.rule --case ${input.entry.frontmatter.case} --as <upheld|conceded>`,
         ]
       : [
           `   └─ fix: set \`verdict: null\`; a fulcrum that owes ${input.entry.frontmatter.owed} takes no human verdict`,

@@ -381,7 +381,7 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
     input.absorption === 'disputed'
       ? input.owed === 'reflect'
         ? `the drive goes on; the misread is owed upstream as a reflection`
-        : `the drive goes on; a human rules it at the next human gate`
+        : `the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none`
       : buysRound
         ? `the hold stands. ${STEP_FIX} the ${input.concern.kind}, buy the round, then ${STEP_REARRIVE}`
         : spent

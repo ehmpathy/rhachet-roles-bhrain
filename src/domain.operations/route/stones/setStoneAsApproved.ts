@@ -54,21 +54,8 @@ export const setStoneAsApproved = async (
       grant: 'approved',
     });
 
-  // human already approved -> idempotent success (no-op)
-  if (isHuman && approvalFound) {
-    return {
-      approved: true,
-      emit: {
-        stdout: formatRouteStoneEmit({
-          operation: 'route.stone.set',
-          stone: stoneMatched.name,
-          action: 'approved',
-        }),
-      },
-    };
-  }
-
-  // human not yet approved -> approve
+  // human -> approve; the writer is a findsert, so a re-approval with naught new is a no-op, and
+  // a re-approval after a fulcrum verdict lands as the new act it is
   if (isHuman) {
     await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
     return {

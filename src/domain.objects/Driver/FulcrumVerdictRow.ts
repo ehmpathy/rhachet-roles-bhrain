@@ -14,4 +14,15 @@ export interface FulcrumVerdictRow {
    * verdict only while the entry still hashes to it, so an edit after the verdict re-opens it
    */
   seen: string;
+  /**
+   * the key of each live dispute that cited the entry when the human ruled (`asFulcrumDisputeKey`).
+   * a row proves its verdict only over these disputes: a later dispute that cites the same entry,
+   * with its text unchanged, is a concern no human saw, so it re-opens the verdict
+   */
+  held: string[];
+  /**
+   * how many rows the passage log held when the human ruled. only an approval at or past this
+   * index can follow the verdict, so an approval given before a concession never reads as its answer
+   */
+  after: number;
 }

@@ -127,23 +127,32 @@ if [[ "$TOOL_NAME" == "Bash" && -n "$COMMAND" ]]; then
       fi
     fi
 
-    # check for .route/ metadata subdir paths (not routes located at .route/)
-    if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "${ROUTE_DIR}/\.route/"; then
-      TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']*${ROUTE_DIR}/\.route/[^ \"']*" | head -n1)
-      MATCH_REASON=".route/**"
-    fi
   fi
 
-  # check for write commands on metadata subdir (not routes located at .route/)
-  if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "(echo.*>|printf.*>|tee|sed\s+-i)"; then
-    if echo "$COMMAND" | grep -qE "${ROUTE_DIR}/\.route/"; then
-      TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']*${ROUTE_DIR}/\.route/[^ \"']*" | head -n1)
-      MATCH_REASON=".route/**"
-    fi
+  # check for ANY command that names the metadata subdir, or the verdict ledger, whatever its verb
+  # .why = a list of write verbs is a denylist a new verb walks past (jq >, node -e, python -c,
+  #        dd of=, a cd into the dir). the driver reaches .route/ only through rhx skills, which
+  #        take the route and never name the subdir, so to name it is to reach around them.
+  #        the match is `.route` as a path segment anywhere — never anchored to the bound route
+  #        dir — so a `cd <route> && … .route/passage.jsonl`, a glob, or a bare `cd <route>/.route`
+  #        is caught as surely as the full path (r011 i008 blocker.2). a segment starts at the
+  #        start, a space, a slash, a quote, `=`, or `:`, and ends at a slash, a space, a quote, or
+  #        the end, so a word like `.routes` or `x.route` reads as no segment
+  if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "(^|[[:space:]/\"'=:])\.route([/[:space:]\"']|$)|fulcrum\.verdicts\.jsonl"; then
+    TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^[:space:]\"']*(\.route|fulcrum\.verdicts\.jsonl)[^[:space:]\"']*" | head -n1)
+    MATCH_REASON=".route/**"
   fi
 
 else
   # file-based tools (Read/Write/Edit)
+  # the harness sends an absolute file_path; the anchored match below reads a repo-relative one,
+  # so derive it relative to the gitroot (this hook's cwd), symlinks followed on both sides, and
+  # cut a lead `./`. where realpath cannot relativize, cut the cwd prefix as named
+  if [[ "$FILE_PATH" == /* ]]; then
+    FILE_PATH_RELATIVE=$(realpath -m --relative-to="$(pwd -P)" "$FILE_PATH" 2>/dev/null || echo "")
+    FILE_PATH="${FILE_PATH_RELATIVE:-${FILE_PATH#"$PWD"/}}"
+  fi
+  FILE_PATH="${FILE_PATH#./}"
   if [[ -n "$FILE_PATH" ]]; then
     # check if file is within bound route
     if echo "$FILE_PATH" | grep -q "$ROUTE_DIR"; then

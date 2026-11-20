@@ -1,5 +1,6 @@
-# ignore all except passage.jsonl and .bind flags
+# ignore all except passage.jsonl, the fulcrum verdict ledger, and .bind flags
 *
 !.gitignore
 !passage.jsonl
+!fulcrum.verdicts.jsonl
 !.bind.*

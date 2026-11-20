@@ -3,7 +3,7 @@ case: F11
 rework: clean
 ground: wrong
 confidence: 0.80
-status: held
+status: superseded
 owed: none
 holds: []
 lean: the verdict ledger lives at .fulcrums/verdicts.jsonl, tracked, beside the yaml it proves
@@ -40,3 +40,9 @@ as the review of the diff that wrote it. that holds for any file-based proof. 80
 ## .where
 
 `src/domain.operations/route/fulcrum/getAllFulcrumVerdictRows.ts` · `setFulcrumVerdictRow.ts`.
+
+## .superseded by
+
+F17. the ledger is tracked still, but sits at `$route/.route/fulcrum.verdicts.jsonl` under the
+route seal, allowlisted by the route gitignore — so it travels with the claim and the driver's own
+tools cannot write it.

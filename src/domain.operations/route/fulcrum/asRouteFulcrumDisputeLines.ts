@@ -4,6 +4,8 @@ import type {
   RouteFulcrumDisputeEntry,
   RouteFulcrumDisputeState,
 } from './asRouteFulcrumDisputeState';
+import { asRouteFulcrumVerdictCommand } from './asRouteFulcrumVerdictCommand';
+import { getAllRouteFulcrumRepairsOwed } from './getAllRouteFulcrumRepairsOwed';
 
 /**
  * .what = renders a route's dispute state as treestruct branches, for a human gate
@@ -19,19 +21,29 @@ export const asRouteFulcrumDisputeLines = (input: {
   const { owedHuman, ruled, unreadable, reflected, forged, reopened } =
     input.state;
   const forgedCases = new Set(forged.map((entry) => entry.frontmatter.case));
-  const reopenedCases = new Set(
-    reopened.map((entry) => entry.frontmatter.case),
+  const reopenedBy = new Map(
+    reopened.map((entry) => [entry.frontmatter.case, entry.by]),
+  );
+  const repairOwedCases = new Set(
+    getAllRouteFulcrumRepairsOwed({ state: input.state }).map(
+      (entry) => entry.frontmatter.case,
+    ),
   );
 
   // disputes that owe the human a verdict — each one holds approval
   const owedLines = owedHuman.length
     ? [
-        `├─ ${owedHuman.length} ${owedHuman.length === 1 ? 'dispute owes' : 'disputes owe'} your verdict`,
+        `├─ ${owedHuman.length} ${owedHuman.length === 1 ? 'dispute owes' : 'disputes owe'} a human verdict`,
+        // the gloss at the decision, so the human need not open --help to read the two words
+        `│  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands`,
         ...asEntryBranches({
           entries: owedHuman,
           asHead: (entry) =>
             `${entry.frontmatter.case} · ${entry.title} · ${asPercent({ confidence: entry.frontmatter.confidence })}`,
           asLeaves: (entry) => [
+            // the ground on the line, so a wrong dispute tagged dirty to dodge a reflection is read
+            // as such by the human at the gate (vision case=7)
+            `ground: ${entry.frontmatter.ground} · ${asPercent({ confidence: entry.frontmatter.confidence })}`,
             `holds: ${asHoldsText({ entry })}`,
             `lean: ${entry.frontmatter.lean}`,
             ...(entry.raisedOn.length
@@ -42,9 +54,19 @@ export const asRouteFulcrumDisputeLines = (input: {
                   `🟡 its yaml carries a verdict no human lever wrote, read as unruled`,
                 ]
               : []),
-            ...(reopenedCases.has(entry.frontmatter.case)
+            ...(reopenedBy.get(entry.frontmatter.case) === 'edit'
               ? [
                   `🟡 edited since a human ruled it ${entry.frontmatter.verdict?.ruled ?? ''}; read as unruled`,
+                ]
+              : []),
+            ...(reopenedBy.get(entry.frontmatter.case) === 'dispute'
+              ? [
+                  `🟡 disputed again since a human ruled it ${entry.frontmatter.verdict?.ruled ?? ''}; the verdict covers only the disputes they saw`,
+                ]
+              : []),
+            ...(entry.owedEditedSinceDispute
+              ? [
+                  `🟡 edited since the dispute to read as a reflection; the dispute pinned it to you`,
                 ]
               : []),
             `read: ${entry.path}`,
@@ -63,13 +85,19 @@ export const asRouteFulcrumDisputeLines = (input: {
           entries: ruled,
           asHead: (entry) =>
             `${entry.frontmatter.case} · ${entry.title} · ${asRuledText({ entry })}`,
-          asLeaves: (entry) =>
-            entry.frontmatter.verdict?.ruled === 'conceded' && !entry.approvedOn
+          asLeaves: (entry) => [
+            // the date a human ruled, so a human at a later gate knows the verdict as their own
+            `ruled on: ${entry.frontmatter.verdict?.at ?? 'unknown'}`,
+            ...(repairOwedCases.has(entry.frontmatter.case)
               ? [
                   `repair owed: ${asHoldsText({ entry })}`,
-                  `next: the driver repairs it in the current diff, then runs rhx route.drive`,
+                  // one next step, the same the passage refusal names: no command tells the driver
+                  // a repair landed, so the human's approval after it is what closes the debt
+                  `next: the driver repairs it in the current diff, then a human approves the stone after it`,
+                  `🟡 leave the fulcrum file as is; an edit to it reopens the verdict`,
                 ]
-              : [],
+              : []),
+          ],
         }),
         `│`,
       ]
@@ -86,15 +114,22 @@ export const asRouteFulcrumDisputeLines = (input: {
       ]
     : [];
 
-  // disputes owed upstream — informational, never hold approval
+  // disputes owed upstream — informational, never hold approval. a human may still rule one, so
+  // each carries what a verdict reads and the lever that rules it
   const reflectedLines = reflected.length
     ? [
         `├─ ${reflected.length} reflected upstream, informational`,
-        ...asLeafRows({
-          rows: reflected.map(
-            (entry) =>
-              `${entry.frontmatter.case} · ${entry.title} · ${asPercent({ confidence: entry.frontmatter.confidence })} · reflect: ${entry.frontmatter.reflect ?? '(none)'}`,
-          ),
+        ...asEntryBranches({
+          entries: reflected,
+          asHead: (entry) =>
+            `${entry.frontmatter.case} · ${entry.title} · ${asPercent({ confidence: entry.frontmatter.confidence })}`,
+          asLeaves: (entry) => [
+            `reflect: ${entry.frontmatter.reflect ?? '(none)'}`,
+            `holds: ${asHoldsText({ entry })}`,
+            `lean: ${entry.frontmatter.lean}`,
+            `read: ${entry.path}`,
+            `to rule it anyway: ${asRouteFulcrumVerdictCommand({ entry })}`,
+          ],
         }),
         `│`,
       ]
@@ -104,14 +139,15 @@ export const asRouteFulcrumDisputeLines = (input: {
 };
 
 /**
- * .what = renders a ruled entry's verdict: upheld, conceded and owed, or conceded and answered
- * .why = a conceded verdict whose repair an approval already answered must not read as a debt at
- *        every later gate, or the human learns to skip the line
+ * .what = renders a ruled entry's verdict: upheld, conceded, or conceded and later approved over
+ * .why = a conceded verdict a human approved over must not read as a debt at every later gate, or
+ *        the human learns to skip the line. but no mechanism checks that the repair landed, so
+ *        the line states only the fact on record — an approval followed — and never claims a repair
  */
 const asRuledText = (input: { entry: RouteFulcrumDisputeEntry }): string => {
   if (input.entry.frontmatter.verdict?.ruled !== 'conceded') return 'upheld';
   return input.entry.approvedOn
-    ? `conceded, repair answered at ${input.entry.approvedOn} approval`
+    ? `conceded, approved over at ${input.entry.approvedOn}`
     : 'conceded';
 };
 

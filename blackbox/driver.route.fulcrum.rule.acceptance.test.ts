@@ -46,7 +46,7 @@ describe('driver.route.fulcrum.rule.acceptance', () => {
       then('the refusal names the fix', () => {
         expect(result.stderr).toContain('--case is required');
         expect(result.stderr).toContain(
-          'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
         );
       });
 
@@ -73,7 +73,7 @@ describe('driver.route.fulcrum.rule.acceptance', () => {
       then('the refusal names both verdicts and the fix', () => {
         expect(result.stderr).toContain('--as must be upheld or conceded');
         expect(result.stderr).toContain(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
       });
 

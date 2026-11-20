@@ -3049,8 +3049,9 @@ describe('stepRouteDrive.integration', () => {
           slug: 'drive-int-case37-ledger',
           fulcrum: FULCRUM_VALID,
         });
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
         await fs.writeFile(
-          path.join(tempDir, '.fulcrums', 'verdicts.jsonl'),
+          path.join(tempDir, '.route', 'fulcrum.verdicts.jsonl'),
           'not json\n',
         );
         return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });

@@ -81,6 +81,9 @@ const asBlockedDisposition = (input: {
   // an approval judge waits on a human to sign
   if (input.blocker === 'approval') return { of: 'halt', why: 'approval' };
 
+  // a dispute at a gateless last stone waits on a human verdict, the same wait as an approval
+  if (input.blocker === 'dispute.owed') return { of: 'halt', why: 'approval' };
+
   // a legacy exhausted blocker waits on a human to approve or extend
   if (input.blocker === 'review.peer.exhausted')
     return { of: 'halt', why: 'exhausted' };

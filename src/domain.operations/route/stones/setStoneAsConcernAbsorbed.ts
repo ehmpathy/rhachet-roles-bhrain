@@ -7,6 +7,7 @@ import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard'
 import { asUrgentHarmSet } from '../asUrgentHarmSet';
 import { asFulcrumOwed } from '../fulcrum/asFulcrumOwed';
 import { assertFulcrumFitsDispute } from '../fulcrum/assertFulcrumFitsDispute';
+import { assertFulcrumPathOnRoute } from '../fulcrum/assertFulcrumPathOnRoute';
 import { asGuardArtifactIteration } from '../guard/artifact/asGuardArtifactIteration';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asAbsorptionIsAnswered } from '../guard/review/peer/asAbsorptionIsAnswered';
@@ -142,13 +143,18 @@ export const setStoneAsConcernAbsorbed = async (input: {
     });
 
   // the fulcrum path is checked BEFORE any state moves, so a refusal mutates naught
+  const repoRoot = await getRepoRootWithFallback({ from: input.route });
   const fulcrumPathResolved = input.why
-    ? assertFulcrumPathExists({
-        why: input.why,
-        route: input.route,
-        repoRoot: await getRepoRootWithFallback({ from: input.route }),
-      })
+    ? assertFulcrumPathExists({ why: input.why, route: input.route, repoRoot })
     : null;
+
+  // a dispute's fulcrum must live on this route: every gate reads the entry by case id from here
+  if (input.as === 'disputed' && fulcrumPathResolved)
+    assertFulcrumPathOnRoute({
+      pathResolved: fulcrumPathResolved,
+      route: input.route,
+      repoRoot,
+    });
 
   // the shared readiness computation, scoped to this one reviewer. it reports every slug
   // that has SPOKEN, which the slug check reads — one corpus read rather than two
@@ -256,6 +262,11 @@ export const setStoneAsConcernAbsorbed = async (input: {
         })
       : null;
 
+  // who the fulcrum owes, as verified here; the row pins it, so a later edit cannot reroute it
+  const owedOfDispute = fulcrumOfDispute
+    ? asFulcrumOwed(fulcrumOfDispute)
+    : null;
+
   // R3 — a contrary stance on this concern of this given is refused
   asAbsorptionIsNotContrary({
     absorptions,
@@ -301,6 +312,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
         // whatever process and from whatever route path it reads (asReviewGivenKey)
         given: asReviewGivenKey({ path: given.pathGiven }),
         fulcrum: input.why,
+        owed: owedOfDispute ?? undefined,
         severity,
         reason: `${input.as} review.peer: ${slug} ${about}${
           severity ? ` (${severity})` : ''
@@ -356,7 +368,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
         slug,
         concern,
         why: input.why ?? null,
-        owed: fulcrumOfDispute ? asFulcrumOwed(fulcrumOfDispute) : null,
+        owed: owedOfDispute,
         severity: severity ?? null,
         meter: {
           level: reviewConfigured?.level ?? LEVEL_OF_UNMAPPED_REVIEW,

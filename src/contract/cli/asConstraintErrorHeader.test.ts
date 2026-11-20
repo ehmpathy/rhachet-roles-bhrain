@@ -87,7 +87,7 @@ const TEST_CASES: Array<{
         [
           '--as must be upheld or conceded, not maybe',
           `   ├─ upheld: the driver's call stands`,
-          '   └─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          '   └─ fix: rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
           '      └─ a child branch',
         ].join('\n'),
       ),
@@ -97,7 +97,7 @@ const TEST_CASES: Array<{
         '✋ ConstraintError: --as must be upheld or conceded, not maybe',
         '',
         `├─ upheld: the driver's call stands`,
-        '└─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+        '└─ fix: rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         '   └─ a child branch',
       ].join('\n'),
     },

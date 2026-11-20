@@ -1,6 +1,7 @@
 import { BadRequestError } from 'helpful-errors';
 
 import { asRouteFulcrumDisputeRefusalLines } from './asRouteFulcrumDisputeRefusalLines';
+import { getAllRouteFulcrumRepairsOwed } from './getAllRouteFulcrumRepairsOwed';
 import { getAllRouteFulcrumVerdictCommands } from './getAllRouteFulcrumVerdictCommands';
 import { getOneRouteFulcrumDisputeState } from './getOneRouteFulcrumDisputeState';
 import { isRouteFulcrumDisputeStateBlocked } from './isRouteFulcrumDisputeStateBlocked';
@@ -22,21 +23,44 @@ export const assertRouteFulcrumDisputeStateUnblocked = async (input: {
      */
     commandsAfter: string[];
   };
+  /**
+   * the refusal when every dispute is ruled but a conceded repair awaits an approval after it, or
+   * null where the act itself is what answers the repair (the approval grant)
+   */
+  repairs: {
+    headline: string;
+    closer: string;
+    commandsAfter: string[];
+  } | null;
   metadata: Record<string, string>;
 }): Promise<void> => {
   const state = await getOneRouteFulcrumDisputeState({ route: input.route });
-  if (!isRouteFulcrumDisputeStateBlocked({ state })) return;
-  const lines = asRouteFulcrumDisputeRefusalLines({
-    headline: input.refusal.headline,
-    state,
-    closer: input.refusal.closer,
-    commands: [
-      ...getAllRouteFulcrumVerdictCommands({ state }),
-      ...input.refusal.commandsAfter,
-    ],
-  });
-  throw new BadRequestError(lines.join('\n'), {
-    route: input.route,
-    ...input.metadata,
-  });
+
+  // a dispute that owes the human, or an unreadable entry, refuses first
+  if (isRouteFulcrumDisputeStateBlocked({ state }))
+    throw new BadRequestError(
+      asRouteFulcrumDisputeRefusalLines({
+        headline: input.refusal.headline,
+        state,
+        closer: input.refusal.closer,
+        commands: [
+          ...getAllRouteFulcrumVerdictCommands({ state }),
+          ...input.refusal.commandsAfter,
+        ],
+      }).join('\n'),
+      { route: input.route, ...input.metadata },
+    );
+
+  // a conceded repair no approval has followed refuses passage: an approval granted before the
+  // verdict never saw the repair (F6), so the human approves once more after it lands
+  if (input.repairs && getAllRouteFulcrumRepairsOwed({ state }).length)
+    throw new BadRequestError(
+      asRouteFulcrumDisputeRefusalLines({
+        headline: input.repairs.headline,
+        state,
+        closer: input.repairs.closer,
+        commands: input.repairs.commandsAfter,
+      }).join('\n'),
+      { route: input.route, ...input.metadata },
+    );
 };

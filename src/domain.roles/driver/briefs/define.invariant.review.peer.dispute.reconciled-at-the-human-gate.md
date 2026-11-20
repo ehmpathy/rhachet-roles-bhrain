@@ -59,7 +59,7 @@ the incident rebuilt.
   stone 3 lands at the gate on stone 7
 - a reflect-owed dispute shows on the halt apart, as information. it never blocks approval
 - it does not decide the verdict. the human does, through the human-only lever
-  `rhx route.fulcrum.rule --case <id> --as upheld|conceded`
+  `rhx route.fulcrum.rule --case <id> --as <upheld|conceded>`
 - a conceded verdict on a stone already passed is repaired in the current diff. a rewind of the old
   stone would void every approval at or after it, the gate the human is at included
 
@@ -109,8 +109,9 @@ human reads a table of leans, not the driver's prose.
 - a route with no human gate whose last stone passes with an open `owed: human` dispute = **blocker**
 - a refusal that names case ids and withholds the lines = **blocker**
 - a human-gated stone that passes with an open `owed: human` dispute raised after its approval =
-  **blocker**. the gate a human opened does not wave a later dispute through; the passage holds
-  until a human rules it (`assertRouteGatedStoneDisputesRuled`)
+  **blocker**. the gate a human opened does not wave a later dispute through: the approval falls
+  out of force until a human rules it, so the `approved?` judge halts and the drive shows the
+  human what to rule (`isStoneApprovalInForce`, read by `getOneStoneGuardApproval`)
 - enforcer: the approval refusal on `--as approved` and `--as forced` (`setStoneAsApproved.ts`,
   `setStoneAsForced.ts`), which reads the fulcrum frontmatter (`owed: human`, `verdict: null`). the
   clamp: a human gate with a dispute at 70% halts, names it, and refuses approval until ruled; with

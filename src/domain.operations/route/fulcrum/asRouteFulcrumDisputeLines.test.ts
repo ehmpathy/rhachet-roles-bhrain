@@ -17,11 +17,14 @@ const genEntry = (input: {
   frontmatter: Partial<FulcrumFrontmatter>;
   raisedOn: string[];
   approvedOn?: string;
+  owedEditedSinceDispute?: boolean;
 }): RouteFulcrumDisputeEntry => ({
   path: `.fulcrums/inventory.of=fulcrums.case=${input.case}-${input.title}.md`,
   title: input.title,
   raisedOn: input.raisedOn,
   approvedOn: input.approvedOn ?? null,
+  owedEditedSinceDispute: input.owedEditedSinceDispute ?? false,
+  disputes: [],
   seen: 'hash-read',
   frontmatter: {
     case: input.case,
@@ -92,16 +95,36 @@ const ENTRY_REOPENED = genEntry({
   },
   raisedOn: ['5.1.execution'],
 });
+const ENTRY_REDISPUTED = genEntry({
+  case: 'F51',
+  title: 'lock-scope',
+  frontmatter: {
+    status: 'ruled',
+    verdict: { by: 'human', at: '2026-11-17', ruled: 'conceded' },
+  },
+  raisedOn: ['3.blueprint', '5.1.execution'],
+});
+
+const ENTRY_PINNED = genEntry({
+  case: 'F50',
+  title: 'edited-after',
+  frontmatter: { confidence: 0.95 },
+  raisedOn: ['5.1.execution'],
+  owedEditedSinceDispute: true,
+});
 
 const STATE_FULL: RouteFulcrumDisputeState = {
-  owedHuman: [ENTRY_OWED, ENTRY_REOPENED],
+  owedHuman: [ENTRY_OWED, ENTRY_REOPENED, ENTRY_REDISPUTED, ENTRY_PINNED],
   ruled: [ENTRY_RULED, ENTRY_RULED_ANSWERED],
   reflected: [ENTRY_REFLECTED],
   unreadable: [
     { slug: 'F46', path: '.fulcrums/inventory.of=fulcrums.case=F46-bare.md' },
   ],
   forged: [ENTRY_OWED],
-  reopened: [ENTRY_REOPENED],
+  reopened: [
+    { ...ENTRY_REOPENED, by: 'edit' },
+    { ...ENTRY_REDISPUTED, by: 'dispute' },
+  ],
 };
 
 describe('asRouteFulcrumDisputeLines', () => {
@@ -118,18 +141,35 @@ describe('asRouteFulcrumDisputeLines', () => {
     expect(lines.join('\n')).toContain('F47 · cache-scope · conceded');
     expect(lines.join('\n')).toContain('repair owed: rules/i003/blocker.2');
     expect(lines.join('\n')).toContain(
-      'next: the driver repairs it in the current diff, then runs rhx route.drive',
+      'next: the driver repairs it in the current diff, then a human approves the stone after it',
     );
     expect(lines.join('\n')).toContain(
-      'F48 · log-shape · conceded, repair answered at 3.blueprint approval',
+      "verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands",
+    );
+    expect(lines.join('\n')).toContain(
+      'F48 · log-shape · conceded, approved over at 3.blueprint',
+    );
+    expect(lines.join('\n')).toContain('ruled on: 2026-11-17');
+    expect(lines.join('\n')).toContain('ground: wrong · 65%');
+    expect(lines.join('\n')).toContain(
+      'leave the fulcrum file as is; an edit to it reopens the verdict',
     );
     expect(lines.join('\n')).toContain(
       'edited since a human ruled it upheld; read as unruled',
     );
     expect(lines.join('\n')).toContain(
+      'disputed again since a human ruled it conceded; the verdict covers only the disputes they saw',
+    );
+    expect(lines.join('\n')).toContain(
       '1 fulcrum is unreadable and owes repair',
     );
     expect(lines.join('\n')).toContain('reflect: ehmpathy/rhachet#1');
+    expect(lines.join('\n')).toContain(
+      'to rule it anyway: rhx route.fulcrum.rule --case F45 --as <upheld|conceded>',
+    );
+    expect(lines.join('\n')).toContain(
+      'edited since the dispute to read as a reflection; the dispute pinned it to you',
+    );
     expect(lines.join('\n')).toMatchSnapshot();
   });
 });
@@ -179,8 +219,10 @@ describe('isRouteFulcrumDisputeStateBlocked', () => {
 describe('getAllRouteFulcrumVerdictCommands', () => {
   test('one rule command per owed dispute, none for ruled or reflected', () => {
     expect(getAllRouteFulcrumVerdictCommands({ state: STATE_FULL })).toEqual([
-      'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
-      'rhx route.fulcrum.rule --case F49 --as upheld|conceded',
+      'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
+      'rhx route.fulcrum.rule --case F49 --as <upheld|conceded>',
+      'rhx route.fulcrum.rule --case F51 --as <upheld|conceded>',
+      'rhx route.fulcrum.rule --case F50 --as <upheld|conceded>',
     ]);
   });
 });

@@ -107,6 +107,7 @@ export const setFulcrumVerdict = async (
       case: entry.frontmatter.case,
       ruled: input.ruled,
       seen: entry.seen,
+      disputes: entry.disputes,
       rows,
     })
   )
@@ -151,6 +152,10 @@ export const setFulcrumVerdict = async (
       ruled: input.ruled,
       on,
       seen: entry.seen,
+      // the disputes the human ruled over, and where the log stood: a later dispute or an earlier
+      // approval cannot then be read as covered by this verdict
+      held: entry.disputes,
+      after: reports.length,
     },
   });
 

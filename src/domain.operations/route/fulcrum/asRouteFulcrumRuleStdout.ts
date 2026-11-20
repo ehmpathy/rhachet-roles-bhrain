@@ -24,5 +24,5 @@ export const asRouteFulcrumRuleStdout = (input: {
     `   ├─ file: ${input.path}`,
     input.ruled === 'upheld'
       ? `   └─ next: the dispute stands; its concerns stay shed from the tally`
-      : `   └─ next: the driver repairs each held concern in the current diff, then runs rhx route.drive`,
+      : `   └─ next: the driver repairs each held concern in the current diff, then you approve the stone after it`,
   ].join('\n');

@@ -8,7 +8,7 @@ exports[`asRouteFulcrumRuleStdout a verdict already on record says so, and write
    ├─ ruled: conceded
    ├─ on: 2026-11-16
    ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
-   └─ next: the driver repairs each held concern in the current diff, then runs rhx route.drive"
+   └─ next: the driver repairs each held concern in the current diff, then you approve the stone after it"
 `;
 
 exports[`asRouteFulcrumRuleStdout a written verdict names the case, the verdict, the date, and the file 1`] = `
@@ -30,5 +30,5 @@ exports[`asRouteFulcrumRuleStdout 🔴 an upheld and a conceded verdict never re
    ├─ ruled: conceded
    ├─ on: 2026-11-17
    ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
-   └─ next: the driver repairs each held concern in the current diff, then runs rhx route.drive"
+   └─ next: the driver repairs each held concern in the current diff, then you approve the stone after it"
 `;

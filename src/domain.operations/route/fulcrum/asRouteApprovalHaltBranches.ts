@@ -3,6 +3,7 @@ import { JUDGE_HALT_ASK_HUMAN_LABEL } from '../guard/review/peer/JUDGE_HALT_ASK_
 import { asRouteFulcrumApprovalDisputeLines } from './asRouteFulcrumApprovalDisputeLines';
 import { asRouteFulcrumCommandRows } from './asRouteFulcrumCommandRows';
 import type { RouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
+import { getAllRouteFulcrumRepairsOwed } from './getAllRouteFulcrumRepairsOwed';
 import { getAllRouteFulcrumVerdictCommands } from './getAllRouteFulcrumVerdictCommands';
 
 /**
@@ -16,6 +17,12 @@ import { getAllRouteFulcrumVerdictCommands } from './getAllRouteFulcrumVerdictCo
  */
 export const asRouteApprovalHaltBranches = (input: {
   stone: string;
+  /**
+   * the gate that holds the stone: 'approval' — its own `approved?` judge, so the ask always
+   * ends in an approval; 'verdict' — the gateless last stone, so the ask is the verdict alone,
+   * plus an approval only where a conceded repair awaits one
+   */
+  gate: 'approval' | 'verdict';
   disputes:
     | { state: RouteFulcrumDisputeState; refusal: null }
     | { state: null; refusal: string };
@@ -33,16 +40,28 @@ export const asRouteApprovalHaltBranches = (input: {
       `   └─ rhx route.drive`,
     ];
 
-  // the ask: a verdict on each dispute, then the approval, then the pass
+  // the ask: a verdict on each dispute, then the approval, then the pass. a conceded verdict
+  // whose repair no approval has followed orders the ask: the repair lands, then the approval
   const head = asRouteStoneSetCommandHead({ stone: input.stone });
   const verdictCmds = getAllRouteFulcrumVerdictCommands({ state });
+  const repairOwed = getAllRouteFulcrumRepairsOwed({ state }).length > 0;
+  const isApprovalAsked = input.gate === 'approval' || repairOwed;
+  const askApprove = repairOwed ? 'approve once the repair lands' : 'approve';
+  const ask = verdictCmds.length
+    ? isApprovalAsked
+      ? ` rule on each, then ${askApprove}`
+      : ' rule on each'
+    : repairOwed
+      ? ` ${askApprove}`
+      : '';
   return [
     ...disputeLines,
-    verdictCmds.length
-      ? `├─ ${JUDGE_HALT_ASK_HUMAN_LABEL} rule on each, then approve`
-      : `├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`,
+    `├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}${ask}`,
     ...asRouteFulcrumCommandRows({
-      commands: [...verdictCmds, `${head} --as approved`],
+      commands: [
+        ...verdictCmds,
+        ...(isApprovalAsked ? [`${head} --as approved`] : []),
+      ],
     }).map((row) => `│  ${row}`),
     `│`,
     `└─ once they do, run`,

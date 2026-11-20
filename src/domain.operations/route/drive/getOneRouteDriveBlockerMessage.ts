@@ -4,6 +4,7 @@ import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/Ro
 import { asRouteApprovalHaltBranches } from '../fulcrum/asRouteApprovalHaltBranches';
 import type { RouteFulcrumDisputeState } from '../fulcrum/asRouteFulcrumDisputeState';
 import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
+import { isStoneLastHeldByDispute } from '../fulcrum/isStoneLastHeldByDispute';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asStoneGuardPartitionGapLines } from '../guard/partition/asStoneGuardPartitionGapLines';
 import { getAllStoneGuardPartitionGaps } from '../guard/partition/getAllStoneGuardPartitionGaps';
@@ -14,6 +15,7 @@ import { getStoneConcessionExhaustion } from '../guard/review/peer/getStoneConce
 import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
 import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
+import { getAllStones } from '../stones/getAllStones';
 import { formatRouteDriveBudgetExhausted } from './formatRouteDriveBudgetExhausted';
 import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
@@ -76,6 +78,30 @@ export const getOneRouteDriveBlockerMessage = async (input: {
         stone: stone.name,
         brain,
         effort,
+        gate: 'approval',
+        disputes,
+      }),
+      blocksStop: false,
+    };
+  }
+
+  // blocked on a dispute at a gateless last stone → show the verdict ask (unless since ruled)
+  // .note = VOLATILE: one verdict, or one approval after a conceded repair, clears it, so it
+  //         recomputes live and returns null once the stone is no longer held
+  if (blockerReport?.blocker === 'dispute.owed') {
+    const [disputes, stones] = await Promise.all([
+      getOneRouteFulcrumDisputeStateOrRefusal({ route }),
+      getAllStones({ route }),
+    ]);
+    if (!isStoneLastHeldByDispute({ stone, stones, state: disputes.state }))
+      return null;
+    return {
+      stdout: formatRouteDriveNeedsApproval({
+        route,
+        stone: stone.name,
+        brain,
+        effort,
+        gate: 'verdict',
         disputes,
       }),
       blocksStop: false,
@@ -263,15 +289,19 @@ const formatRouteDriveNeedsApproval = (input: {
   stone: string;
   brain: string | null;
   effort: string | null;
+  gate: 'approval' | 'verdict';
   disputes:
     | { state: RouteFulcrumDisputeState; refusal: null }
     | { state: null; refusal: string };
 }): string =>
   [
     ...formatRouteDriveHeader(input),
-    `   └─ halted, human approval required`,
+    input.gate === 'approval'
+      ? `   └─ halted, human approval required`
+      : `   └─ halted, the last stone has no human gate and a dispute owes the human`,
     ...asRouteApprovalHaltBranches({
       stone: input.stone,
+      gate: input.gate,
       disputes: input.disputes,
     }).map((line) => `      ${line}`),
   ].join('\n');

@@ -2,14 +2,16 @@
 
 exports[`assertRouteGatelessLastStoneDisputesRuled given: [case1] a route whose only human gate sits on an earlier stone when: [t0] the last stone passes while a dispute owes the human then: it is refused — a gate the route already passed cannot show a later dispute 1`] = `
 "BadRequestError: 🗿 route.stone.set --as passed: refused, the last stone has no human gate and disputes owe a verdict
-   ├─ 1 dispute owes your verdict
+   ├─ 1 dispute owes a human verdict
+   │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
    │  └─ F44 · rename-table · 70%
+   │     ├─ ground: wrong · 70%
    │     ├─ holds: limited/i001/blocker.1 · limited/i001/blocker.2 · limited/i001/blocker.9 · limited/i001/nitpick.1 · friendly/i001/nitpick.1
    │     ├─ lean: x
    │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
    │
    └─ a human must rule on each before the route can finish
-      └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+      └─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
 
 {
   "route": "<route>",

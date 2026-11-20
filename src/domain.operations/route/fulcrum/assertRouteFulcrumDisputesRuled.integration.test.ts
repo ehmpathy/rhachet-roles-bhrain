@@ -73,7 +73,7 @@ describe('assertRouteFulcrumDisputesRuled', () => {
         );
         expect(error.message).toContain('F44');
         expect(error.message).toContain(
-          'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
         );
         expect(
           asStableRefusal({ message: error.message, route }),
@@ -102,6 +102,8 @@ describe('assertRouteFulcrumDisputesRuled', () => {
             ruled: 'upheld',
             on: '2026-11-17',
             seen: asFulcrumSeenOfContent({ content }),
+            held: [],
+            after: 0,
           },
         });
       });

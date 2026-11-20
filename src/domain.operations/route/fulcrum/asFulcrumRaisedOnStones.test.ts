@@ -160,12 +160,92 @@ const TEST_CASES = [
   },
 ];
 
+const TEST_CASES_PINNED = [
+  {
+    description:
+      '🔴 clamp. pins the strongest owed the rows stamped: human outranks reflect',
+    given: {
+      reports: [
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'reflect',
+        }),
+        new PassageReport({
+          stone: '5.1.execution',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'human',
+        }),
+        new PassageReport({
+          stone: '5.1.execution',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'reflect',
+        }),
+      ],
+    },
+    expect: { owedPinned: 'human' },
+  },
+  {
+    description: 'pins reflect where every live row stamped reflect',
+    given: {
+      reports: [
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'reflect',
+        }),
+      ],
+    },
+    expect: { owedPinned: 'reflect' },
+  },
+  {
+    description: 'a rewind drops the pin its stone stamped',
+    given: {
+      reports: [
+        new PassageReport({
+          stone: '3.blueprint',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'human',
+        }),
+        new PassageReport({
+          stone: '5.1.execution',
+          status: 'disputed',
+          fulcrum: `.fulcrums/${FULCRUM_F44}`,
+          owed: 'reflect',
+        }),
+        new PassageReport({ stone: '3.blueprint', status: 'rewound' }),
+      ],
+    },
+    expect: { owedPinned: 'reflect' },
+  },
+];
+
 describe('asFulcrumRaisedOnStones', () => {
+  // rows written before the stamp pin naught, so each case above reads `owedPinned: null`
   TEST_CASES.map((thisCase) =>
     test(thisCase.description, () => {
-      expect([...asFulcrumRaisedOnStones(thisCase.given)]).toEqual(
-        thisCase.expect.output,
+      const raisedOn = [...asFulcrumRaisedOnStones(thisCase.given)];
+      expect(
+        raisedOn.map(([key, raised]) => [
+          key,
+          { stones: raised.stones, path: raised.path },
+        ]),
+      ).toEqual(thisCase.expect.output);
+      expect(raisedOn.map(([, raised]) => raised.owedPinned)).toEqual(
+        raisedOn.map(() => null),
       );
+    }),
+  );
+  TEST_CASES_PINNED.map((thisCase) =>
+    test(thisCase.description, () => {
+      expect(
+        asFulcrumRaisedOnStones(thisCase.given).get('F44')?.owedPinned,
+      ).toEqual(thisCase.expect.owedPinned);
     }),
   );
 });

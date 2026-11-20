@@ -85,7 +85,7 @@ describe('assertRouteGatelessLastStoneDisputesRuled', () => {
             );
             expect(error.message).toContain('the last stone has no human gate');
             expect(error.message).toContain(
-              'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+              'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
             );
             expect(
               asStableRefusal({ message: error.message, route }),

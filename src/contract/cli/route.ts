@@ -390,7 +390,7 @@ options:
   --why <path>       path to a fulcrum/justification entry
                        (required for --as disputed — the fulcrum entry a human reads at the
                         gate; its frontmatter must hold the concern. the human rules it with
-                        rhx route.fulcrum.rule --case <id> --as upheld|conceded;
+                        rhx route.fulcrum.rule --case <id> --as <upheld|conceded>;
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
@@ -1178,7 +1178,7 @@ const printFulcrumRuleHelp = (): void => {
 route.fulcrum.rule - a human rules on one disputed fulcrum
 
 usage:
-  route.fulcrum.rule --case <id> --as upheld|conceded [options]
+  route.fulcrum.rule --case <id> --as <upheld|conceded> [options]
 
 options:
   --case <id>       the fulcrum case id, e.g. F44 (required)
@@ -1210,7 +1210,7 @@ export const routeFulcrumRule = async (): Promise<void> =>
         [
           '--case is required',
           '   └─ fix: name the fulcrum to rule, e.g.',
-          '      └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+          '      └─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
         ].join('\n'),
       );
     if (options.as !== 'upheld' && options.as !== 'conceded')
@@ -1219,7 +1219,7 @@ export const routeFulcrumRule = async (): Promise<void> =>
           `--as must be upheld or conceded, not ${options.as ?? '(absent)'}`,
           `   ├─ upheld: the driver's call stands`,
           `   ├─ conceded: the reviewer's concern stands, and its repair is owed`,
-          `   └─ fix: rhx route.fulcrum.rule --case ${options.case} --as upheld|conceded`,
+          `   └─ fix: rhx route.fulcrum.rule --case ${options.case} --as <upheld|conceded>`,
         ].join('\n'),
       );
 
@@ -1378,9 +1378,11 @@ const judgeApproved = async (input: {
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
-    asRouteApprovalHaltBranches({ stone: input.stone, disputes }).forEach(
-      (line) => console.log(`   ${line}`),
-    );
+    asRouteApprovalHaltBranches({
+      stone: input.stone,
+      gate: 'approval',
+      disputes,
+    }).forEach((line) => console.log(`   ${line}`));
     process.exit(2);
   }
 
@@ -1557,7 +1559,7 @@ const judgeReviewed = async (input: {
   // subtract the concerns the driver SHED from the tally against the current generation.
   // .why = two absorptions shed a concern from the judge's count, and both are at the grain of ONE
   //        concern (S07): the review still ran, its file still stands, only its count is dropped.
-  //   - DISPUTED — the driver holds the concern is fine to continue; a council rules later.
+  //   - DISPUTED — the driver holds the concern is fine to continue; a human rules it at the next human gate.
   //   - CONCEDED `better` — hard-capped by the budget (S16). the judge only runs at terminality,
   //     so a `better` concession that survives to here is one the driver could not fix within
   //     budget: the maintenance floor was met, and it passes as tech debt with NO budget increase

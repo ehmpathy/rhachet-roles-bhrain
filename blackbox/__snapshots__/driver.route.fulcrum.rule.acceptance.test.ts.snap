@@ -4,7 +4,7 @@ exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one di
 "✋ ConstraintError: --case is required
 
 └─ fix: name the fulcrum to rule, e.g.
-   └─ rhx route.fulcrum.rule --case F44 --as upheld|conceded
+   └─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
 "
 `;
 
@@ -13,7 +13,7 @@ exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one di
 
 ├─ upheld: the driver's call stands
 ├─ conceded: the reviewer's concern stands, and its repair is owed
-└─ fix: rhx route.fulcrum.rule --case F001 --as upheld|conceded
+└─ fix: rhx route.fulcrum.rule --case F001 --as <upheld|conceded>
 "
 `;
 
@@ -32,7 +32,7 @@ exports[`driver.route.fulcrum.rule.acceptance given: [case1] a route with one di
 route.fulcrum.rule - a human rules on one disputed fulcrum
 
 usage:
-  route.fulcrum.rule --case <id> --as upheld|conceded [options]
+  route.fulcrum.rule --case <id> --as <upheld|conceded> [options]
 
 options:
   --case <id>       the fulcrum case id, e.g. F44 (required)

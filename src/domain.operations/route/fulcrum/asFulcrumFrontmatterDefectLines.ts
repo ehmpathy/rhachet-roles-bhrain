@@ -43,6 +43,7 @@ const asFulcrumDisputeLinesOfPasteBlock = (input: {
     ? [
         `         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human`,
         `         │  holds: [${asFulcrumHoldOfConcern(input.dispute)}]`,
+        `         │  reflect: null            # the upstream ref, only when owed: reflect (rhx radio.task.push)`,
       ]
     : [
         `         │  owed: none               # none, until a dispute cites it: then human | reflect`,

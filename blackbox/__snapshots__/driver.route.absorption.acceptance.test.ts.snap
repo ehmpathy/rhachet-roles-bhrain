@@ -16,7 +16,7 @@ a stance answers ONE concern, so it must name which:
 exports[`driver.route.stance.acceptance given: [case3] --as disputed with no --why when: [t0] the fulcrum reference is omitted then: stderr matches snapshot: disputed no --why 1`] = `
 "✋ ConstraintError: --why is required for --as disputed
 
-a dispute is a guarantee to the council, so it must cite the argument they will read.
+a dispute is a guarantee to a human at the next human gate, so it must cite the argument they will read.
 write the entry first, then point at it:
   .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
 "

@@ -83,8 +83,33 @@ describe('setFulcrumVerdict', () => {
         const rowsAfterAgain = await getAllFulcrumVerdictRows({
           route: scene.route,
         });
-        return { outcome, content, rows, state, again, rowsAfterAgain };
+        const ledgerOnDisk = await fs.readFile(
+          path.join(scene.route, '.route', 'fulcrum.verdicts.jsonl'),
+          'utf8',
+        );
+        const routeGitignore = await fs.readFile(
+          path.join(scene.route, '.route', '.gitignore'),
+          'utf8',
+        );
+        return {
+          outcome,
+          content,
+          rows,
+          state,
+          again,
+          rowsAfterAgain,
+          ledgerOnDisk,
+          routeGitignore,
+        };
       });
+
+      then(
+        '🔴 the ledger sits under the sealed .route/ dir, and the gitignore keeps it tracked',
+        () => {
+          expect(result.ledgerOnDisk).toContain('"case":"F44"');
+          expect(result.routeGitignore).toContain('!fulcrum.verdicts.jsonl');
+        },
+      );
 
       then('the yaml carries status ruled and the human verdict', () => {
         const parse = asFulcrumFrontmatter({ content: result.content });
@@ -109,7 +134,10 @@ describe('setFulcrumVerdict', () => {
           expect(result.content).toContain(
             "holds:\n  - rules/i003/blocker.2\n# the driver's note, which the verdict write must keep\nlean: keep the table as written",
           );
-          expect(result.content).toMatchSnapshot();
+          // the verdict date is the day the test runs; mask it, or the snap reds the next day
+          expect(
+            result.content.replace(/at: \d{4}-\d{2}-\d{2}/, 'at: [DATE]'),
+          ).toMatchSnapshot();
         },
       );
 
@@ -484,6 +512,8 @@ describe('setFulcrumVerdict', () => {
           ruled: 'upheld',
           on: '2026-11-17',
           seen: 'hash-read',
+          held: ['1.vision:rules:r001.rules.md:blocker.1'],
+          after: 1,
         };
         const first = await setFulcrumVerdictRow({ route, row });
         const second = await setFulcrumVerdictRow({ route, row });
@@ -497,5 +527,41 @@ describe('setFulcrumVerdict', () => {
         expect(result.rows).toHaveLength(1);
       });
     });
+
+    when(
+      '[t1] the same verdict is set over a dispute the first never held',
+      () => {
+        const result = useThen('it appends a second row', async () => {
+          const route = genTempDir({ slug: 'fulcrum-verdict-row-redispute' });
+          const row: FulcrumVerdictRow = {
+            case: 'F44',
+            ruled: 'upheld',
+            on: '2026-11-17',
+            seen: 'hash-read',
+            held: ['1.vision:rules:r001.rules.md:blocker.1'],
+            after: 1,
+          };
+          await setFulcrumVerdictRow({ route, row });
+          const second = await setFulcrumVerdictRow({
+            route,
+            row: {
+              ...row,
+              held: [
+                ...row.held,
+                '5.1.execution:rules:r004.rules.md:blocker.2',
+              ],
+              after: 4,
+            },
+          });
+          const rows = await getAllFulcrumVerdictRows({ route });
+          return { second, rows };
+        });
+
+        then('the re-ruled row lands, so the newer dispute is covered', () => {
+          expect(result.second.outcome).toEqual('appended');
+          expect(result.rows.map((row) => row.held.length)).toEqual([1, 2]);
+        });
+      },
+    );
   });
 });

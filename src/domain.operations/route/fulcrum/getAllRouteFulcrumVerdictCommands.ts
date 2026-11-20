@@ -1,4 +1,5 @@
 import type { RouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
+import { asRouteFulcrumVerdictCommand } from './asRouteFulcrumVerdictCommand';
 
 /**
  * .what = the rule commands a human runs, one per owed dispute
@@ -7,7 +8,4 @@ import type { RouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
 export const getAllRouteFulcrumVerdictCommands = (input: {
   state: RouteFulcrumDisputeState;
 }): string[] =>
-  input.state.owedHuman.map(
-    (entry) =>
-      `rhx route.fulcrum.rule --case ${entry.frontmatter.case} --as upheld|conceded`,
-  );
+  input.state.owedHuman.map((entry) => asRouteFulcrumVerdictCommand({ entry }));

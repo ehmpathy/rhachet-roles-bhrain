@@ -1,5 +1,6 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { asRouteFulcrumRepairsOwedRefusal } from './asRouteFulcrumRepairsOwedRefusal';
 import { assertRouteFulcrumDisputeStateUnblocked } from './assertRouteFulcrumDisputeStateUnblocked';
 import { isStoneGatedByHuman } from './isStoneGatedByHuman';
 
@@ -30,6 +31,7 @@ export const assertRouteGatelessLastStoneDisputesRuled = async (input: {
       closer: 'a human must rule on each before the route can finish',
       commandsAfter: [],
     },
+    repairs: asRouteFulcrumRepairsOwedRefusal({ stone: input.stone.name }),
     metadata: { stone: input.stone.name },
   });
 };

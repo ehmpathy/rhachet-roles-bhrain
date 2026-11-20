@@ -37,7 +37,7 @@ describe('asRouteFulcrumRuleStdout', () => {
     const conceded = asRouteFulcrumRuleStdout({ ...given, ruled: 'conceded' });
     expect(upheld).toContain('next: the dispute stands');
     expect(conceded).toContain(
-      'next: the driver repairs each held concern in the current diff, then runs rhx route.drive',
+      'next: the driver repairs each held concern in the current diff, then you approve the stone after it',
     );
     expect(conceded).toMatchSnapshot();
   });

@@ -18,6 +18,9 @@ import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { asRouteApprovalHaltBranches } from '../fulcrum/asRouteApprovalHaltBranches';
+import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
+import { isStoneLastHeldByDispute } from '../fulcrum/isStoneLastHeldByDispute';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
 import { asFailedJudgeReasons } from '../guard/asFailedJudgeReasons';
@@ -188,9 +191,45 @@ export const setStoneAsPassed = async (
     );
   }
 
-  // .note = a dispute that owes the human refuses passage inside setStonePassage, the one writer
-  //         of a pass, so it refuses only a pass that would land; a stone some other gate holds
-  //         reports that gate first
+  // a dispute at the gateless last stone halts here, before any review runs, as a recorded
+  // blocker the drive renders for the human (r011 i011 blocker.1). setStonePassage keeps the
+  // same check as a backstop; a human-gated stone halts at its own `approved?` judge
+  const isLast = stones.at(-1)?.name === stoneMatched.name;
+  const disputes = isLast
+    ? await getOneRouteFulcrumDisputeStateOrRefusal({ route: input.route })
+    : null;
+  if (
+    disputes &&
+    isStoneLastHeldByDispute({
+      stone: stoneMatched,
+      stones,
+      state: disputes.state,
+    })
+  )
+    return genStoneGuardBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'dispute.owed',
+      reason: 'the last stone has no human gate and a dispute owes the human',
+      refs: { reviews: [], judges: [] },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'blocked',
+          note: 'a dispute owes the human',
+        }),
+        stderr: [
+          `✋ halted, the last stone has no human gate and a dispute owes the human`,
+          ...asRouteApprovalHaltBranches({
+            stone: stoneMatched.name,
+            gate: 'verdict',
+            disputes,
+          }).map((line) => `   ${line}`),
+        ].join('\n'),
+      },
+    });
 
   // if no guard, auto-pass
   if (!stoneMatched.guard) {

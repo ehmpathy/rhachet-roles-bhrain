@@ -71,6 +71,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
          │  holds: [limited/i001/blocker.1]
+         │  reflect: null            # the upstream ref, only when owed: reflect (rhx radio.task.push)
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -99,6 +100,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
          │  holds: [limited/i001/blocker.1]
+         │  reflect: null            # the upstream ref, only when owed: reflect (rhx radio.task.push)
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---
@@ -210,6 +212,7 @@ exports[`setStoneAsConcernAbsorbed.integration given: [case4] a dispute whose fu
          │  status: open             # open | held | ruled | superseded
          │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
          │  holds: [limited/i001/blocker.1]
+         │  reflect: null            # the upstream ref, only when owed: reflect (rhx radio.task.push)
          │  lean: <one line — the call you made>
          │  verdict: null            # only rhx route.fulcrum.rule writes this
          │  ---

@@ -1434,7 +1434,7 @@ exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the o
    ├─ file: .fulcrums/inventory.of=fulcrums.case=F1-keep.md
    ├─ verdict carries no ledger row; only rhx route.fulcrum.rule writes it
    └─ fix: set \`verdict: null\` and \`status: open\`, then ask a human to run
-      └─ rhx route.fulcrum.rule --case F1 --as upheld|conceded"
+      └─ rhx route.fulcrum.rule --case F1 --as <upheld|conceded>"
 `;
 
 exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t3] the verdict ledger holds a line that cannot be read then: the ledger lint matches snapshot 1`] = `
@@ -1442,9 +1442,10 @@ exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the o
 
 🗿 route.fulcrum lint: the verdict ledger cannot be read
    └─ fulcrum verdict ledger holds an unreadable row at line 1
-      ├─ ledger: <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case37-ledger.<hash>/.fulcrums/verdicts.jsonl
+      ├─ ledger: <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case37-ledger.<hash>/.route/fulcrum.verdicts.jsonl
       ├─ line: not json
-      └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger"
+      └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger
+         └─ the ledger sits under the route seal, so a driver needs a human's rhx route.mutate grant allow first"
 `;
 
 exports[`stepRouteDrive.integration given: [case37] a route whose fulcrums the onStop linter reads when: [t4] a live dispute cites a fulcrum whose file is gone then: the orphan lint matches snapshot 1`] = `

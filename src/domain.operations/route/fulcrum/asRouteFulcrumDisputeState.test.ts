@@ -1,6 +1,7 @@
 import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdictRow';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
+import { asFulcrumDisputeKey } from './asFulcrumDisputeKey';
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asRouteFulcrumDisputeState } from './asRouteFulcrumDisputeState';
 import type { RouteFulcrum } from './getAllRouteFulcrums';
@@ -46,6 +47,8 @@ const ROW_UPHELD: FulcrumVerdictRow = {
   ruled: 'upheld',
   on: '2026-11-17',
   seen: 'hash-read',
+  held: [],
+  after: 0,
 };
 
 /**
@@ -365,10 +368,15 @@ describe('asRouteFulcrumDisputeState, a conceded verdict reaches an end state', 
     status: 'ruled',
     verdict: { by: 'human', at: '2026-11-17', ruled: 'conceded' },
   });
-  const rowConceded: FulcrumVerdictRow = { ...ROW_UPHELD, ruled: 'conceded' };
   const dispute = genDisputeOfF1({
     fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
   });
+  const rowConceded: FulcrumVerdictRow = {
+    ...ROW_UPHELD,
+    ruled: 'conceded',
+    held: [asFulcrumDisputeKey({ report: dispute })],
+    after: 1,
+  };
   const approval = new PassageReport({
     stone: '3.blueprint',
     status: 'approved',
@@ -394,7 +402,8 @@ describe('asRouteFulcrumDisputeState, a conceded verdict reaches an end state', 
     ]);
   });
 
-  test('a newer dispute on the same case re-opens the debt an approval answered', () => {
+  // r011 i006 blocker.1: the verdict covers only the disputes the human saw
+  test('🔴 a newer dispute on a ruled, unedited case reopens it to the human', () => {
     const state = asRouteFulcrumDisputeState({
       fulcrums: [fulcrumConceded],
       rows: [rowConceded],
@@ -404,7 +413,125 @@ describe('asRouteFulcrumDisputeState, a conceded verdict reaches an end state', 
         new PassageReport({ ...dispute, stone: '5.1.execution' }),
       ],
     });
+    expect(state.ruled).toEqual([]);
+    expect(state.owedHuman.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
+    expect(state.reopened.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
+  });
+
+  test('a verdict re-ruled over the newer dispute is ruled again', () => {
+    const disputeNewer = new PassageReport({
+      ...dispute,
+      stone: '5.1.execution',
+    });
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [
+        rowConceded,
+        {
+          ...rowConceded,
+          held: [
+            asFulcrumDisputeKey({ report: dispute }),
+            asFulcrumDisputeKey({ report: disputeNewer }),
+          ],
+          after: 3,
+        },
+      ],
+      reports: [dispute, approval, disputeNewer],
+    });
     expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([null]);
+  });
+
+  // r010 i006 div2: an approval the human gave before the verdict never answers it
+  test('🔴 an approval before the verdict does not answer the repair', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [{ ...rowConceded, after: 2 }],
+      reports: [dispute, approval],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([null]);
+  });
+
+  // r011 i008 blocker.2: a rewind that retires the dispute must not strand the conceded debt
+  test('🔴 after a rewind retires its dispute, a later approval still answers the repair', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [rowConceded],
+      reports: [
+        dispute,
+        new PassageReport({ stone: '1.vision', status: 'rewound' }),
+        new PassageReport({ stone: '3.blueprint', status: 'approved' }),
+      ],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([
+      '3.blueprint',
+    ]);
+  });
+
+  // r011 i006 blocker.2: a rewind can void the approval that answered
+  test('🔴 a rewind after the answer voids it, so the repair is owed again', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumConceded],
+      rows: [rowConceded],
+      reports: [
+        dispute,
+        approval,
+        new PassageReport({ stone: '3.blueprint', status: 'rewound' }),
+      ],
+    });
+    expect(state.ruled.map((entry) => entry.approvedOn)).toEqual([null]);
+  });
+});
+
+// r11 i005 blocker.3: ground and confidence are mutable after a dispute, so the row pins `owed`
+describe('asRouteFulcrumDisputeState, the owed a dispute row pinned', () => {
+  // the entry now derives `reflect` (wrong ground, 0.95), as a driver edit after the dispute would
+  const fulcrumEdited = genFulcrum({ case: 'F1', owed: 'reflect' });
+  const asDispute = (input: { owed: 'human' | 'reflect' | undefined }) =>
+    new PassageReport({
+      stone: '3.blueprint',
+      status: 'disputed',
+      fulcrum: '.fulcrums/inventory.of=fulcrums.case=F1-demo.md',
+      owed: input.owed,
+    });
+
+  test('🔴 a row pinned to the human holds the entry owed to the human, and names the edit', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumEdited],
+      rows: [],
+      reports: [asDispute({ owed: 'human' })],
+    });
+    expect(state.owedHuman.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
+    expect(state.reflected).toEqual([]);
+    expect(state.owedHuman[0]?.owedEditedSinceDispute).toEqual(true);
+  });
+
+  test('a row pinned to a reflection reads the live derive', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumEdited],
+      rows: [],
+      reports: [asDispute({ owed: 'reflect' })],
+    });
+    expect(state.reflected.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
+    expect(state.reflected[0]?.owedEditedSinceDispute).toEqual(false);
+  });
+
+  test('a row written before the stamp reads the live derive', () => {
+    const state = asRouteFulcrumDisputeState({
+      fulcrums: [fulcrumEdited],
+      rows: [],
+      reports: [asDispute({ owed: undefined })],
+    });
+    expect(state.reflected.map((entry) => entry.frontmatter.case)).toEqual([
+      'F1',
+    ]);
   });
 });
 

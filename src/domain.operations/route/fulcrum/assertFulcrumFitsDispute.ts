@@ -112,7 +112,7 @@ export const assertFulcrumFitsDispute = async (input: {
           : `--reflect is required for a dispute at confidence ${FULCRUM_REFLECT_CONFIDENCE_FLOOR} or above`,
         `   ├─ file: ${input.pathResolved}`,
         `   ├─ a sure misread is a defect in the rubric, owed upstream as a reflection`,
-        `   └─ fix: pass --reflect ${frontmatter.reflect}`,
+        ...asFulcrumReflectFixLines({ reflect: frontmatter.reflect }),
       ].join('\n'),
       { path: input.pathResolved, reflect: input.reflect },
     );
@@ -131,3 +131,20 @@ export const assertFulcrumFitsDispute = async (input: {
 
   return frontmatter;
 };
+
+/**
+ * .what = the fix a reflect-owed dispute teaches: pass the ref the file names, or file one first
+ * .why = a driver who raised confidence past the floor holds no ref yet; "pass --reflect" alone
+ *        names no way to get one, so the fix names the dispatch, then both places the ref goes
+ */
+const asFulcrumReflectFixLines = (input: {
+  reflect: string | null;
+}): string[] =>
+  input.reflect
+    ? [`   └─ fix: pass --reflect ${input.reflect}`]
+    : [
+        `   └─ fix: file the reflection upstream, then name its ref in both places`,
+        `      ├─ rhx radio.task.push --via gh.issues --into <owner/repo> --title '<the misread>' --description @stdin`,
+        `      ├─ set reflect: <the ref> in the fulcrum's frontmatter`,
+        `      └─ pass --reflect <the ref>`,
+      ];

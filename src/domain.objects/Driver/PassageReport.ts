@@ -124,13 +124,25 @@ export interface PassageReport {
   /**
    * the fulcrum entry that argues this dispute (only for status='disputed')
    *
-   * .why = a dispute is a guarantee to the council, so it must cite the argument a human
-   *        will read. stored VERBATIM as the driver supplied it — a copy of an argument,
-   *        which is the one shape that cannot drift from itself.
+   * .why = a dispute is a guarantee to a human at the next human gate, so it must cite the
+   *        argument a human will read. stored VERBATIM as the driver supplied it — a copy of
+   *        an argument, which is the one shape that cannot drift from itself.
    * .note = the driver AUTHORS the entry; this command only resolves the path (F018).
    *         absent for 'conceded' — a concede claims no judgment, so it cites naught.
    */
   fulcrum?: string;
+
+  /**
+   * who the cited fulcrum owed its verdict to when the dispute path verified it (only for
+   * status='disputed')
+   *
+   * .why = `owed` derives from the entry's `ground` and `confidence`, which the driver can edit
+   *        after the dispute. the row is sealed, so it pins what the dispute path checked: a gate
+   *        reads the stronger of this and the live derive, and a later edit cannot route a
+   *        human-owed dispute away from the human.
+   * .note = absent on rows written before the stamp; a gate then reads the live derive alone.
+   */
+  owed?: 'human' | 'reflect';
 
   /**
    * the severity a concession carries (only for status='conceded')

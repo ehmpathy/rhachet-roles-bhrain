@@ -15,7 +15,7 @@ act the gate refuses to trust, not the intent behind it.
 ## .evidence
 
 the vision's invariant 2 lets only a human rule a dispute. a yaml field alone cannot prove that, so
-the lever writes a ledger row (`.fulcrums/verdicts.jsonl`, fulcrum F11) and every gate proves the
+the lever writes a ledger row (`.route/fulcrum.verdicts.jsonl`, fulcrum F11) and every gate proves the
 yaml against it. the cases the proof must part:
 
 | yaml verdict | newest ledger row | read |

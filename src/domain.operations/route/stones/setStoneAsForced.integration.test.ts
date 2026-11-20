@@ -46,7 +46,7 @@ describe('setStoneAsForced, at the dispute gate', () => {
 
       then('🔴 the force is refused, and names the dispute', () => {
         expect(result.error.message).toContain(
-          'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
         );
       });
 

@@ -68,7 +68,7 @@ describe('setStoneAsApproved, at the dispute gate', () => {
       then('🔴 the approval is refused, and names the dispute', () => {
         expect(result.error.message).toContain('F44');
         expect(result.error.message).toContain(
-          'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
         );
       });
 
@@ -103,7 +103,7 @@ describe('setStoneAsApproved, at the dispute gate', () => {
         '🔴 a re-approval names the later dispute, never a silent no-op',
         () => {
           expect(result.error.message).toContain(
-            'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+            'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
           );
         },
       );

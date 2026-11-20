@@ -32,7 +32,7 @@ verdict    = null | { by: human, at: <date>, ruled: upheld | conceded }
 a dispute record  ⟹  holds the fulcrum path only; it restates no frontmatter attribute
 a summary row     ⟹  derived from the frontmatter; the two never disagree
 
-verdict ≠ null  ⟹  a matched entry exists in $route/.fulcrums/verdicts.jsonl
+verdict ≠ null  ⟹  a matched entry exists in $route/.route/fulcrum.verdicts.jsonl
                     written by the human-only `rhx route.fulcrum.rule`
 ```
 
@@ -70,9 +70,12 @@ with a matched entry in the verdict log, which only the human-only lever writes
 the frontmatter fields and the body, verdict and status aside. an edit after the verdict changes the
 hash, so the fulcrum reads as reopened, and a human must rule it again.
 
-🟡 **the log is evidence, never a lock.** it is a plain file in the repo. a driver who hand-writes a
-row with the right hash forges a verdict the gate accepts. what stops it is that both files sit in
-the diff a human reviews, so the forgery is visible. it is not prevented.
+🔴 **the log sits under the route seal.** it lives in `.route/`, which `route.mutate.guard` closes to
+the driver's own reads and writes, beside `passage.jsonl`. a driver cannot forge a row with one more
+`Write`; only the lever, run by a human, appends. the route gitignore keeps it tracked.
+
+🟡 **the seal guards the driver's tools, never the disk.** a shell outside the hooks can still write
+the file. what stops that is the diff a human reviews, where the forged row shows.
 
 🔴 **confidence is the weakest held call.** a table of rows at 55 to 90 percent is a 0.55 fulcrum,
 the incident's exact shape. an average would grade it 0.75 and hide the weak rows.
@@ -121,7 +124,7 @@ survives to a gate. the block is the price of a halt the human can trust.
 - enforcer: an onStop linter beside `route.drive --when hook.onStop`. every
   `$route/.fulcrums/inventory.of=fulcrums.case=*.md` carries valid frontmatter, or the stop holds
   (exit 2) and names the file and the absent fields. it also refuses a `verdict` with no matched
-  entry in `$route/.fulcrums/verdicts.jsonl`. the dispute path reads the same fields at write,
+  entry in `$route/.route/fulcrum.verdicts.jsonl`. the dispute path reads the same fields at write,
   through one formatter. the clamp: a fulcrum with no frontmatter holds the stop, and with the
   linter removed the stop goes through; a hand-forged verdict holds the stop
 

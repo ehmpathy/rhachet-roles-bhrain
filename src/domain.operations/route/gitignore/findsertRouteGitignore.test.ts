@@ -27,6 +27,7 @@ describe('findsertRouteGitignore', () => {
         expect(content).toContain('*');
         expect(content).toContain('!.gitignore');
         expect(content).toContain('!passage.jsonl');
+        expect(content).toContain('!fulcrum.verdicts.jsonl');
         expect(content).toContain('!.bind.*');
       });
     });
@@ -40,10 +41,11 @@ describe('findsertRouteGitignore', () => {
 
     beforeEach(async () => {
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      const content = `# ignore all except passage.jsonl and .bind flags
+      const content = `# ignore all except passage.jsonl, the fulcrum verdict ledger, and .bind flags
 *
 !.gitignore
 !passage.jsonl
+!fulcrum.verdicts.jsonl
 !.bind.*
 `;
       await fs.writeFile(path.join(tempDir, '.route', '.gitignore'), content);

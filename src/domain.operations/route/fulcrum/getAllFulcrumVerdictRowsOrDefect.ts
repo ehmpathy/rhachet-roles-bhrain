@@ -18,11 +18,7 @@ export const getAllFulcrumVerdictRowsOrDefect = async (input: {
 }): Promise<
   { rows: FulcrumVerdictRow[]; defect: null } | { rows: null; defect: string }
 > => {
-  const ledger = path.join(
-    input.route,
-    '.fulcrums',
-    FULCRUM_VERDICT_LEDGER_NAME,
-  );
+  const ledger = path.join(input.route, '.route', FULCRUM_VERDICT_LEDGER_NAME);
   const content = await fs
     .readFile(ledger, 'utf8')
     .catch((error: NodeJS.ErrnoException) => {
@@ -59,6 +55,7 @@ const asAllFulcrumVerdictRowsFromContent = (input: {
         `   ├─ ledger: ${input.ledger}`,
         `   ├─ line: ${broken.line}`,
         `   └─ fix: restore the line from git; only rhx route.fulcrum.rule writes this ledger`,
+        `      └─ the ledger sits under the route seal, so a driver needs a human's rhx route.mutate grant allow first`,
       ].join('\n'),
     };
   return {
@@ -91,8 +88,18 @@ const asFulcrumVerdictRow = (input: {
     typeof row.case !== 'string' ||
     (row.ruled !== 'upheld' && row.ruled !== 'conceded') ||
     typeof row.on !== 'string' ||
-    typeof row.seen !== 'string'
+    typeof row.seen !== 'string' ||
+    !Array.isArray(row.held) ||
+    !row.held.every((key) => typeof key === 'string') ||
+    typeof row.after !== 'number'
   )
     return null;
-  return { case: row.case, ruled: row.ruled, on: row.on, seen: row.seen };
+  return {
+    case: row.case,
+    ruled: row.ruled,
+    on: row.on,
+    seen: row.seen,
+    held: row.held.map(String),
+    after: row.after,
+  };
 };

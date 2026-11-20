@@ -4,8 +4,12 @@ import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { asFulcrumApprovedAfterDisputes } from './asFulcrumApprovedAfterDisputes';
 import type { FulcrumFrontmatter } from './asFulcrumFrontmatter';
 import { asFulcrumOwed } from './asFulcrumOwed';
-import { asFulcrumRaisedOnStones } from './asFulcrumRaisedOnStones';
+import {
+  asFulcrumRaisedOnStones,
+  type FulcrumRaisedOn,
+} from './asFulcrumRaisedOnStones';
 import type { RouteFulcrum } from './getAllRouteFulcrums';
+import { getOneFulcrumVerdictRowLatest } from './getOneFulcrumVerdictRowLatest';
 import { isFulcrumVerdictProven } from './isFulcrumVerdictProven';
 import { isFulcrumVerdictReopened } from './isFulcrumVerdictReopened';
 
@@ -30,6 +34,17 @@ export interface RouteFulcrumDisputeEntry {
    * the repair lands)
    */
   approvedOn: string | null;
+  /**
+   * true when a dispute row pinned `owed: human` but the entry's fields now derive `reflect` —
+   * an edit after the dispute that would have routed it away from the human. the pin holds, and
+   * the gate names the edit
+   */
+  owedEditedSinceDispute: boolean;
+  /**
+   * the key of each live dispute that cites this fulcrum (`asFulcrumDisputeKey`). a verdict row
+   * proves its verdict only over these; the lever writes them as the row's `held`
+   */
+  disputes: string[];
   /**
    * the content hash a verdict row must carry to prove this entry (`asFulcrumContentSeen`)
    */
@@ -68,10 +83,11 @@ export interface RouteFulcrumDisputeState {
    */
   forged: RouteFulcrumDisputeEntry[];
   /**
-   * any live entry whose verdict the lever DID write, edited since — the row no longer matches
-   * what the entry says. it owes the human again, and the gate says why; it is no forgery
+   * any live entry whose verdict the lever DID write, outlived since — edited, so the row no
+   * longer matches what the entry says, or cited by a dispute the human never saw. it owes the
+   * human again, and the gate says which; it is no forgery
    */
-  reopened: RouteFulcrumDisputeEntry[];
+  reopened: (RouteFulcrumDisputeEntry & { by: 'edit' | 'dispute' })[];
 }
 
 /**
@@ -88,7 +104,10 @@ export const asRouteFulcrumDisputeState = (input: {
   const live = asAllFulcrumDisputeEntriesLive({
     fulcrums: input.fulcrums,
     raisedOn,
-    approvedOn: asFulcrumApprovedAfterDisputes({ reports: input.reports }),
+    approvedOn: asFulcrumApprovedAfterDisputes({
+      reports: input.reports,
+      afterOf: asFulcrumVerdictAfterOfCases({ rows: input.rows }),
+    }),
   });
   const isProven = (entry: RouteFulcrumDisputeEntry): boolean =>
     isFulcrumDisputeEntryVerdict({ entry, rows: input.rows, is: 'proven' });
@@ -108,9 +127,36 @@ export const asRouteFulcrumDisputeState = (input: {
     forged: unproven.filter(
       (entry) => entry.frontmatter.verdict !== null && !isReopened(entry),
     ),
-    reopened: unproven.filter(isReopened),
+    reopened: unproven.filter(isReopened).map((entry) => ({
+      ...entry,
+      by: asFulcrumReopenedBy({ entry, rows: input.rows }),
+    })),
   };
 };
+
+/**
+ * .what = what outlived a reopened entry's verdict: an edit, or a dispute the human never saw
+ * .why = the gate names the cause, so a human reads why a ruled entry asks for them again
+ */
+const asFulcrumReopenedBy = (input: {
+  entry: RouteFulcrumDisputeEntry;
+  rows: FulcrumVerdictRow[];
+}): 'edit' | 'dispute' =>
+  getOneFulcrumVerdictRowLatest({
+    case: input.entry.frontmatter.case,
+    rows: input.rows,
+  })?.seen === input.entry.seen
+    ? 'dispute'
+    : 'edit';
+
+/**
+ * .what = each case's passage-log index at its newest verdict, as its ledger row recorded it
+ * .why = an approval given before a verdict never answers it; the newest row speaks for the case
+ */
+const asFulcrumVerdictAfterOfCases = (input: {
+  rows: FulcrumVerdictRow[];
+}): Map<string, number> =>
+  new Map(input.rows.map((row) => [row.case, row.after]));
 
 /**
  * .what = each fulcrum whose name or frontmatter cannot be read, as its path and slug
@@ -132,7 +178,7 @@ const asAllFulcrumsUnreadable = (input: {
  */
 const asAllFulcrumDisputesOrphaned = (input: {
   fulcrums: RouteFulcrum[];
-  raisedOn: Map<string, { stones: string[]; path: string }>;
+  raisedOn: Map<string, FulcrumRaisedOn>;
 }): { path: string; slug: string }[] => {
   const cases = new Set(input.fulcrums.map((fulcrum) => fulcrum.slug));
   return [...input.raisedOn.entries()].flatMap(([slug, cited]) =>
@@ -147,44 +193,53 @@ const asAllFulcrumDisputesOrphaned = (input: {
  */
 const asAllFulcrumDisputeEntriesLive = (input: {
   fulcrums: RouteFulcrum[];
-  raisedOn: Map<string, { stones: string[]; path: string }>;
+  raisedOn: Map<string, FulcrumRaisedOn>;
   approvedOn: Map<string, string | null>;
 }): RouteFulcrumDisputeEntry[] =>
   input.fulcrums.flatMap((fulcrum) => {
     if (fulcrum.parse.kind !== 'valid') return [];
-    const raisedOn = input.raisedOn.get(fulcrum.slug)?.stones ?? [];
+    const cited = input.raisedOn.get(fulcrum.slug) ?? null;
+    const raisedOn = cited?.stones ?? [];
     const isSuperseded = fulcrum.parse.frontmatter.status === 'superseded';
     if (isSuperseded && !raisedOn.length) return [];
+    const owedDerived = asFulcrumOwed(fulcrum.parse.frontmatter);
     return [
       {
         path: fulcrum.path,
         title: fulcrum.title,
         raisedOn,
         approvedOn: input.approvedOn.get(fulcrum.slug) ?? null,
+        owedEditedSinceDispute:
+          cited?.owedPinned === 'human' && owedDerived !== 'human',
+        disputes: cited?.disputes ?? [],
         seen: fulcrum.parse.seen,
         frontmatter: asFulcrumFrontmatterOwedAsDisputed({
           frontmatter: fulcrum.parse.frontmatter,
-          raisedOn,
+          cited,
+          owedDerived,
         }),
       },
     ];
   });
 
 /**
- * .what = an entry's frontmatter with `owed` read as derived, once a dispute has cited it
+ * .what = an entry's frontmatter with `owed` read as the gate routes it, once a dispute cites it
  * .why = `owed` is derived from ground × confidence, and the dispute path refuses a typed value
- *        that disagrees. but that check runs once, at the dispute; a later hand edit of a cited
- *        entry to `owed: none` would hide the dispute from every gate. so for an entry a dispute
- *        cites, the gate reads the derived value and the typed one cannot route it away. an entry
+ *        that disagrees. but that check runs once, at the dispute, and the driver can edit the
+ *        fields after. so for an entry a dispute cites, the gate reads the derive, never the
+ *        typed value — and where the dispute row pinned `human`, the pin holds over any later
+ *        derive. an edit can neither hide a dispute nor route it away from the human. an entry
  *        no dispute cites is a design call, and its typed `owed` stands
  */
 const asFulcrumFrontmatterOwedAsDisputed = (input: {
   frontmatter: FulcrumFrontmatter;
-  raisedOn: string[];
-}): FulcrumFrontmatter =>
-  input.raisedOn.length
-    ? { ...input.frontmatter, owed: asFulcrumOwed(input.frontmatter) }
-    : input.frontmatter;
+  cited: FulcrumRaisedOn | null;
+  owedDerived: 'human' | 'reflect';
+}): FulcrumFrontmatter => {
+  if (!input.cited?.stones.length) return input.frontmatter;
+  const owed = input.cited.owedPinned === 'human' ? 'human' : input.owedDerived;
+  return { ...input.frontmatter, owed };
+};
 
 /**
  * .what = decides whether an entry's yaml verdict is proven by the ledger on its current content,
@@ -203,6 +258,7 @@ const isFulcrumDisputeEntryVerdict = (input: {
     case: input.entry.frontmatter.case,
     ruled: verdict.ruled,
     seen: input.entry.seen,
+    disputes: input.entry.disputes,
     rows: input.rows,
   };
   return input.is === 'proven'

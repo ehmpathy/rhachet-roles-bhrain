@@ -223,6 +223,8 @@ describe('getOneRouteDriveBlockerMessage', () => {
             ruled: 'conceded',
             on: '2026-11-17',
             seen: asFulcrumSeenOfContent({ content: contentF47 }),
+            held: [],
+            after: 0,
           },
         });
         return sceneBase;
@@ -252,11 +254,11 @@ describe('getOneRouteDriveBlockerMessage', () => {
         then(
           'the halt names the dispute, its confidence, and its verdict command',
           () => {
-            expect(result.stdout).toContain('1 dispute owes your verdict');
+            expect(result.stdout).toContain('1 dispute owes a human verdict');
             expect(result.stdout).toContain('F44 · rename-table · 70%');
             expect(result.stdout).toContain('raised on: 0.prior');
             expect(result.stdout).toContain(
-              'rhx route.fulcrum.rule --case F44 --as upheld|conceded',
+              'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
             );
           },
         );
@@ -270,7 +272,7 @@ describe('getOneRouteDriveBlockerMessage', () => {
               'repair owed: limited/i001/blocker.1',
             );
             expect(result.stdout).toContain(
-              'next: the driver repairs it in the current diff, then runs rhx route.drive',
+              'next: the driver repairs it in the current diff, then a human approves the stone after it',
             );
             expect(result.stdout).not.toContain('--case F47');
           },
@@ -294,11 +296,11 @@ describe('getOneRouteDriveBlockerMessage', () => {
     // the whole halt with a refusal. remove the refusal render and this case goes red
     const scene = useBeforeAll(async () => {
       const sceneBase = await genRouteScene({ givens: [], takens: [] });
-      await fs.mkdir(path.join(sceneBase.route, '.fulcrums'), {
+      await fs.mkdir(path.join(sceneBase.route, '.route'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(sceneBase.route, '.fulcrums', 'verdicts.jsonl'),
+        path.join(sceneBase.route, '.route', 'fulcrum.verdicts.jsonl'),
         '{"case": "F44", "ruled": "upheld"\n',
       );
       return sceneBase;

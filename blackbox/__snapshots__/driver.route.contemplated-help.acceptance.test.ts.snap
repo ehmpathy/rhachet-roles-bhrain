@@ -36,7 +36,7 @@ options:
   --why <path>       path to a fulcrum/justification entry
                        (required for --as disputed — the fulcrum entry a human reads at the
                         gate; its frontmatter must hold the concern. the human rules it with
-                        rhx route.fulcrum.rule --case <id> --as upheld|conceded;
+                        rhx route.fulcrum.rule --case <id> --as <upheld|conceded>;
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)

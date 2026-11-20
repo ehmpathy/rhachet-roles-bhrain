@@ -2,8 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { asFulcrumSeenOfContent } from '../src/domain.operations/route/__test_assets__/asFulcrumSeenOfContent';
-import { asFulcrumContentWithVerdict } from '../src/domain.operations/route/fulcrum/asFulcrumContentWithVerdict';
+import { setFulcrumVerdictAsTheLever } from '../src/domain.operations/route/__test_assets__/setFulcrumVerdictAsTheLever';
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
@@ -18,6 +17,16 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-dispute-passage');
 const FULCRUM_REL =
   '.fulcrums/inventory.of=fulcrums.case=F001-the-shape-is-deliberate.md';
+
+/**
+ * .what = the env of a driver's own session: no review mark
+ * .why = a runner that itself runs inside a review carries these keys, and `route.drive` reads
+ *        them; each is deleted, so the halt renders the same on every machine
+ */
+const ENV_OF_DRIVER = {
+  RHACHET_GUARD_CONTEXT: undefined,
+  RHACHET_REVIEW_SUBPROCESS: undefined,
+};
 
 /**
  * .what = the DRIVEN dispute journey, end to end through the REAL `reviewed?` judge:
@@ -215,9 +224,9 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
 
       then('🔴 the judge names the dispute and its verdict command', () => {
         expect(result.stdout).toContain('passed: false');
-        expect(result.stdout).toContain('1 dispute owes your verdict');
+        expect(result.stdout).toContain('1 dispute owes a human verdict');
         expect(result.stdout).toContain(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
       });
 
@@ -314,7 +323,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(output).toContain('the last stone has no human gate');
         expect(output).toContain('F001');
         expect(output).toContain(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
       });
 
@@ -322,6 +331,39 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(
           sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
         ).toMatchSnapshot('the gateless last stone refuses past a dispute');
+      });
+    });
+
+    // r011 i011 blocker.1: the hold was a throw, so the stop hook told the driver to pass (and
+    // was refused) and never asked the human; the entrance now records a `dispute.owed` halt
+    when('[t5] the stop hook runs route.drive on the held last stone', () => {
+      const result = useThen('the drive renders the human halt', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.', when: 'hook.onStop' },
+          cwd: scene.tempDir,
+          env: ENV_OF_DRIVER,
+        }),
+      );
+
+      then('🔴 the stop is allowed — the agent waits on the human', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('🔴 the halt names the dispute and its verdict command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('a dispute owes the human');
+        expect(output).toContain('F001');
+        expect(output).toContain(
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
+        );
+        expect(output).not.toContain('when ready to continue');
+      });
+
+      then('the halt a human reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('the drive halt at a gateless last stone');
       });
     });
   });
@@ -370,8 +412,9 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
           slug: 'dispute-passage-ledger',
           clone: ASSETS_DIR,
         });
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
         await fs.writeFile(
-          path.join(tempDir, '.fulcrums', 'verdicts.jsonl'),
+          path.join(tempDir, '.route', 'fulcrum.verdicts.jsonl'),
           'not json\n',
         );
         await execAsync('npx rhachet roles link --role driver', {
@@ -494,11 +537,13 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('both judges allow, so the passage dispute check is the one that refuses', () => {
+      // r011 i009 blocker.1: the approval is out of force, so the `approved?` judge halts as a
+      // recorded blocker, never a throw after both judges allowed
+      then('🔴 the approved? judge halts — the approval is out of force', () => {
         expect(result.stdout).toContain('judge.1 - allowed');
-        expect(result.stdout).toContain('judge.2 - allowed');
-        expect(result.stderr).toContain(
-          "a dispute owes the human at this stone's gate",
+        expect(result.stdout).not.toContain('judge.2 - allowed');
+        expect(result.stdout + result.stderr).toContain(
+          'halted, human approval required',
         );
       });
 
@@ -506,7 +551,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         const output = result.stdout + result.stderr;
         expect(output).toContain('F001');
         expect(output).toContain(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
       });
 
@@ -514,6 +559,32 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(
           sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
         ).toMatchSnapshot('an approval before the dispute cannot pass it');
+      });
+    });
+
+    // r011 i009 blocker.1: the stop hook once told the driver to `--as passed` (refused) and
+    // blocked the stop; it now shows the human the dispute to rule, and lets the agent stop
+    when('[t1b] the stop hook runs route.drive on the held stone', () => {
+      const result = useThen('the drive renders the human halt', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.', when: 'hook.onStop' },
+          cwd: gated.tempDir,
+          env: ENV_OF_DRIVER,
+        }),
+      );
+
+      then('🔴 the stop is allowed — the agent waits on the human', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('🔴 the halt asks the human to rule, never the driver to pass', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('halted, human approval required');
+        expect(output).toContain(
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
+        );
+        expect(output).not.toContain('when ready to continue');
       });
     });
 
@@ -536,7 +607,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         const output = result.stdout + result.stderr;
         expect(output).toContain('refused, disputes owe a verdict');
         expect(output).toContain(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
       });
 
@@ -553,22 +624,12 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
     // own write is proven at integration grain (`setFulcrumVerdict.integration.test.ts`)
     when('[t4] the human upholds the dispute, then approves, and the driver passes', () => {
       const result = useThen('the stone passes', async () => {
-        const fulcrumPath = path.join(gated.tempDir, FULCRUM_REL);
-        const content = await fs.readFile(fulcrumPath, 'utf-8');
-        const on = '2026-11-18';
-        await fs.writeFile(
-          path.join(gated.tempDir, '.fulcrums', 'verdicts.jsonl'),
-          `${JSON.stringify({
-            case: 'F001',
-            ruled: 'upheld',
-            on,
-            seen: asFulcrumSeenOfContent({ content }),
-          })}\n`,
-        );
-        await fs.writeFile(
-          fulcrumPath,
-          asFulcrumContentWithVerdict({ content, ruled: 'upheld', on })!,
-        );
+        await setFulcrumVerdictAsTheLever({
+          route: gated.tempDir,
+          fulcrum: FULCRUM_REL,
+          ruled: 'upheld',
+          on: '2026-11-18',
+        });
         const approved = await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'approved' },
@@ -665,6 +726,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
           skill: 'route.drive',
           args: { route: '.', when: 'hook.onStop' },
           cwd: held.tempDir,
+          env: ENV_OF_DRIVER,
         });
         return { passed, halt };
       });
@@ -675,9 +737,9 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
 
       then('🔴 the halt names the verdict ask before the approval ask', () => {
         const output = result.halt.stdout + result.halt.stderr;
-        expect(output).toContain('1 dispute owes your verdict');
+        expect(output).toContain('1 dispute owes a human verdict');
         const atRule = output.indexOf(
-          'rhx route.fulcrum.rule --case F001 --as upheld|conceded',
+          'rhx route.fulcrum.rule --case F001 --as <upheld|conceded>',
         );
         const atApprove = output.indexOf(
           'rhx route.stone.set --stone 1.vision --as approved',
@@ -692,6 +754,72 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
             `${result.halt.stdout}\n---\n${result.halt.stderr}`,
           ),
         ).toMatchSnapshot('the drive halt at a human gate with an open dispute');
+      });
+    });
+
+    // the conceded critipath: the human concedes, the halt names the repair the driver owes and
+    // orders the ask — the repair lands, then the human approves — and the stone then passes.
+    // the fixture writes what the lever writes, as [case3] [t4] does
+    when('[t1] the human concedes the dispute', () => {
+      const result = useThen('the halt names the repair', async () => {
+        await setFulcrumVerdictAsTheLever({
+          route: held.tempDir,
+          fulcrum: FULCRUM_REL,
+          ruled: 'conceded',
+          on: '2026-11-18',
+        });
+        return invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.', when: 'hook.onStop' },
+          cwd: held.tempDir,
+          env: ENV_OF_DRIVER,
+        });
+      });
+
+      then('the halt names the repair the driver owes', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('F001');
+        expect(output).toContain('conceded');
+        expect(output).toContain('repair owed: lane/i001/blocker.1');
+        expect(output).toContain(
+          'next: the driver repairs it in the current diff, then a human approves the stone after it',
+        );
+      });
+
+      then('🔴 the ask orders the repair before the approval', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('approve once the repair lands');
+        expect(output).not.toContain('rhx route.fulcrum.rule --case F001');
+      });
+
+      then('the halt a human reads is pinned', () => {
+        expect(
+          sanitizeTimeForSnapshot(`${result.stdout}\n---\n${result.stderr}`),
+        ).toMatchSnapshot('the drive halt after a conceded verdict');
+      });
+    });
+
+    when('[t2] the repair lands, the human approves, and the driver passes', () => {
+      const result = useThen('the stone passes', async () => {
+        const approved = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'approved' },
+          cwd: held.tempDir,
+        });
+        const passed = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: held.tempDir,
+        });
+        return { approved, passed };
+      });
+
+      then('the approval is accepted, since a conceded verdict owes no human', () => {
+        expect(result.approved.code).toEqual(0);
+      });
+
+      then('🔴 the stone PASSES after the concession and the approval', () => {
+        expect(result.passed.code).toEqual(0);
       });
     });
   });
@@ -719,6 +847,7 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
           skill: 'route.drive',
           args: { route: '.', when: 'hook.onStop' },
           cwd: tempDir,
+          env: ENV_OF_DRIVER,
         });
       });
 

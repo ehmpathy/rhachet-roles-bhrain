@@ -3,11 +3,16 @@ import type { FulcrumVerdictRow } from '@src/domain.objects/Driver/FulcrumVerdic
 import { isFulcrumVerdictProven } from './isFulcrumVerdictProven';
 import { isFulcrumVerdictReopened } from './isFulcrumVerdictReopened';
 
+const KEY_SEEN = '1.vision:rules:r001.rules.md:blocker.1';
+const KEY_NEWER = '5.1.execution:rules:r004.rules.md:blocker.2';
+
 const ROW_F44_UPHELD: FulcrumVerdictRow = {
   case: 'F44',
   ruled: 'upheld',
   on: '2026-11-17',
   seen: 'hash-read',
+  held: [KEY_SEEN],
+  after: 1,
 };
 
 const TEST_CASES: {
@@ -16,6 +21,7 @@ const TEST_CASES: {
     case: string;
     ruled: 'upheld' | 'conceded';
     seen: string;
+    disputes: string[];
     rows: FulcrumVerdictRow[];
   };
   expect: { proven: boolean; reopened: boolean };
@@ -26,13 +32,20 @@ const TEST_CASES: {
       case: 'F44',
       ruled: 'upheld',
       seen: 'hash-read',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD],
     },
     expect: { proven: true, reopened: false },
   },
   {
     description: 'a verdict with no ledger row is not proven (a hand edit)',
-    given: { case: 'F44', ruled: 'upheld', seen: 'hash-read', rows: [] },
+    given: {
+      case: 'F44',
+      ruled: 'upheld',
+      seen: 'hash-read',
+      disputes: [KEY_SEEN],
+      rows: [],
+    },
     expect: { proven: false, reopened: false },
   },
   {
@@ -42,6 +55,7 @@ const TEST_CASES: {
       case: 'F44',
       ruled: 'conceded',
       seen: 'hash-read',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD],
     },
     expect: { proven: false, reopened: false },
@@ -53,9 +67,34 @@ const TEST_CASES: {
       case: 'F44',
       ruled: 'upheld',
       seen: 'hash-edited',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD],
     },
     expect: { proven: false, reopened: true },
+  },
+  {
+    description:
+      '🔴 a dispute the verdict never held is not proven, and reads as reopened (a re-dispute on unedited content)',
+    given: {
+      case: 'F44',
+      ruled: 'upheld',
+      seen: 'hash-read',
+      disputes: [KEY_SEEN, KEY_NEWER],
+      rows: [ROW_F44_UPHELD],
+    },
+    expect: { proven: false, reopened: true },
+  },
+  {
+    description:
+      'a dispute the verdict held, since rewound, leaves the verdict proven',
+    given: {
+      case: 'F44',
+      ruled: 'upheld',
+      seen: 'hash-read',
+      disputes: [],
+      rows: [ROW_F44_UPHELD],
+    },
+    expect: { proven: true, reopened: false },
   },
   {
     description:
@@ -64,6 +103,7 @@ const TEST_CASES: {
       case: 'F44',
       ruled: 'upheld',
       seen: 'hash-read',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD, { ...ROW_F44_UPHELD, ruled: 'conceded' }],
     },
     expect: { proven: false, reopened: false },
@@ -74,6 +114,7 @@ const TEST_CASES: {
       case: 'F44',
       ruled: 'conceded',
       seen: 'hash-read',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD, { ...ROW_F44_UPHELD, ruled: 'conceded' }],
     },
     expect: { proven: true, reopened: false },
@@ -84,6 +125,7 @@ const TEST_CASES: {
       case: 'F47',
       ruled: 'upheld',
       seen: 'hash-read',
+      disputes: [KEY_SEEN],
       rows: [ROW_F44_UPHELD],
     },
     expect: { proven: false, reopened: false },

@@ -98,32 +98,8 @@ describe('setStonePassage', () => {
       },
     );
 
-    when('[t1] a human-gated stone is passed', () => {
-      then('🔴 it is refused at its own gate', async () => {
-        const route = genRouteWithOpenDispute({ slug: 'passage-gated' });
-        const stoneGated = genStone({
-          route,
-          name: '1.vision',
-          isHumanGated: true,
-        });
-        const stoneLast = genStone({
-          route,
-          name: '2.execution',
-          isHumanGated: false,
-        });
-        const error = await getError(
-          setStonePassage({
-            stone: stoneGated,
-            stones: [stoneGated, stoneLast],
-            route,
-          }),
-        );
-        expect(error.message).toContain(
-          "a dispute owes the human at this stone's gate",
-        );
-      });
-    });
-
+    // .note = a human-gated stone halts at its `approved?` judge, not here: the approval reader
+    //         holds a later dispute's approval out of force (getOneStoneGuardApproval clamp)
     when('[t2] an ungated stone that is not last is passed', () => {
       then('it passes: a dispute never halts an ungated stone', async () => {
         const route = genRouteWithOpenDispute({ slug: 'passage-ungated' });
