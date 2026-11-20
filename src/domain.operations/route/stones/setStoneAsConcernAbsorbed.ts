@@ -1,9 +1,14 @@
 import { ConstraintError } from 'helpful-errors';
+import { basename } from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asUrgentHarmSet } from '../asUrgentHarmSet';
+import { asFulcrumOwed } from '../fulcrum/asFulcrumOwed';
+import { assertFulcrumFitsDispute } from '../fulcrum/assertFulcrumFitsDispute';
+import { assertFulcrumPathOnRoute } from '../fulcrum/assertFulcrumPathOnRoute';
+import { asGuardArtifactIteration } from '../guard/artifact/asGuardArtifactIteration';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asAbsorptionIsAnswered } from '../guard/review/peer/asAbsorptionIsAnswered';
 import { asAbsorptionIsNotContrary } from '../guard/review/peer/asAbsorptionIsNotContrary';
@@ -68,6 +73,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   about: string;
   why?: string;
   severity?: 'better' | 'urgent';
+  reflect?: string;
 }): Promise<{
   disputed?: boolean;
   conceded?: boolean;
@@ -82,7 +88,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
       [
         `--why is required for --as disputed`,
         ``,
-        `a dispute is a guarantee to the council, so it must cite the argument they will read.`,
+        `a dispute is a guarantee to a human at the next human gate, so it must cite the argument they will read.`,
         `write the entry first, then point at it:`,
         `  .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
@@ -137,11 +143,17 @@ export const setStoneAsConcernAbsorbed = async (input: {
     });
 
   // the fulcrum path is checked BEFORE any state moves, so a refusal mutates naught
-  if (input.why)
-    assertFulcrumPathExists({
-      why: input.why,
+  const repoRoot = await getRepoRootWithFallback({ from: input.route });
+  const fulcrumPathResolved = input.why
+    ? assertFulcrumPathExists({ why: input.why, route: input.route, repoRoot })
+    : null;
+
+  // a dispute's fulcrum must live on this route: every gate reads the entry by case id from here
+  if (input.as === 'disputed' && fulcrumPathResolved)
+    assertFulcrumPathOnRoute({
+      pathResolved: fulcrumPathResolved,
       route: input.route,
-      repoRoot: await getRepoRootWithFallback({ from: input.route }),
+      repoRoot,
     });
 
   // the shared readiness computation, scoped to this one reviewer. it reports every slug
@@ -153,6 +165,8 @@ export const setStoneAsConcernAbsorbed = async (input: {
     scope: { slug },
   });
 
+  // the reviewer must exist BEFORE its fulcrum is judged: a typo'd --with must meet "no reviewer
+  // named", never a fulcrum-hold refusal that scripts a hold for a reviewer that does not exist
   assertValidPeerReviewSlug({
     slug,
     stone: stoneMatched,
@@ -231,6 +245,28 @@ export const setStoneAsConcernAbsorbed = async (input: {
       ].join('\n'),
     );
 
+  // a dispute's fulcrum must carry the dispute: valid frontmatter, derived owed, matched reflect.
+  // read here, once the given is known, so a refusal teaches the round the driver read
+  const fulcrumOfDispute =
+    input.as === 'disputed' && fulcrumPathResolved
+      ? await assertFulcrumFitsDispute({
+          pathResolved: fulcrumPathResolved,
+          reflect: input.reflect ?? null,
+          concern: {
+            reviewer: slug,
+            iteration: asGuardArtifactIteration({
+              filename: basename(given.pathGiven),
+            }),
+            about,
+          },
+        })
+      : null;
+
+  // who the fulcrum owes, as verified here; the row pins it, so a later edit cannot reroute it
+  const owedOfDispute = fulcrumOfDispute
+    ? asFulcrumOwed(fulcrumOfDispute)
+    : null;
+
   // R3 — a contrary stance on this concern of this given is refused
   asAbsorptionIsNotContrary({
     absorptions,
@@ -276,6 +312,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
         // whatever process and from whatever route path it reads (asReviewGivenKey)
         given: asReviewGivenKey({ path: given.pathGiven }),
         fulcrum: input.why,
+        owed: owedOfDispute ?? undefined,
         severity,
         reason: `${input.as} review.peer: ${slug} ${about}${
           severity ? ` (${severity})` : ''
@@ -331,6 +368,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
         slug,
         concern,
         why: input.why ?? null,
+        owed: owedOfDispute,
         severity: severity ?? null,
         meter: {
           level: reviewConfigured?.level ?? LEVEL_OF_UNMAPPED_REVIEW,

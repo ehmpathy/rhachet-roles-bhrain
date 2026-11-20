@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertRouteFulcrumDisputesRuled given: [case1] a route with one human-owed dispute, unruled when: [t0] a human approves then: the grant is refused, and names the dispute 1`] = `
+"BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
+   ├─ 1 dispute owes a human verdict
+   │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
+   │  └─ F44 · rename-table · 65%
+   │     ├─ ground: dirty · 65%
+   │     ├─ holds: rules/i003/blocker.2
+   │     ├─ lean: keep the table as written
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   │
+   └─ rule on each owed dispute, repair any unreadable fulcrum, then approve
+      ├─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
+      └─ rhx route.stone.set --stone 3.blueprint --as approved
+
+{
+  "route": "<route>",
+  "stone": "3.blueprint"
+}"
+`;
+
+exports[`assertRouteFulcrumDisputesRuled given: [case3] a yaml verdict with no ledger row (a hand edit) when: [t0] a human forces then: the grant is refused, and names the forged verdict 1`] = `
+"BadRequestError: 🗿 route.stone.set --as forced: refused, disputes owe a verdict
+   ├─ 1 dispute owes a human verdict
+   │  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
+   │  └─ F44 · rename-table · 65%
+   │     ├─ ground: dirty · 65%
+   │     ├─ holds: rules/i003/blocker.2
+   │     ├─ lean: keep the table as written
+   │     ├─ 🟡 its yaml carries a verdict no human lever wrote, read as unruled
+   │     └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   │
+   └─ rule on each owed dispute, repair any unreadable fulcrum, then force
+      ├─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>
+      └─ rhx route.stone.set --stone 3.blueprint --as forced
+
+{
+  "route": "<route>",
+  "stone": "3.blueprint"
+}"
+`;
+
+exports[`assertRouteFulcrumDisputesRuled given: [case4] only a reflect-owed dispute, and an unreadable entry when: [t0] a human approves then: the unreadable entry refuses the grant; the reflect is listed apart 1`] = `
+"BadRequestError: 🗿 route.stone.set --as approved: refused, disputes owe a verdict
+   ├─ 1 fulcrum is unreadable and owes repair
+   │  └─ F46 · .fulcrums/inventory.of=fulcrums.case=F46-no-frontmatter.md
+   │
+   ├─ 1 reflected upstream, informational
+   │  └─ F45 · sure-misread · 95%
+   │     ├─ reflect: ehmpathy/rhachet#1
+   │     ├─ holds: rules/i003/blocker.2
+   │     ├─ lean: keep the table as written
+   │     ├─ read: .fulcrums/inventory.of=fulcrums.case=F45-sure-misread.md
+   │     └─ to rule it anyway: rhx route.fulcrum.rule --case F45 --as <upheld|conceded>
+   │
+   └─ rule on each owed dispute, repair any unreadable fulcrum, then approve
+      └─ rhx route.stone.set --stone 3.blueprint --as approved
+
+{
+  "route": "<route>",
+  "stone": "3.blueprint"
+}"
+`;

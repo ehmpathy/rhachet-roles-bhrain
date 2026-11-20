@@ -723,7 +723,14 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t5] the real
 exports[`roleBootClamps given: [case2] the driver role boot when: [t0] its boot.yml is read then: its budget and \`not\` list match the snapshot 1`] = `
 {
   "budgetTokens": 10000,
-  "not": [],
+  "not": [
+    "briefs/define.invariant.review.peer.dispute.deferrals-accrue-where-the-human-reads.md",
+    "briefs/define.invariant.review.peer.dispute.earns-no-budget.md",
+    "briefs/define.invariant.review.peer.dispute.never-halts-without-a-human-gate.md",
+    "briefs/define.invariant.review.peer.dispute.reconciled-at-the-human-gate.md",
+    "briefs/define.invariant.review.peer.dispute.sure-misread-owes-a-reflection.md",
+    "briefs/define.invariant.review.peer.dispute.the-fulcrum-is-the-one-home.md",
+  ],
 }
 `;
 
@@ -1121,11 +1128,11 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "$route/.fulcrums/inventory.of=fulcrums.case=F$n-$slug.md  # one ENTRY per fulcrum",
       "\`\`\`",
       "",
-      "both owed. append at the moment, never in a sweep. a call under 93% confidence is a trigger too, even with no alternative weighed (n=1 generalization, unfetched premise, invented taxonomy, an act against a stated bound, "i think this is right").",
+      "both owed. append at the moment, never in a sweep. a call under 93% confidence is a trigger too, even with no fork (n=1 generalization, unfetched premise, invented taxonomy, an act against a stated bound).",
       "",
-      "summary columns: \`case\` · \`title\` · \`rework\` (clean/dirty) · \`status\` · \`confidence\` (a percentage). entry adds: the fork stated fairly · taken, why · rework, why · confidence, why low · where · verdict once ruled.",
+      "each entry opens with yaml frontmatter: \`case · rework · ground · confidence · status · owed · holds · lean · verdict\` (a refusal prints the block). body: the fork stated fairly · taken, why · rework, why · confidence, why low · where.",
       "",
-      "blocker: a fulcrum never itemized · row with no entry or entry with no row · record swept at the end · absent \`rework\` column · prose filename · unrecorded verdict · sub-93% call with no row · percentage with no reason.",
+      "blocker: a fulcrum never itemized · row with no entry or entry with no row · record swept at the end · absent \`rework\` · prose filename · invalid frontmatter · unrecorded verdict · sub-93% call with no row · percentage with no reason.",
     ],
   },
   {
@@ -1355,15 +1362,17 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
   "driver/briefs/howto.run-self-reviews.md",
   "driver/briefs/im_a.bhrain_owl.md",
   "driver/briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.example=the-approved-lane-that-re-raised.md",
+  "driver/briefs/rule.forbid.deferrals-hidden-from-the-human.md",
   "driver/briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md",
   "driver/briefs/rule.prefer.walk-a-route-before-you-template-it.md",
+  "driver/briefs/rule.require.deferrals-accrue-in-the-blocker-list.md",
 ]
 `;
 
 exports[`roleBootClamps given: [case2] the driver role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
   "budget": 10000,
-  "payload": 9936,
+  "payload": 9962,
 }
 `;
 

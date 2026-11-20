@@ -64,6 +64,7 @@ describe('driver.route.passage-gitignore.acceptance', () => {
         expect(res.gitignoreContent).toContain('*');
         expect(res.gitignoreContent).toContain('!.gitignore');
         expect(res.gitignoreContent).toContain('!passage.jsonl');
+        expect(res.gitignoreContent).toContain('!fulcrum.verdicts.jsonl');
         expect(res.gitignoreContent).toContain('!.bind.*');
       });
     });
@@ -122,7 +123,7 @@ describe('driver.route.passage-gitignore.acceptance', () => {
         const negationRules = res.gitignoreAfterSecond
           .split('\n')
           .filter((line) => line.startsWith('!'));
-        expect(negationRules.length).toEqual(3); // !.gitignore, !passage.jsonl, !.bind.*
+        expect(negationRules.length).toEqual(4); // !.gitignore, !passage.jsonl, !fulcrum.verdicts.jsonl, !.bind.*
       });
     });
   });

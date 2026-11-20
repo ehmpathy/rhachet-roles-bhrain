@@ -19,6 +19,10 @@ import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { ROUTE_INFLIGHT_FRESH_BOUND_LABEL } from '@src/domain.operations/route/drive/asRouteInflightFreshness';
+import { asRouteApprovalHaltBranches } from '@src/domain.operations/route/fulcrum/asRouteApprovalHaltBranches';
+import { asRouteFulcrumRuleStdout } from '@src/domain.operations/route/fulcrum/asRouteFulcrumRuleStdout';
+import { getOneRouteFulcrumDisputeStateOrRefusal } from '@src/domain.operations/route/fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
+import { setFulcrumVerdict } from '@src/domain.operations/route/fulcrum/setFulcrumVerdict';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 import { isStoneMatchedByName } from '@src/domain.operations/route/guard/isStoneMatchedByName';
@@ -58,7 +62,6 @@ import {
   getStoneLiveUrgentConcessionSlugs,
 } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
 import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
-import { JUDGE_HALT_ASK_HUMAN_LABEL } from '@src/domain.operations/route/guard/review/peer/JUDGE_HALT_ASK_HUMAN_LABEL';
 import { asBudgetGrantWarrantLines } from '@src/domain.operations/route/guard/review/peer/meter/asBudgetGrantWarrantLines';
 import { asGuardBudgetHeadLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetHeadLines';
 import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
@@ -367,7 +370,8 @@ options:
                        promised - review.self promise made
                        absorbed - peer review response articulated
                        conceded - the reviewer is right on ONE concern; you will fix it
-                       disputed - ONE concern is fine to continue; a council will rule
+                       disputed - ONE concern is fine to continue; a human rules it at
+                                  the next human gate, or a sure misread is reflected upstream
                        blocked  - stuck, need help
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
@@ -384,13 +388,19 @@ options:
                        within that reviewer's latest report: blocker.1, nitpick.4
                        (required for --as disputed / --as conceded)
   --why <path>       path to a fulcrum/justification entry
-                       (required for --as disputed — the argument a council reads;
+                       (required for --as disputed — the fulcrum entry a human reads at the
+                        gate; its frontmatter must hold the concern. the human rules it with
+                        rhx route.fulcrum.rule --case <id> --as <upheld|conceded>;
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
                        urgent = a shipped harm — earns more budget, warns the human
                        (${asUrgentHarmSet({ separator: ' | ' })})
                        better = code idealism / maintenance — the floor, never earns budget
+  --reflect <ref>    the upstream reflection a sure misread owes: <owner>/<repo>#<n>
+                       (REQUIRED for --as disputed when the fulcrum derives owed: reflect —
+                        ground wrong, confidence 0.9 or above; must match its frontmatter.
+                        refused on dirty ground, which a human always rules)
   --into <path>      the path you wrote your articulation to — copy it from the prompt
                        (REQUIRED for --as promised)
                        a diff needs both paths: with one, a mismatch reads "absent";
@@ -402,7 +412,8 @@ note:
   --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
   --as forced is shorthand for --as approved + --as overruled
   --as conceded is the DEFAULT absorption of a concern: fix it, then re-arrive.
-    --as disputed is an escalation — it asks a human council to rule at the close.
+    --as disputed is an escalation — a human rules it at the next human gate. it never
+    halts a stone that has no human gate.
 
 examples:
   route.stone.set --stone 1.vision --as arrived
@@ -1073,6 +1084,7 @@ export const routeStoneSet = async (): Promise<void> =>
           about: options.about,
           why: options.why,
           severity: asConcedeSeverity({ raw: options.severity }),
+          reflect: options.reflect,
           into: options.into,
           yield: yieldMode,
         },
@@ -1156,6 +1168,71 @@ export const routeStoneDel = async (): Promise<void> => {
     throw error;
   }
 };
+
+/**
+ * .what = prints help for route.fulcrum.rule
+ * .why = a human reads how to rule on a dispute from the surface itself
+ */
+const printFulcrumRuleHelp = (): void => {
+  console.log(`
+route.fulcrum.rule - a human rules on one disputed fulcrum
+
+usage:
+  route.fulcrum.rule --case <id> --as <upheld|conceded> [options]
+
+options:
+  --case <id>       the fulcrum case id, e.g. F44 (required)
+  --as <verdict>    upheld (the driver's call stands) | conceded (the reviewer's concern stands) (required)
+  --route <path>    path to route directory (uses bound route if absent)
+  --help            show this help
+
+example:
+  route.fulcrum.rule --case F44 --as upheld
+`);
+};
+
+/**
+ * .what = cli entrypoint for route.fulcrum.rule skill
+ * .why = the one human lever that rules a dispute; it writes the yaml verdict and the ledger row
+ *        that proves a human wrote it
+ */
+export const routeFulcrumRule = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
+    if (options.help) {
+      printFulcrumRuleHelp();
+      return;
+    }
+
+    // validate the case and the verdict
+    if (!options.case)
+      throw new BadRequestError(
+        [
+          '--case is required',
+          '   └─ fix: name the fulcrum to rule, e.g.',
+          '      └─ rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
+        ].join('\n'),
+      );
+    if (options.as !== 'upheld' && options.as !== 'conceded')
+      throw new BadRequestError(
+        [
+          `--as must be upheld or conceded, not ${options.as ?? '(absent)'}`,
+          `   ├─ upheld: the driver's call stands`,
+          `   ├─ conceded: the reviewer's concern stands, and its repair is owed`,
+          `   └─ fix: rhx route.fulcrum.rule --case ${options.case} --as <upheld|conceded>`,
+        ].join('\n'),
+      );
+
+    // rule the dispute; a human holds a tty on stdin, a spawned clone holds a pipe
+    // .note = no env hatch, as route.mutate grant: a verdict a test env could self-grant would
+    //         let a clone forge the very verdict the ledger exists to prove
+    const route = await getRouteOrThrow({ route: options.route });
+    const result = await setFulcrumVerdict(
+      { route, case: options.case, ruled: options.as },
+      { isTTY: process.stdin.isTTY === true },
+    );
+    console.log(asRouteFulcrumRuleStdout({ ...result, ruled: options.as }));
+  });
 
 /**
  * .what = cli entrypoint for route.stone.add skill
@@ -1291,19 +1368,21 @@ const judgeApproved = async (input: {
     route: input.route,
   });
 
-  // halt until a human approves
+  // halt until a human approves; the same branches the drive halt shows, from one render
   if (!approval) {
-    const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
-    const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+    // a corrupt dispute record renders as a refusal, never a throw
+    const disputes = await getOneRouteFulcrumDisputeStateOrRefusal({
+      route: input.route,
+    });
     console.log('passed: false');
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
-    console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);
-    console.log(`   │  └─ ${approveCmd}`);
-    console.log('   │');
-    console.log('   └─ after human approves, run');
-    console.log(`      └─ ${passCmd}`);
+    asRouteApprovalHaltBranches({
+      stone: input.stone,
+      gate: 'approval',
+      disputes,
+    }).forEach((line) => console.log(`   ${line}`));
     process.exit(2);
   }
 
@@ -1480,7 +1559,7 @@ const judgeReviewed = async (input: {
   // subtract the concerns the driver SHED from the tally against the current generation.
   // .why = two absorptions shed a concern from the judge's count, and both are at the grain of ONE
   //        concern (S07): the review still ran, its file still stands, only its count is dropped.
-  //   - DISPUTED — the driver holds the concern is fine to continue; a council rules later.
+  //   - DISPUTED — the driver holds the concern is fine to continue; a human rules it at the next human gate.
   //   - CONCEDED `better` — hard-capped by the budget (S16). the judge only runs at terminality,
   //     so a `better` concession that survives to here is one the driver could not fix within
   //     budget: the maintenance floor was met, and it passes as tech debt with NO budget increase

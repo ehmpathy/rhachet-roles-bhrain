@@ -48,9 +48,11 @@ because a fix is *minor* or *later* is forbidden outright (`rule.forbid.lazy-rev
 2. `--why` is **required**, and it is a **path** to a fulcrum entry the driver authored — never prose
    (`S05` → `F018`)
 3. one fulcrum entry may back **N** disputes
-4. no gate reads the entry's content (`S04` — *"a reason is a nudge to reconsider"*). the beneficiary
-   is the author, and a gate cannot improve a mechanism whose action completes before any reader
-   arrives
+4. the passage gate (`reviewed?`) reads naught of the entry's content: the dispute sheds its one
+   concern whatever the argument says. the **approval** gate does read the entry's frontmatter: it
+   lists each dispute that owes a human (`owed: human`, `verdict: null`) and refuses approval until
+   the human rules on each
+   (`define.invariant.review.peer.dispute.reconciled-at-the-human-gate`)
 5. it discharges **only** the concern it names — every un-named concern still gates
    (`rule.forbid.suppression-of-undeclared-concerns`)
 

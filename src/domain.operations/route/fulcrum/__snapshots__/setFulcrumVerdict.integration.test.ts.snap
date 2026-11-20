@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setFulcrumVerdict given: [case1] an open human-owed dispute when: [t0] a human rules it upheld then: 🔴 every line but status and verdict stays as written, comments and key order included 1`] = `
+"---
+case: F44
+rework: clean
+ground: wrong
+confidence: 0.65
+status: ruled
+owed: human
+holds:
+  - rules/i003/blocker.2
+# the driver's note, which the verdict write must keep
+lean: keep the table as written
+verdict:
+  by: human
+  at: [DATE]
+  ruled: upheld
+---
+
+# F44 · rename-table
+
+the body stays as written.
+"
+`;
+
+exports[`setFulcrumVerdict given: [case4] a fulcrum whose frontmatter case differs from its file case id when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 has unreadable frontmatter; the driver repairs it before a verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ malformed
+   │  └─ case (equal to the file id, F44)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case7] a case id with no fulcrum on the route when: [t0] a human rules it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: no fulcrum found for case F45
+   ├─ looked in: <route>/.fulcrums
+   └─ fix: name a case whose entry lives at .fulcrums/inventory.of=fulcrums.case=<id>-<slug>.md
+
+{
+  "route": "<route>",
+  "case": "F45"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case8] a design-call fulcrum that owes none when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 holds no dispute a human can rule
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ fix: none owed here; a fulcrum no dispute cites, with owed: none, is a design call
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
+}"
+`;
+
+exports[`setFulcrumVerdict given: [case9] a fulcrum with no frontmatter at all when: [t0] a human tries to rule it then: the refusal a human reads is pinned 1`] = `
+"BadRequestError: fulcrum F44 has unreadable frontmatter; the driver repairs it before a verdict
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ case
+   │  ├─ rework
+   │  ├─ ground
+   │  ├─ confidence
+   │  ├─ status
+   │  ├─ owed
+   │  ├─ holds
+   │  ├─ lean
+   │  └─ verdict
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─
+
+{
+  "path": ".fulcrums/inventory.of=fulcrums.case=F44-rename-table.md"
+}"
+`;

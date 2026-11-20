@@ -7,8 +7,8 @@ $route/.fulcrums/inventory.of=fulcrums._.md               # SUMMARY
 $route/.fulcrums/inventory.of=fulcrums.case=F$n-$slug.md  # one ENTRY per fulcrum
 ```
 
-both owed. append at the moment, never in a sweep. a call under 93% confidence is a trigger too, even with no alternative weighed (n=1 generalization, unfetched premise, invented taxonomy, an act against a stated bound, "i think this is right").
+both owed. append at the moment, never in a sweep. a call under 93% confidence is a trigger too, even with no fork (n=1 generalization, unfetched premise, invented taxonomy, an act against a stated bound).
 
-summary columns: `case` · `title` · `rework` (clean/dirty) · `status` · `confidence` (a percentage). entry adds: the fork stated fairly · taken, why · rework, why · confidence, why low · where · verdict once ruled.
+each entry opens with yaml frontmatter: `case · rework · ground · confidence · status · owed · holds · lean · verdict` (a refusal prints the block). body: the fork stated fairly · taken, why · rework, why · confidence, why low · where.
 
-blocker: a fulcrum never itemized · row with no entry or entry with no row · record swept at the end · absent `rework` column · prose filename · unrecorded verdict · sub-93% call with no row · percentage with no reason.
+blocker: a fulcrum never itemized · row with no entry or entry with no row · record swept at the end · absent `rework` · prose filename · invalid frontmatter · unrecorded verdict · sub-93% call with no row · percentage with no reason.

@@ -142,6 +142,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.del'
     | 'route.bounce'
     | 'route.drive'
+    | 'route.fulcrum.rule'
     | 'route.guard.budget'
     | 'route.guard.partition'
     | 'route.guard.upgrade'

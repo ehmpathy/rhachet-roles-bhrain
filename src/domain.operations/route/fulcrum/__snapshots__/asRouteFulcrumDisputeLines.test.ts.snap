@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteFulcrumDisputeLines every section renders, owed first, each fact on its own leaf 1`] = `
+"├─ 4 disputes owe a human verdict
+│  ├─ verdict: upheld = the driver's call stands · conceded = the reviewer's concern stands
+│  ├─ F44 · rename-table · 65%
+│  │  ├─ ground: wrong · 65%
+│  │  ├─ holds: rules/i003/blocker.2
+│  │  ├─ lean: keep the table as written
+│  │  ├─ raised on: 3.blueprint
+│  │  ├─ 🟡 its yaml carries a verdict no human lever wrote, read as unruled
+│  │  └─ read: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+│  ├─ F49 · retry-bound · 65%
+│  │  ├─ ground: wrong · 65%
+│  │  ├─ holds: rules/i003/blocker.2
+│  │  ├─ lean: keep the table as written
+│  │  ├─ raised on: 5.1.execution
+│  │  ├─ 🟡 edited since a human ruled it upheld; read as unruled
+│  │  └─ read: .fulcrums/inventory.of=fulcrums.case=F49-retry-bound.md
+│  ├─ F51 · lock-scope · 65%
+│  │  ├─ ground: wrong · 65%
+│  │  ├─ holds: rules/i003/blocker.2
+│  │  ├─ lean: keep the table as written
+│  │  ├─ raised on: 3.blueprint · 5.1.execution
+│  │  ├─ 🟡 disputed again since a human ruled it conceded; the verdict covers only the disputes they saw
+│  │  └─ read: .fulcrums/inventory.of=fulcrums.case=F51-lock-scope.md
+│  └─ F50 · edited-after · 95%
+│     ├─ ground: wrong · 95%
+│     ├─ holds: rules/i003/blocker.2
+│     ├─ lean: keep the table as written
+│     ├─ raised on: 5.1.execution
+│     ├─ 🟡 edited since the dispute to read as a reflection; the dispute pinned it to you
+│     └─ read: .fulcrums/inventory.of=fulcrums.case=F50-edited-after.md
+│
+├─ 1 fulcrum is unreadable and owes repair
+│  └─ F46 · .fulcrums/inventory.of=fulcrums.case=F46-bare.md
+│
+├─ 2 ruled
+│  ├─ F47 · cache-scope · conceded
+│  │  ├─ ruled on: 2026-11-17
+│  │  ├─ repair owed: rules/i003/blocker.2
+│  │  ├─ next: the driver repairs it in the current diff, then a human approves the stone after it
+│  │  └─ 🟡 leave the fulcrum file as is; an edit to it reopens the verdict
+│  └─ F48 · log-shape · conceded, approved over at 3.blueprint
+│     └─ ruled on: 2026-11-17
+│
+├─ 1 reflected upstream, informational
+│  └─ F45 · sure-misread · 95%
+│     ├─ reflect: ehmpathy/rhachet#1
+│     ├─ holds: rules/i003/blocker.2
+│     ├─ lean: keep the table as written
+│     ├─ read: .fulcrums/inventory.of=fulcrums.case=F45-sure-misread.md
+│     └─ to rule it anyway: rhx route.fulcrum.rule --case F45 --as <upheld|conceded>
+│"
+`;

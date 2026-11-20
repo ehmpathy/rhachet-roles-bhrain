@@ -18,6 +18,9 @@ import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { asRouteApprovalHaltBranches } from '../fulcrum/asRouteApprovalHaltBranches';
+import { getOneRouteFulcrumDisputeStateOrRefusal } from '../fulcrum/getOneRouteFulcrumDisputeStateOrRefusal';
+import { isStoneLastHeldByDispute } from '../fulcrum/isStoneLastHeldByDispute';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
 import { asFailedJudgeReasons } from '../guard/asFailedJudgeReasons';
@@ -62,6 +65,7 @@ import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
 import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
 import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
+import { asJudgeMechanism } from '../judges/asJudgeMechanism';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
@@ -187,9 +191,49 @@ export const setStoneAsPassed = async (
     );
   }
 
+  // a dispute at the gateless last stone halts here, before any review runs, as a recorded
+  // blocker the drive renders for the human (r011 i011 blocker.1). setStonePassage keeps the
+  // same check as a backstop; a human-gated stone halts at its own `approved?` judge
+  const isLast = stones.at(-1)?.name === stoneMatched.name;
+  const disputes = isLast
+    ? await getOneRouteFulcrumDisputeStateOrRefusal({ route: input.route })
+    : null;
+  if (
+    disputes &&
+    isStoneLastHeldByDispute({
+      stone: stoneMatched,
+      stones,
+      state: disputes.state,
+    })
+  )
+    return genStoneGuardBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'dispute.owed',
+      reason: 'the last stone has no human gate and a dispute owes the human',
+      refs: { reviews: [], judges: [] },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'blocked',
+          note: 'a dispute owes the human',
+        }),
+        stderr: [
+          `✋ halted, the last stone has no human gate and a dispute owes the human`,
+          ...asRouteApprovalHaltBranches({
+            stone: stoneMatched.name,
+            gate: 'verdict',
+            disputes,
+          }).map((line) => `   ${line}`),
+        ].join('\n'),
+      },
+    });
+
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
-    await setStonePassage({ stone: stoneMatched, route: input.route });
+    await setStonePassage({ stone: stoneMatched, stones, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
     await clearBlockedTriggersUpTo({
@@ -367,7 +411,7 @@ export const setStoneAsPassed = async (
   // if guard has no reviews and no judges, auto-pass (guard only customizes artifact detection)
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
-    await setStonePassage({ stone: stoneMatched, route: input.route });
+    await setStonePassage({ stone: stoneMatched, stones, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
     await clearBlockedTriggersUpTo({
@@ -1136,7 +1180,7 @@ export const setStoneAsPassed = async (
     }
 
     await setRoundOutput(() =>
-      setStonePassage({ stone: stoneMatched, route: input.route }),
+      setStonePassage({ stone: stoneMatched, stones, route: input.route }),
     );
 
     // clear blocked triggers for this stone and all earlier stones
@@ -1384,11 +1428,13 @@ const computeBlockedOn = (input: {
   let hasOtherFailure = false;
 
   for (const judge of input.failedJudges) {
-    const judgeCmd = input.guard.judges[judge.index - 1] ?? '';
+    const mechanism = asJudgeMechanism({
+      judge: input.guard.judges[judge.index - 1] ?? '',
+    });
 
-    if (judgeCmd.includes('--mechanism reviewed?')) {
+    if (mechanism === 'reviewed?') {
       hasReviewFailure = true;
-    } else if (judgeCmd.includes('--mechanism approved?')) {
+    } else if (mechanism === 'approved?') {
       hasApprovalFailure = true;
     } else {
       hasOtherFailure = true;

@@ -1,6 +1,7 @@
 import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { assertRouteFulcrumDisputesRuled } from '../fulcrum/assertRouteFulcrumDisputesRuled';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
 import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
@@ -44,21 +45,17 @@ export const setStoneAsApproved = async (
   // check if caller is human
   const { isHuman } = getDecisionIsCallerHuman({ isTTY: context.isTTY });
 
-  // human already approved -> idempotent success (no-op)
-  if (isHuman && approvalFound) {
-    return {
-      approved: true,
-      emit: {
-        stdout: formatRouteStoneEmit({
-          operation: 'route.stone.set',
-          stone: stoneMatched.name,
-          action: 'approved',
-        }),
-      },
-    };
-  }
+  // human -> refuse while a dispute owes a verdict, even on a re-approval; a dispute opened
+  // after the first approval must still reach the human who approves again
+  if (isHuman)
+    await assertRouteFulcrumDisputesRuled({
+      route: input.route,
+      stone: stoneMatched.name,
+      grant: 'approved',
+    });
 
-  // human not yet approved -> approve
+  // human -> approve; the writer is a findsert, so a re-approval with naught new is a no-op, and
+  // a re-approval after a fulcrum verdict lands as the new act it is
   if (isHuman) {
     await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
     return {

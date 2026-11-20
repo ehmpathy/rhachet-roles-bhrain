@@ -49,7 +49,8 @@ const isStanceDeclared = (
   stance.severity !== null;
 
 // the fulcrum a dispute cites, written into each temp route
-const FULCRUM_PATH = '.fulcrums/F1-held.md';
+const FULCRUM_PATH = '.fulcrums/inventory.of=fulcrums.case=F1-held.md';
+const FULCRUM_REFLECT = 'ehmpathy/demo#1';
 
 const STANCES_ALL_BETTER: Stance[] = [
   { slug: 'intent', about: 'blocker.1', severity: 'better' },
@@ -149,7 +150,26 @@ const driveToExhaustionUnderGuard = async (input: {
   });
   await fs.writeFile(
     path.join(tempDir, FULCRUM_PATH),
-    '# F1 — held, for the council\n',
+    [
+      '---',
+      'case: F1',
+      'rework: clean',
+      // a sure misread, owed a reflection: this suite's subject is the exhaustion tally, and its
+      // one stone is a gateless last stone, so a human-owed fulcrum would refuse every pass (F5)
+      'ground: wrong',
+      'confidence: 0.95',
+      'status: open',
+      'owed: reflect',
+      `reflect: ${FULCRUM_REFLECT}`,
+      // the two concerns this suite's cases dispute; a dispute may only cite a fulcrum that holds it
+      'holds: [intent/i001/blocker.1, calm/i001/nitpick.1]',
+      'lean: held, for the council',
+      'verdict: null',
+      '---',
+      '',
+      '# F1 — held, for the council',
+      '',
+    ].join('\n'),
   );
 
   // serial by nature: each round's reviews read the artifact the prior round edited
@@ -210,7 +230,7 @@ const driveToExhaustionUnderGuard = async (input: {
           with: stance.slug,
           about: stance.about,
           ...(stance.severity === 'disputed'
-            ? { as: 'disputed', why: FULCRUM_PATH }
+            ? { as: 'disputed', why: FULCRUM_PATH, reflect: FULCRUM_REFLECT }
             : { as: 'conceded', severity: stance.severity }),
         },
         cwd: tempDir,

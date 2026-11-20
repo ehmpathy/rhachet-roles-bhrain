@@ -317,7 +317,7 @@ exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
    │  │     │
-   │  │     └─ after human approves, run
+   │  │     └─ once they do, run
    │  │        └─ rhx route.stone.set --stone 1.vision --as passed
    │  │
    │  └─
@@ -366,7 +366,7 @@ exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when
    │  └─ stone = 1.vision
    │
    └─ halted, human approval required
-      ├─ please ask a human to
+      ├─ please ask your human to
       │  └─ rhx route.stone.set --stone 1.vision --as approved
       │
       └─ once they do, run

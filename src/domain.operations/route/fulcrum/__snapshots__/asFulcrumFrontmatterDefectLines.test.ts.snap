@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asFulcrumFrontmatterDefectLines names the file, each absent and malformed field, then the block to paste 1`] = `
+"   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ owed
+   │  └─ verdict
+   ├─ malformed
+   │  └─ ground (wrong | dirty)
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: none               # none, until a dispute cites it: then human | reflect
+         │  holds: []                # each concern a dispute cites, e.g. rules/i003/blocker.2
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─"
+`;
+
+exports[`asFulcrumFrontmatterDefectLines 🔴 clamp. for a dispute, the block teaches the derived owed and the disputed concern 1`] = `
+"   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   ├─ absent
+   │  ├─ owed
+   │  └─ holds
+   └─ fix: the frontmatter opens the file, with every field of
+      ├─ case · rework · ground · confidence · status · owed · holds · lean · verdict
+      └─ paste, at the head of the file
+         ├─
+         │  ---
+         │  case: F44
+         │  rework: clean            # clean | dirty
+         │  ground: wrong            # wrong | dirty
+         │  confidence: 0.65         # the weakest call it holds, 0 to 1
+         │  status: open             # open | held | ruled | superseded
+         │  owed: human              # derived: reflect iff ground wrong and confidence ≥ 0.90, else human
+         │  holds: [rules/i004/blocker.2]
+         │  reflect: null            # the upstream ref, only when owed: reflect (rhx radio.task.push)
+         │  lean: <one line — the call you made>
+         │  verdict: null            # only rhx route.fulcrum.rule writes this
+         │  ---
+         └─"
+`;

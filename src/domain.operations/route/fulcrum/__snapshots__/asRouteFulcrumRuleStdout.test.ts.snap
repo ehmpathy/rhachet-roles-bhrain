@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteFulcrumRuleStdout a verdict already on record says so, and writes naught new 1`] = `
+"🦉 so it was. this verdict already stands
+
+🗿 route.fulcrum.rule
+   ├─ case: F44
+   ├─ ruled: conceded
+   ├─ on: 2026-11-16
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ next: the driver repairs each held concern in the current diff, then you approve the stone after it"
+`;
+
+exports[`asRouteFulcrumRuleStdout a written verdict names the case, the verdict, the date, and the file 1`] = `
+"🦉 so it is. the verdict is written
+
+🗿 route.fulcrum.rule
+   ├─ case: F44
+   ├─ ruled: upheld
+   ├─ on: 2026-11-17
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ next: the dispute stands; its concerns stay shed from the tally"
+`;
+
+exports[`asRouteFulcrumRuleStdout 🔴 an upheld and a conceded verdict never read alike: a concede names the repair owed 1`] = `
+"🦉 so it is. the verdict is written
+
+🗿 route.fulcrum.rule
+   ├─ case: F44
+   ├─ ruled: conceded
+   ├─ on: 2026-11-17
+   ├─ file: .fulcrums/inventory.of=fulcrums.case=F44-rename-table.md
+   └─ next: the driver repairs each held concern in the current diff, then you approve the stone after it"
+`;

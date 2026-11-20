@@ -16,10 +16,11 @@ export const findsertRouteGitignore = async (input: {
 }): Promise<{ path: string; action: 'created' | 'rewrote' | 'unchanged' }> =>
   findsertGitignore({
     dir: path.join(input.route, '.route'),
-    content: `# ignore all except passage.jsonl and .bind flags
+    content: `# ignore all except passage.jsonl, the fulcrum verdict ledger, and .bind flags
 *
 !.gitignore
 !passage.jsonl
+!fulcrum.verdicts.jsonl
 !.bind.*
 `,
   });

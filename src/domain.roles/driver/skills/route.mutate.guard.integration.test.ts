@@ -191,6 +191,136 @@ describe('route.mutate.guard', () => {
         expect(result.code).toEqual(2);
       });
     });
+
+    // the harness sends an absolute file_path; the seal must hold for it as for a relative one
+    when(
+      '[t5] Write tool targets the verdict ledger by its absolute path',
+      () => {
+        const result = useThen('hook is invoked', async () =>
+          invokeGuardHook({
+            cwd: scene.tempDir,
+            stdin: {
+              tool_name: 'Write',
+              tool_input: {
+                file_path: path.join(
+                  scene.tempDir,
+                  '.behavior/example/.route/fulcrum.verdicts.jsonl',
+                ),
+              },
+            },
+          }),
+        );
+
+        then('🔴 exits with code 2 (blocked)', () => {
+          expect(result.code).toEqual(2);
+        });
+      },
+    );
+
+    when('[t6] Bash copies a file onto the verdict ledger via cpsafe', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Bash',
+            tool_input: {
+              command:
+                'rhx cpsafe --from forged.jsonl --into .behavior/example/.route/fulcrum.verdicts.jsonl',
+            },
+          },
+        }),
+      );
+
+      then('🔴 exits with code 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+    });
+
+    when('[t7] Read tool targets an artifact by its absolute path', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Read',
+            tool_input: {
+              file_path: path.join(
+                scene.tempDir,
+                '.behavior/example/1.vision.md',
+              ),
+            },
+          },
+        }),
+      );
+
+      then('exits with code 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+
+    // r011 i007 blocker.2: the seal keys on the path a command names, never on its verb
+    // r011 i008 blocker.3: nor on how it spells the path — relative, after a cd, or a glob
+    const COMMANDS_THAT_REACH_THE_LEDGER = [
+      'jq -c . row.json > .behavior/example/.route/fulcrum.verdicts.jsonl',
+      "node -e \"require('fs').appendFileSync('.behavior/example/.route/fulcrum.verdicts.jsonl', x)\"",
+      "python -c \"open('.behavior/example/.route/passage.jsonl','a')\"",
+      'dd of=.behavior/example/.route/passage.jsonl',
+      'cd .behavior/example/.route && echo x >> passage.jsonl',
+      'cd .behavior/example && echo x >> .route/passage.jsonl',
+      'cd .behavior/example && echo x >> .route/fulcrum.verd*.jsonl',
+      'cd .behavior/example && printf x | tee -a .route/passage.jsonl',
+    ];
+    COMMANDS_THAT_REACH_THE_LEDGER.map((command, index) =>
+      when(
+        `[t${8 + index}] Bash reaches .route/ with no listed verb: ${command.slice(0, 40)}`,
+        () => {
+          const result = useThen('hook is invoked', async () =>
+            invokeGuardHook({
+              cwd: scene.tempDir,
+              stdin: { tool_name: 'Bash', tool_input: { command } },
+            }),
+          );
+
+          then('🔴 exits with code 2 (blocked)', () => {
+            expect(result.code).toEqual(2);
+          });
+        },
+      ),
+    );
+
+    when('[t21] Bash names a word that only contains .route', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Bash',
+            tool_input: { command: 'cat docs/my.routes.md' },
+          },
+        }),
+      );
+
+      then('exits with code 0 (allowed): no .route segment', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+
+    when('[t20] Bash names the route dir but not its .route/ subdir', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Bash',
+            tool_input: {
+              command:
+                'rhx route.stone.set --stone 1.vision --route .behavior/example --as arrived',
+            },
+          },
+        }),
+      );
+
+      then('exits with code 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
   });
 
   given('[case2] bound route with privilege flag', () => {

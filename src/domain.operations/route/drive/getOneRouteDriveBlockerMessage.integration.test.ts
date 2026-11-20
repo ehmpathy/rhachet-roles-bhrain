@@ -1,16 +1,22 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
-import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
+import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
+import { asFulcrumSeenOfContent } from '../__test_assets__/asFulcrumSeenOfContent';
 import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
+import { genFulcrumEntryContent } from '../__test_assets__/genFulcrumEntryContent';
+import { setFulcrumVerdictRow } from '../fulcrum/setFulcrumVerdictRow';
 import { setRouteGuardPartitions } from '../guard/partition/setRouteGuardPartitions';
 import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
+import { setPassageReport } from '../passage/setPassageReport';
 import { getOneRouteDriveBlockerMessage } from './getOneRouteDriveBlockerMessage';
 
 /**
@@ -157,6 +163,186 @@ describe('getOneRouteDriveBlockerMessage', () => {
           effort: null,
         });
         expect(message).toBeNull();
+      });
+    });
+  });
+
+  given(
+    '[case2b] the approval halt, with a dispute at 70% that owes the human',
+    () => {
+      // the wish's clamp: at a human gate, the halt names each dispute under 90%. with the dispute
+      // lines removed from the halt, it is silent and this case goes red
+      const scene = useBeforeAll(async () => {
+        const sceneBase = await genRouteScene({ givens: [], takens: [] });
+        await fs.mkdir(path.join(sceneBase.route, '.fulcrums'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(
+            sceneBase.route,
+            '.fulcrums',
+            'inventory.of=fulcrums.case=F44-rename-table.md',
+          ),
+          genFulcrumEntryContent({ case: 'F44', confidence: 0.7 }),
+        );
+
+        // F44 was raised on an earlier stone; the halt names where (vision case=4)
+        await setPassageReport({
+          route: sceneBase.route,
+          report: new PassageReport({
+            stone: '0.prior',
+            status: 'disputed',
+            reviewer: 'rules',
+            about: 'blocker.2',
+            given: 'r001.rules.md',
+            fulcrum: '.fulcrums/inventory.of=fulcrums.case=F44-rename-table.md',
+            reason: 'disputed review.peer: rules blocker.2',
+          }),
+        });
+
+        // F47 a human already conceded: listed under ruled, with the repair it owes
+        const contentF47 = genFulcrumEntryContent({
+          case: 'F47',
+          confidence: 0.8,
+        }).replace(
+          'verdict: null',
+          'verdict: { by: human, at: 2026-11-17, ruled: conceded }',
+        );
+        await fs.writeFile(
+          path.join(
+            sceneBase.route,
+            '.fulcrums',
+            'inventory.of=fulcrums.case=F47-cache-scope.md',
+          ),
+          contentF47,
+        );
+        await setFulcrumVerdictRow({
+          route: sceneBase.route,
+          row: {
+            case: 'F47',
+            ruled: 'conceded',
+            on: '2026-11-17',
+            seen: asFulcrumSeenOfContent({ content: contentF47 }),
+            held: [],
+            after: 0,
+          },
+        });
+        return sceneBase;
+      });
+
+      when('[t0] the dispatcher runs with the approval blocker', () => {
+        const result = useThen('it renders the halt', async () => {
+          const message = await getOneRouteDriveBlockerMessage({
+            blockerReport: new RouteStoneGuardBlockerReport({
+              stone: '1.vision',
+              blocker: 'approval',
+              reason: null,
+            }),
+            stone: scene.stone,
+            route: scene.route,
+            brain: null,
+            effort: null,
+          });
+          if (!message)
+            throw new UnexpectedCodePathError(
+              'the approval blocker rendered no halt',
+              { hint: 'the dispatcher dropped the approval branch' },
+            );
+          return message;
+        });
+
+        then(
+          'the halt names the dispute, its confidence, and its verdict command',
+          () => {
+            expect(result.stdout).toContain('1 dispute owes a human verdict');
+            expect(result.stdout).toContain('F44 · rename-table · 70%');
+            expect(result.stdout).toContain('raised on: 0.prior');
+            expect(result.stdout).toContain(
+              'rhx route.fulcrum.rule --case F44 --as <upheld|conceded>',
+            );
+          },
+        );
+
+        then(
+          'a ruled dispute is listed apart, a conceded one with its repair owed',
+          () => {
+            expect(result.stdout).toContain('1 ruled');
+            expect(result.stdout).toContain('F47 · cache-scope · conceded');
+            expect(result.stdout).toContain(
+              'repair owed: limited/i001/blocker.1',
+            );
+            expect(result.stdout).toContain(
+              'next: the driver repairs it in the current diff, then a human approves the stone after it',
+            );
+            expect(result.stdout).not.toContain('--case F47');
+          },
+        );
+
+        then('the stop is allowed — the driver waits on the human', () => {
+          expect(result.blocksStop).toEqual(false);
+        });
+
+        then('the halt a human reads is pinned', () => {
+          expect(
+            asStableGuardEmit({ emit: result.stdout, route: scene.route }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given('[case2c] the approval halt, with a corrupt verdict ledger', () => {
+    // onBoot promises to show the stone and exit 0; a ledger fault that threw here would replace
+    // the whole halt with a refusal. remove the refusal render and this case goes red
+    const scene = useBeforeAll(async () => {
+      const sceneBase = await genRouteScene({ givens: [], takens: [] });
+      await fs.mkdir(path.join(sceneBase.route, '.route'), {
+        recursive: true,
+      });
+      await fs.writeFile(
+        path.join(sceneBase.route, '.route', 'fulcrum.verdicts.jsonl'),
+        '{"case": "F44", "ruled": "upheld"\n',
+      );
+      return sceneBase;
+    });
+
+    when('[t0] the dispatcher runs with the approval blocker', () => {
+      const result = useThen('it renders the halt', async () => {
+        const message = await getOneRouteDriveBlockerMessage({
+          blockerReport: new RouteStoneGuardBlockerReport({
+            stone: '1.vision',
+            blocker: 'approval',
+            reason: null,
+          }),
+          stone: scene.stone,
+          route: scene.route,
+          brain: null,
+          effort: null,
+        });
+        if (!message)
+          throw new UnexpectedCodePathError(
+            'the approval blocker rendered no halt',
+            { hint: 'the dispatcher dropped the approval branch' },
+          );
+        return message;
+      });
+
+      then(
+        '🔴 the halt renders, and names the unreadable ledger and its fix',
+        () => {
+          expect(result.stdout).toContain('halted, human approval required');
+          expect(result.stdout).toContain(
+            'the dispute record cannot be read; approval is refused until it is repaired',
+          );
+          expect(result.stdout).toContain('unreadable row at line 1');
+          expect(result.stdout).toContain('fix: restore the line from git');
+        },
+      );
+
+      then('the halt a human reads is pinned', () => {
+        expect(
+          asStableGuardEmit({ emit: result.stdout, route: scene.route }),
+        ).toMatchSnapshot();
       });
     });
   });

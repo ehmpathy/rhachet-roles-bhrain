@@ -53,7 +53,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: 
    ├─ about = blocker.1 — the last concern this lane owed
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
       │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
       └─ 2. re-arrive
@@ -69,7 +69,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: 
    ├─ about = blocker.1 — the last concern this lane owed
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
       │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
       └─ 2. re-arrive
@@ -86,7 +86,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: 
    ├─ also  = 3 concerns on other lanes await absorption
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
       │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
       ├─ 2. absorb the 3 concerns on other lanes — next, mechanic nitpick.1
@@ -106,7 +106,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: 
    ├─ also  = 1 concern on other lanes awaits absorption
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
       │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
       ├─ 2. absorb the 1 concern on other lanes — next, mechanic blocker.1
@@ -158,7 +158,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered bod
    ├─ about = blocker.1 — 2 more on this lane
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       └─ absorb blocker.2 — 2 still owed on this lane
          ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with architect --about blocker.2 --severity better|urgent
          └─ rhx route.stone.set --stone 5.1.execution --as disputed --with architect --about blocker.2 --why <fulcrum-path>"
@@ -305,7 +305,7 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case7] a stance lands o
    ├─ about = blocker.1 — the last concern this lane owed
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
-   └─ the council will read it
+   └─ the drive goes on; a human rules it at the next human gate, or at the last stone if the route has none
       ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
       │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
       └─ 2. re-arrive

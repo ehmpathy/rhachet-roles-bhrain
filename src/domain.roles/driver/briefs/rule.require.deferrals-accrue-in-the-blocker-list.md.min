@@ -1,0 +1,18 @@
+# rule.require.deferrals-accrue-in-the-blocker-list
+
+> a deferral you make is a named line in the halt the human reads. the fulcrum frontmatter decides it, never your judgment of "worth a line".
+
+owed per deferral: a fulcrum with valid frontmatter, written at the moment you defer · `confidence` = the weakest held call, never the average · `ground` · a one-line `lean` · `holds` that names each concern by `lane/round/ordinal` · for a dispute, `--why <that fulcrum>` (and `--reflect <owner>/<repo>#N` when wrong-ground at 0.90+).
+
+test: **if the human read only the next gate's halt, would this deferral be named?** no → this rule.
+
+| when… | then… |
+|---|---|
+| you dispute a concern | its `--why` fulcrum has valid frontmatter, and `holds` names that concern |
+| a fulcrum holds rows at many confidences | the lowest row is its `confidence` |
+| a dispute lands on a stone with no human gate | it rides on by `owed: human`; no halt added, none dropped |
+| a route with no human gate ends | the last stone refuses to pass while an owed-human dispute is open |
+| you would write it into the yield and no fulcrum | the yield is not the gate; write the fulcrum |
+
+blocker: a deferral with no fulcrum · absent or invalid frontmatter · an averaged `confidence` · a `holds` that omits a carried concern.
+twin: `rule.forbid.deferrals-hidden-from-the-human`.

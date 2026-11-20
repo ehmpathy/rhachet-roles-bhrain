@@ -15,6 +15,7 @@ const asInput = (
   slug: 'mechanic',
   concern: { kind: 'blocker', ordinal: 1 },
   why: null,
+  owed: null,
   severity: null,
   meter: { level: 1, rounds: 2, budget: 4 },
   concernsLeft: 0,
@@ -266,6 +267,7 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
           absorption: 'disputed',
           slug: 'architect',
           why: FULCRUM,
+          owed: 'human',
           ...input,
         }),
       );
@@ -273,14 +275,14 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
     when('[t0] the last owed concern on the stone', () => {
       const stdout = asDispute({});
 
-      then('it cites the fulcrum the council will read', () => {
+      then('it cites the fulcrum a human will read', () => {
         expect(stdout).toContain(`why   = ${FULCRUM}`);
       });
 
       then(
         'the next acts are absorb THIS lane, then re-arrive via --as arrived',
         () => {
-          expect(stdout).toContain('the council will read it');
+          expect(stdout).toContain('a human rules it at the next human gate');
           const atAbsorb = stdout.indexOf(
             'rhx route.stone.set --stone 5.1.execution --as absorbed --that architect',
           );
@@ -300,8 +302,20 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
       });
 
       then('the bytes a driver reads are pinned', () => {
-        expect(stdout).toContain('the council will read it');
+        expect(stdout).toContain('a human rules it at the next human gate');
         expect(stdout).toMatchSnapshot();
+      });
+    });
+
+    when('[t0b] the dispute is a sure misread, owed upstream', () => {
+      const stdoutReflect = asDispute({ owed: 'reflect' });
+
+      then('the close names the reflection, never a human', () => {
+        expect(stdoutReflect).toContain(
+          'the drive goes on; the misread is owed upstream as a reflection',
+        );
+        expect(stdoutReflect).not.toContain('a human rules it');
+        expect(stdoutReflect).not.toContain('council');
       });
     });
 
@@ -311,7 +325,9 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
       });
 
       then('still no top-up — a dispute does not depend on rounds', () => {
-        expect(stdoutSpent).toContain('the council will read it');
+        expect(stdoutSpent).toContain(
+          'a human rules it at the next human gate',
+        );
         expect(stdoutSpent).not.toContain('route.guard.budget');
       });
 
@@ -507,18 +523,19 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
           absorption: 'disputed',
           slug: 'architect',
           why: FULCRUM,
+          owed: 'human',
           concernsLeft: 2,
           concernNextOnLane: 'blocker.2',
         }),
       );
 
       // a dispute concedes naught, so it mints no warrant and carries no grade — the fulcrum it
-      // cites is the argument, and the council is who reads it
-      then('the fulcrum is cited and the council is named', () => {
+      // cites is the argument, and a human at the next human gate is who reads it
+      then('the fulcrum is cited and the human gate is named', () => {
         expect(stdout).toContain(
           'why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md',
         );
-        expect(stdout).toContain('the council will read it');
+        expect(stdout).toContain('a human rules it at the next human gate');
       });
 
       // 🔴 and the header carries NO `--severity` term either. the flag is refused outright on a
@@ -528,7 +545,9 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
         expect(stdout).toContain('🗿 route.stone.set --as disputed\n');
         // .note = the next-concern prompt may name `--severity` on its CONCEDE command, which
         //         requires it; the dispute's own header and its own commands never do
-        const header = stdout.split('the council will read it')[0]!;
+        const header = stdout.split(
+          'a human rules it at the next human gate',
+        )[0]!;
         expect(header).not.toContain('--severity');
         expect(stdout).not.toContain('--as disputed --severity');
         expect(stdout).not.toContain('warn  =');

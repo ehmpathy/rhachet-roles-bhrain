@@ -50,6 +50,13 @@ always:
       - briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md
       - briefs/define.invariant.review.peer.budget.urgent-earns-budget.md
       - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md
+      # the driver's duty pair for the six dispute invariants. ref, not say: the say tier holds
+      # a fixed budget, and each refusal or halt that fires them prints the fix and the command.
+      # the six `define.invariant.review.peer.dispute.*` laws ship beside them, unbooted: each
+      # rule cites them by name, and a path list of six would breach the 10_000 cap. the record
+      # half boots at say already (rule.always.itemize-the-fulcrums-you-best-guess)
+      - briefs/rule.require.deferrals-accrue-in-the-blocker-list.md
+      - briefs/rule.forbid.deferrals-hidden-from-the-human.md
       # the RouteReminder runbook — the auto-wire path, the manual inspect/override skills,
       # and what the nudge does NOT cover. ref because a driver never turns the reminder on:
       # route.drive findserts it and reaps it, so an enrolled drive is covered with no action.
@@ -199,6 +206,16 @@ always:
       - briefs/rule.forbid.verbatim-quotes-outside-seeds.md
       - briefs/howto.drive-routes.md
       - briefs/howto.navigate-fulcrum-choices.md
+    # the six dispute laws: read on demand, each cited by name from the duty pair at ref.
+    # named one by one, never by glob: a `not` entry costs no boot tokens, and a named path
+    # is one the completeness clamp (getDriverRole.test.ts) can check exists
+    not:
+      - briefs/define.invariant.review.peer.dispute.deferrals-accrue-where-the-human-reads.md
+      - briefs/define.invariant.review.peer.dispute.earns-no-budget.md
+      - briefs/define.invariant.review.peer.dispute.never-halts-without-a-human-gate.md
+      - briefs/define.invariant.review.peer.dispute.reconciled-at-the-human-gate.md
+      - briefs/define.invariant.review.peer.dispute.sure-misread-owes-a-reflection.md
+      - briefs/define.invariant.review.peer.dispute.the-fulcrum-is-the-one-home.md
   skills:
     say:
       - skills/route.stone.set.sh

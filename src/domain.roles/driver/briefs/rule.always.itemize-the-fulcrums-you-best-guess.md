@@ -105,15 +105,55 @@ catches the rest.
 ## .the summary — `inventory.of=fulcrums._.md`
 
 one row per fulcrum, and no narrative about any one of them
-(`rule.require.catalog-is-an-index`). the columns:
+(`rule.require.catalog-is-an-index`). **every column except the title derives from the entry's
+frontmatter**, so the row and the entry never disagree. the columns:
 
 | column | holds |
 |---|---|
 | **case** | the id — the coordinate, and the path to its entry |
 | **title** | one line: what forked, or what call was made |
 | **rework** | `clean` or `dirty` — per `howto.navigate-fulcrum-choices`'s ladder |
-| **status** | `best-guessed` → `wisher-ruled` (with the verdict) |
-| **confidence** | a percentage. a call under **93%** earns a row, fork or not |
+| **status** | `open · held · ruled · superseded` — the closed set. a `ruled` entry records its verdict, in the home `verdict` below names |
+| **confidence** | a percentage, the frontmatter's `confidence` × 100. a call under **93%** earns a row, fork or not |
+
+## .the frontmatter — the entry's record, and the one home of its attributes
+
+every entry opens with this yaml block. it is the record: the summary row derives from it, a dispute
+only links the file, and the approval halt reads it to name each deferral the human owes a verdict.
+
+the block below backs a dispute. a plain best-guess fulcrum, which no dispute cites, carries
+`owed: none` and `holds: []`, and holds no gate.
+
+```yaml
+---
+case: F44
+rework: clean
+ground: wrong
+confidence: 0.65
+status: open
+owed: human
+holds: [rules-lane/i003/blocker.2]
+lean: the reviewer read a rename table as a contract change
+verdict: null
+---
+```
+
+| field | holds |
+|---|---|
+| `case` | the id, equal to the `case=` coordinate in the filename |
+| `rework` | `clean` or `dirty` |
+| `ground` | `wrong` (not a defect) or `dirty` (a real defect, a massively dirty fix) |
+| `confidence` | `0.00`–`1.00`, **the weakest call the fulcrum holds**, never an average |
+| `status` | `open · held · ruled · superseded` |
+| `owed` | `human · reflect · none`, derived at write: `reflect` iff `ground = wrong ∧ confidence ≥ 0.90`, `human` for any other dispute, `none` for a fulcrum no dispute backs |
+| `holds` | the reviewer concerns it holds, as `lane/round/ordinal`; `[]` if none |
+| `lean` | one line: your lean, what the halt shows the human |
+| `verdict` | `null` until a human rules, then `{ by: human, at: <date>, ruled: upheld \| conceded }`. **you never write it** — only `rhx route.fulcrum.rule` does, and its log backs it. that lever rules a dispute only, so a design call the wisher settles at a stone gate (`owed: none`) keeps `null` here, and its verdict lives in the entry body's **the verdict** |
+| `reflect` | `<owner>/<repo>#N`, required when `owed: reflect`, absent otherwise |
+
+an entry without valid frontmatter holds the stop (the onStop linter names the file and the absent
+fields), and a dispute whose `--why` fulcrum lacks it is refused at write. the law and its reasons:
+`define.invariant.review.peer.dispute.the-fulcrum-is-the-one-home`.
 
 🟡 **`rework` is the column the council actually sorts on.** a human scans the `dirty` rows first,
 because those are the only ones where a late reversal costs more than a rename. a summary without
@@ -121,7 +161,8 @@ it is a list of decisions with no priority.
 
 ## .the entry — `inventory.of=fulcrums.case=$id.md`
 
-the full record, ejected so the summary stays a summary:
+the full record, ejected so the summary stays a summary. it opens with the frontmatter above, then
+carries the prose below:
 
 | field | holds |
 |---|---|
@@ -130,7 +171,7 @@ the full record, ejected so the summary stays a summary:
 | **rework, and why** | what a reversal would cost, judged live |
 | **confidence, and why it is low** | the percentage, plus the specific premise, sample size, or bound that holds it down |
 | **where** | a back-ref: the stone, or the yield line the decision lives in |
-| **the verdict** | once the wisher rules, what they ruled and in what words |
+| **the verdict** | once the wisher or the human rules, what they ruled. the frontmatter `verdict` carries the machine form; the body states it in words |
 
 🟡 **`confidence, and why it is low` is the field that does the work.** a bare percentage tells the
 council to look and not what to look at; the *why* is what makes the entry actionable in one read.
@@ -174,8 +215,14 @@ the record, and the human reads both.
   the reconstructed reason is the part that was worth the record
 - a row with no `rework` column = **blocker** — it is the column the council sorts on
 - a fulcrum record under a prose name (`fulcrums.md`, `register.md`, `catalog.md`) = **blocker**
-- a `wisher-ruled` row whose verdict is not recorded = **blocker** — a settled fork that reads as
-  open will be re-litigated
+- a `ruled` entry whose verdict is not recorded = **blocker** — a settled fork that reads as
+  open will be re-litigated. a dispute records it in the yaml `verdict`; a design call with
+  `owed: none`, in the body's **the verdict**
+- an entry with absent or invalid frontmatter = **blocker** — the stop holds, and the linter names
+  the file and the absent fields
+- a summary row typed apart from its entry's frontmatter, or one that disagrees with it = **blocker**
+- a `status` outside `open · held · ruled · superseded` = **blocker**
+- a `verdict` a driver wrote by hand = **blocker** — only `rhx route.fulcrum.rule` writes it
 - a call made **under 93% confidence** and never itemized = **blocker** — the floor is a trigger in
   its own right, not a note on the fork trigger
 - a confidence row that carries **a number and no reason** = **blocker** — the council cannot act
@@ -188,6 +235,9 @@ the record, and the human reads both.
 - `rule.always.get-a-second-opinion-before-foreman` — what catches the calls a self-grade rates 100%
 - `rule.always.defer-fulcrums-to-last` — the WHEN; this is the RECORD
 - `howto.navigate-fulcrum-choices` — the ladder the `rework` column encodes
+- `define.invariant.review.peer.dispute.the-fulcrum-is-the-one-home` — the frontmatter law
+- `rule.require.deferrals-accrue-in-the-blocker-list` · `rule.forbid.deferrals-hidden-from-the-human`
+  — what the record is for: the halt names each deferral from it
 - `rule.always.yield-the-output-not-the-archaeology` — why the fulcrum row belongs beside the
   yield rather than narrated inside it
 - `rule.forbid.itemization-without-coordinates` (librarian) — the coordinate contract this obeys

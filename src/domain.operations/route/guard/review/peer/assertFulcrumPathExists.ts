@@ -3,7 +3,8 @@ import { BadRequestError } from 'helpful-errors';
 import { isAbsolute, join } from 'path';
 
 /**
- * .what = asserts the `--why` path names a fulcrum entry that EXISTS on disk
+ * .what = asserts the `--why` path names a fulcrum entry that EXISTS on disk, and returns the
+ *         absolute path it resolved to, so a caller can read the entry it cited
  * .why = a dispute is a guarantee to the council, so it must cite an argument a human will
  *        read. this resolves that citation and refuses when it points at naught.
  *
@@ -31,18 +32,18 @@ export const assertFulcrumPathExists = (input: {
   why: string;
   route: string;
   repoRoot: string;
-}): void => {
+}): string => {
   const routeAbs = isAbsolute(input.route)
     ? input.route
     : join(input.repoRoot, input.route);
 
   if (isAbsolute(input.why)) {
-    if (existsSync(input.why)) return;
+    if (existsSync(input.why)) return input.why;
     throw new BadRequestError(
       [
         `no fulcrum entry at "${input.why}"`,
         ``,
-        `a dispute cites an argument the council will read, so the entry must exist first.`,
+        `a dispute cites an argument a human will read, so the entry must exist first.`,
         `write it there, then re-run this command:`,
         `  ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
@@ -50,10 +51,10 @@ export const assertFulcrumPathExists = (input: {
   }
 
   const asRouteRelative = join(routeAbs, input.why);
-  if (existsSync(asRouteRelative)) return;
+  if (existsSync(asRouteRelative)) return asRouteRelative;
 
   const asRepoRootRelative = join(input.repoRoot, input.why);
-  if (existsSync(asRepoRootRelative)) return;
+  if (existsSync(asRepoRootRelative)) return asRepoRootRelative;
 
   throw new BadRequestError(
     [
@@ -63,7 +64,7 @@ export const assertFulcrumPathExists = (input: {
       `   route-relative     = ${asRouteRelative}`,
       `   repo-root-relative = ${asRepoRootRelative}`,
       ``,
-      `a dispute cites an argument the council will read, so the entry must exist first.`,
+      `a dispute cites an argument a human will read, so the entry must exist first.`,
       `write it there, then re-run this command:`,
       `  ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ``,

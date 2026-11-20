@@ -22,13 +22,17 @@ describe('setStonePassage', () => {
 
     when('[t0] passage is set', () => {
       then('creates .route directory if absent', async () => {
-        await setStonePassage({ stone, route: tempDir });
+        await setStonePassage({ stone, stones: [stone], route: tempDir });
         const stat = await fs.stat(path.join(tempDir, '.route'));
         expect(stat.isDirectory()).toBe(true);
       });
 
       then('appends passage report to passage.jsonl', async () => {
-        const result = await setStonePassage({ stone, route: tempDir });
+        const result = await setStonePassage({
+          stone,
+          stones: [stone],
+          route: tempDir,
+        });
         expect(result.path).toContain('passage.jsonl');
         const content = await fs.readFile(result.path, 'utf-8');
         expect(content).toContain('"stone":"1.vision"');
@@ -58,7 +62,11 @@ describe('setStonePassage', () => {
 
     when('[t0] passage is set', () => {
       then('appends to passage.jsonl', async () => {
-        const result = await setStonePassage({ stone, route: tempDir });
+        const result = await setStonePassage({
+          stone,
+          stones: [stone],
+          route: tempDir,
+        });
         expect(result.path).toContain('passage.jsonl');
         const content = await fs.readFile(result.path, 'utf-8');
         expect(content).toContain('"stone":"2.criteria"');

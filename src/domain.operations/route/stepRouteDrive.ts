@@ -30,6 +30,7 @@ import { getRouteInflight } from './drive/getRouteInflight';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { isRouteStoneBlockerArticulated } from './drive/isRouteStoneBlockerArticulated';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
+import { getOneRouteFulcrumLintMessage } from './fulcrum/getOneRouteFulcrumLintMessage';
 import { getOneStoneByName } from './getOneStoneByName';
 import { asGuardMalfunctionReasonLines } from './guard/asGuardMalfunctionReasonLines';
 import { formatGuardMalfunctionClearLines } from './guard/formatGuardMalfunctionClearLines';
@@ -480,6 +481,55 @@ export const stepRouteDrive = async (
     //         blocked does not re-dispatch per tick; the block count is untouched
     const asStopped = asRendered;
 
+    // the stuck escalation: past the cutoff of consecutive held stops, a human must step in
+    // .note = exit 1 (malfunction: the route is stuck). the guard-malfunction branch uses code 1
+    //         too; per rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint)
+    // .note = a HALT surface — the route is stuck and a human is escalated, so the brain that
+    //         prices the fix is named here as on every other onStop return
+    const maxBlocks = 21;
+    const asStuckEmit = (
+      count: number,
+    ): {
+      emit: { stdout: string; stderr: { reason: string; code: number } };
+    } => ({
+      emit: {
+        stdout: asStopped(
+          formatRouteDriveExhausted({
+            route,
+            stone: stone.name,
+            ...prescribed,
+            count,
+            max: maxBlocks,
+          }),
+          'halt',
+        ),
+        stderr: {
+          reason: formatRouteDriveEscalate({ route, stone: stone.name, count }),
+          code: 1,
+        },
+      },
+    });
+
+    // lint the route's fulcrums; a malformed entry or a forged verdict holds the stop
+    // .why = invariant 5: the driver can repair a fulcrum file now, so the stop blocks (code 2)
+    //        before any wait that would let the session end with a defect on record
+    // .note = each held stop counts toward the same cutoff as a drive nudge, so a fault the
+    //         driver cannot repair escalates to a human rather than hold every stop forever
+    const fulcrumLint = await getOneRouteFulcrumLintMessage({ route });
+    if (fulcrumLint) {
+      const { state: lintState } = await setDriveBlockerState({
+        route,
+        stone: stone.name,
+      });
+      if (lintState.count > maxBlocks) return asStuckEmit(lintState.count);
+      return {
+        emit: {
+          stdout: asStopped(fulcrumLint, 'halt'),
+          stderr: { reason: fulcrumLint, code: 2 },
+        },
+      };
+    }
+
     // read the driver's repairs-in-flight watermark for this stone
     // .why = a driver that delegated the round's repairs waits on them; arrived, passed, and
     //        blocked are each wrong for that wait. a fresh watermark lets the stop through
@@ -553,38 +603,7 @@ export const stepRouteDrive = async (
     const { state } = await setDriveBlockerState({ route, stone: stone.name });
 
     // check if we've exceeded max consecutive blocks (cutoff: 21)
-    const maxBlocks = 21;
-    if (state.count > maxBlocks) {
-      // stop-block exhausted → exit 1 (malfunction: the route is stuck and a human must
-      // step in). the guard-malfunction branch uses code 1 too; per
-      // rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint) — never a
-      // non-standard code 3
-      // a HALT surface too — the route is stuck and a human is escalated, so the brain
-      // that prices the fix must be named here as on every other onStop return
-      const stdoutStuck = asStopped(
-        formatRouteDriveExhausted({
-          route,
-          stone: stone.name,
-          ...prescribed,
-          count: state.count,
-          max: maxBlocks,
-        }),
-        'halt',
-      );
-      return {
-        emit: {
-          stdout: stdoutStuck,
-          stderr: {
-            reason: formatRouteDriveEscalate({
-              route,
-              stone: stone.name,
-              count: state.count,
-            }),
-            code: 1,
-          },
-        },
-      };
-    }
+    if (state.count > maxBlocks) return asStuckEmit(state.count);
 
     // format output with nudge threshold and blocked suggestion; a stale watermark is named
     // beneath the nudge, so the driver sees why the hook is loud again

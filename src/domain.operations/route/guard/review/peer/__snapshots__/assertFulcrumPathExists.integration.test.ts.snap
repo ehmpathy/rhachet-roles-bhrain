@@ -7,7 +7,7 @@ a relative --why is checked two ways, and neither resolved:
    route-relative     = <repoRoot>/.behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F404-absent.md
    repo-root-relative = <repoRoot>/.fulcrums/inventory.of=fulcrums.case=F404-absent.md
 
-a dispute cites an argument the council will read, so the entry must exist first.
+a dispute cites an argument a human will read, so the entry must exist first.
 write it there, then re-run this command:
   .behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
 

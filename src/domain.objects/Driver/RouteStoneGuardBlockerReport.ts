@@ -27,6 +27,9 @@ import { DomainLiteral } from 'domain-objects';
  *   make is raised by `--as blocked` with an articulation (agent can fix, or escalate)
  * - 'judge': non-approval judges failed (agent can fix)
  * - 'approval': only approval judge blocks (agent must wait for human)
+ * - 'dispute.owed': the last stone of a route has no human gate, and a dispute owes the human a
+ *   verdict (or a conceded repair awaits an approval) — refused at the entrance, before any
+ *   review runs (agent must wait for human)
  */
 export type RouteStoneGuardBlockerType =
   | 'review.self'
@@ -37,7 +40,8 @@ export type RouteStoneGuardBlockerType =
   | 'review.peer.malpartitioned'
   | 'review.peer.constraint'
   | 'judge'
-  | 'approval';
+  | 'approval'
+  | 'dispute.owed';
 
 /**
  * .what = describes why a stone is blocked from passage
