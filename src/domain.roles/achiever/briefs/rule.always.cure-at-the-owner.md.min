@@ -1,0 +1,15 @@
+# rule.always.cure-at-the-owner
+
+> **aim each fix at the file its owner publishes, never at a copy. before an edit, name the owner of the source and whether the edit reaches the next reader.**
+
+| the miss | the cure |
+|---|---|
+| a local copy of a skill or brief an upstream publishes | a mod, a patch, or a task into the repo of the owner; the copy is no fix |
+| a symptom met in one tree | the cause in the shared source; a one-tree grant bridges, never cures |
+| a defect in a peer's output | the peer's own tool or role, built by its owner |
+
+step one, before any edit: read where the path resolves (a link to main, a copy, an installed package) and who publishes it.
+test: **who publishes this file, and does my edit reach the next reader?**
+
+enforcement: a fix aimed at a copy where an owner publishes the source = **blocker** · a fix with no named owner of its source = **nitpick**.
+case: `….example=the-local-copy.md` · argument and sources: the `.md`.

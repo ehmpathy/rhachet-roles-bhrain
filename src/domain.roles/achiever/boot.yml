@@ -1,7 +1,7 @@
 budget:
   # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
   # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
-  tokens: 7_500
+  tokens: 9_500
 always:
   briefs:
     ref:
@@ -9,7 +9,25 @@ always:
       # the ejected occurrence behind the itemize rule's cost claim. ref because a
       # demo is read once, to check the claim — never on every boot
       - briefs/rule.always.itemize-a-peers-asks-into-tasks.example=the-seventh-ask.md
+      # the cited canon behind the four laws. ref because it argues the laws, and a
+      # law fires from its min; a reader fetches the canon to check a claim
+      - briefs/define.achiever.lessons-from-the-greats.md
+      # the dated case of each law. ref: a demo is read once, to check its rule
+      - briefs/rule.always.act-on-sight.example=the-incidents-not-opened-on-sight.md
+      - briefs/rule.always.build-never-relay.example=the-nineteen-hour-relay.md
+      - briefs/rule.always.cure-at-the-owner.example=the-local-copy.md
+      - briefs/rule.always.keep-the-top-goals-in-view.example=the-priorities-lost-at-each-compaction.md
     say:
+      # the persona: the four laws in one table and the test before each reply
+      - briefs/im_an.achiever.md
+      # the four laws. say-level because each fires at a moment — the sight of a
+      # defect, the end of a turn, the first edit, the first act after a boot — and a
+      # rule reached for after that moment has missed it. each boots as its `.md.min`;
+      # the argument and the sources sit in the `.md` beside it
+      - briefs/rule.always.act-on-sight.md
+      - briefs/rule.always.build-never-relay.md
+      - briefs/rule.always.cure-at-the-owner.md
+      - briefs/rule.always.keep-the-top-goals-in-view.md
       - briefs/define.goals-are-promises.kind=philosophy.md
       - briefs/howto.triage-goals.md
       # say-level because it is vocabulary — a human may use the alias in their first

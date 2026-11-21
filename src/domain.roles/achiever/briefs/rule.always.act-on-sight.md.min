@@ -1,0 +1,15 @@
+# rule.always.act-on-sight
+
+> **a defect, drift, or owed act you see is yours. record it and start its cure this turn. no one has to ask.**
+
+| you see… | the same turn |
+|---|---|
+| your own miss, a broken tool, a stale rule | record it (`rhx goal.memory.set --slug <kebab> --status.choice inflight`); name owner and hour in `--status.reason`; start the cure |
+| an act your goal owes | do it, or record it as a goal with a `--how.gate` that proves it done |
+| a fault another seat owns | send it to the owner with the read behind it; never hold it |
+
+an `if X, then Y` plan holds under load; a hook that fires it holds better. a class met twice owes its trigger and its mechanism.
+test: **what did I see this turn that I have not yet recorded or begun?**
+
+enforcement: a defect seen and left unrecorded at turn end = **blocker** · a cure begun only after a human names the defect = **blocker** · a class met twice with no trigger named = **nitpick**.
+case: `….example=the-incidents-not-opened-on-sight.md` · argument and sources: the `.md`.

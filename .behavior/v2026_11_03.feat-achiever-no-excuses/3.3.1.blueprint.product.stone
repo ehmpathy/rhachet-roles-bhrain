@@ -1,0 +1,51 @@
+propose a blueprint for how we will implement the wish
+- in .behavior/v2026_11_03.feat-achiever-no-excuses/0.wish.md
+- with .behavior/v2026_11_03.feat-achiever-no-excuses/1.vision.yield.md (approved)
+
+.why = blueprint the code changes needed to deliver the product.
+- the product is the deliverable (spec + impl)
+- explicit blueprint declares what the execution will adhere to
+
+follow the patterns already present in this repo.
+
+scope order (set by the director, 2026-11-03): the two required clamps first, in 5.1; the rest of
+the goal.tree promotion as later stones, named here but not built in 5.1.
+
+---
+
+## summary
+
+state what will be built.
+
+## filediff tree
+
+a treestruct of filediffs. legend: [+] create, [~] update, [-] delete
+
+## codepath tree
+
+a treestruct of codepaths. legend: [+] create, [~] update, [○] retain, [-] delete, [←] reuse, [→] eject
+
+## test coverage
+
+test coverage is a MANDATORY requirement, equal weight to implementation.
+- by layer: transformers = unit; communicators, orchestrators = integration; contracts = integration + acceptance
+- by case: positive, negative, happy path, edge cases
+- snapshots: acceptance tests snapshot every contract stdout, success and every error path
+- a test tree per codepath, with [+] / [~] / [○]
+
+---
+
+the blueprint declares what the execution will adhere to: the contracts used, how domain.objects and
+domain.operations decompose and recompose, and the codepaths.
+
+this stone is the commander review: once the yield is written, push the pr and hold for the
+commander review on github. do not pass this stone on your own.
+
+reference
+- .behavior/v2026_11_03.feat-achiever-no-excuses/0.wish.md
+- .behavior/v2026_11_03.feat-achiever-no-excuses/1.vision.yield.md
+- .behavior/v2026_11_03.feat-achiever-no-excuses/1.vision.experience.case=_.md
+- .behavior/v2026_11_03.feat-achiever-no-excuses/.fulcrums/inventory.of=fulcrums._.md
+- .behavior/v2026_11_03.feat-achiever-no-excuses/.seeds/inventory.of=seeds._.md
+
+emit into .behavior/v2026_11_03.feat-achiever-no-excuses/3.3.1.blueprint.product.yield.md

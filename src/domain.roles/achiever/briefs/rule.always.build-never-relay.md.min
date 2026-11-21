@@ -1,0 +1,16 @@
+# rule.always.build-never-relay
+
+> **a turn ends with a change in the world, or a named block with its owner and hour. a relay, a re-hour, a status ask, and a plan are no change.**
+
+| the turn held only… | the turn owes |
+|---|---|
+| a relay of a peer's word | the read behind it, and the act it calls for |
+| an hour moved on a goal | the artifact made since the last hour, or a builder seated this turn |
+| a plan or a list | its first step run |
+| a block named | its cure run or dispatched, owner and hour set |
+
+the second re-hour of one goal with no act between is the tell. a seat that cannot build (a director) seats the builder: a tree, a fork, the skill owner.
+test: **what exists now that did not exist at my last turn, and what read proves it?**
+
+enforcement: a goal re-houred twice with no act between = **blocker** · a turn that ends on a relay with no read and no act = **blocker** · a plan with no first step run = **nitpick**.
+case: `….example=the-nineteen-hour-relay.md` · argument and sources: the `.md`.

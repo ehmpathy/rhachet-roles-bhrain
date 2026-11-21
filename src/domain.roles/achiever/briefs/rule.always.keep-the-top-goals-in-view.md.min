@@ -1,0 +1,15 @@
+# rule.always.keep-the-top-goals-in-view
+
+> **your top goals live outside your context. read them at each boot, resume, compact, and report, and say the top three before other work.**
+
+| the moment | the read |
+|---|---|
+| a boot, a resume, a compact | your goal record: `rhx goal.memory.get`, inflight first, then enqueued; and the orders in force from the seat above |
+| before each report | the same; the first lines name the top three and what moved each |
+| a new order arrives | rank it against the top three; name what it displaces |
+
+test: **name my top three goals and each one's last move. can I?** cannot → read before any other act.
+the onBoot hook prints the open goals in record order, never in rank; the first act after a boot is the read that names the top three.
+
+enforcement: the first act after a compaction or resume taken on a task with the top goals unread = **blocker** · a report that names no top three in its first lines = **nitpick** · a new order ranked against no top goal = **nitpick**.
+case: `….example=the-priorities-lost-at-each-compaction.md` · argument and sources: the `.md`.
