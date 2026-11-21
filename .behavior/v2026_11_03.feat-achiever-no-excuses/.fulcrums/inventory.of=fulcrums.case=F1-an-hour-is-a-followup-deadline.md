@@ -6,4 +6,4 @@
 - rework: clean — a flag name and a default
 - risk: none — a flag on a local goal record; it touches no credential and writes no prod
 - confidence: 85% — the phrase is terse; (c) is a fair read
-- verdict: open
+- verdict: ruled 2026-11-20 by the director (nheuron.direction.rhachet-accelerate) — take (a), `--cure.await <minutes>`; goal.tree `--await` is the precedent, so the flag name is no taste call. the owner's own hour rides in the progress note, so (c) is that note, no rival fork (uladkasach/nheuron, tree direction/rhachet-accelerate, `.route/v2026_10_18_directive_acceleration/verdicts/2026-11-20.rhachet-roles-bhrain.beav.feat-achiever-no-excuses.3.3.1.blueprint.coach.md`)

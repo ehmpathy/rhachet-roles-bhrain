@@ -1832,8 +1832,8 @@ exports[`roleBootClamps given: [case6] a linked seat whose role is over its budg
 
 exports[`roleBootClamps given: [case7] the achiever role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
-  "budget": 7500,
-  "payload": 7264,
+  "budget": 9500,
+  "payload": 9321,
 }
 `;
 

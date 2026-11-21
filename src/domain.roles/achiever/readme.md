@@ -1,6 +1,8 @@
 ## 💎 achiever
 
-the achiever role enables goal detection, persistence, and triage — so no ask is forgotten.
+the achiever meets its goals: it tracks every ask to a goal, and it acts on what it sees, with no excuse and no relay.
+
+each `X.md.min` here condenses the `X.md` beside it. read the `.md` for the argument.
 
 ### purpose
 
@@ -8,6 +10,18 @@ the achiever role enables goal detection, persistence, and triage — so no ask 
 - persist goals to `.goals/` for visibility and audit
 - track coverage so every ask is tied to a goal
 - ensure goals survive context compression
+- act on sight, build never relay, cure at the owner, keep the top goals in view
+
+### the four laws
+
+| law | brief |
+|---|---|
+| act on sight | `rule.always.act-on-sight` |
+| build, never relay | `rule.always.build-never-relay` |
+| cure at the owner | `rule.always.cure-at-the-owner` |
+| keep the top goals in view | `rule.always.keep-the-top-goals-in-view` |
+
+persona: `im_an.achiever` · cited canon: `define.achiever.lessons-from-the-greats` (ref) · one dated case beside each law (`.example=`, ref)
 
 ### skills
 

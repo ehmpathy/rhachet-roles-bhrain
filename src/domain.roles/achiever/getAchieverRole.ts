@@ -7,7 +7,8 @@ import { Role } from 'rhachet';
 export const ROLE_ACHIEVER: Role = Role.build({
   slug: 'achiever',
   name: 'Achiever',
-  purpose: 'detect, persist, and triage goals — no ask forgotten',
+  purpose:
+    'track every ask to a goal, act on sight, and cure each block at its owner — no ask forgotten, no excuse',
   readme: { uri: __dirname + '/readme.md' },
   boot: { uri: __dirname + '/boot.yml' },
   traits: [],

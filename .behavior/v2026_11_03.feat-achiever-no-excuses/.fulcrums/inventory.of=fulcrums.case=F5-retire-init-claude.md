@@ -6,4 +6,4 @@
 - rework: clean
 - risk: none — local claude settings, applied by rhachet's own hook mechanism; it touches no credential and writes no prod
 - confidence: 90%
-- verdict: open
+- verdict: ruled 2026-11-20 by the director (nheuron.direction.rhachet-accelerate) — take (a); one mechanism, and a dead path removed, internal with no caller (uladkasach/nheuron, tree direction/rhachet-accelerate, `.route/v2026_10_18_directive_acceleration/verdicts/2026-11-20.rhachet-roles-bhrain.beav.feat-achiever-no-excuses.3.3.1.blueprint.coach.md`)
