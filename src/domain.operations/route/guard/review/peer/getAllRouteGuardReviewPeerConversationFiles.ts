@@ -5,9 +5,9 @@ import {
   asPeerReviewOutputName,
   SEGMENTS_OF_PEER_REVIEWS_DIR,
 } from '@src/domain.operations/asPeerReviewOutputName';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
+import { asStoneGuardCounter } from '@src/domain.operations/route/guard/asStoneGuardCounter';
 
-import { enumRouteFiles } from '../../artifact/enumRouteFiles';
-import { asStoneGuardCounter } from '../../asStoneGuardCounter';
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 
 /**

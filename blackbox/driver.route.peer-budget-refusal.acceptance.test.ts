@@ -111,12 +111,15 @@ describe('driver.route.peer-budget-refusal.acceptance', () => {
         expect(result.stderr).toContain('yours to run, no human needed');
       });
 
-      then('🔴 the guard file is byte-identical — the gate read before the write', async () => {
-        // the whole reason the gate sits above the write. a refusal that mutated the guard
-        // would leave a changed budget with no emit to explain it (rule.require.failfast)
-        const guardAfter = await fs.readFile(scene.guardPath, 'utf-8');
-        expect(guardAfter).toEqual(scene.guardBefore);
-      });
+      then(
+        '🔴 the guard file is byte-identical — the gate read before the write',
+        async () => {
+          // the whole reason the gate sits above the write. a refusal that mutated the guard
+          // would leave a changed budget with no emit to explain it (rule.require.failfast)
+          const guardAfter = await fs.readFile(scene.guardPath, 'utf-8');
+          expect(guardAfter).toEqual(scene.guardBefore);
+        },
+      );
 
       then('stderr has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot(
@@ -232,9 +235,12 @@ describe('driver.route.peer-budget-refusal.acceptance', () => {
         }),
       );
 
-      then('🔴 the SCOPE refusal is gone — the full name reached one stone', () => {
-        expect(result.stderr).not.toContain('--stone matched');
-      });
+      then(
+        '🔴 the SCOPE refusal is gone — the full name reached one stone',
+        () => {
+          expect(result.stderr).not.toContain('--stone matched');
+        },
+      );
 
       then('the gate moved on to the warrant', () => {
         expect(result.stderr).toContain(
@@ -242,23 +248,29 @@ describe('driver.route.peer-budget-refusal.acceptance', () => {
         );
       });
 
-      then('the peer stone is untouched by the narrowed invocation', async () => {
-        const guardsAfter = await Promise.all(
-          scene.guardPaths.map((p) => fs.readFile(p, 'utf-8')),
-        );
-        expect(guardsAfter).toEqual(scene.guardsBefore);
-      });
+      then(
+        'the peer stone is untouched by the narrowed invocation',
+        async () => {
+          const guardsAfter = await Promise.all(
+            scene.guardPaths.map((p) => fs.readFile(p, 'utf-8')),
+          );
+          expect(guardsAfter).toEqual(scene.guardsBefore);
+        },
+      );
 
       // 🔴 the TERMINAL step of the journey renders, so it is snapped.
       //    [t0] carried a snapshot and this did not, so a reviewer who follows the snapshots saw
       //    the refusal open and never saw what the remedy produced — which is the half that
       //    matters, since the whole point of [t1] is that the handed-over command LANDS
       //    (`rule.require.snapshot-every-journey-step`, raised i003/r001 n2).
-      then('stderr has good vibes: the warrant refusal the remedy reached', () => {
-        expect(result.stderr).toMatchSnapshot(
-          'refusal — the narrowed stone, warrant absent',
-        );
-      });
+      then(
+        'stderr has good vibes: the warrant refusal the remedy reached',
+        () => {
+          expect(result.stderr).toMatchSnapshot(
+            'refusal — the narrowed stone, warrant absent',
+          );
+        },
+      );
     });
   });
 
@@ -328,9 +340,12 @@ describe('driver.route.peer-budget-refusal.acceptance', () => {
           );
         });
 
-        then('it names the spend, so the branch condition stays checkable', () => {
-          expect(result.stderr).toContain('mock-reviewer = 1/2 rounds spent');
-        });
+        then(
+          'it names the spend, so the branch condition stays checkable',
+          () => {
+            expect(result.stderr).toContain('mock-reviewer = 1/2 rounds spent');
+          },
+        );
 
         then('the sanctioned move is to spend the rounds in hand', () => {
           expect(result.stderr).toContain('spend the rounds in hand');

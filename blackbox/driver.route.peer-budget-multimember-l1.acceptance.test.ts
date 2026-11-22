@@ -132,30 +132,33 @@ describe('driver.route.peer-budget-multimember-l1.acceptance', () => {
     // =========================================================================
 
     when('[t1] alpha passes but beta fails, L2 STILL awaits', () => {
-      const result = useThen('L2 still awaits (beta not terminal)', async () => {
-        // make ONLY alpha-checker pass
-        await fs.writeFile(
-          path.join(scene.tempDir, '.test', 'alpha-should-pass'),
-          '',
-        );
+      const result = useThen(
+        'L2 still awaits (beta not terminal)',
+        async () => {
+          // make ONLY alpha-checker pass
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'alpha-should-pass'),
+            '',
+          );
 
-        // change artifact to trigger re-review
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v2";',
-        );
+          // change artifact to trigger re-review
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v2";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero (blocked)', () => {
         expect(result.code).not.toEqual(0);

@@ -55,7 +55,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -69,9 +73,12 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         expect(result.stdout).toContain('1/2');
       });
 
-      then('the hash-A tree is pinned — the reviewer rejected at 1 of 2, budget still live', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the hash-A tree is pinned — the reviewer rejected at 1 of 2, budget still live',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] second attempt exhausts budget (hash A variant)', () => {
@@ -85,7 +92,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -118,7 +129,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -144,24 +159,31 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
     // =========================================================================
 
     when('[t2] artifact changes to hash B, attempt to pass', () => {
-      const result = useThen('reviewer stays exhausted, no re-run', async () => {
-        // change artifact to a different hash (hash B)
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "hash-B-different-content";',
-        );
+      const result = useThen(
+        'reviewer stays exhausted, no re-run',
+        async () => {
+          // change artifact to a different hash (hash B)
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "hash-B-different-content";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('still blocked (hash change does NOT reset)', () => {
         expect(result.code).not.toEqual(0);
@@ -189,24 +211,31 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
     // =========================================================================
 
     when('[t3] artifact changes to hash C, still exhausted', () => {
-      const result = useThen('stays exhausted across hash changes', async () => {
-        // change to yet another hash (hash C)
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "hash-C-yet-another-version";',
-        );
+      const result = useThen(
+        'stays exhausted across hash changes',
+        async () => {
+          // change to yet another hash (hash C)
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "hash-C-yet-another-version";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('reviewer remains exhausted', () => {
         expect(result.code).not.toEqual(0);

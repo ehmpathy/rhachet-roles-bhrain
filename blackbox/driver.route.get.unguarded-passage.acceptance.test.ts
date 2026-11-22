@@ -64,47 +64,50 @@ describe('driver.route.get.unguarded-passage.acceptance', () => {
       });
     });
 
-    when('[t1] route.stone.get --stone @next-one after two artifacts exist', () => {
-      const res = useThen('invoke get skill', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'driver-get-unguarded-two',
-          clone: ASSETS_DIR,
+    when(
+      '[t1] route.stone.get --stone @next-one after two artifacts exist',
+      () => {
+        const res = useThen('invoke get skill', async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'driver-get-unguarded-two',
+            clone: ASSETS_DIR,
+          });
+
+          // link the driver role
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
+
+          // write output artifacts for first two stones (NOT passed, just artifacts)
+          await fs.writeFile(
+            path.join(tempDir, '1.vision.md'),
+            '# 1.vision\n\nthe vision is clear.\n',
+          );
+          await fs.writeFile(
+            path.join(tempDir, '2.criteria.md'),
+            '# 2.criteria\n\ncriteria defined.\n',
+          );
+
+          // invoke skill
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.get',
+            args: { stone: '@next-one', route: '.' },
+            cwd: tempDir,
+          });
+
+          return { cli, tempDir };
         });
 
-        // link the driver role
-        await execAsync('npx rhachet roles link --role driver', {
-          cwd: tempDir,
+        then('cli completes successfully', () => {
+          expect(res.cli.code).toEqual(0);
         });
 
-        // write output artifacts for first two stones (NOT passed, just artifacts)
-        await fs.writeFile(
-          path.join(tempDir, '1.vision.md'),
-          '# 1.vision\n\nthe vision is clear.\n',
-        );
-        await fs.writeFile(
-          path.join(tempDir, '2.criteria.md'),
-          '# 2.criteria\n\ncriteria defined.\n',
-        );
-
-        // invoke skill
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.get',
-          args: { stone: '@next-one', route: '.' },
-          cwd: tempDir,
+        then('returns 1.vision (artifacts exist but stones not passed)', () => {
+          // artifacts alone do NOT pass stones — first stone is still next
+          expect(res.cli.stdout).toContain('1.vision');
         });
-
-        return { cli, tempDir };
-      });
-
-      then('cli completes successfully', () => {
-        expect(res.cli.code).toEqual(0);
-      });
-
-      then('returns 1.vision (artifacts exist but stones not passed)', () => {
-        // artifacts alone do NOT pass stones — first stone is still next
-        expect(res.cli.stdout).toContain('1.vision');
-      });
-    });
+      },
+    );
 
     when('[t2] route.stone.get --stone @next-one with no artifacts', () => {
       const res = useThen('invoke get skill', async () => {

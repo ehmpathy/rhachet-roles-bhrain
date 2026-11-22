@@ -1,6 +1,5 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
-import { getAllPassageReports } from '../passage/getAllPassageReports';
+import { getAllPassageReports } from '@src/domain.operations/route/passage/getAllPassageReports';
 
 /**
  * .what = retrieves the set of review levels that have ALREADY POURED for a stone

@@ -1,11 +1,8 @@
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
+import { execAsync, genTempDirForRhachet } from './.test/invokeReviewSkill';
 import { sanitizeTimeForSnapshot } from './.test/invokeRouteSkill';
-import {
-  execAsync,
-  genTempDirForRhachet,
-} from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -57,13 +54,18 @@ describe('review.conversation-help.acceptance', () => {
         expect(result.stdout).toContain('.taken');
       });
 
-      then('🔴 the --mode row names every value the choice refusal names', () => {
-        // .why = a `--mode` typo refuses with "must be plan, hard, or soft" and sends the
-        //        human to --help, so the help must explain all three, not plan alone
-        expect(result.stdout).toContain('--mode <mode>       plan, hard, or soft');
-        expect(result.stdout).toContain('· plan:');
-        expect(result.stdout).toContain('· hard, soft:');
-      });
+      then(
+        '🔴 the --mode row names every value the choice refusal names',
+        () => {
+          // .why = a `--mode` typo refuses with "must be plan, hard, or soft" and sends the
+          //        human to --help, so the help must explain all three, not plan alone
+          expect(result.stdout).toContain(
+            '--mode <mode>       plan, hard, or soft',
+          );
+          expect(result.stdout).toContain('· plan:');
+          expect(result.stdout).toContain('· hard, soft:');
+        },
+      );
 
       then('[t0] help output matches snapshot', () => {
         // .why = the --help text is a user-visible contract surface; snapshot it so

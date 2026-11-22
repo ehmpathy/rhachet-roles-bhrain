@@ -4,11 +4,11 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import { answerEveryPeerGiven } from '@src/domain.operations/route/.test.assets/answerEveryPeerGiven';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
 import { computeDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeDisputedConcernCounts';
 import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
 
-import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
-import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';
 import { setStoneAsPassed } from './setStoneAsPassed';
 import { setStoneAsRewound } from './setStoneAsRewound';

@@ -131,10 +131,13 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('blocker entry exists in passage.jsonl with approval', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
-        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
-        const blockerReport = reports.filter(
-          (r) => r.stone === '1.vision' && r.status === 'blocked',
-        ).pop();
+        const reports = content
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        const blockerReport = reports
+          .filter((r) => r.stone === '1.vision' && r.status === 'blocked')
+          .pop();
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('approval');
       });
@@ -221,8 +224,13 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('passage shows stone passed (supersedes blocked)', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
-        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
-        const latestReport = reports.filter((r) => r.stone === '1.vision').pop();
+        const reports = content
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        const latestReport = reports
+          .filter((r) => r.stone === '1.vision')
+          .pop();
         expect(latestReport.status).toEqual('passed');
       });
 
@@ -325,7 +333,10 @@ describe('driver.route.drive.blocker.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '3.blueprint',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -341,10 +352,13 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('passage.jsonl shows blocked on review.self', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
-        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
-        const blockerReport = reports.filter(
-          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
-        ).pop();
+        const reports = content
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        const blockerReport = reports
+          .filter((r) => r.stone === '3.blueprint' && r.status === 'blocked')
+          .pop();
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('review.self');
       });
@@ -426,7 +440,10 @@ describe('driver.route.drive.blocker.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '3.blueprint',
+        });
 
         // try to pass (will fail on peer review)
         return invokeRouteSkill({
@@ -443,10 +460,13 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('passage.jsonl shows blocked on review.peer', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
-        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
-        const blockerReport = reports.filter(
-          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
-        ).pop();
+        const reports = content
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        const blockerReport = reports
+          .filter((r) => r.stone === '3.blueprint' && r.status === 'blocked')
+          .pop();
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('review.peer');
       });
@@ -506,7 +526,10 @@ describe('driver.route.drive.blocker.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '3.blueprint',
+        });
 
         // trigger review.self for new hash (artifact changed)
         await invokeRouteSkill({
@@ -541,7 +564,10 @@ describe('driver.route.drive.blocker.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '3.blueprint',
+        });
 
         // try to pass (will fail on approval)
         return invokeRouteSkill({
@@ -558,10 +584,13 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('passage.jsonl shows blocked on approval', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
-        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
-        const blockerReport = reports.filter(
-          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
-        ).pop();
+        const reports = content
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        const blockerReport = reports
+          .filter((r) => r.stone === '3.blueprint' && r.status === 'blocked')
+          .pop();
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('approval');
       });

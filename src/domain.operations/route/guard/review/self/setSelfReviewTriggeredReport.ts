@@ -2,7 +2,8 @@ import * as fs from 'fs/promises';
 import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
-import { isPathFound } from '../../../isPathFound';
+import { isPathFound } from '@src/domain.operations/route/isPathFound';
+
 import { asAttemptCount } from './asAttemptCount';
 import { getSelfReviewTriggeredPaths } from './getSelfReviewTriggeredPaths';
 import { setSelfReviewAttemptTally } from './setSelfReviewAttemptTally';

@@ -19,7 +19,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -78,7 +80,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -145,7 +149,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // try to add a stone that already exists
         const cli = await invokeRouteSkill({
@@ -184,7 +190,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -222,7 +230,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -284,7 +294,9 @@ describe('driver.route.stone.add.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const stdinContent = `research: api integration
 
@@ -341,7 +353,9 @@ understand how the external api works
 
       then('stone file has stdin content', () => {
         expect(res.stoneContent).toContain('research: api integration');
-        expect(res.stoneContent).toContain('understand how the external api works');
+        expect(res.stoneContent).toContain(
+          'understand how the external api works',
+        );
       });
 
       then('stdout matches snapshot', () => {
@@ -358,7 +372,9 @@ understand how the external api works
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -397,7 +413,9 @@ understand how the external api works
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -435,7 +453,9 @@ understand how the external api works
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -469,7 +489,9 @@ understand how the external api works
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',
@@ -505,7 +527,9 @@ understand how the external api works
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.add',

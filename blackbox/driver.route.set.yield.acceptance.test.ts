@@ -20,7 +20,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield file
         await fs.writeFile(
@@ -79,25 +81,35 @@ describe('driver.route.set.yield.acceptance', () => {
     });
 
     when('[t1] stone has no yield file', () => {
-      const res = useThen('invoke rewound with yield drop on empty', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'driver-set-yield-drop-empty',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke rewound with yield drop on empty',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'driver-set-yield-drop-empty',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // no yield file created
+          // no yield file created
 
-        // invoke rewind with yield drop
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound', yield: 'drop' },
-          cwd: tempDir,
-        });
+          // invoke rewind with yield drop
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1.vision',
+              route: '.',
+              as: 'rewound',
+              yield: 'drop',
+            },
+            cwd: tempDir,
+          });
 
-        return { cli, tempDir };
-      });
+          return { cli, tempDir };
+        },
+      );
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
@@ -127,7 +139,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield file
         await fs.writeFile(
@@ -183,7 +197,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield file
         await fs.writeFile(
@@ -239,7 +255,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield file
         await fs.writeFile(
@@ -300,7 +318,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield file
         await fs.writeFile(
@@ -351,17 +371,27 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create yield files for stones 1, 2, and 3
         await fs.writeFile(path.join(tempDir, '1.vision.yield.md'), '# Vision');
-        await fs.writeFile(path.join(tempDir, '2.criteria.yield.md'), '# Criteria');
+        await fs.writeFile(
+          path.join(tempDir, '2.criteria.yield.md'),
+          '# Criteria',
+        );
         await fs.writeFile(path.join(tempDir, '3.plan.yield.md'), '# Plan');
 
         // invoke rewind on stone 2 with yield drop (should cascade to 2 and 3)
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '2.criteria', route: '.', as: 'rewound', yield: 'drop' },
+          args: {
+            stone: '2.criteria',
+            route: '.',
+            as: 'rewound',
+            yield: 'drop',
+          },
           cwd: tempDir,
         });
 
@@ -441,12 +471,20 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke with both --hard and --soft
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound', hard: true, soft: true },
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'rewound',
+            hard: true,
+            soft: true,
+          },
           cwd: tempDir,
         });
 
@@ -479,12 +517,20 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke with --hard and --yield keep
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound', hard: true, yield: 'keep' },
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'rewound',
+            hard: true,
+            yield: 'keep',
+          },
           cwd: tempDir,
         });
 
@@ -513,12 +559,20 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke with --soft and --yield drop
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound', soft: true, yield: 'drop' },
+          args: {
+            stone: '1.vision',
+            route: '.',
+            as: 'rewound',
+            soft: true,
+            yield: 'drop',
+          },
           cwd: tempDir,
         });
 
@@ -547,7 +601,9 @@ describe('driver.route.set.yield.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke with --yield on passed action
         const cli = await invokeRouteSkill({
@@ -577,57 +633,73 @@ describe('driver.route.set.yield.acceptance', () => {
 
   given('[case8] yield with multiple yield file extensions', () => {
     when('[t0] stone has .yield, .yield.md, and .yield.json', () => {
-      const res = useThen('invoke rewound with multiple yield files', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'driver-set-yield-multi',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke rewound with multiple yield files',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'driver-set-yield-multi',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // create multiple yield files
-        await fs.writeFile(path.join(tempDir, '1.vision.yield'), 'plain yield');
-        await fs.writeFile(path.join(tempDir, '1.vision.yield.md'), '# Markdown yield');
-        await fs.writeFile(
-          path.join(tempDir, '1.vision.yield.json'),
-          '{"type": "json yield"}',
-        );
+          // create multiple yield files
+          await fs.writeFile(
+            path.join(tempDir, '1.vision.yield'),
+            'plain yield',
+          );
+          await fs.writeFile(
+            path.join(tempDir, '1.vision.yield.md'),
+            '# Markdown yield',
+          );
+          await fs.writeFile(
+            path.join(tempDir, '1.vision.yield.json'),
+            '{"type": "json yield"}',
+          );
 
-        // invoke rewind with yield drop
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound', yield: 'drop' },
-          cwd: tempDir,
-        });
+          // invoke rewind with yield drop
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1.vision',
+              route: '.',
+              as: 'rewound',
+              yield: 'drop',
+            },
+            cwd: tempDir,
+          });
 
-        // check all yield files are gone
-        const yieldPlainExists = await isPathFound(
-          path.join(tempDir, '1.vision.yield'),
-        );
-        const yieldMdExists = await isPathFound(
-          path.join(tempDir, '1.vision.yield.md'),
-        );
-        const yieldJsonExists = await isPathFound(
-          path.join(tempDir, '1.vision.yield.json'),
-        );
+          // check all yield files are gone
+          const yieldPlainExists = await isPathFound(
+            path.join(tempDir, '1.vision.yield'),
+          );
+          const yieldMdExists = await isPathFound(
+            path.join(tempDir, '1.vision.yield.md'),
+          );
+          const yieldJsonExists = await isPathFound(
+            path.join(tempDir, '1.vision.yield.json'),
+          );
 
-        // check archive
-        const archiveDir = path.join(tempDir, '.route', '.archive');
-        let archivedFiles: string[] = [];
-        const archiveExists = await isPathFound(archiveDir);
-        if (archiveExists) {
-          archivedFiles = await fs.readdir(archiveDir);
-        }
+          // check archive
+          const archiveDir = path.join(tempDir, '.route', '.archive');
+          let archivedFiles: string[] = [];
+          const archiveExists = await isPathFound(archiveDir);
+          if (archiveExists) {
+            archivedFiles = await fs.readdir(archiveDir);
+          }
 
-        return {
-          cli,
-          tempDir,
-          yieldPlainExists,
-          yieldMdExists,
-          yieldJsonExists,
-          archivedFiles,
-        };
-      });
+          return {
+            cli,
+            tempDir,
+            yieldPlainExists,
+            yieldMdExists,
+            yieldJsonExists,
+            archivedFiles,
+          };
+        },
+      );
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
@@ -645,16 +717,19 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.archivedFiles).toContain('1.vision.yield.json');
       });
 
-      then('the emit reports ONE yield, though THREE files were archived', () => {
-        // 🔴 .why = this is the conjunction the pin below exists for, and a snapshot alone
-        //    cannot state it — a re-take would absorb a drift to `3 yields` in silence and
-        //    the tree would still look right. the cascade carries a per-stone STATUS, so
-        //    the singular is the contract rather than a lost count
-        expect(res.cli.stdout).toContain(
-          'cleared: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield',
-        );
-        expect(res.cli.stdout).not.toContain('yields');
-      });
+      then(
+        'the emit reports ONE yield, though THREE files were archived',
+        () => {
+          // 🔴 .why = this is the conjunction the pin below exists for, and a snapshot alone
+          //    cannot state it — a re-take would absorb a drift to `3 yields` in silence and
+          //    the tree would still look right. the cascade carries a per-stone STATUS, so
+          //    the singular is the contract rather than a lost count
+          expect(res.cli.stdout).toContain(
+            'cleared: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield',
+          );
+          expect(res.cli.stdout).not.toContain('yields');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         // 🔴 .why this pin = the bars above read the DISK; none reads what the driver

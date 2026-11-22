@@ -1,0 +1,19 @@
+{
+  "key": "293410814e2f028f",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "declapract-typescript-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(jest): a repo seam for jest cuts, globalSetup, retries; fail on stale patches",
+  "description": "## .what\ndeclapract-typescript-ehmpathy 0.50.0 checks the jest configs, the integration + acceptance env files, the prepare files, and `src/.test/use*.ts` as EQUALS. a consumer repo has no seam for its own jest needs. rhachet-roles-bhrain lost these on upgrade:\n\n- a `.log/` haste cut (`modulePathIgnorePatterns`): stray `.snap` files under `.log/` read as obsolete\n- `.behavior/` + `.scratch/` cuts: records of retired code load as suites\n- a repo globalSetup hook: no place for a once-per-run step (bhrain picks a brain tier there)\n- a way to run `.agent/repo=.this/` skill suites: `testPathIgnorePatterns` cuts all of `/.agent/`\n- `jest.retryTimes(2)` and a 240s timeout for live-brain acceptance; the acceptance pool is now `--runInBand`\n- `allowUnusedPatches` + `ignorePatchFailures` let a stale patch key (`test-fns@1.15.7` after a bump to 1.17.0) pass the install in silence; a stale patch should fail loud\n\n## .ask\na repo-owned extension seam (e.g. a `jest.*.config.repo.ts` merged in, or a CONTAINS check) so a consumer keeps its cuts without a full override.\n\nfirst seen in rhachet-roles-bhrain `.route/v2026_11_19.declapract.upgrade`, stone 3.1 (fulcrum F5).",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": "findsert",
+  "heldSeq": 49,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

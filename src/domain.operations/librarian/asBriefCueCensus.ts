@@ -1,4 +1,4 @@
-import { asBriefLinesByCue } from '../learn/asBriefLinesByCue';
+import { asBriefLinesByCue } from '@src/domain.operations/learn/asBriefLinesByCue';
 
 /**
  * .what = the chars a set of lines costs, each with its newline

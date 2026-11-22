@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { genContextReviewBrainSupplyDemo } from './__test_assets__/genContextReviewBrainSupplyDemo';
+import { genContextReviewBrainSupplyDemo } from './.test.assets/genContextReviewBrainSupplyDemo';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 

@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
+
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStones } from './getAllStones';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';

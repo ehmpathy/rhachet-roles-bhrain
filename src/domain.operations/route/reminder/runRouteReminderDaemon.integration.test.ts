@@ -2,8 +2,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import { getRouteReminderCrashLogPath } from './getRouteReminderCrashLogPath';
 import { runRouteReminderDaemon } from './runRouteReminderDaemon';
 import { sayToClone } from './sayToClone';

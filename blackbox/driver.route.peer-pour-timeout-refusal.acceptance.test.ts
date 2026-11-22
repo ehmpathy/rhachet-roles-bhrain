@@ -163,23 +163,32 @@ describe('driver.route.peer-pour-timeout-refusal.acceptance', () => {
       }),
     );
 
-    when('[t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS= (empty)', () => {
-      then('CLAMP: an empty string is refused, never absorbed as the default', () => {
-        // ⚠️ .why = an empty string is `!== undefined`, so it reaches the transformer.
-        //    a `NaN` bound here makes the subprocess timeout never compare true, so a
-        //    hung reviewer runs UNBOUNDED — and this timeout is its only bound
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('positive integer');
-        expect(output).toContain('RHACHET_REVIEW_TIMEOUT_MS');
-      });
+    when(
+      '[t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS= (empty)',
+      () => {
+        then(
+          'CLAMP: an empty string is refused, never absorbed as the default',
+          () => {
+            // ⚠️ .why = an empty string is `!== undefined`, so it reaches the transformer.
+            //    a `NaN` bound here makes the subprocess timeout never compare true, so a
+            //    hung reviewer runs UNBOUNDED — and this timeout is its only bound
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('positive integer');
+            expect(output).toContain('RHACHET_REVIEW_TIMEOUT_MS');
+          },
+        );
 
-      then('the refusal renders `declares ""` — distinct from the abc variant', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('declares ""');
-        expect(
-          sanitizeTimeForSnapshot(result.stdout + result.stderr),
-        ).toMatchSnapshot();
-      });
-    });
+        then(
+          'the refusal renders `declares ""` — distinct from the abc variant',
+          () => {
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('declares ""');
+            expect(
+              sanitizeTimeForSnapshot(result.stdout + result.stderr),
+            ).toMatchSnapshot();
+          },
+        );
+      },
+    );
   });
 });

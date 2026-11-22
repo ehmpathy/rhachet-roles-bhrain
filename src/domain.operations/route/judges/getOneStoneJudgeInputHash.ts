@@ -3,12 +3,11 @@ import * as path from 'path';
 import { isPresent } from 'type-fns';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
+import { getAllLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/review/peer/getAllLatestReviewFilesPerIndex';
+import { getOneReviewArtifactContent } from '@src/domain.operations/route/guard/review/peer/getOneReviewArtifactContent';
+import { getOnePassageReport } from '@src/domain.operations/route/passage/getOnePassageReport';
 import { getAllResultsInBoundedPool } from '@src/utils/getAllResultsInBoundedPool';
-
-import { enumRouteGuardReviewPeerFiles } from '../guard/review/peer/enumRouteGuardReviewPeerFiles';
-import { getAllLatestReviewFilesPerIndex } from '../guard/review/peer/getAllLatestReviewFilesPerIndex';
-import { getOneReviewArtifactContent } from '../guard/review/peer/getOneReviewArtifactContent';
-import { getOnePassageReport } from '../passage/getOnePassageReport';
 
 /**
  * .what = how many review file reads may be in flight at one time

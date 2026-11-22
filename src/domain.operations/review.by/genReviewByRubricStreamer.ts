@@ -1,9 +1,9 @@
 import { asReviewWaveStatusLine } from '@src/domain.operations/asReviewWaveStatusLine';
 import { genReviewWaveBuffer } from '@src/domain.operations/genReviewWaveBuffer';
+// a sanctioned exposure, declared in src/domain.operations/route/guard/tree/.readme.md
+import { formatGuardReviewerTree } from '@src/domain.operations/route/guard/tree/formatGuardReviewerTree';
 import { genTerminalTailLine } from '@src/infra/terminal/genTerminalTailLine';
 
-// a sanctioned exposure, declared in src/domain.operations/route/guard/tree/.readme.md
-import { formatGuardReviewerTree } from '../route/guard/tree/formatGuardReviewerTree';
 import { asReviewByReviewerTreeState } from './asReviewByReviewerTreeState';
 import type { ReviewRubricProgress } from './ReviewByResult';
 

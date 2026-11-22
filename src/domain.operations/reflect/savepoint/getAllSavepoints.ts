@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import type { ReflectScope } from '../scope/getReflectScope';
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+
 import { getOneSavepoint } from './getOneSavepoint';
 import type { Savepoint } from './setSavepoint';
 

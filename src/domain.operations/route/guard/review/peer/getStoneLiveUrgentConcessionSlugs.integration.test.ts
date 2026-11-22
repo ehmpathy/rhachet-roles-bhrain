@@ -4,8 +4,8 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 
-import { computeStoneReviewInputHash } from '../computeStoneReviewInputHash';
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 import { getStoneLiveUrgentConcessionSlugs } from './getStoneLiveUrgentConcessionSlugs';
 

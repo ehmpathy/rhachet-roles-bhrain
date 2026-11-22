@@ -1,8 +1,8 @@
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardApproveArtifact } from '@src/domain.objects/Driver/RouteStoneGuardApproveArtifact';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { setPassageReport } from '../passage/setPassageReport';
 import { getOneStoneGuardApproval } from './getOneStoneGuardApproval';
 
 /**

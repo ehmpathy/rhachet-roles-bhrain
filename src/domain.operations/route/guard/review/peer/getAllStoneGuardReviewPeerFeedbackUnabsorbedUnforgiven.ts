@@ -1,7 +1,7 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 
-import { getStoneGuardOverruledLevels } from '../../../judges/getStoneGuardOverruledLevels';
 import { asPeerReviewLevelBySlug } from './asPeerReviewLevelBySlug';
 import { computePeerFeedbackUnabsorbedUnforgiven } from './computePeerFeedbackUnabsorbedUnforgiven';
 import {

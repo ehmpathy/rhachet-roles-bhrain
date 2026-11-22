@@ -1,6 +1,6 @@
-import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import { asExecResultOrThrow } from './.test/asExecResultOrThrow';
@@ -47,7 +47,10 @@ const invokeReviewWithEnv = async (input: {
   ].join(' ');
 
   try {
-    const result = await execAsync(cmd, { cwd: input.cwd, env: childEnv as NodeJS.ProcessEnv });
+    const result = await execAsync(cmd, {
+      cwd: input.cwd,
+      env: childEnv as NodeJS.ProcessEnv,
+    });
     return { ...result, code: 0 };
   } catch (error) {
     // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
@@ -126,34 +129,42 @@ describe('review.timeout-env-refusals.acceptance', () => {
   });
 
   given('[case2] RHACHET_REVIEW_TIMEOUT_MS is set to empty', () => {
-    when('[t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS= (empty)', () => {
-      const result = useThen('review refuses at the timeout read', async () =>
-        invokeReviewWithEnv({
-          cwd: scene.tempDir,
-          env: { RHACHET_REVIEW_TIMEOUT_MS: '' },
-        }),
-      );
+    when(
+      '[t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS= (empty)',
+      () => {
+        const result = useThen('review refuses at the timeout read', async () =>
+          invokeReviewWithEnv({
+            cwd: scene.tempDir,
+            env: { RHACHET_REVIEW_TIMEOUT_MS: '' },
+          }),
+        );
 
-      then('CLAMP: exit 2 — a constraint, never a malfunction', () => {
-        // an empty string is `!== undefined`, so it reaches `asGuardPositiveInt`. a
-        // NaN bound from `parseInt('')` would make every review time out at once.
-        expect(result.code).toEqual(2);
-      });
+        then('CLAMP: exit 2 — a constraint, never a malfunction', () => {
+          // an empty string is `!== undefined`, so it reaches `asGuardPositiveInt`. a
+          // NaN bound from `parseInt('')` would make every review time out at once.
+          expect(result.code).toEqual(2);
+        });
 
-      then('CLAMP: the message names the env var and the fault', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('positive integer');
-        expect(output).toContain('RHACHET_REVIEW_TIMEOUT_MS');
-        // the qualified header, held by an assertion and never by the snapshot alone
-        expect(output).toContain('✋ ConstraintError:');
-      });
+        then('CLAMP: the message names the env var and the fault', () => {
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('positive integer');
+          expect(output).toContain('RHACHET_REVIEW_TIMEOUT_MS');
+          // the qualified header, held by an assertion and never by the snapshot alone
+          expect(output).toContain('✋ ConstraintError:');
+        });
 
-      then('the refusal renders `declares ""` — distinct from the abc variant', () => {
-        // `declares ""` is this variant's byte string; [case1] pins `declares "abc"`.
-        // a merged template or dropped quote would surface here.
-        const output = sanitizeTimeForSnapshot(result.stdout + result.stderr);
-        expect(output).toMatchSnapshot();
-      });
-    });
+        then(
+          'the refusal renders `declares ""` — distinct from the abc variant',
+          () => {
+            // `declares ""` is this variant's byte string; [case1] pins `declares "abc"`.
+            // a merged template or dropped quote would surface here.
+            const output = sanitizeTimeForSnapshot(
+              result.stdout + result.stderr,
+            );
+            expect(output).toMatchSnapshot();
+          },
+        );
+      },
+    );
   });
 });

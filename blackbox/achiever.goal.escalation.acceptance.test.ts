@@ -1,6 +1,5 @@
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { execAsync } from './.test/invokeRouteSkill';
 import {
   createGoalYaml,
   genTempDirForGoals,
@@ -8,6 +7,7 @@ import {
   invokeGoalTriageNext,
   sanitizeGoalOutputForSnapshot,
 } from './.test/invokeGoalSkill';
+import { execAsync } from './.test/invokeRouteSkill';
 
 /**
  * .what = acceptance tests for goal escalation after repeated onStop reminders
@@ -72,26 +72,23 @@ describe('achiever.goal.escalation.acceptance', () => {
     });
 
     when('[t1] onStop is called 5 times without progress', () => {
-      const result = useThen(
-        'invoke goal.triage.next 5 times',
-        async () => {
-          // calls 2-5 (call 1 already happened in [t0])
-          for (let i = 0; i < 4; i++) {
-            await invokeGoalTriageNext({
-              when: 'hook.onStop',
-              scope: 'repo',
-              cwd: scene.tempDir,
-            });
-          }
-
-          // call 5 - should escalate
-          return invokeGoalTriageNext({
+      const result = useThen('invoke goal.triage.next 5 times', async () => {
+        // calls 2-5 (call 1 already happened in [t0])
+        for (let i = 0; i < 4; i++) {
+          await invokeGoalTriageNext({
             when: 'hook.onStop',
             scope: 'repo',
             cwd: scene.tempDir,
           });
-        },
-      );
+        }
+
+        // call 5 - should escalate
+        return invokeGoalTriageNext({
+          when: 'hook.onStop',
+          scope: 'repo',
+          cwd: scene.tempDir,
+        });
+      });
 
       then('exit code is 2', () => {
         expect(result.code).toEqual(2);
@@ -178,38 +175,35 @@ describe('achiever.goal.escalation.acceptance', () => {
     });
 
     when('[t1] new goal is created and onStop is called', () => {
-      const result = useThen(
-        'create new goal and call onStop',
-        async () => {
-          // create a new inflight goal
-          const goalYaml = createGoalYaml({
-            slug: 'new-task',
-            why: {
-              ask: 'new task after progress',
-              purpose: 'test fresh start',
-              benefit: 'validates reset',
-            },
-            what: { outcome: 'new task done' },
-            how: { task: 'do new task', gate: 'done' },
-            status: { choice: 'inflight', reason: 'fresh start' },
-            source: 'peer:human',
-          });
+      const result = useThen('create new goal and call onStop', async () => {
+        // create a new inflight goal
+        const goalYaml = createGoalYaml({
+          slug: 'new-task',
+          why: {
+            ask: 'new task after progress',
+            purpose: 'test fresh start',
+            benefit: 'validates reset',
+          },
+          what: { outcome: 'new task done' },
+          how: { task: 'do new task', gate: 'done' },
+          status: { choice: 'inflight', reason: 'fresh start' },
+          source: 'peer:human',
+        });
 
-          await invokeGoalSkill({
-            skill: 'goal.memory.set',
-            args: { scope: 'repo' },
-            cwd: scene.tempDir,
-            stdin: goalYaml,
-          });
+        await invokeGoalSkill({
+          skill: 'goal.memory.set',
+          args: { scope: 'repo' },
+          cwd: scene.tempDir,
+          stdin: goalYaml,
+        });
 
-          // call onStop - should be gentle (fresh blocker state)
-          return invokeGoalTriageNext({
-            when: 'hook.onStop',
-            scope: 'repo',
-            cwd: scene.tempDir,
-          });
-        },
-      );
+        // call onStop - should be gentle (fresh blocker state)
+        return invokeGoalTriageNext({
+          when: 'hook.onStop',
+          scope: 'repo',
+          cwd: scene.tempDir,
+        });
+      });
 
       then('exit code is 2', () => {
         expect(result.code).toEqual(2);

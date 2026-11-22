@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
+
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getExhaustedReviewerSlugs } from './getExhaustedReviewerSlugs';
 

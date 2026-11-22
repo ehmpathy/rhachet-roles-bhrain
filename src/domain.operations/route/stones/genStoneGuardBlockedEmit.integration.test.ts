@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { getStoneGuardBlockerReport } from '../drive/getStoneGuardBlockerReport';
+import { getStoneGuardBlockerReport } from '@src/domain.operations/route/drive/getStoneGuardBlockerReport';
+
 import { genStoneGuardBlockedEmit } from './genStoneGuardBlockedEmit';
 
 describe('genStoneGuardBlockedEmit', () => {

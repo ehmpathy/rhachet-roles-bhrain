@@ -222,7 +222,7 @@ describe('stepRouteDrive', () => {
         const result = await stepRouteDrive({ route: scene.tempDir });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
@@ -342,7 +342,7 @@ describe('stepRouteDrive', () => {
         });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
@@ -403,7 +403,7 @@ describe('stepRouteDrive', () => {
         });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
@@ -467,7 +467,7 @@ describe('stepRouteDrive', () => {
         });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
@@ -503,7 +503,7 @@ describe('stepRouteDrive', () => {
         });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
@@ -571,7 +571,7 @@ describe('stepRouteDrive', () => {
         });
         // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();

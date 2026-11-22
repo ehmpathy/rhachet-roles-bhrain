@@ -5,7 +5,7 @@ import { given, then, useBeforeAll, useThen, when } from 'test-fns';
  * .why = without the patch, a setup that throws on attempt 1, or an attempt that outlives the
  *        jest timeout, reds the file even when a later attempt passes. live-brain suites hit
  *        both, so one slow or odd brain response blocked a release
- * .note = the patch is `patches/test-fns@1.15.7.patch`; upstream is ehmpathy/test-fns#71
+ * .note = the patch is `patches/test-fns@1.17.0.patch`; upstream is ehmpathy/test-fns#71
  * .note = a unit test on purpose: the unit env declares no jest.retryTimes, which would mask a red
  */
 

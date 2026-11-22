@@ -2,8 +2,7 @@ import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardApproveArtifact } from '@src/domain.objects/Driver/RouteStoneGuardApproveArtifact';
-
-import { getAllPassageReports } from '../passage/getAllPassageReports';
+import { getAllPassageReports } from '@src/domain.operations/route/passage/getAllPassageReports';
 
 /**
  * .what = retrieves approval artifact for a stone if present and valid

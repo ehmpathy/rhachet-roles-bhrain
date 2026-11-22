@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { DISPUTED_NARRATIVE } from '../../../tree/formatGuardReviewerTree';
+import { DISPUTED_NARRATIVE } from '@src/domain.operations/route/guard/tree/formatGuardReviewerTree';
+
 import {
   asGuardBudgetUpdateLines,
   DISPUTED_UNTOUCHED_SUFFIX,

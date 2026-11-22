@@ -117,7 +117,9 @@ describe('driver.route.passage-stamp.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // make the rejector mock review executable
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blocker.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });

@@ -5,7 +5,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import { delRouteReminder } from './delRouteReminder';
 import { genRouteReminder } from './genRouteReminder';
 import { getRouteReminder } from './getRouteReminder';

@@ -1,7 +1,7 @@
 import {
   getRouteDriveFrontier,
   type RouteDriveFrontier,
-} from '../stones/getRouteDriveFrontier';
+} from '@src/domain.operations/route/stones/getRouteDriveFrontier';
 
 /**
  * .what = whether a route's drive is COMPLETE — every stone passed, no next stone to drive

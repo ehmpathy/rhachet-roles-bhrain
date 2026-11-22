@@ -27,10 +27,15 @@ describe('driver.route.set.acceptance', () => {
         });
 
         // link the driver role
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create artifact
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
+        await fs.writeFile(
+          path.join(tempDir, '1.vision.md'),
+          '# Vision\n\nTest',
+        );
 
         // invoke skill
         const cli = await invokeRouteSkill({
@@ -47,7 +52,9 @@ describe('driver.route.set.acceptance', () => {
 
         // check for passage marker in passage.jsonl
         const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const passageContent = await fs
+          .readFile(passagePath, 'utf-8')
+          .catch(() => '');
         const passageExists = passageContent
           .split('\n')
           .filter(Boolean)
@@ -88,7 +95,9 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -123,7 +132,9 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const cli = await invokeRouteSkill({
@@ -135,7 +146,9 @@ describe('driver.route.set.acceptance', () => {
 
         // check for approval marker in passage.jsonl (should NOT exist)
         const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const passageContent = await fs
+          .readFile(passagePath, 'utf-8')
+          .catch(() => '');
         const approvalExists = passageContent
           .split('\n')
           .filter(Boolean)
@@ -171,52 +184,51 @@ describe('driver.route.set.acceptance', () => {
 
   given('[case3] route.stone.set --as passed with guard (allowed)', () => {
     when('[t0] guarded stone with review + judge that pass', () => {
-      const res = useThen(
-        'invoke set skill on guarded stone',
-        async () => {
-          const tempDir = genTempDirForRhachet({
-            slug: 'driver-set-guarded-pass',
-            clone: ASSETS_GUARDED_DIR,
+      const res = useThen('invoke set skill on guarded stone', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-guarded-pass',
+          clone: ASSETS_GUARDED_DIR,
+        });
+
+        // link the driver role
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+
+        // create artifact
+        await fs.writeFile(
+          path.join(tempDir, '1.test.md'),
+          '# Test artifact\n\ncontent for review',
+        );
+
+        // invoke skill
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.test', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        console.log('\n--- [case3] cli.stdout ---');
+        console.log(cli.stdout);
+        console.log('\n--- [case3] cli.stderr ---');
+        console.log(cli.stderr);
+        console.log('--- end [case3] cli ---\n');
+
+        // check for passage marker in passage.jsonl
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs
+          .readFile(passagePath, 'utf-8')
+          .catch(() => '');
+        const passageExists = passageContent
+          .split('\n')
+          .filter(Boolean)
+          .some((line) => {
+            const entry = JSON.parse(line);
+            return entry.stone === '1.test' && entry.status === 'passed';
           });
 
-          // link the driver role
-          await execAsync('npx rhachet roles link --role driver', {
-            cwd: tempDir,
-          });
-
-          // create artifact
-          await fs.writeFile(
-            path.join(tempDir, '1.test.md'),
-            '# Test artifact\n\ncontent for review',
-          );
-
-          // invoke skill
-          const cli = await invokeRouteSkill({
-            skill: 'route.stone.set',
-            args: { stone: '1.test', route: '.', as: 'passed' },
-            cwd: tempDir,
-          });
-
-          console.log('\n--- [case3] cli.stdout ---');
-          console.log(cli.stdout);
-          console.log('\n--- [case3] cli.stderr ---');
-          console.log(cli.stderr);
-          console.log('--- end [case3] cli ---\n');
-
-          // check for passage marker in passage.jsonl
-          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-          const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
-          const passageExists = passageContent
-            .split('\n')
-            .filter(Boolean)
-            .some((line) => {
-              const entry = JSON.parse(line);
-              return entry.stone === '1.test' && entry.status === 'passed';
-            });
-
-          return { cli, tempDir, passageExists };
-        },
-      );
+        return { cli, tempDir, passageExists };
+      });
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
@@ -312,7 +324,9 @@ describe('driver.route.set.acceptance', () => {
 
           // check passage marker should NOT exist in passage.jsonl
           const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-          const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+          const passageContent = await fs
+            .readFile(passagePath, 'utf-8')
+            .catch(() => '');
           const passageExists = passageContent
             .split('\n')
             .filter(Boolean)
@@ -406,10 +420,15 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create artifact for 1.vision
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
+        await fs.writeFile(
+          path.join(tempDir, '1.vision.md'),
+          '# Vision\n\nTest',
+        );
 
         // invoke with partial pattern 'vision' (should match 1.vision)
         const cli = await invokeRouteSkill({
@@ -444,7 +463,9 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke with numeric prefix '2.' (should match 2.criteria)
         // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
@@ -475,23 +496,28 @@ describe('driver.route.set.acceptance', () => {
 
   given('[case6] route.stone.set with ambiguous pattern (failfast)', () => {
     when('[t0] pattern matches multiple stones', () => {
-      const res = useThen('invoke set skill with ambiguous pattern', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'driver-set-flex-ambig',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke set skill with ambiguous pattern',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'driver-set-flex-ambig',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // invoke with ambiguous pattern that matches all stones
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '.', route: '.', as: 'approved' },
-          cwd: tempDir,
-        });
+          // invoke with ambiguous pattern that matches all stones
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '.', route: '.', as: 'approved' },
+            cwd: tempDir,
+          });
 
-        return { cli, tempDir };
-      });
+          return { cli, tempDir };
+        },
+      );
 
       then('cli fails with non-zero code', () => {
         expect(res.cli.code).not.toEqual(0);
@@ -577,10 +603,13 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('cached');
       });
 
-      then('stdout shows glob pattern under cached indicator with on prefix', () => {
-        // the cachedOn feature shows the original glob (what invalidates the cache)
-        expect(res.cli.stdout).toContain('on $route/1.test*.md');
-      });
+      then(
+        'stdout shows glob pattern under cached indicator with on prefix',
+        () => {
+          // the cachedOn feature shows the original glob (what invalidates the cache)
+          expect(res.cli.stdout).toContain('on $route/1.test*.md');
+        },
+      );
 
       then('stdout contains passage = allowed', () => {
         expect(res.cli.stdout).toContain('passage = allowed');
@@ -594,63 +623,76 @@ describe('driver.route.set.acceptance', () => {
 
   given('[case8] route.stone.set --as rewound', () => {
     when('[t0] rewind a single stone with guard artifacts', () => {
-      const res = useThen('invoke rewound on stone with artifacts', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'driver-set-rewound-single',
-          clone: ASSETS_DIR,
-        });
-
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-
-        // create .reviews/peer/ directory and guard artifacts
-        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
-        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-        await fs.writeFile(
-          path.join(
-            tempDir,
-            '.reviews',
-            'peer',
-            '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md',
-          ),
-          '# review',
-        );
-        await fs.writeFile(
-          path.join(tempDir, '.route', '1.vision.guard.judge.i1.abc.j1.md'),
-          '# judge',
-        );
-
-        // invoke rewind
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound' },
-          cwd: tempDir,
-        });
-
-        console.log('\n--- [case8] cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- [case8] cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end [case8] cli ---\n');
-
-        // check passage.jsonl for rewound entry
-        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
-        const rewoundExists = passageContent
-          .split('\n')
-          .filter(Boolean)
-          .some((line) => {
-            const entry = JSON.parse(line);
-            return entry.stone === '1.vision' && entry.status === 'rewound';
+      const res = useThen(
+        'invoke rewound on stone with artifacts',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'driver-set-rewound-single',
+            clone: ASSETS_DIR,
           });
 
-        // check guard artifacts are deleted (reviews in .reviews/peer/, judges in .route/)
-        const reviewsDir = path.join(tempDir, '.reviews', 'peer');
-        const reviewFiles = await fs.readdir(reviewsDir).catch(() => [] as string[]);
-        const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
-        const judgeFiles = routeFiles.filter((f) => f.includes('.guard.judge.'));
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        return { cli, tempDir, rewoundExists, reviewFiles, judgeFiles };
-      });
+          // create .reviews/peer/ directory and guard artifacts
+          await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
+            recursive: true,
+          });
+          await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+          await fs.writeFile(
+            path.join(
+              tempDir,
+              '.reviews',
+              'peer',
+              '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md',
+            ),
+            '# review',
+          );
+          await fs.writeFile(
+            path.join(tempDir, '.route', '1.vision.guard.judge.i1.abc.j1.md'),
+            '# judge',
+          );
+
+          // invoke rewind
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'rewound' },
+            cwd: tempDir,
+          });
+
+          console.log('\n--- [case8] cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('\n--- [case8] cli.stderr ---');
+          console.log(cli.stderr);
+          console.log('--- end [case8] cli ---\n');
+
+          // check passage.jsonl for rewound entry
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          const passageContent = await fs
+            .readFile(passagePath, 'utf-8')
+            .catch(() => '');
+          const rewoundExists = passageContent
+            .split('\n')
+            .filter(Boolean)
+            .some((line) => {
+              const entry = JSON.parse(line);
+              return entry.stone === '1.vision' && entry.status === 'rewound';
+            });
+
+          // check guard artifacts are deleted (reviews in .reviews/peer/, judges in .route/)
+          const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+          const reviewFiles = await fs
+            .readdir(reviewsDir)
+            .catch(() => [] as string[]);
+          const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
+          const judgeFiles = routeFiles.filter((f) =>
+            f.includes('.guard.judge.'),
+          );
+
+          return { cli, tempDir, rewoundExists, reviewFiles, judgeFiles };
+        },
+      );
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
@@ -683,10 +725,14 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create .reviews/peer/ directory with review artifacts for multiple stones
-        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
+        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
+          recursive: true,
+        });
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
         await fs.writeFile(
           path.join(
@@ -725,11 +771,15 @@ describe('driver.route.set.acceptance', () => {
 
         // check which review files remain in .reviews/peer/
         const reviewsDir = path.join(tempDir, '.reviews', 'peer');
-        const reviewFiles = await fs.readdir(reviewsDir).catch(() => [] as string[]);
+        const reviewFiles = await fs
+          .readdir(reviewsDir)
+          .catch(() => [] as string[]);
 
         // check passage.jsonl for rewound entries
         const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const passageContent = await fs
+          .readFile(passagePath, 'utf-8')
+          .catch(() => '');
         const lines = passageContent.split('\n').filter(Boolean);
         const rewoundStones = lines
           .map((line) => JSON.parse(line))
@@ -771,7 +821,9 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create .route directory with prior approval
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
@@ -799,14 +851,17 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('passage.jsonl contains approved then rewound entries (cascade)', () => {
-        // cascade rewinds all 3 stones (1, 2, 3)
-        expect(res.lines).toHaveLength(4);
-        expect(res.lines[0]).toContain('approved');
-        expect(res.lines[1]).toContain('rewound');
-        expect(res.lines[2]).toContain('rewound');
-        expect(res.lines[3]).toContain('rewound');
-      });
+      then(
+        'passage.jsonl contains approved then rewound entries (cascade)',
+        () => {
+          // cascade rewinds all 3 stones (1, 2, 3)
+          expect(res.lines).toHaveLength(4);
+          expect(res.lines[0]).toContain('approved');
+          expect(res.lines[1]).toContain('rewound');
+          expect(res.lines[2]).toContain('rewound');
+          expect(res.lines[3]).toContain('rewound');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
@@ -820,7 +875,9 @@ describe('driver.route.set.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create .route directory
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
@@ -851,11 +908,16 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('passage.jsonl contains rewound entries for each cascade (3 stones × 2 rewinds)', () => {
-        // cascade rewinds all 3 stones twice = 6 entries
-        expect(res.lines).toHaveLength(6);
-        expect(res.lines.every((l: string) => l.includes('rewound'))).toBe(true);
-      });
+      then(
+        'passage.jsonl contains rewound entries for each cascade (3 stones × 2 rewinds)',
+        () => {
+          // cascade rewinds all 3 stones twice = 6 entries
+          expect(res.lines).toHaveLength(6);
+          expect(res.lines.every((l: string) => l.includes('rewound'))).toBe(
+            true,
+          );
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();

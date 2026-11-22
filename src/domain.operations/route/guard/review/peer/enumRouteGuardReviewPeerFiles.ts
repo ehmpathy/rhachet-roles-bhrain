@@ -1,5 +1,5 @@
-import { enumRouteFiles } from '../../artifact/enumRouteFiles';
-import { asStoneGuardCounter } from '../../asStoneGuardCounter';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
+import { asStoneGuardCounter } from '@src/domain.operations/route/guard/asStoneGuardCounter';
 
 /**
  * .what = enumerates peer review guard files by semantic criteria

@@ -1,8 +1,8 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import { getOneCacheSafePeerReviewArtifact } from '@src/domain.operations/route/guard/review/peer/getOneCacheSafePeerReviewArtifact';
+import { getOneLatestReviewArtifactForSlug } from '@src/domain.operations/route/guard/review/peer/getOneLatestReviewArtifactForSlug';
 
-import { getOneCacheSafePeerReviewArtifact } from '../getOneCacheSafePeerReviewArtifact';
-import { getOneLatestReviewArtifactForSlug } from '../getOneLatestReviewArtifactForSlug';
 import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import { asRedactedOutput } from './.test/asRedactedOutput';
@@ -87,11 +87,14 @@ describe('review.optional-rules.acceptance', () => {
         expect(output.toLowerCase()).toContain('no rules found');
       });
 
-      then('stdout carries the 0/0 counts the guard tallies as approved', () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        expect(output).toContain('0 blockers');
-        expect(output).toContain('0 nitpicks');
-      });
+      then(
+        'stdout carries the 0/0 counts the guard tallies as approved',
+        () => {
+          const output = res.cli.stdout + res.cli.stderr;
+          expect(output).toContain('0 blockers');
+          expect(output).toContain('0 nitpicks');
+        },
+      );
 
       then('the --output review file is written with the skip verdict', () => {
         expect(res.review).toContain('🌙 skipped');
@@ -99,17 +102,25 @@ describe('review.optional-rules.acceptance', () => {
         expect(res.review).toContain('0 nitpicks');
       });
 
-      then('the skip output matches its snapshot (format regression guard)', () => {
-        // the review file holds exactly the skip report (header + body), so it is the
-        // cleanest artifact to snap (rule.require.contract-snapshot-exhaustiveness)
-        expect(asRedactedOutputWithReviewPath(res.review)).toMatchSnapshot();
-      });
+      then(
+        'the skip output matches its snapshot (format regression guard)',
+        () => {
+          // the review file holds exactly the skip report (header + body), so it is the
+          // cleanest artifact to snap (rule.require.contract-snapshot-exhaustiveness)
+          expect(asRedactedOutputWithReviewPath(res.review)).toMatchSnapshot();
+        },
+      );
 
-      then('the skip stdout matches its snapshot (the caller-visible tree)', () => {
-        // the file above is the report; stdout is the tree a caller reads. both are
-        // contract surfaces, so both are pinned (rule.require.contract-snapshot-exhaustiveness)
-        expect(asRedactedOutputWithReviewPath(res.cli.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the skip stdout matches its snapshot (the caller-visible tree)',
+        () => {
+          // the file above is the report; stdout is the tree a caller reads. both are
+          // contract surfaces, so both are pinned (rule.require.contract-snapshot-exhaustiveness)
+          expect(
+            asRedactedOutputWithReviewPath(res.cli.stdout),
+          ).toMatchSnapshot();
+        },
+      );
     });
   });
 
@@ -149,7 +160,9 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the strict-error output matches its snapshot', () => {
-        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
+        expect(
+          asRedactedOutputWithReviewPath(res.cli.stderr),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -192,7 +205,9 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the unsupported-refs error output matches its snapshot', () => {
-        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
+        expect(
+          asRedactedOutputWithReviewPath(res.cli.stderr),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -235,7 +250,9 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the unknown-supply error output matches its snapshot', () => {
-        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
+        expect(
+          asRedactedOutputWithReviewPath(res.cli.stderr),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -283,9 +300,12 @@ describe('review.optional-rules.acceptance', () => {
         return { cli };
       });
 
-      then('cli fails loud (exit 2) — never silently disables strictness', () => {
-        expect(res.cli.code).toEqual(2);
-      });
+      then(
+        'cli fails loud (exit 2) — never silently disables strictness',
+        () => {
+          expect(res.cli.code).toEqual(2);
+        },
+      );
 
       then('stderr demands a supply name', () => {
         const output = res.cli.stdout + res.cli.stderr;
@@ -293,7 +313,9 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the bare-optional error output matches its snapshot', () => {
-        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
+        expect(
+          asRedactedOutputWithReviewPath(res.cli.stderr),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -337,11 +359,14 @@ describe('review.optional-rules.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout displays the absolute output path, never a `..` crawl', () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        expect(output).toContain(`review: ${res.outputPath}`);
-        expect(output).not.toContain('review: ..');
-      });
+      then(
+        'stdout displays the absolute output path, never a `..` crawl',
+        () => {
+          const output = res.cli.stdout + res.cli.stderr;
+          expect(output).toContain(`review: ${res.outputPath}`);
+          expect(output).not.toContain('review: ..');
+        },
+      );
 
       then('the skip review file is written at that absolute path', () => {
         // .why = the guard consumes the --output artifact, not only stdout; the skip must
@@ -352,73 +377,87 @@ describe('review.optional-rules.acceptance', () => {
         expect(contents).toContain('0 nitpicks');
       });
 
-      then('the skip stdout matches its snapshot (the caller-visible tree)', () => {
-        // the absolute path is per-run, so it is masked; the line it sits on, and every
-        // other byte of the tree, are pinned
-        expect(
-          asRedactedOutputWithReviewPath(res.cli.stdout).replace(
-            res.outputPath,
-            '<OUTPUT_PATH>',
-          ),
-        ).toMatchSnapshot();
-      });
+      then(
+        'the skip stdout matches its snapshot (the caller-visible tree)',
+        () => {
+          // the absolute path is per-run, so it is masked; the line it sits on, and every
+          // other byte of the tree, are pinned
+          expect(
+            asRedactedOutputWithReviewPath(res.cli.stdout).replace(
+              res.outputPath,
+              '<OUTPUT_PATH>',
+            ),
+          ).toMatchSnapshot();
+        },
+      );
     });
   });
 
-  given('[case7] --optional rules set, but the rules glob DOES match files', () => {
-    // .why = the vision's edgecase table promises the flag is a NO-OP when the glob is
-    //        effective: "--optional rules but rules glob does match files → normal review".
-    //        this guards against a regression where --optional short-circuits a real review.
-    //        this case runs a full brain review, so it is probabilistic → when.repeatably.
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked', () => {
-      const res = useThen('invoke review skill', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-optional-rules-noop',
-          clone: ASSETS_DIR,
+  given(
+    '[case7] --optional rules set, but the rules glob DOES match files',
+    () => {
+      // .why = the vision's edgecase table promises the flag is a NO-OP when the glob is
+      //        effective: "--optional rules but rules glob does match files → normal review".
+      //        this guards against a regression where --optional short-circuits a real review.
+      //        this case runs a full brain review, so it is probabilistic → when.repeatably.
+      when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked', () => {
+        const res = useThen('invoke review skill', async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-optional-rules-noop',
+            clone: ASSETS_DIR,
+          });
+          const outputPath = path.join(tempDir, 'review-optional-noop.md');
+
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
+
+          const cli = await invokeReviewSkill({
+            // an effective rules glob (matches a real fixture rule) paired with --optional rules
+            rules: 'rules/rule.require.arrow-only.md',
+            paths: 'src/clean.ts',
+            optional: 'rules',
+            output: outputPath,
+            focus: 'push',
+            goal: 'representative',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+            cwd: tempDir,
+          });
+
+          const review = fs.readFileSync(outputPath, 'utf-8');
+          return { cli, review };
         });
-        const outputPath = path.join(tempDir, 'review-optional-noop.md');
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
+        then('cli exits 0 (normal review succeeds)', () => {
+          expect(res.cli.code).toEqual(0);
         });
 
-        const cli = await invokeReviewSkill({
-          // an effective rules glob (matches a real fixture rule) paired with --optional rules
-          rules: 'rules/rule.require.arrow-only.md',
-          paths: 'src/clean.ts',
-          optional: 'rules',
-          output: outputPath,
-          focus: 'push',
-          goal: 'representative',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd: tempDir,
+        then('the review did NOT skip — no 🌙 skipped header anywhere', () => {
+          const output = res.cli.stdout + res.cli.stderr;
+          expect(output).not.toContain('🌙 skipped');
+          expect(res.review).not.toContain('🌙 skipped');
         });
 
-        const review = fs.readFileSync(outputPath, 'utf-8');
-        return { cli, review };
-      });
+        then(
+          'a real review ran — output carries the rules count, not a skip body',
+          () => {
+            // the skip body reads "no rules matched the --optional rules glob"; a real review
+            // must never emit it. the normal stdout reports the enumerated rules instead.
+            expect(res.review).not.toContain('review skipped');
+            expect(res.cli.stdout).toContain('rules');
+          },
+        );
 
-      then('cli exits 0 (normal review succeeds)', () => {
-        expect(res.cli.code).toEqual(0);
+        then(
+          'the metrics.expected block matches its snapshot (computed before the brain)',
+          () => {
+            // the scope tree and estimate are deterministic; the verdict summary is the brain's
+            expect(
+              asReviewMetricsExpectedBlock({ stdout: res.cli.stdout }),
+            ).toMatchSnapshot();
+          },
+        );
       });
-
-      then('the review did NOT skip — no 🌙 skipped header anywhere', () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        expect(output).not.toContain('🌙 skipped');
-        expect(res.review).not.toContain('🌙 skipped');
-      });
-
-      then('a real review ran — output carries the rules count, not a skip body', () => {
-        // the skip body reads "no rules matched the --optional rules glob"; a real review
-        // must never emit it. the normal stdout reports the enumerated rules instead.
-        expect(res.review).not.toContain('review skipped');
-        expect(res.cli.stdout).toContain('rules');
-      });
-
-      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
-        // the scope tree and estimate are deterministic; the verdict summary is the brain's
-        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

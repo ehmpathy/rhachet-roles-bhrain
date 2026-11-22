@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { given, then, useThen, useBeforeAll, when } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
   execAsync,
@@ -31,53 +31,67 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-precedence');
  *     gate, so the contemplation prompt is suppressed
  */
 describe('driver.route.peer-contemplation-precedence.acceptance', () => {
-  given('[case1] one reviewer malfunctions while another holds a blocker', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-precedence',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-malfunction.sh', {
-        cwd: tempDir,
-      });
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
-      await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
-      await fs.writeFile(
-        path.join(tempDir, 'src', 'feature.ts'),
-        'export const feature = () => "v1";\n',
-      );
-      return { tempDir };
-    });
-
-    when('[t0] the driver attempts to pass while both reviewers run', () => {
-      const result = useThen('the gate halts on the higher-precedence halt', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('is blocked (exit non-zero)', () => {
-        expect(result.code).not.toEqual(0);
+  given(
+    '[case1] one reviewer malfunctions while another holds a blocker',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-precedence',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-malfunction.sh', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-blocker.sh', {
+          cwd: tempDir,
+        });
+        await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, 'src', 'feature.ts'),
+          'export const feature = () => "v1";\n',
+        );
+        return { tempDir };
       });
 
-      then('the malfunction halt is surfaced', () => {
-        // the unreadable reviewer trips the malfunction gate
-        expect(result.stdout.toLowerCase()).toContain('malfunction');
-      });
+      when('[t0] the driver attempts to pass while both reviewers run', () => {
+        const result = useThen(
+          'the gate halts on the higher-precedence halt',
+          async () =>
+            invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.execute', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            }),
+        );
 
-      then('the contemplation prompt is SUPPRESSED by the higher-precedence malfunction', () => {
-        // the core precedence guarantee: an unreadable-critique malfunction
-        // outranks the driver-fixable contemplation prompt — contemplation
-        // is LAST (B10)
-        expect(result.stdout).not.toContain('the reviewers await your reply');
-      });
+        then('is blocked (exit non-zero)', () => {
+          expect(result.code).not.toEqual(0);
+        });
 
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('the malfunction halt is surfaced', () => {
+          // the unreadable reviewer trips the malfunction gate
+          expect(result.stdout.toLowerCase()).toContain('malfunction');
+        });
+
+        then(
+          'the contemplation prompt is SUPPRESSED by the higher-precedence malfunction',
+          () => {
+            // the core precedence guarantee: an unreadable-critique malfunction
+            // outranks the driver-fixable contemplation prompt — contemplation
+            // is LAST (B10)
+            expect(result.stdout).not.toContain(
+              'the reviewers await your reply',
+            );
+          },
+        );
+
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

@@ -55,7 +55,9 @@ const getAskMarkerPaths = async (input: {
   stone: string;
   slug: string;
 }): Promise<string[]> => {
-  const stonePattern = input.stone.includes('.') ? input.stone : `${input.stone}.`;
+  const stonePattern = input.stone.includes('.')
+    ? input.stone
+    : `${input.stone}.`;
   const routeDir = path.join(input.tempDir, '.route');
   const files = await getRouteDirFiles(routeDir);
   return files
@@ -143,7 +145,9 @@ describe('driver.route.review.self.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-review.self-case1', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case1', {
+        cwd: tempDir,
+      });
 
       // make mock-review executable
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
@@ -247,7 +251,10 @@ describe('driver.route.review.self.acceptance', () => {
     when('[t2] second review is promised', () => {
       const result = useThen('promise succeeds and guards run', async () => {
         // make review pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
         // ask for the second review — the lazy mint stamps ITS ask now, not at [t0]
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -325,7 +332,9 @@ describe('driver.route.review.self.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-review.self-case2', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case2', {
+        cwd: tempDir,
+      });
 
       // create artifact for the stone
       await fs.writeFile(
@@ -340,7 +349,12 @@ describe('driver.route.review.self.acceptance', () => {
       const result = useThen('shows error with valid options', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'promised', that: 'invalid-slug' },
+          args: {
+            stone: '1',
+            route: '.',
+            as: 'promised',
+            that: 'invalid-slug',
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -371,142 +385,149 @@ describe('driver.route.review.self.acceptance', () => {
     });
   });
 
-  given('[case3] hashless promises survive hash changes (firm checkpoint)', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'review.self-case3',
-        clone: ASSETS_DIR,
-      });
-
-      // link the driver role
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-
-      // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-review.self-case3', {
-        cwd: tempDir,
-      });
-
-      // make mock-review executable
-      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
-
-      // create artifact for the stone
-      await fs.writeFile(
-        path.join(tempDir, '1.stone.i1.md'),
-        '# Implementation\n\nFeature implemented.',
-      );
-
-      // create articulation files for both self-reviews
-      const articulationPath1 = getSelfReviewArticulationPath({
-        route: tempDir,
-        stone: '1',
-        slug: 'all-done',
-      });
-      const articulationPath2 = getSelfReviewArticulationPath({
-        route: tempDir,
-        stone: '1',
-        slug: 'tests-pass',
-      });
-      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
-      await fs.writeFile(
-        articulationPath1,
-        '# Self-Review: all-done\n\nI reviewed all requirements.\n',
-      );
-      await fs.writeFile(
-        articulationPath2,
-        '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
-      );
-
-      return { tempDir };
-    });
-
-    when('[t0] first review is promised', () => {
-      const result = useThen('promise succeeds', async () => {
-        // first call --as passed to trigger the report
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+  given(
+    '[case3] hashless promises survive hash changes (firm checkpoint)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'review.self-case3',
+          clone: ASSETS_DIR,
         });
-        // backdate triggered report to bypass time enforcement
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
+
+        // link the driver role
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+
+        // create feature branch (bind rejects protected branches like main)
+        await execAsync('git checkout -b vlad/test-review.self-case3', {
+          cwd: tempDir,
+        });
+
+        // make mock-review executable
+        await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+        // create artifact for the stone
+        await fs.writeFile(
+          path.join(tempDir, '1.stone.i1.md'),
+          '# Implementation\n\nFeature implemented.',
+        );
+
+        // create articulation files for both self-reviews
+        const articulationPath1 = getSelfReviewArticulationPath({
+          route: tempDir,
           stone: '1',
           slug: 'all-done',
         });
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
+        const articulationPath2 = getSelfReviewArticulationPath({
+          route: tempDir,
+          stone: '1',
+          slug: 'tests-pass',
+        });
+        await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
+        await fs.writeFile(
+          articulationPath1,
+          '# Self-Review: all-done\n\nI reviewed all requirements.\n',
+        );
+        await fs.writeFile(
+          articulationPath2,
+          '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
+        );
+
+        return { tempDir };
+      });
+
+      when('[t0] first review is promised', () => {
+        const result = useThen('promise succeeds', async () => {
+          // first call --as passed to trigger the report
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+          // backdate triggered report to bypass time enforcement
+          await backdateTriggeredReport({
+            tempDir: scene.tempDir,
             stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'all-done',
-            into: asOwedPath({ stone: '1', slug: 'all-done' }),
-          },
-          cwd: scene.tempDir,
+            slug: 'all-done',
+          });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'all-done',
+              into: asOwedPath({ stone: '1', slug: 'all-done' }),
+            },
+            cwd: scene.tempDir,
+          });
+        });
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('shows progress 1/2', () => {
+          expect(result.stdout).toContain('1/2');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });
 
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
+      when('[t1] artifact is edited (hash changes)', () => {
+        then('artifact content changes', async () => {
+          await fs.writeFile(
+            path.join(scene.tempDir, '1.stone.i1.md'),
+            '# Implementation\n\nFeature implemented with changes.',
+          );
+          // verify the file was updated
+          const content = await fs.readFile(
+            path.join(scene.tempDir, '1.stone.i1.md'),
+            'utf-8',
+          );
+          expect(content).toContain('with changes');
+        });
       });
 
-      then('shows progress 1/2', () => {
-        expect(result.stdout).toContain('1/2');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] artifact is edited (hash changes)', () => {
-      then('artifact content changes', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, '1.stone.i1.md'),
-          '# Implementation\n\nFeature implemented with changes.',
+      when('[t2] pass attempted after edit', () => {
+        const result = useThen(
+          'all-done still valid, tests-pass blocks',
+          async () =>
+            invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            }),
         );
-        // verify the file was updated
-        const content = await fs.readFile(
-          path.join(scene.tempDir, '1.stone.i1.md'),
-          'utf-8',
-        );
-        expect(content).toContain('with changes');
-      });
-    });
 
-    when('[t2] pass attempted after edit', () => {
-      const result = useThen('all-done still valid, tests-pass blocks', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
+        then('exit code is non-zero (tests-pass not promised yet)', () => {
+          expect(result.code).not.toEqual(0);
+        });
 
-      then('exit code is non-zero (tests-pass not promised yet)', () => {
-        expect(result.code).not.toEqual(0);
-      });
+        then('shows review.self required', () => {
+          expect(result.stdout.toLowerCase()).toContain('review.self');
+        });
 
-      then('shows review.self required', () => {
-        expect(result.stdout.toLowerCase()).toContain('review.self');
-      });
+        then('shows tests-pass (not all-done)', () => {
+          // all-done promise is firm (hashless), so we proceed to tests-pass
+          expect(result.stdout).toContain('tests-pass');
+          expect(result.stdout).toContain('2/2');
+        });
 
-      then('shows tests-pass (not all-done)', () => {
-        // all-done promise is firm (hashless), so we proceed to tests-pass
-        expect(result.stdout).toContain('tests-pass');
-        expect(result.stdout).toContain('2/2');
-      });
+        then('all-done promise remains valid', () => {
+          // no invalidation status shown
+          expect(result.stdout.toLowerCase()).not.toContain('invalidated');
+        });
 
-      then('all-done promise remains valid', () => {
-        // no invalidation status shown
-        expect(result.stdout.toLowerCase()).not.toContain('invalidated');
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   given('[case4] flat reviews array (backwards compatible)', () => {
     const scene = useBeforeAll(async () => {
@@ -519,7 +540,9 @@ describe('driver.route.review.self.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-review.self-case4', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case4', {
+        cwd: tempDir,
+      });
 
       // make mock-review executable
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
@@ -551,12 +574,14 @@ judges:
     });
 
     when('[t0] pass attempted with flat reviews', () => {
-      const result = useThen('guards execute directly (no review.self)', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'guards execute directly (no review.self)',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 0', () => {
@@ -733,217 +758,225 @@ judges:
    *            own, because each step's result is a local built by several awaits. the rule
    *            asks that every step be readable, never that every step own a separate `then`.
    */
-  given('[case6] a promise is hashless and survives an artifact hash change', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case6',
-        clone: ASSETS_DIR,
-      });
-
-      // link the driver role
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-
-      // create feature branch
-      await execAsync('git checkout -b vlad/test-self-review-case6', {
-        cwd: tempDir,
-      });
-
-      // make mock-review executable
-      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
-
-      // create artifact for the stone
-      await fs.writeFile(
-        path.join(tempDir, '1.stone.i1.md'),
-        '# Implementation v1\n\nFeature implemented.',
-      );
-
-      return { tempDir };
-    });
-
-    /**
-     * 🟡 .note on the shape of all three `when`s below = the act is declared in the `when`
-     *    via `useThen`, and each `then` only asserts. the acts used to run inline inside
-     *    bare `then` blocks, which inverts the given/when/then contract — a `when` that
-     *    names a state while the act hides one level down (`rule.require.given-when-then`).
-     *    these three steps are also a SEQUENCE: [t1] depends on [t0]'s promise, and [t2] on
-     *    both, so each act stays exactly one per `when`.
-     */
-    when('[t0] all promises are hashless (no hash in filename)', () => {
-      const outcome = useThen('the first promise is made', async () => {
-        // trigger self-review
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+  given(
+    '[case6] a promise is hashless and survives an artifact hash change',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'self-review-case6',
+          clone: ASSETS_DIR,
         });
 
-        // create articulation file (required for promise to succeed)
-        const articulationPath = getSelfReviewArticulationPath({
-          route: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
+        // link the driver role
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
         });
-        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+
+        // create feature branch
+        await execAsync('git checkout -b vlad/test-self-review-case6', {
+          cwd: tempDir,
+        });
+
+        // make mock-review executable
+        await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+        // create artifact for the stone
         await fs.writeFile(
-          articulationPath,
-          '# self-review\n\nreviewed and looks good.',
+          path.join(tempDir, '1.stone.i1.md'),
+          '# Implementation v1\n\nFeature implemented.',
         );
 
-        // backdate to bypass time enforcement
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
-        });
-        // promise
-        const result = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'all-done',
-            into: asOwedPath({ stone: '1', slug: 'all-done' }),
-          },
-          cwd: scene.tempDir,
-        });
-
-        const files = await fs.readdir(path.join(scene.tempDir, '.route'));
-        return { result, files };
+        return { tempDir };
       });
 
-      then('the promise is accepted', () => {
-        expect(outcome.result.code).toEqual(0);
-      });
-
-      then('a hashless promise file is created', () => {
-        // exact match, no hash suffix
-        expect(
-          outcome.files.find((f) => f === '1.guard.promise.all-done.md'),
-        ).toBeDefined();
-      });
-
-      then('no hash-bound promise file is created', () => {
-        expect(
-          outcome.files.find(
-            (f) =>
-              f.startsWith('1.guard.promise.all-done.') &&
-              f.match(/\.[a-f0-9]+\.md$/),
-          ),
-        ).toBeUndefined();
-      });
-
-      // .why = the promise's own stdout — the acceptance a driver reads when a self review
-      //        lands. the filename assertions above prove the SHAPE on disk and say naught
-      //        about what the driver was told
-      then('the driver is told the promise landed', () => {
-        expect(sanitizeTimeForSnapshot(outcome.result.stdout)).toMatchSnapshot(
-          'the first promise is accepted',
-        );
-      });
-    });
-
-    when('[t1] hashless promise survives hash changes', () => {
-      const result = useThen('the artifact is edited, then re-passed', async () => {
-        // change artifact (new hash)
-        await fs.writeFile(
-          path.join(scene.tempDir, '1.stone.i1.md'),
-          '# Implementation v2\n\nFeature improved.',
-        );
-
-        // make review pass for tests-pass
-        await fs.writeFile(
-          path.join(scene.tempDir, '.test', 'review-should-pass'),
-          '',
-        );
-
-        // attempt pass — should progress to tests-pass (all-done still valid)
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
-
-      then('the guard names the NEXT review, never all-done', () => {
-        expect(result.stdout).toContain('tests-pass');
-        expect(result.stdout).toContain('2/2');
-      });
-
-      // 🔴 .why = this is the case's WHOLE subject — the artifact hash moved and the extant
-      //    promise held. the assertion above proves the guard named the NEXT review;
-      //    only the snapshot shows that `all-done` is still counted, which is the survival
-      //    the case is named for
-      then('the prior promise is still counted', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
-          'the hashless promise survives the edit',
-        );
-      });
-    });
-
-    when('[t2] promise tests-pass and complete stone', () => {
-      const outcome = useThen(
-        'the last review is promised, then the stone is passed',
-        async () => {
-          // create articulation file for tests-pass (required for promise to succeed)
-          const articulationPath = getSelfReviewArticulationPath({
-            route: scene.tempDir,
-            stone: '1',
-            slug: 'tests-pass',
-          });
-          await fs.writeFile(
-            articulationPath,
-            '# self-review\n\nall tests pass.',
-          );
-
-          // backdate tests-pass triggered report
-          await backdateTriggeredReport({
-            tempDir: scene.tempDir,
-            stone: '1',
-            slug: 'tests-pass',
-          });
-
-          // promise tests-pass
-          const promiseResult = await invokeRouteSkill({
-            skill: 'route.stone.set',
-            args: {
-              stone: '1',
-              route: '.',
-              as: 'promised',
-              that: 'tests-pass',
-              into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
-            },
-            cwd: scene.tempDir,
-          });
-
-          // pass should now succeed (both reviews promised)
-          const passResult = await invokeRouteSkill({
+      /**
+       * 🟡 .note on the shape of all three `when`s below = the act is declared in the `when`
+       *    via `useThen`, and each `then` only asserts. the acts used to run inline inside
+       *    bare `then` blocks, which inverts the given/when/then contract — a `when` that
+       *    names a state while the act hides one level down (`rule.require.given-when-then`).
+       *    these three steps are also a SEQUENCE: [t1] depends on [t0]'s promise, and [t2] on
+       *    both, so each act stays exactly one per `when`.
+       */
+      when('[t0] all promises are hashless (no hash in filename)', () => {
+        const outcome = useThen('the first promise is made', async () => {
+          // trigger self-review
+          await invokeRouteSkill({
             skill: 'route.stone.set',
             args: { stone: '1', route: '.', as: 'passed' },
             cwd: scene.tempDir,
           });
 
-          return { promiseResult, passResult };
-        },
-      );
+          // create articulation file (required for promise to succeed)
+          const articulationPath = getSelfReviewArticulationPath({
+            route: scene.tempDir,
+            stone: '1',
+            slug: 'all-done',
+          });
+          await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+          await fs.writeFile(
+            articulationPath,
+            '# self-review\n\nreviewed and looks good.',
+          );
 
-      then('the second promise is accepted', () => {
-        expect(outcome.promiseResult.code).toEqual(0);
-        expect(
-          sanitizeTimeForSnapshot(outcome.promiseResult.stdout),
-        ).toMatchSnapshot('the second promise is accepted');
+          // backdate to bypass time enforcement
+          await backdateTriggeredReport({
+            tempDir: scene.tempDir,
+            stone: '1',
+            slug: 'all-done',
+          });
+          // promise
+          const result = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'all-done',
+              into: asOwedPath({ stone: '1', slug: 'all-done' }),
+            },
+            cwd: scene.tempDir,
+          });
+
+          const files = await fs.readdir(path.join(scene.tempDir, '.route'));
+          return { result, files };
+        });
+
+        then('the promise is accepted', () => {
+          expect(outcome.result.code).toEqual(0);
+        });
+
+        then('a hashless promise file is created', () => {
+          // exact match, no hash suffix
+          expect(
+            outcome.files.find((f) => f === '1.guard.promise.all-done.md'),
+          ).toBeDefined();
+        });
+
+        then('no hash-bound promise file is created', () => {
+          expect(
+            outcome.files.find(
+              (f) =>
+                f.startsWith('1.guard.promise.all-done.') &&
+                f.match(/\.[a-f0-9]+\.md$/),
+            ),
+          ).toBeUndefined();
+        });
+
+        // .why = the promise's own stdout — the acceptance a driver reads when a self review
+        //        lands. the filename assertions above prove the SHAPE on disk and say naught
+        //        about what the driver was told
+        then('the driver is told the promise landed', () => {
+          expect(
+            sanitizeTimeForSnapshot(outcome.result.stdout),
+          ).toMatchSnapshot('the first promise is accepted');
+        });
       });
 
-      // .why = the arc's end. `code === 0` says the stone passed and says naught about the
-      //        guard tree the driver reads on the way through
-      then('the stone then passes', () => {
-        expect(outcome.passResult.code).toEqual(0);
-        expect(
-          sanitizeTimeForSnapshot(outcome.passResult.stdout),
-        ).toMatchSnapshot('the stone passes with both reviews promised');
+      when('[t1] hashless promise survives hash changes', () => {
+        const result = useThen(
+          'the artifact is edited, then re-passed',
+          async () => {
+            // change artifact (new hash)
+            await fs.writeFile(
+              path.join(scene.tempDir, '1.stone.i1.md'),
+              '# Implementation v2\n\nFeature improved.',
+            );
+
+            // make review pass for tests-pass
+            await fs.writeFile(
+              path.join(scene.tempDir, '.test', 'review-should-pass'),
+              '',
+            );
+
+            // attempt pass — should progress to tests-pass (all-done still valid)
+            return invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
+          },
+        );
+
+        then('the guard names the NEXT review, never all-done', () => {
+          expect(result.stdout).toContain('tests-pass');
+          expect(result.stdout).toContain('2/2');
+        });
+
+        // 🔴 .why = this is the case's WHOLE subject — the artifact hash moved and the extant
+        //    promise held. the assertion above proves the guard named the NEXT review;
+        //    only the snapshot shows that `all-done` is still counted, which is the survival
+        //    the case is named for
+        then('the prior promise is still counted', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
+            'the hashless promise survives the edit',
+          );
+        });
       });
-    });
-  });
+
+      when('[t2] promise tests-pass and complete stone', () => {
+        const outcome = useThen(
+          'the last review is promised, then the stone is passed',
+          async () => {
+            // create articulation file for tests-pass (required for promise to succeed)
+            const articulationPath = getSelfReviewArticulationPath({
+              route: scene.tempDir,
+              stone: '1',
+              slug: 'tests-pass',
+            });
+            await fs.writeFile(
+              articulationPath,
+              '# self-review\n\nall tests pass.',
+            );
+
+            // backdate tests-pass triggered report
+            await backdateTriggeredReport({
+              tempDir: scene.tempDir,
+              stone: '1',
+              slug: 'tests-pass',
+            });
+
+            // promise tests-pass
+            const promiseResult = await invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: {
+                stone: '1',
+                route: '.',
+                as: 'promised',
+                that: 'tests-pass',
+                into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
+              },
+              cwd: scene.tempDir,
+            });
+
+            // pass should now succeed (both reviews promised)
+            const passResult = await invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
+
+            return { promiseResult, passResult };
+          },
+        );
+
+        then('the second promise is accepted', () => {
+          expect(outcome.promiseResult.code).toEqual(0);
+          expect(
+            sanitizeTimeForSnapshot(outcome.promiseResult.stdout),
+          ).toMatchSnapshot('the second promise is accepted');
+        });
+
+        // .why = the arc's end. `code === 0` says the stone passed and says naught about the
+        //        guard tree the driver reads on the way through
+        then('the stone then passes', () => {
+          expect(outcome.passResult.code).toEqual(0);
+          expect(
+            sanitizeTimeForSnapshot(outcome.passResult.stdout),
+          ).toMatchSnapshot('the stone passes with both reviews promised');
+        });
+      });
+    },
+  );
 
   /**
    * .note = this case once read `[case7] plowthrough via 3 attempts on same hash`, and
@@ -1056,7 +1089,9 @@ judges:
        *    globally, and a COLLISION case is about the PAIR, which no peer case pins
        */
       then('the 1st attempt has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(attempts.first.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeTimeForSnapshot(attempts.first.stdout),
+        ).toMatchSnapshot();
       });
 
       then('the 2nd attempt has good vibes', () => {
@@ -1200,11 +1235,14 @@ judges:
         expect(result.stdout).not.toContain('for.1._.r1.all-done.md');
       });
 
-      then('states the guard looks precisely here, write exactly this path', () => {
-        expect(result.stdout).toContain(
-          'the guard looks precisely here, write exactly to this path',
-        );
-      });
+      then(
+        'states the guard looks precisely here, write exactly this path',
+        () => {
+          expect(result.stdout).toContain(
+            'the guard looks precisely here, write exactly to this path',
+          );
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -1382,10 +1420,13 @@ judges:
         expect(result.stdout).not.toContain('articulation is absent');
       });
 
-      then('names BOTH stamps, so the driver sees which one is the problem', () => {
-        expect(result.stdout).toContain('written');
-        expect(result.stdout).toContain('asked at');
-      });
+      then(
+        'names BOTH stamps, so the driver sees which one is the problem',
+        () => {
+          expect(result.stdout).toContain('written');
+          expect(result.stdout).toContain('asked at');
+        },
+      );
 
       then('names the fix — read what is there now, then promise again', () => {
         expect(result.stdout).toContain('read what is there now');
@@ -1568,12 +1609,15 @@ judges:
         expect(result.stderr).not.toContain('--as promised');
       });
 
-      then('burns no attempt — the parser refuses before any decision', async () => {
-        const routeDir = path.join(scene.tempDir, '.route');
-        const files = await getRouteDirFiles(routeDir);
-        const uptils = files.filter((f) => f.endsWith('.triggered.uptil'));
-        expect(uptils).toEqual([]);
-      });
+      then(
+        'burns no attempt — the parser refuses before any decision',
+        async () => {
+          const routeDir = path.join(scene.tempDir, '.route');
+          const files = await getRouteDirFiles(routeDir);
+          const uptils = files.filter((f) => f.endsWith('.triggered.uptil'));
+          expect(uptils).toEqual([]);
+        },
+      );
 
       then('stderr has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
@@ -1667,106 +1711,116 @@ judges:
    *            operands a human reads are equal (second precision). a real-clock test of the
    *            same branch would be a flake with a sub-second window.
    */
-  given('[case11] an articulation written in the same second as the ask', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'review.self-case11',
-        clone: ASSETS_DIR,
-      });
+  given(
+    '[case11] an articulation written in the same second as the ask',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'review.self-case11',
+          clone: ASSETS_DIR,
+        });
 
-      // link the driver role
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        // link the driver role
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
-      // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-review.self-case11', {
-        cwd: tempDir,
-      });
+        // create feature branch (bind rejects protected branches like main)
+        await execAsync('git checkout -b vlad/test-review.self-case11', {
+          cwd: tempDir,
+        });
 
-      // create artifact for the stone
-      await fs.writeFile(
-        path.join(tempDir, '1.stone.i1.md'),
-        '# Implementation\n\nFeature implemented.',
-      );
+        // create artifact for the stone
+        await fs.writeFile(
+          path.join(tempDir, '1.stone.i1.md'),
+          '# Implementation\n\nFeature implemented.',
+        );
 
-      // the ask — this mints the trigger, and its `.since` mtime is the datum
-      await invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: { stone: '1', route: '.', as: 'passed' },
-        cwd: tempDir,
-      });
-
-      // a real review, at the owed path — written 650ms BEFORE the ask, inside its second
-      const articulationPath = getSelfReviewArticulationPath({
-        route: tempDir,
-        stone: '1',
-        slug: 'all-done',
-      });
-      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
-      await fs.writeFile(
-        articulationPath,
-        '# self-review\n\ni read the artifact and here is what i found.',
-      );
-
-      // 🔴 pin both stamps into ONE utc second, write strictly first.
-      //    the raw ms decide the verdict (stale); the floored stamps decide the words
-      const askAt = new Date('2026-01-01T12:00:00.750Z');
-      const writtenAt = new Date('2026-01-01T12:00:00.100Z');
-      await fs.utimes(articulationPath, writtenAt, writtenAt);
-      for (const sincePath of await getAskMarkerPaths({
-        tempDir,
-        stone: '1',
-        slug: 'all-done',
-      })) {
-        await fs.utimes(sincePath, askAt, askAt);
-      }
-
-      return { tempDir, articulationPath };
-    });
-
-    when('[t0] the promise names that file', () => {
-      const result = useThen('returns challenge:stale', async () =>
-        invokeRouteSkill({
+        // the ask — this mints the trigger, and its `.since` mtime is the datum
+        await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: {
-            stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'all-done',
-            into: asOwedPath({ stone: '1', slug: 'all-done' }),
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        // a real review, at the owed path — written 650ms BEFORE the ask, inside its second
+        const articulationPath = getSelfReviewArticulationPath({
+          route: tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(
+          articulationPath,
+          '# self-review\n\ni read the artifact and here is what i found.',
+        );
+
+        // 🔴 pin both stamps into ONE utc second, write strictly first.
+        //    the raw ms decide the verdict (stale); the floored stamps decide the words
+        const askAt = new Date('2026-01-01T12:00:00.750Z');
+        const writtenAt = new Date('2026-01-01T12:00:00.100Z');
+        await fs.utimes(articulationPath, writtenAt, writtenAt);
+        for (const sincePath of await getAskMarkerPaths({
+          tempDir,
+          stone: '1',
+          slug: 'all-done',
+        })) {
+          await fs.utimes(sincePath, askAt, askAt);
+        }
+
+        return { tempDir, articulationPath };
+      });
+
+      when('[t0] the promise names that file', () => {
+        const result = useThen('returns challenge:stale', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'all-done',
+              into: asOwedPath({ stone: '1', slug: 'all-done' }),
+            },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is non-zero', () => {
+          expect(result.code).not.toEqual(0);
+        });
+
+        then(
+          'names the sub-second gap, so the two equal stamps read as sane',
+          () => {
+            // .why = the bite. drop the identical-render branch and the driver is told their
+            //        file is "older than the question" beside two stamps that look the same
+            expect(result.stdout).toContain('the two read alike');
+            expect(result.stdout).toContain(
+              'you wrote it just before the guard asked',
+            );
           },
-          cwd: scene.tempDir,
-        }),
-      );
+        );
 
-      then('exit code is non-zero', () => {
-        expect(result.code).not.toEqual(0);
-      });
+        then('names the fix as a RE-SAVE, never a re-read', () => {
+          // .why = the words are probably fine; only the stamp is wrong. to tell this driver
+          //        to "read what is there now" sends them to redo work they already did
+          expect(result.stdout).toContain('re-save the file');
+          expect(result.stdout).not.toContain('read what is there now');
+        });
 
-      then('names the sub-second gap, so the two equal stamps read as sane', () => {
-        // .why = the bite. drop the identical-render branch and the driver is told their
-        //        file is "older than the question" beside two stamps that look the same
-        expect(result.stdout).toContain('the two read alike');
-        expect(result.stdout).toContain('you wrote it just before the guard asked');
-      });
+        then('does NOT reproach the driver for haste', () => {
+          // .why = the same D5 bound case9 carries — a date defect earns no haste cue
+          expect(result.stdout).not.toContain('what is the rush');
+          expect(result.stdout).not.toContain('patience, friend');
+        });
 
-      then('names the fix as a RE-SAVE, never a re-read', () => {
-        // .why = the words are probably fine; only the stamp is wrong. to tell this driver
-        //        to "read what is there now" sends them to redo work they already did
-        expect(result.stdout).toContain('re-save the file');
-        expect(result.stdout).not.toContain('read what is there now');
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-
-      then('does NOT reproach the driver for haste', () => {
-        // .why = the same D5 bound case9 carries — a date defect earns no haste cue
-        expect(result.stdout).not.toContain('what is the rush');
-        expect(result.stdout).not.toContain('patience, friend');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   /**
    * .what = the cheapest bypass `S13`'s design concedes, walked end to end
@@ -2073,12 +2127,15 @@ judges:
         }),
       );
 
-      then('the precondition holds — the rewind really did archive the ask', () => {
-        // .why = the case is worthless if the ask survived. this asserts the SETUP reached the
-        //        state under test, so a later change to the rewind cannot make [t0] vacuous
-        expect(scene.asksBefore.length).toBeGreaterThan(0);
-        expect(scene.asksAfter).toEqual([]);
-      });
+      then(
+        'the precondition holds — the rewind really did archive the ask',
+        () => {
+          // .why = the case is worthless if the ask survived. this asserts the SETUP reached the
+          //        state under test, so a later change to the rewind cannot make [t0] vacuous
+          expect(scene.asksBefore.length).toBeGreaterThan(0);
+          expect(scene.asksAfter).toEqual([]);
+        },
+      );
 
       then('the promise is refused', () => {
         expect(result.code).not.toEqual(0);
@@ -2247,373 +2304,398 @@ judges:
    *            it carried is unchanged and is stronger here, because the lane charged for the
    *            repair is now the same lane that made it.
    */
-  given('[case15] the ladder is serial, and a repair mid-review costs naught', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'review.self-case15',
-        clone: ASSETS_DIR,
+  given(
+    '[case15] the ladder is serial, and a repair mid-review costs naught',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'review.self-case15',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-review.self-case15', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+        // the DELIVERABLE under review — this is what the artifact hash reads
+        const deliverablePath = path.join(tempDir, '1.stone.i1.md');
+        await fs.writeFile(
+          deliverablePath,
+          '# Implementation v1\n\nFeature implemented.',
+        );
+
+        // the mock reviewer must pass, so the stone reaches its self reviews
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'review-should-pass'),
+          '',
+        );
+
+        return { tempDir, deliverablePath };
       });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-review.self-case15', {
-        cwd: tempDir,
-      });
-      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+      when('[t0] the guard hands out ONE review', () => {
+        const result = useThen('the ask lands', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
+        );
 
-      // the DELIVERABLE under review — this is what the artifact hash reads
-      const deliverablePath = path.join(tempDir, '1.stone.i1.md');
-      await fs.writeFile(
-        deliverablePath,
-        '# Implementation v1\n\nFeature implemented.',
+        then(
+          'an ask is minted for the named slug, and for it alone',
+          async () => {
+            // 🔴 .why = `.since` IS the ask, and the haste cue reads elapsed-since-the-ask. a
+            //           trigger minted for `tests-pass` here would date its ask to THIS moment —
+            //           so by the time the driver is actually handed `tests-pass`, minutes later,
+            //           `elapsed < window` can never hold and the cue is dead for it. ⇒ the
+            //           second assertion is the clamp on that, and it goes red on a mint-all
+            expect(result.code).not.toEqual(0);
+            const asksNamed = await getAskMarkerPaths({
+              tempDir: scene.tempDir,
+              stone: '1',
+              slug: 'all-done',
+            });
+            const asksUnnamed = await getAskMarkerPaths({
+              tempDir: scene.tempDir,
+              stone: '1',
+              slug: 'tests-pass',
+            });
+            expect(asksNamed.length).toEqual(1);
+            expect(asksUnnamed.length).toEqual(0);
+          },
+        );
+
+        then(
+          'the other slug is withheld, so the ladder stays one at a time',
+          () => {
+            // 🔴 .why = the route is SEALED — a driver cannot read the `.guard` file — so this
+            //           emit is the only surface that could ever name the other slug. while it
+            //           names one, slug N+1 is reachable only once slug N is promised, and the
+            //           serial contract holds by construction rather than by a refusal branch
+            expect(result.stdout).toContain('all-done');
+            expect(result.stdout).not.toContain('tests-pass');
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          // 🔴 .why = the two `toContain` checks above prove which slugs APPEAR without proof
+          //           of what the driver reads. a reviewer cannot vibe-check "is this legible
+          //           as one clear instruction?" from a pair of booleans; the snapshot is the
+          //           only window onto that — and it is where a re-added roster would show
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+
+      when(
+        '[t1] the driver repairs the deliverable, inside their own window',
+        () => {
+          const observed = useThen('the repair lands', async () => {
+            const askPathBefore = (
+              await getAskMarkerPaths({
+                tempDir: scene.tempDir,
+                stone: '1',
+                slug: 'all-done',
+              })
+            )[0]!;
+            const before = {
+              path: askPathBefore,
+              content: await fs.readFile(askPathBefore, 'utf-8'),
+              mtimeMs: (await fs.stat(askPathBefore)).mtimeMs,
+              // 🔴 the path the GUARD COMPUTES, not the one that happens to sit on disk.
+              //    an on-disk read alone is green under the defect — a re-key mints no new
+              //    file until the guard next runs, so the old marker is trivially unchanged.
+              //    this is the operand that actually moves (proven: the bite check caught it)
+              computed: getSelfReviewTriggeredPaths({
+                stone: '1',
+                slug: 'all-done',
+                route: scene.tempDir,
+              }).sincePath,
+            };
+
+            // 🔴 the driver improves the deliverable — exactly what the guard's own
+            //    `for each found issue 🪘` block instructs. the review is STILL unpromised
+            await fs.writeFile(
+              scene.deliverablePath,
+              '# Implementation v2\n\nFeature improved, per the review’s read.',
+            );
+
+            const asksAfter = await getAskMarkerPaths({
+              tempDir: scene.tempDir,
+              stone: '1',
+              slug: 'all-done',
+            });
+            const askPathAfter = asksAfter[0];
+            return {
+              before,
+              asksAfter,
+              computedAfter: getSelfReviewTriggeredPaths({
+                stone: '1',
+                slug: 'all-done',
+                route: scene.tempDir,
+              }).sincePath,
+              after: askPathAfter
+                ? {
+                    path: askPathAfter,
+                    content: await fs.readFile(askPathAfter, 'utf-8'),
+                    mtimeMs: (await fs.stat(askPathAfter)).mtimeMs,
+                  }
+                : null,
+            };
+          });
+
+          then(
+            'there is still exactly one ask — the repair minted none',
+            () => {
+              expect(observed.asksAfter.length).toEqual(1);
+            },
+          );
+
+          then('the path the gate COMPUTES is unmoved by the repair', () => {
+            // 🔴 .why = THE assertion of this case, and the wish's own defect. the trigger report
+            //           was keyed (stone, slug, hash), and its filename CARRIED the hash — so the
+            //           repair moved the file the gate looks for. the gate then read `absent`,
+            //           minted a fresh ask dated now, and confronted the driver for their own work
+            // ⚠️ .why the COMPUTED path and not the on-disk one = an on-disk equality is green
+            //           under the defect. a re-key mints no file until the guard next runs, so the
+            //           old marker sits there untouched and the compare passes while the gate is
+            //           already broken. the bite check caught exactly that, in this very assertion
+            expect(observed.computedAfter).toEqual(observed.before.computed);
+          });
+
+          then('and the ask it points at is still there, byte for byte', () => {
+            // .why = the computed path is the operand that moves; this is the second half —
+            //        the repair neither rewrote the marker nor re-dated the ask the gates read
+            expect(observed.after).not.toBeNull();
+            expect(observed.after!.path).toEqual(observed.before.path);
+            expect(observed.after!.content).toEqual(observed.before.content);
+            expect(observed.after!.mtimeMs).toEqual(observed.before.mtimeMs);
+          });
+
+          /**
+           * 🔴 .why the LITERAL on both operands = an equality can hold by luck; a named
+           *    basename cannot. this pins BOTH the marker on disk and the path the guard
+           *    computes to the hashless name, so a re-keyed design goes red here even if
+           *    the two operands happen to agree with each other.
+           *
+           * ⚠️ .note = a `toMatchSnapshot` of these values stood here until i002 and was
+           *    removed. it pinned a flat object of test-computed booleans
+           *    (`askBytesUnmoved`, `askDateUnmoved`, …) — internal assertion state, never
+           *    output a driver meets. this step runs no cli, so it renders no artifact for
+           *    `rule.forbid.snapshot-visual-blemishes` to grade, and the dump broke the
+           *    treestruct format every other export in this corpus carries. each field it
+           *    held is asserted by name in the four `then` blocks here, so the removal
+           *    costs no coverage — it moves the same claims from an opaque blob to
+           *    assertions that say what they mean.
+           */
+          then('and both operands carry the hashless name, by literal', () => {
+            const hashless = '1.guard.selfreview.all-done.triggered.since';
+            expect(path.basename(observed.before.path)).toEqual(hashless);
+            expect(path.basename(observed.before.computed)).toEqual(hashless);
+            expect(path.basename(observed.computedAfter)).toEqual(hashless);
+          });
+        },
       );
 
-      // the mock reviewer must pass, so the stone reaches its self reviews
-      await fs.writeFile(path.join(tempDir, '.test', 'review-should-pass'), '');
-
-      return { tempDir, deliverablePath };
-    });
-
-    when('[t0] the guard hands out ONE review', () => {
-      const result = useThen('the ask lands', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('an ask is minted for the named slug, and for it alone', async () => {
-        // 🔴 .why = `.since` IS the ask, and the haste cue reads elapsed-since-the-ask. a
-        //           trigger minted for `tests-pass` here would date its ask to THIS moment —
-        //           so by the time the driver is actually handed `tests-pass`, minutes later,
-        //           `elapsed < window` can never hold and the cue is dead for it. ⇒ the
-        //           second assertion is the clamp on that, and it goes red on a mint-all
-        expect(result.code).not.toEqual(0);
-        const asksNamed = await getAskMarkerPaths({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
-        });
-        const asksUnnamed = await getAskMarkerPaths({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'tests-pass',
-        });
-        expect(asksNamed.length).toEqual(1);
-        expect(asksUnnamed.length).toEqual(0);
-      });
-
-      then('the other slug is withheld, so the ladder stays one at a time', () => {
-        // 🔴 .why = the route is SEALED — a driver cannot read the `.guard` file — so this
-        //           emit is the only surface that could ever name the other slug. while it
-        //           names one, slug N+1 is reachable only once slug N is promised, and the
-        //           serial contract holds by construction rather than by a refusal branch
-        expect(result.stdout).toContain('all-done');
-        expect(result.stdout).not.toContain('tests-pass');
-      });
-
-      then('stdout has good vibes', () => {
-        // 🔴 .why = the two `toContain` checks above prove which slugs APPEAR without proof
-        //           of what the driver reads. a reviewer cannot vibe-check "is this legible
-        //           as one clear instruction?" from a pair of booleans; the snapshot is the
-        //           only window onto that — and it is where a re-added roster would show
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] the driver repairs the deliverable, inside their own window', () => {
-      const observed = useThen('the repair lands', async () => {
-        const askPathBefore = (
-          await getAskMarkerPaths({
+      when('[t2] the driver promises, after their own repair', () => {
+        const result = useThen('the promise lands', async () => {
+          const articulationPath = getSelfReviewArticulationPath({
+            route: scene.tempDir,
+            stone: '1',
+            slug: 'all-done',
+          });
+          await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+          await fs.writeFile(
+            articulationPath,
+            '# self-review\n\nread it all, and here is what it found.',
+          );
+          await backdateTriggeredReport({
             tempDir: scene.tempDir,
             stone: '1',
             slug: 'all-done',
-          })
-        )[0]!;
-        const before = {
-          path: askPathBefore,
-          content: await fs.readFile(askPathBefore, 'utf-8'),
-          mtimeMs: (await fs.stat(askPathBefore)).mtimeMs,
-          // 🔴 the path the GUARD COMPUTES, not the one that happens to sit on disk.
-          //    an on-disk read alone is green under the defect — a re-key mints no new
-          //    file until the guard next runs, so the old marker is trivially unchanged.
-          //    this is the operand that actually moves (proven: the bite check caught it)
-          computed: getSelfReviewTriggeredPaths({
-            stone: '1',
-            slug: 'all-done',
-            route: scene.tempDir,
-          }).sincePath,
-        };
-
-        // 🔴 the driver improves the deliverable — exactly what the guard's own
-        //    `for each found issue 🪘` block instructs. the review is STILL unpromised
-        await fs.writeFile(
-          scene.deliverablePath,
-          '# Implementation v2\n\nFeature improved, per the review’s read.',
-        );
-
-        const asksAfter = await getAskMarkerPaths({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
+          });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'all-done',
+              into: asOwedPath({ stone: '1', slug: 'all-done' }),
+            },
+            cwd: scene.tempDir,
+          });
         });
-        const askPathAfter = asksAfter[0];
-        return {
-          before,
-          asksAfter,
-          computedAfter: getSelfReviewTriggeredPaths({
-            stone: '1',
-            slug: 'all-done',
-            route: scene.tempDir,
-          }).sincePath,
-          after: askPathAfter
-            ? {
-                path: askPathAfter,
-                content: await fs.readFile(askPathAfter, 'utf-8'),
-                mtimeMs: (await fs.stat(askPathAfter)).mtimeMs,
-              }
-            : null,
-        };
-      });
 
-      then('there is still exactly one ask — the repair minted none', () => {
-        expect(observed.asksAfter.length).toEqual(1);
-      });
-
-      then('the path the gate COMPUTES is unmoved by the repair', () => {
-        // 🔴 .why = THE assertion of this case, and the wish's own defect. the trigger report
-        //           was keyed (stone, slug, hash), and its filename CARRIED the hash — so the
-        //           repair moved the file the gate looks for. the gate then read `absent`,
-        //           minted a fresh ask dated now, and confronted the driver for their own work
-        // ⚠️ .why the COMPUTED path and not the on-disk one = an on-disk equality is green
-        //           under the defect. a re-key mints no file until the guard next runs, so the
-        //           old marker sits there untouched and the compare passes while the gate is
-        //           already broken. the bite check caught exactly that, in this very assertion
-        expect(observed.computedAfter).toEqual(observed.before.computed);
-      });
-
-      then('and the ask it points at is still there, byte for byte', () => {
-        // .why = the computed path is the operand that moves; this is the second half —
-        //        the repair neither rewrote the marker nor re-dated the ask the gates read
-        expect(observed.after).not.toBeNull();
-        expect(observed.after!.path).toEqual(observed.before.path);
-        expect(observed.after!.content).toEqual(observed.before.content);
-        expect(observed.after!.mtimeMs).toEqual(observed.before.mtimeMs);
-      });
-
-      /**
-       * 🔴 .why the LITERAL on both operands = an equality can hold by luck; a named
-       *    basename cannot. this pins BOTH the marker on disk and the path the guard
-       *    computes to the hashless name, so a re-keyed design goes red here even if
-       *    the two operands happen to agree with each other.
-       *
-       * ⚠️ .note = a `toMatchSnapshot` of these values stood here until i002 and was
-       *    removed. it pinned a flat object of test-computed booleans
-       *    (`askBytesUnmoved`, `askDateUnmoved`, …) — internal assertion state, never
-       *    output a driver meets. this step runs no cli, so it renders no artifact for
-       *    `rule.forbid.snapshot-visual-blemishes` to grade, and the dump broke the
-       *    treestruct format every other export in this corpus carries. each field it
-       *    held is asserted by name in the four `then` blocks here, so the removal
-       *    costs no coverage — it moves the same claims from an opaque blob to
-       *    assertions that say what they mean.
-       */
-      then('and both operands carry the hashless name, by literal', () => {
-        const hashless = '1.guard.selfreview.all-done.triggered.since';
-        expect(path.basename(observed.before.path)).toEqual(hashless);
-        expect(path.basename(observed.before.computed)).toEqual(hashless);
-        expect(path.basename(observed.computedAfter)).toEqual(hashless);
-      });
-    });
-
-    when('[t2] the driver promises, after their own repair', () => {
-      const result = useThen('the promise lands', async () => {
-        const articulationPath = getSelfReviewArticulationPath({
-          route: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
-        });
-        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
-        await fs.writeFile(
-          articulationPath,
-          '# self-review\n\nread it all, and here is what it found.',
-        );
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'all-done',
-        });
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'all-done',
-            into: asOwedPath({ stone: '1', slug: 'all-done' }),
+        then(
+          'it clears — the driver was never charged for their repair',
+          () => {
+            expect(result.code).toEqual(0);
           },
-          cwd: scene.tempDir,
-        });
-      });
-
-      then('it clears — the driver was never charged for their repair', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('and it meets no confrontation it did not earn', () => {
-        expect(result.stdout).not.toContain('no ask on record');
-        expect(result.stdout).not.toContain('what is the rush');
-        expect(result.stdout).not.toContain('articulation is absent');
-      });
-
-      then('stdout has good vibes', () => {
-        // 🔴 .why = the round's headline claim, and the assertion above states it as three
-        //           ABSENCES. a reviewer reads "these three words are absent" and still
-        //           cannot tell what the driver actually saw. this is the step that renders
-        //           "never charged for your own repair" as a thing you can look at
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t3] the driver runs ahead and promises the un-asked slug', () => {
-      const result = useThen('the out-of-order promise lands', async () => {
-        await fs.writeFile(
-          getSelfReviewArticulationPath({
-            route: scene.tempDir,
-            stone: '1',
-            slug: 'tests-pass',
-          }),
-          '# self-review\n\nread the tests, ahead of being asked.',
         );
-        const promised = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'tests-pass',
-            into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
-          },
-          cwd: scene.tempDir,
+
+        then('and it meets no confrontation it did not earn', () => {
+          expect(result.stdout).not.toContain('no ask on record');
+          expect(result.stdout).not.toContain('what is the rush');
+          expect(result.stdout).not.toContain('articulation is absent');
         });
-        return {
-          promised,
-          asksAfter: await getAskMarkerPaths({
+
+        then('stdout has good vibes', () => {
+          // 🔴 .why = the round's headline claim, and the assertion above states it as three
+          //           ABSENCES. a reviewer reads "these three words are absent" and still
+          //           cannot tell what the driver actually saw. this is the step that renders
+          //           "never charged for your own repair" as a thing you can look at
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+
+      when('[t3] the driver runs ahead and promises the un-asked slug', () => {
+        const result = useThen('the out-of-order promise lands', async () => {
+          await fs.writeFile(
+            getSelfReviewArticulationPath({
+              route: scene.tempDir,
+              stone: '1',
+              slug: 'tests-pass',
+            }),
+            '# self-review\n\nread the tests, ahead of being asked.',
+          );
+          const promised = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'tests-pass',
+              into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
+            },
+            cwd: scene.tempDir,
+          });
+          return {
+            promised,
+            asksAfter: await getAskMarkerPaths({
+              tempDir: scene.tempDir,
+              stone: '1',
+              slug: 'tests-pass',
+            }),
+          };
+        });
+
+        then('it is REFUSED — that slug has no ask on record', () => {
+          // 🔴 .why = the tooth. the articulation is real and well-placed, so every other gate
+          //           would have passed it; the only thing absent is the ASK. ⇒ the serial
+          //           ladder is not merely undiscoverable now, it is enforced
+          expect(result.promised.code).not.toEqual(0);
+          expect(result.promised.stdout).toContain('no ask on record');
+        });
+
+        then('and the refusal minted no ask to satisfy itself', async () => {
+          // 🔴 .why = a guard that minted an ask here would LAUNDER a review nobody requested,
+          //           and would date it now — so a pre-ask articulation reads as fresh against
+          //           a timestamp that postdates it. that is the freshness bar's own defect,
+          //           entered from the other side
+          expect(result.asksAfter.length).toEqual(0);
+        });
+
+        then('stdout has good vibes', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.promised.stdout),
+          ).toMatchSnapshot();
+        });
+      });
+
+      when('[t4] the driver asks again, and gets the second review', () => {
+        const result = useThen('the second ask lands', async () => {
+          const askedAfter = Date.now();
+          const asked = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+          const asks = await getAskMarkerPaths({
             tempDir: scene.tempDir,
             stone: '1',
             slug: 'tests-pass',
-          }),
-        };
-      });
+          });
+          const askMtimeMs = asks[0] ? (await fs.stat(asks[0])).mtimeMs : null;
 
-      then('it is REFUSED — that slug has no ask on record', () => {
-        // 🔴 .why = the tooth. the articulation is real and well-placed, so every other gate
-        //           would have passed it; the only thing absent is the ASK. ⇒ the serial
-        //           ladder is not merely undiscoverable now, it is enforced
-        expect(result.promised.code).not.toEqual(0);
-        expect(result.promised.stdout).toContain('no ask on record');
-      });
-
-      then('and the refusal minted no ask to satisfy itself', async () => {
-        // 🔴 .why = a guard that minted an ask here would LAUNDER a review nobody requested,
-        //           and would date it now — so a pre-ask articulation reads as fresh against
-        //           a timestamp that postdates it. that is the freshness bar's own defect,
-        //           entered from the other side
-        expect(result.asksAfter.length).toEqual(0);
-      });
-
-      then('stdout has good vibes', () => {
-        expect(
-          sanitizeTimeForSnapshot(result.promised.stdout),
-        ).toMatchSnapshot();
-      });
-    });
-
-    when('[t4] the driver asks again, and gets the second review', () => {
-      const result = useThen('the second ask lands', async () => {
-        const askedAfter = Date.now();
-        const asked = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-        const asks = await getAskMarkerPaths({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'tests-pass',
-        });
-        const askMtimeMs = asks[0]
-          ? (await fs.stat(asks[0])).mtimeMs
-          : null;
-
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
-          stone: '1',
-          slug: 'tests-pass',
-        });
-        const promised = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
+          await backdateTriggeredReport({
+            tempDir: scene.tempDir,
             stone: '1',
-            route: '.',
-            as: 'promised',
-            that: 'tests-pass',
-            into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
-          },
-          cwd: scene.tempDir,
+            slug: 'tests-pass',
+          });
+          const promised = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              route: '.',
+              as: 'promised',
+              that: 'tests-pass',
+              into: asOwedPath({ stone: '1', slug: 'tests-pass' }),
+            },
+            cwd: scene.tempDir,
+          });
+          const passed = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+          return { askedAfter, asked, asks, askMtimeMs, promised, passed };
         });
-        const passed = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+
+        then('NOW the second slug has its ask, and the driver is told', () => {
+          expect(result.asks.length).toEqual(1);
+          expect(result.asked.stdout).toContain('tests-pass');
         });
-        return { askedAfter, asked, asks, askMtimeMs, promised, passed };
-      });
 
-      then('NOW the second slug has its ask, and the driver is told', () => {
-        expect(result.asks.length).toEqual(1);
-        expect(result.asked.stdout).toContain('tests-pass');
-      });
+        /**
+         * 🔴 .why = the clamp on the lazy mint, and the one bar that states WHY the ladder is
+         *    served one at a time rather than merely rendered that way. `.since` is the ask,
+         *    and the haste cue reads elapsed-since-the-ask. a mint-all would have stamped this
+         *    ask back at `[t0]`, before the repair, the promise and the refusal — so this
+         *    comparison goes red, and the cue would be dead for every review after the first.
+         */
+        then('and its clock starts NOW, never back at the first ask', () => {
+          expect(result.askMtimeMs).not.toBeNull();
+          expect(result.askMtimeMs!).toBeGreaterThanOrEqual(result.askedAfter);
+        });
 
-      /**
-       * 🔴 .why = the clamp on the lazy mint, and the one bar that states WHY the ladder is
-       *    served one at a time rather than merely rendered that way. `.since` is the ask,
-       *    and the haste cue reads elapsed-since-the-ask. a mint-all would have stamped this
-       *    ask back at `[t0]`, before the repair, the promise and the refusal — so this
-       *    comparison goes red, and the cue would be dead for every review after the first.
-       */
-      then('and its clock starts NOW, never back at the first ask', () => {
-        expect(result.askMtimeMs).not.toBeNull();
-        expect(result.askMtimeMs!).toBeGreaterThanOrEqual(result.askedAfter);
-      });
+        then('the second review clears', () => {
+          expect(result.promised.code).toEqual(0);
+        });
 
-      then('the second review clears', () => {
-        expect(result.promised.code).toEqual(0);
-      });
+        then('both reviews are satisfied, so the stone passes', () => {
+          // .why = the ladder's end state. two reviews, one repair mid-flight, no charge for
+          //        the repair, and the review ladder is discharged in full
+          expect(result.passed.code).toEqual(0);
+        });
 
-      then('both reviews are satisfied, so the stone passes', () => {
-        // .why = the ladder's end state. two reviews, one repair mid-flight, no charge for
-        //        the repair, and the review ladder is discharged in full
-        expect(result.passed.code).toEqual(0);
-      });
+        then('the second ask has good vibes', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.asked.stdout),
+          ).toMatchSnapshot();
+        });
 
-      then('the second ask has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.asked.stdout)).toMatchSnapshot();
-      });
+        then('the second clear has good vibes', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.promised.stdout),
+          ).toMatchSnapshot();
+        });
 
-      then('the second clear has good vibes', () => {
-        expect(
-          sanitizeTimeForSnapshot(result.promised.stdout),
-        ).toMatchSnapshot();
+        then('and the stone’s passage has good vibes', () => {
+          // .why = the arc's destination. with [t0]'s one-at-a-time hand-out, [t1]'s untouched
+          //        ask, [t2]'s unconfronted clear and [t3]'s refusal beside it, a reviewer can
+          //        read the whole serial ladder from the snapshots alone
+          expect(
+            sanitizeTimeForSnapshot(result.passed.stdout),
+          ).toMatchSnapshot();
+        });
       });
-
-      then('and the stone’s passage has good vibes', () => {
-        // .why = the arc's destination. with [t0]'s one-at-a-time hand-out, [t1]'s untouched
-        //        ask, [t2]'s unconfronted clear and [t3]'s refusal beside it, a reviewer can
-        //        read the whole serial ladder from the snapshots alone
-        expect(sanitizeTimeForSnapshot(result.passed.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   /**
    * 🔴 .why = invariant 5 — "only a promise the guard adjudicated may increment the attempt
@@ -2719,19 +2801,22 @@ judges:
         expect(promises).toHaveLength(1);
       });
 
-      then('first-ness is claimed exactly ONCE, however many lanes promise', async () => {
-        // 🔴 the operand invariant 5 is actually about, and it is NOT the tally. the haste
-        //    cue reads `firstAdjudication`, won by an atomic `wx` create of `.uptil`, so
-        //    exactly one lane can hold it — that single marker IS the "at most once per
-        //    slug" bound, and a second lane physically cannot re-win it
-        const routeFiles = await getRouteDirFiles(
-          path.join(scene.tempDir, '.route'),
-        );
-        const uptils = routeFiles.filter((file) =>
-          file.includes('selfreview.all-done.triggered.uptil'),
-        );
-        expect(uptils).toHaveLength(1);
-      });
+      then(
+        'first-ness is claimed exactly ONCE, however many lanes promise',
+        async () => {
+          // 🔴 the operand invariant 5 is actually about, and it is NOT the tally. the haste
+          //    cue reads `firstAdjudication`, won by an atomic `wx` create of `.uptil`, so
+          //    exactly one lane can hold it — that single marker IS the "at most once per
+          //    slug" bound, and a second lane physically cannot re-win it
+          const routeFiles = await getRouteDirFiles(
+            path.join(scene.tempDir, '.route'),
+          );
+          const uptils = routeFiles.filter((file) =>
+            file.includes('selfreview.all-done.triggered.uptil'),
+          );
+          expect(uptils).toHaveLength(1);
+        },
+      );
 
       then('the tally counts both commands, and gates on neither', async () => {
         // 🔴 the DISTINCTION the i010 repair established, asserted rather than assumed: a
@@ -3048,20 +3133,23 @@ judges:
         expect(scene.rewind.code).toEqual(0);
       });
 
-      then('🔴 exactly one cascade line reports a NON-ZERO trigger count', () => {
-        // 🔴 THE bite, and it is the assertion no snapshot in this repo could make before,
-        //    because none of them had a live trigger to clear. under a regression that
-        //    stops the clear, every line reads `0 triggers` and this goes red
-        //
-        // ⚠️ .note = it reads ONE cascade line, never the whole emit, and the first draft
-        //    got that wrong. a rewind cascades downstream, so the stdout legitimately
-        //    carries a `0 triggers` line for the stone that never held one — a whole-stdout
-        //    `not.toContain('0 triggers')` therefore fails on CORRECT behavior, and the only
-        //    repairs available are to scope it or to delete it. deletion would have removed
-        //    the case's whole bite, so the scope is what was owed
-        const counts = asClearedTriggerCounts(scene.rewind.stdout);
-        expect(counts.filter((count) => count > 0)).toHaveLength(1);
-      });
+      then(
+        '🔴 exactly one cascade line reports a NON-ZERO trigger count',
+        () => {
+          // 🔴 THE bite, and it is the assertion no snapshot in this repo could make before,
+          //    because none of them had a live trigger to clear. under a regression that
+          //    stops the clear, every line reads `0 triggers` and this goes red
+          //
+          // ⚠️ .note = it reads ONE cascade line, never the whole emit, and the first draft
+          //    got that wrong. a rewind cascades downstream, so the stdout legitimately
+          //    carries a `0 triggers` line for the stone that never held one — a whole-stdout
+          //    `not.toContain('0 triggers')` therefore fails on CORRECT behavior, and the only
+          //    repairs available are to scope it or to delete it. deletion would have removed
+          //    the case's whole bite, so the scope is what was owed
+          const counts = asClearedTriggerCounts(scene.rewind.stdout);
+          expect(counts.filter((count) => count > 0)).toHaveLength(1);
+        },
+      );
 
       then('the count the emit prints equals the count on disk', () => {
         // .why = an emit that reports a plausible number it did not measure is the defect

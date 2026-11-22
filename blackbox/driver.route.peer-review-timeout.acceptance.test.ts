@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-review-timeout');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-review-timeout',
+);
 
 /**
  * .what = acceptance test for peer review timeout
@@ -29,7 +32,9 @@ describe('driver.route.peer-review-timeout.acceptance', () => {
       });
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-timeout.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-timeout.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });

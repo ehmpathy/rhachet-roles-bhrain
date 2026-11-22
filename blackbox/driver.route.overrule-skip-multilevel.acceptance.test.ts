@@ -28,7 +28,10 @@ const ASSETS_DIR = path.join(
  */
 describe('driver.route.overrule-skip-multilevel.acceptance', () => {
   const genScene = async (input: { slug: string }) => {
-    const tempDir = genTempDirForRhachet({ slug: input.slug, clone: ASSETS_DIR });
+    const tempDir = genTempDirForRhachet({
+      slug: input.slug,
+      clone: ASSETS_DIR,
+    });
     await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-basic.sh', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-advanced.sh', { cwd: tempDir });
@@ -52,119 +55,146 @@ describe('driver.route.overrule-skip-multilevel.acceptance', () => {
   // D2 — overrule l1 only. l2 is the NEXT ready gate. passage must block on l2,
   //      never leap to l3. an un-approved l2 stands.
   // ===========================================================================
-  given('[case1] D2 — overrule l1 only → l2 is the next gate → passage blocked', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genScene({ slug: 'overrule-skip-ml-d2' });
-      await setStone({ tempDir, as: 'passed' }); // l1 rejects
-      await setStone({ tempDir, as: 'overruled' }); // wave l1 → l2 active
-      return { tempDir };
-    });
-
-    when('[t0] pass attempted after l1 overrule', () => {
-      const result = useThen('the pass', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
-      );
-
-      then('CLAMP: passage BLOCKED — l2 is the next gate, not l3', () => {
-        expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
-        expect(result.stdout).not.toContain('passage = allowed');
-        expect(result.stdout).not.toContain('passage = overruled');
+  given(
+    '[case1] D2 — overrule l1 only → l2 is the next gate → passage blocked',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genScene({ slug: 'overrule-skip-ml-d2' });
+        await setStone({ tempDir, as: 'passed' }); // l1 rejects
+        await setStone({ tempDir, as: 'overruled' }); // wave l1 → l2 active
+        return { tempDir };
       });
 
-      then('CLAMP: l2 ran and blocks (advanced-checker)', () => {
-        expect(result.stdout).toContain('advanced-checker');
-      });
+      when('[t0] pass attempted after l1 overrule', () => {
+        const result = useThen('the pass', async () =>
+          setStone({ tempDir: scene.tempDir, as: 'passed' }),
+        );
 
-      then('DISPLAY: no false "awaits l1 terminal" once l1 is overruled', () => {
-        // .why = parity with the 2-level suite's explicit guard — an overruled l1 must never
-        //        paint a bogus `awaits l1 terminal` on the level above it, and a `--resnap`
-        //        must not be able to silently re-absorb a regression of that contradiction.
-        expect(result.stdout).not.toContain('awaits l1 terminal');
-      });
+        then('CLAMP: passage BLOCKED — l2 is the next gate, not l3', () => {
+          expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
+          expect(result.stdout).not.toContain('passage = allowed');
+          expect(result.stdout).not.toContain('passage = overruled');
+        });
 
-      then('DISPLAY: l1 carries the forgiven marker', () => {
-        expect(result.stdout).toContain('overruled ✓ — forgiven by human');
-      });
+        then('CLAMP: l2 ran and blocks (advanced-checker)', () => {
+          expect(result.stdout).toContain('advanced-checker');
+        });
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then(
+          'DISPLAY: no false "awaits l1 terminal" once l1 is overruled',
+          () => {
+            // .why = parity with the 2-level suite's explicit guard — an overruled l1 must never
+            //        paint a bogus `awaits l1 terminal` on the level above it, and a `--resnap`
+            //        must not be able to silently re-absorb a regression of that contradiction.
+            expect(result.stdout).not.toContain('awaits l1 terminal');
+          },
+        );
+
+        then('DISPLAY: l1 carries the forgiven marker', () => {
+          expect(result.stdout).toContain('overruled ✓ — forgiven by human');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   // ===========================================================================
   // D3 — overrule l1, l2 APPROVES (flag), l3 still un-approved → passage blocked.
   //      the deepest residual-leak probe: two lower levels cleared, l3 still guards.
   // ===========================================================================
-  given('[case2] D3 — l1 overruled, l2 approves, l3 un-approved → passage blocked', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genScene({ slug: 'overrule-skip-ml-d3' });
-      // let l2 (advanced) pass so the ladder reaches l3; l3 (premium) still rejects
-      await fs.writeFile(path.join(tempDir, '.test', 'advanced-should-pass'), '');
-      await setStone({ tempDir, as: 'passed' }); // l1 rejects
-      await setStone({ tempDir, as: 'overruled' }); // wave l1 → l2 active
-      return { tempDir };
-    });
-
-    when('[t0] pass attempted — l1 waved, l2 approves, l3 rejects', () => {
-      const result = useThen('the pass', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
-      );
-
-      then('CLAMP: passage BLOCKED — l3 still guards after l1 waved + l2 approved', () => {
-        expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
-        expect(result.stdout).not.toContain('passage = allowed');
-        expect(result.stdout).not.toContain('passage = overruled');
+  given(
+    '[case2] D3 — l1 overruled, l2 approves, l3 un-approved → passage blocked',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genScene({ slug: 'overrule-skip-ml-d3' });
+        // let l2 (advanced) pass so the ladder reaches l3; l3 (premium) still rejects
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'advanced-should-pass'),
+          '',
+        );
+        await setStone({ tempDir, as: 'passed' }); // l1 rejects
+        await setStone({ tempDir, as: 'overruled' }); // wave l1 → l2 active
+        return { tempDir };
       });
 
-      then('CLAMP: l3 (premium-checker) ran and blocks', () => {
-        expect(result.stdout).toContain('premium-checker');
-      });
+      when('[t0] pass attempted — l1 waved, l2 approves, l3 rejects', () => {
+        const result = useThen('the pass', async () =>
+          setStone({ tempDir: scene.tempDir, as: 'passed' }),
+        );
 
-      then('DISPLAY: l1 overruled is honest — forgiven marker, no false awaits', () => {
-        // .why = the deepest display case: l1 waved + l2 approved on merit + l3 live. l1 must
-        //        read as forgiven, and no reviewer may await the overruled l1 (parity guard).
-        expect(result.stdout).not.toContain('awaits l1 terminal');
-        expect(result.stdout).toContain('overruled ✓ — forgiven by human');
-      });
+        then(
+          'CLAMP: passage BLOCKED — l3 still guards after l1 waved + l2 approved',
+          () => {
+            expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
+            expect(result.stdout).not.toContain('passage = allowed');
+            expect(result.stdout).not.toContain('passage = overruled');
+          },
+        );
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('CLAMP: l3 (premium-checker) ran and blocks', () => {
+          expect(result.stdout).toContain('premium-checker');
+        });
+
+        then(
+          'DISPLAY: l1 overruled is honest — forgiven marker, no false awaits',
+          () => {
+            // .why = the deepest display case: l1 waved + l2 approved on merit + l3 live. l1 must
+            //        read as forgiven, and no reviewer may await the overruled l1 (parity guard).
+            expect(result.stdout).not.toContain('awaits l1 terminal');
+            expect(result.stdout).toContain('overruled ✓ — forgiven by human');
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   // ===========================================================================
   // D3-pass — the honest full clear: l1 overruled, l2 + l3 approve → passage allowed.
   // ===========================================================================
-  given('[case3] D3-pass — l1 overruled, l2 + l3 approve → passage overruled (allowed)', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genScene({ slug: 'overrule-skip-ml-d3-pass' });
-      await fs.writeFile(path.join(tempDir, '.test', 'advanced-should-pass'), '');
-      await fs.writeFile(path.join(tempDir, '.test', 'premium-should-pass'), '');
-      await setStone({ tempDir, as: 'passed' }); // l1 rejects
-      await setStone({ tempDir, as: 'overruled' }); // wave l1
-      return { tempDir };
-    });
-
-    when('[t0] pass attempted — l1 waved, l2 + l3 approve', () => {
-      const result = useThen('the pass', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
+  given(
+    '[case3] D3-pass — l1 overruled, l2 + l3 approve → passage overruled (allowed)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genScene({ slug: 'overrule-skip-ml-d3-pass' });
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'advanced-should-pass'),
+          '',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'premium-should-pass'),
+          '',
+        );
+        await setStone({ tempDir, as: 'passed' }); // l1 rejects
+        await setStone({ tempDir, as: 'overruled' }); // wave l1
+        return { tempDir };
       });
 
-      then('passage is allowed (overruled)', () => {
-        expect(result.stdout).toContain('passage = overruled');
-      });
+      when('[t0] pass attempted — l1 waved, l2 + l3 approve', () => {
+        const result = useThen('the pass', async () =>
+          setStone({ tempDir: scene.tempDir, as: 'passed' }),
+        );
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('passage is allowed (overruled)', () => {
+          expect(result.stdout).toContain('passage = overruled');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   // ===========================================================================
   // JUDGE-READY — overrule every peer level (l1→l2→l3); the JUDGE is the next
@@ -177,7 +207,9 @@ describe('driver.route.overrule-skip-multilevel.acceptance', () => {
     '[case4] JUDGE-READY — overrule the top peer level → the judge is the next ready gate',
     () => {
       const scene = useBeforeAll(async () => {
-        const tempDir = await genScene({ slug: 'overrule-skip-ml-judge-ready' });
+        const tempDir = await genScene({
+          slug: 'overrule-skip-ml-judge-ready',
+        });
         // walk the ladder to the top peer level: each pass runs the newly-unlocked
         // level (it rejects), each overrule waves it so the next level becomes active
         await setStone({ tempDir, as: 'passed' }); // l1 rejects

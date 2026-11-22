@@ -3,7 +3,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
+
 import { getRouteReminder } from './getRouteReminder';
 import { getRouteReminderCrashBreaker } from './getRouteReminderCrashBreaker';
 import { getRouteReminderLogPath } from './getRouteReminderLogPath';

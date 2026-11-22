@@ -8,10 +8,10 @@ import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { FIXED_FALLBACK_BRAIN } from '@src/domain.operations/brain/FIXED_FALLBACK_BRAIN';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+import { getAllStoneGuardArtifactsByHash } from '@src/domain.operations/route/guard/artifact/getAllStoneGuardArtifactsByHash';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
-import { setPassageReport } from '../../passage/setPassageReport';
-import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { runStoneGuardReviews } from './runStoneGuardReviews';
 import { TALLIED_FOOTER_PREFIX } from './TALLIED_FOOTER_PREFIX';

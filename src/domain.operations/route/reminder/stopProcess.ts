@@ -1,4 +1,4 @@
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
 
 /**
  * .what = signals a process to stop, and reports whether a live process was signalled

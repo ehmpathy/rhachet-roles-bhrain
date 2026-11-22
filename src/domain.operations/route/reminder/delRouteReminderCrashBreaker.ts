@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 
-import { withEnoentAsNull } from '../withEnoentAsNull';
+import { withEnoentAsNull } from '@src/domain.operations/route/withEnoentAsNull';
+
 import { getRouteReminderCrashBreakerPath } from './getRouteReminderCrashBreakerPath';
 
 /**

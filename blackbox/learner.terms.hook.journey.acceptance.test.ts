@@ -1,7 +1,7 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { genTempDirForRhachet } from './.test/genTempDirForRhachet';
 import { asChildEnv, invokeShellCommand } from './.test/invokeRouteSkill';
 
@@ -73,8 +73,13 @@ const asRepoLayerPath = (input: { tempDir: string }): string =>
  * .why = the clamp asserts on the file a session reads, not only on what the cli says
  */
 const getTermsHookEntries = (input: { tempDir: string }) => {
-  const settings = JSON.parse(fs.readFileSync(asRepoLayerPath(input), 'utf8')) as {
-    hooks?: Record<string, { hooks?: { author?: string; command?: string }[] }[]>;
+  const settings = JSON.parse(
+    fs.readFileSync(asRepoLayerPath(input), 'utf8'),
+  ) as {
+    hooks?: Record<
+      string,
+      { hooks?: { author?: string; command?: string }[] }[]
+    >;
   };
   return (settings.hooks?.Stop ?? [])
     .flatMap((block) => block.hooks ?? [])
@@ -86,8 +91,12 @@ const getTermsHookEntries = (input: { tempDir: string }) => {
  * .why = "no term hook" is a claim about every author: a toggle-author filter alone would pass
  *        a restored role `onStop`, or a hand copy, as off
  */
-const getTermsHookCommandsAnyAuthor = (input: { tempDir: string }): string[] => {
-  const settings = JSON.parse(fs.readFileSync(asRepoLayerPath(input), 'utf8')) as {
+const getTermsHookCommandsAnyAuthor = (input: {
+  tempDir: string;
+}): string[] => {
+  const settings = JSON.parse(
+    fs.readFileSync(asRepoLayerPath(input), 'utf8'),
+  ) as {
     hooks?: Record<string, { hooks?: { command?: string }[] }[]>;
   };
   return (settings.hooks?.Stop ?? [])
@@ -126,9 +135,12 @@ describe('learner.terms.hook.journey.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('the repo layer holds no term hook under any author: the default is off', () => {
-        expect(getTermsHookCommandsAnyAuthor(scene)).toEqual([]);
-      });
+      then(
+        'the repo layer holds no term hook under any author: the default is off',
+        () => {
+          expect(getTermsHookCommandsAnyAuthor(scene)).toEqual([]);
+        },
+      );
 
       then('the framed init block matches the snapshot', () => {
         expect(
@@ -175,7 +187,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
       then('the repo layer holds exactly one term hook entry', () => {
         const entries = getTermsHookEntries(scene);
         expect(entries).toHaveLength(1);
-        expect(entries[0]?.command).toContain('learn.domain.terms --when hook.onStop');
+        expect(entries[0]?.command).toContain(
+          'learn.domain.terms --when hook.onStop',
+        );
       });
 
       then('the output matches the snapshot', () => {
@@ -194,11 +208,14 @@ describe('learner.terms.hook.journey.acceptance', () => {
         }),
       );
 
-      then('it exits 0, reports already enabled, and writes no second copy', () => {
-        expect(result.code).toEqual(0);
-        expect(result.stdout).toContain('status = already enabled');
-        expect(getTermsHookEntries(scene)).toHaveLength(1);
-      });
+      then(
+        'it exits 0, reports already enabled, and writes no second copy',
+        () => {
+          expect(result.code).toEqual(0);
+          expect(result.stdout).toContain('status = already enabled');
+          expect(getTermsHookEntries(scene)).toHaveLength(1);
+        },
+      );
 
       then('the output matches the snapshot', () => {
         expect(
@@ -309,7 +326,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
         expect(result.stderr).toMatch(/─ get\s+report/);
         expect(result.stderr).toMatch(/─ set on\s+add/);
         expect(result.stderr).toMatch(/─ set off\s+remove/);
-        expect(result.stderr).toMatch(/─ del\s+remove it \(an alias of set off\)/);
+        expect(result.stderr).toMatch(
+          /─ del\s+remove it \(an alias of set off\)/,
+        );
       });
 
       then('the stderr matches the snapshot, its banner shown once', () => {
@@ -329,14 +348,19 @@ describe('learner.terms.hook.journey.acceptance', () => {
         }),
       );
 
-      then('it exits 0 and states what it does, the usage, the verbs, an example, and the default', () => {
-        expect(result.code).toEqual(0);
-        expect(result.stdout).toContain('what = turn the learner');
-        expect(result.stdout).toContain('usage = rhx learn.terms.hook <verb>');
-        expect(result.stdout).toMatch(/─ rhx learn\.terms\.hook set on\s+#/);
-        expect(result.stdout).toMatch(/─ get\s+report/);
-        expect(result.stdout).toContain('default = disabled');
-      });
+      then(
+        'it exits 0 and states what it does, the usage, the verbs, an example, and the default',
+        () => {
+          expect(result.code).toEqual(0);
+          expect(result.stdout).toContain('what = turn the learner');
+          expect(result.stdout).toContain(
+            'usage = rhx learn.terms.hook <verb>',
+          );
+          expect(result.stdout).toMatch(/─ rhx learn\.terms\.hook set on\s+#/);
+          expect(result.stdout).toMatch(/─ get\s+report/);
+          expect(result.stdout).toContain('default = disabled');
+        },
+      );
 
       then('the output matches the snapshot', () => {
         expect(
@@ -380,46 +404,64 @@ describe('learner.terms.hook.journey.acceptance', () => {
       genScene({ slug: 'learner-terms-hook-unlinked' }),
     );
 
-    when('[t0] the hook command a session would run fires, with no learner link', () => {
-      const out = useThen('init, set on, unlink, then the hook fires', async () => {
-        const init = await runRhx({
-          cmd: 'npx rhx init --roles learner --hooks',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        const setOn = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set on',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        const command = getTermsHookEntries(scene)[0]?.command ?? '';
-        // rm on a link removes the link itself, never the role dir it points at
-        fs.rmSync(path.join(scene.tempDir, '.agent', 'repo=bhrain', 'role=learner'), {
-          recursive: true,
-        });
-        const fired = await runRhx({ cmd: command, cwd: scene.tempDir, home: scene.home });
-        return { init, setOn, command, fired };
-      });
+    when(
+      '[t0] the hook command a session would run fires, with no learner link',
+      () => {
+        const out = useThen(
+          'init, set on, unlink, then the hook fires',
+          async () => {
+            const init = await runRhx({
+              cmd: 'npx rhx init --roles learner --hooks',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            const setOn = await runRhx({
+              cmd: 'npx rhx learn.terms.hook set on',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            const command = getTermsHookEntries(scene)[0]?.command ?? '';
+            // rm on a link removes the link itself, never the role dir it points at
+            fs.rmSync(
+              path.join(scene.tempDir, '.agent', 'repo=bhrain', 'role=learner'),
+              {
+                recursive: true,
+              },
+            );
+            const fired = await runRhx({
+              cmd: command,
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            return { init, setOn, command, fired };
+          },
+        );
 
-      then('the setup ran clean and the entry holds the guarded command', () => {
-        expect(out.init.code).toEqual(0);
-        expect(out.setOn.code).toEqual(0);
-        expect(out.command).toContain('[ ! -e .agent/repo=bhrain/role=learner ] ||');
-      });
+        then(
+          'the setup ran clean and the entry holds the guarded command',
+          () => {
+            expect(out.init.code).toEqual(0);
+            expect(out.setOn.code).toEqual(0);
+            expect(out.command).toContain(
+              '[ ! -e .agent/repo=bhrain/role=learner ] ||',
+            );
+          },
+        );
 
-      then('the hook exits 0 and says naught: no stop is held', () => {
-        expect(out.fired.code).toEqual(0);
-        expect(out.fired.stdout).toEqual('');
-        expect(out.fired.stderr).toEqual('');
-      });
+        then('the hook exits 0 and says naught: no stop is held', () => {
+          expect(out.fired.code).toEqual(0);
+          expect(out.fired.stdout).toEqual('');
+          expect(out.fired.stderr).toEqual('');
+        });
 
-      then('the quiet stop matches the snapshot, an empty frame', () => {
-        expect({
-          stdout: asFramedOutput({ text: out.fired.stdout, scene }),
-          stderr: asFramedOutput({ text: out.fired.stderr, scene }),
-        }).toMatchSnapshot('hook command - learner unlinked, quiet');
-      });
-    });
+        then('the quiet stop matches the snapshot, an empty frame', () => {
+          expect({
+            stdout: asFramedOutput({ text: out.fired.stdout, scene }),
+            stderr: asFramedOutput({ text: out.fired.stderr, scene }),
+          }).toMatchSnapshot('hook command - learner unlinked, quiet');
+        });
+      },
+    );
   });
 
   given('[case3] a repo layer that is not valid json', () => {
@@ -441,7 +483,11 @@ describe('learner.terms.hook.journey.acceptance', () => {
           cwd: scene.tempDir,
           home: scene.home,
         });
-        return { init, setOn, after: fs.readFileSync(asRepoLayerPath(scene), 'utf8') };
+        return {
+          init,
+          setOn,
+          after: fs.readFileSync(asRepoLayerPath(scene), 'utf8'),
+        };
       });
 
       then('it exits 2 with the qualified header and the fix', () => {
@@ -459,9 +505,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
 
       then('the stderr matches the snapshot', () => {
-        expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
-          'set on - refused, not valid json',
-        );
+        expect(
+          asFramedOutput({ text: out.setOn.stderr, scene }),
+        ).toMatchSnapshot('set on - refused, not valid json');
       });
     });
   });
@@ -472,23 +518,26 @@ describe('learner.terms.hook.journey.acceptance', () => {
     );
 
     when('[t0] set on runs over the link', () => {
-      const out = useThen('init, swap the file for a link, then set on', async () => {
-        const init = await runRhx({
-          cmd: 'npx rhx init --roles learner --hooks',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        const elsewhere = path.join(scene.home, 'elsewhere.json');
-        fs.writeFileSync(elsewhere, '{}');
-        fs.rmSync(asRepoLayerPath(scene));
-        fs.symlinkSync(elsewhere, asRepoLayerPath(scene));
-        const setOn = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set on',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        return { init, setOn, elsewhere: fs.readFileSync(elsewhere, 'utf8') };
-      });
+      const out = useThen(
+        'init, swap the file for a link, then set on',
+        async () => {
+          const init = await runRhx({
+            cmd: 'npx rhx init --roles learner --hooks',
+            cwd: scene.tempDir,
+            home: scene.home,
+          });
+          const elsewhere = path.join(scene.home, 'elsewhere.json');
+          fs.writeFileSync(elsewhere, '{}');
+          fs.rmSync(asRepoLayerPath(scene));
+          fs.symlinkSync(elsewhere, asRepoLayerPath(scene));
+          const setOn = await runRhx({
+            cmd: 'npx rhx learn.terms.hook set on',
+            cwd: scene.tempDir,
+            home: scene.home,
+          });
+          return { init, setOn, elsewhere: fs.readFileSync(elsewhere, 'utf8') };
+        },
+      );
 
       then('it exits 2 with the qualified header and the fix', () => {
         expect(out.init.code).toEqual(0);
@@ -496,7 +545,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
         expect(out.setOn.stderr).toContain(
           '✋ ConstraintError: the settings target is a link',
         );
-        expect(out.setOn.stderr).toContain('fix: replace the link with a real file');
+        expect(out.setOn.stderr).toContain(
+          'fix: replace the link with a real file',
+        );
       });
 
       then('the file behind the link is untouched', () => {
@@ -504,9 +555,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
       });
 
       then('the stderr matches the snapshot', () => {
-        expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
-          'set on - refused, a link',
-        );
+        expect(
+          asFramedOutput({ text: out.setOn.stderr, scene }),
+        ).toMatchSnapshot('set on - refused, a link');
       });
     });
   });
@@ -523,8 +574,12 @@ describe('learner.terms.hook.journey.acceptance', () => {
       slug: 'unwalkable',
       scenario: 'a repo layer whose hooks shape no verb can walk',
       tamper: (scene) =>
-        fs.writeFileSync(asRepoLayerPath(scene), '{ "hooks": { "Stop": "x" } }'),
-      header: '✋ ConstraintError: the settings target holds a shape learn.terms.hook cannot walk',
+        fs.writeFileSync(
+          asRepoLayerPath(scene),
+          '{ "hooks": { "Stop": "x" } }',
+        ),
+      header:
+        '✋ ConstraintError: the settings target holds a shape learn.terms.hook cannot walk',
       fix: 'fix: make hooks map each event to a list of { matcher, hooks }',
     },
     {
@@ -546,7 +601,8 @@ describe('learner.terms.hook.journey.acceptance', () => {
         fs.rmSync(path.join(scene.tempDir, '.claude'));
         fs.symlinkSync(outside, path.join(scene.tempDir, '.claude'));
       },
-      header: '✋ ConstraintError: the settings target resolves outside the repo',
+      header:
+        '✋ ConstraintError: the settings target resolves outside the repo',
       fix: 'fix: point .claude at a dir inside the repo',
     },
   ];
@@ -586,9 +642,9 @@ describe('learner.terms.hook.journey.acceptance', () => {
         });
 
         then('the stderr matches the snapshot', () => {
-          expect(asFramedOutput({ text: out.setOn.stderr, scene })).toMatchSnapshot(
-            `set on - refused, ${refusal.slug}`,
-          );
+          expect(
+            asFramedOutput({ text: out.setOn.stderr, scene }),
+          ).toMatchSnapshot(`set on - refused, ${refusal.slug}`);
         });
       });
     }),
@@ -599,162 +655,207 @@ describe('learner.terms.hook.journey.acceptance', () => {
       genScene({ slug: 'learner-terms-hook-held' }),
     );
 
-    when('[t0] a stop fires the entry with no fresh distillation on file', () => {
-      const out = useThen('init, set on, then the hook fires', async () => {
-        const init = await runRhx({
-          cmd: 'npx rhx init --roles learner --hooks',
-          cwd: scene.tempDir,
-          home: scene.home,
+    when(
+      '[t0] a stop fires the entry with no fresh distillation on file',
+      () => {
+        const out = useThen('init, set on, then the hook fires', async () => {
+          const init = await runRhx({
+            cmd: 'npx rhx init --roles learner --hooks',
+            cwd: scene.tempDir,
+            home: scene.home,
+          });
+          const setOn = await runRhx({
+            cmd: 'npx rhx learn.terms.hook set on',
+            cwd: scene.tempDir,
+            home: scene.home,
+          });
+          const command = getTermsHookEntries(scene)[0]?.command ?? '';
+          const fired = await runRhx({
+            cmd: command,
+            cwd: scene.tempDir,
+            home: scene.home,
+          });
+          return { init, setOn, fired };
         });
-        const setOn = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set on',
-          cwd: scene.tempDir,
-          home: scene.home,
+
+        then('the setup ran clean', () => {
+          expect(out.init.code).toEqual(0);
+          expect(out.setOn.code).toEqual(0);
         });
-        const command = getTermsHookEntries(scene)[0]?.command ?? '';
-        const fired = await runRhx({ cmd: command, cwd: scene.tempDir, home: scene.home });
-        return { init, setOn, fired };
-      });
 
-      then('the setup ran clean', () => {
-        expect(out.init.code).toEqual(0);
-        expect(out.setOn.code).toEqual(0);
-      });
-
-      then('the stop is held, exit 2, with the term nudge', () => {
-        expect(out.fired.code).toEqual(2);
-        expect(out.fired.stderr).toContain('time again, to tend the terms');
-      });
-
-      then('the held stop matches the snapshot', () => {
-        expect(asFramedOutput({ text: out.fired.stderr, scene })).toMatchSnapshot(
-          'hook command - learner linked, stale, held',
-        );
-      });
-    });
-
-    when('[t1] set off runs, then the Stop commands left in the repo layer are read', () => {
-      const out = useThen('set off, then collect every Stop command that runs it', async () => {
-        const setOff = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set off',
-          cwd: scene.tempDir,
-          home: scene.home,
+        then('the stop is held, exit 2, with the term nudge', () => {
+          expect(out.fired.code).toEqual(2);
+          expect(out.fired.stderr).toContain('time again, to tend the terms');
         });
-        return { setOff, commandsLeft: getTermsHookCommandsAnyAuthor(scene) };
-      });
 
-      then('set off exits 0 and no Stop command runs the term hook, under any author', () => {
-        expect(out.setOff.code).toEqual(0);
-        expect(out.commandsLeft).toEqual([]);
-      });
-
-      then('the term hook commands left match the snapshot, an empty list', () => {
-        expect(out.commandsLeft).toMatchSnapshot(
-          'stop commands after set off - none runs the term hook',
-        );
-      });
-    });
-  });
-
-  given('[case9] an enabled repo with a hand copy of the withdrawn hook', () => {
-    const scene = useBeforeAll(async () =>
-      genScene({ slug: 'learner-terms-hook-hand-copy' }),
+        then('the held stop matches the snapshot', () => {
+          expect(
+            asFramedOutput({ text: out.fired.stderr, scene }),
+          ).toMatchSnapshot('hook command - learner linked, stale, held');
+        });
+      },
     );
 
-    when('[t0] get, then set off, run over the hand copy', () => {
-      const out = useThen('init, set on, paste a hand copy, then get and set off', async () => {
-        const init = await runRhx({
-          cmd: 'npx rhx init --roles learner --hooks',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        const setOn = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set on',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-
-        // a human pastes the withdrawn hook back in, under the learner's own author
-        const settings = JSON.parse(fs.readFileSync(asRepoLayerPath(scene), 'utf8')) as {
-          hooks?: Record<string, unknown[]>;
-        };
-        const handCopy = {
-          matcher: '*',
-          hooks: [
-            {
-              type: 'command',
-              command: './node_modules/.bin/rhx learn.domain.terms --when hook.onStop',
-              timeout: 5,
-              author: 'repo=bhrain/role=learner',
-            },
-          ],
-        };
-        fs.writeFileSync(
-          asRepoLayerPath(scene),
-          JSON.stringify(
-            {
-              ...settings,
-              hooks: {
-                ...settings.hooks,
-                Stop: [...(settings.hooks?.Stop ?? []), handCopy],
-              },
-            },
-            null,
-            2,
-          ),
+    when(
+      '[t1] set off runs, then the Stop commands left in the repo layer are read',
+      () => {
+        const out = useThen(
+          'set off, then collect every Stop command that runs it',
+          async () => {
+            const setOff = await runRhx({
+              cmd: 'npx rhx learn.terms.hook set off',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            return {
+              setOff,
+              commandsLeft: getTermsHookCommandsAnyAuthor(scene),
+            };
+          },
         );
 
-        const get = await runRhx({
-          cmd: 'npx rhx learn.terms.hook get',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        const setOff = await runRhx({
-          cmd: 'npx rhx learn.terms.hook set off',
-          cwd: scene.tempDir,
-          home: scene.home,
-        });
-        return {
-          init,
-          setOn,
-          get,
-          setOff,
-          commandsLeft: getTermsHookCommandsAnyAuthor(scene),
-        };
-      });
-
-      then('the setup ran clean', () => {
-        expect(out.init.code).toEqual(0);
-        expect(out.setOn.code).toEqual(0);
-      });
-
-      then('get reports enabled and names the hand copy as drift, with its repair', () => {
-        expect(out.get.code).toEqual(0);
-        expect(out.get.stdout).toContain('status = enabled');
-        expect(out.get.stdout).toContain('drift = an entry');
-      });
-
-      then('set off removes both entries and names the one it did not write', () => {
-        expect(out.setOff.code).toEqual(0);
-        expect(out.setOff.stdout).toContain('status = disabled (removed)');
-        expect(out.setOff.stdout).toContain(
-          'also removed = an entry the toggle did not write',
+        then(
+          'set off exits 0 and no Stop command runs the term hook, under any author',
+          () => {
+            expect(out.setOff.code).toEqual(0);
+            expect(out.commandsLeft).toEqual([]);
+          },
         );
-        expect(out.setOff.stdout).toContain('└─ by repo=bhrain/role=learner');
-        expect(out.commandsLeft).toEqual([]);
-      });
 
-      then('the get output matches the snapshot', () => {
-        expect(
-          asFramedOutput({ text: `${out.get.stdout}${out.get.stderr}`, scene }),
-        ).toMatchSnapshot('get - enabled, a hand copy as drift');
-      });
-
-      then('the set off output matches the snapshot', () => {
-        expect(
-          asFramedOutput({ text: `${out.setOff.stdout}${out.setOff.stderr}`, scene }),
-        ).toMatchSnapshot('set off - removed, a hand copy too');
-      });
-    });
+        then(
+          'the term hook commands left match the snapshot, an empty list',
+          () => {
+            expect(out.commandsLeft).toMatchSnapshot(
+              'stop commands after set off - none runs the term hook',
+            );
+          },
+        );
+      },
+    );
   });
+
+  given(
+    '[case9] an enabled repo with a hand copy of the withdrawn hook',
+    () => {
+      const scene = useBeforeAll(async () =>
+        genScene({ slug: 'learner-terms-hook-hand-copy' }),
+      );
+
+      when('[t0] get, then set off, run over the hand copy', () => {
+        const out = useThen(
+          'init, set on, paste a hand copy, then get and set off',
+          async () => {
+            const init = await runRhx({
+              cmd: 'npx rhx init --roles learner --hooks',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            const setOn = await runRhx({
+              cmd: 'npx rhx learn.terms.hook set on',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+
+            // a human pastes the withdrawn hook back in, under the learner's own author
+            const settings = JSON.parse(
+              fs.readFileSync(asRepoLayerPath(scene), 'utf8'),
+            ) as {
+              hooks?: Record<string, unknown[]>;
+            };
+            const handCopy = {
+              matcher: '*',
+              hooks: [
+                {
+                  type: 'command',
+                  command:
+                    './node_modules/.bin/rhx learn.domain.terms --when hook.onStop',
+                  timeout: 5,
+                  author: 'repo=bhrain/role=learner',
+                },
+              ],
+            };
+            fs.writeFileSync(
+              asRepoLayerPath(scene),
+              JSON.stringify(
+                {
+                  ...settings,
+                  hooks: {
+                    ...settings.hooks,
+                    Stop: [...(settings.hooks?.Stop ?? []), handCopy],
+                  },
+                },
+                null,
+                2,
+              ),
+            );
+
+            const get = await runRhx({
+              cmd: 'npx rhx learn.terms.hook get',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            const setOff = await runRhx({
+              cmd: 'npx rhx learn.terms.hook set off',
+              cwd: scene.tempDir,
+              home: scene.home,
+            });
+            return {
+              init,
+              setOn,
+              get,
+              setOff,
+              commandsLeft: getTermsHookCommandsAnyAuthor(scene),
+            };
+          },
+        );
+
+        then('the setup ran clean', () => {
+          expect(out.init.code).toEqual(0);
+          expect(out.setOn.code).toEqual(0);
+        });
+
+        then(
+          'get reports enabled and names the hand copy as drift, with its repair',
+          () => {
+            expect(out.get.code).toEqual(0);
+            expect(out.get.stdout).toContain('status = enabled');
+            expect(out.get.stdout).toContain('drift = an entry');
+          },
+        );
+
+        then(
+          'set off removes both entries and names the one it did not write',
+          () => {
+            expect(out.setOff.code).toEqual(0);
+            expect(out.setOff.stdout).toContain('status = disabled (removed)');
+            expect(out.setOff.stdout).toContain(
+              'also removed = an entry the toggle did not write',
+            );
+            expect(out.setOff.stdout).toContain(
+              '└─ by repo=bhrain/role=learner',
+            );
+            expect(out.commandsLeft).toEqual([]);
+          },
+        );
+
+        then('the get output matches the snapshot', () => {
+          expect(
+            asFramedOutput({
+              text: `${out.get.stdout}${out.get.stderr}`,
+              scene,
+            }),
+          ).toMatchSnapshot('get - enabled, a hand copy as drift');
+        });
+
+        then('the set off output matches the snapshot', () => {
+          expect(
+            asFramedOutput({
+              text: `${out.setOff.stdout}${out.setOff.stderr}`,
+              scene,
+            }),
+          ).toMatchSnapshot('set off - removed, a hand copy too');
+        });
+      });
+    },
+  );
 });

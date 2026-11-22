@@ -1,6 +1,7 @@
 import { BadRequestError } from 'helpful-errors';
 
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import { getRouteReminderPidPath } from './getRouteReminderPidPath';
 
 /**

@@ -72,7 +72,7 @@ const extractReviewBody = (input: { raw: string }): string => {
 const loadFixture = (input: { name: string }): string =>
   extractReviewBody({
     raw: readFileSync(
-      join(__dirname, '__test_assets__/reviews', input.name),
+      join(__dirname, '.test.assets/reviews', input.name),
       'utf-8',
     ),
   });

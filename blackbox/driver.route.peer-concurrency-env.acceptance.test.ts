@@ -109,12 +109,15 @@ describe('driver.route.peer-concurrency-env.acceptance', () => {
         expect(observed.peak).toBeLessThanOrEqual(2);
       });
 
-      then('CLAMP: the override still fans out — it is not a serial walk', () => {
-        // .why = the limit above is satisfied by a peak of 1, so it cannot part
-        //        "bound at two" from "not concurrent at all". the two clamps are
-        //        only meaningful together
-        expect(observed.peak).toBeGreaterThan(1);
-      });
+      then(
+        'CLAMP: the override still fans out — it is not a serial walk',
+        () => {
+          // .why = the limit above is satisfied by a peak of 1, so it cannot part
+          //        "bound at two" from "not concurrent at all". the two clamps are
+          //        only meaningful together
+          expect(observed.peak).toBeGreaterThan(1);
+        },
+      );
 
       then('the pour announce reads as declared', () => {
         // .why = the env override clamps prove the BOUND held; this frame pins
@@ -206,37 +209,45 @@ describe('driver.route.peer-concurrency-env.acceptance', () => {
     //     but never pins the RENDERED shape a driver meets at the acceptance grain.
     //     one snapshot commits the exact message bytes; a drift in the template
     //     (e.g. a quote dropped) would otherwise ship undetected
-    when('[t1] the stone arrives under RHACHET_LEVEL_CONCURRENCY= (empty)', () => {
-      const result = useThen('the pour refuses the empty override', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-          env: { RHACHET_LEVEL_CONCURRENCY: '' },
-        }),
-      );
+    when(
+      '[t1] the stone arrives under RHACHET_LEVEL_CONCURRENCY= (empty)',
+      () => {
+        const result = useThen(
+          'the pour refuses the empty override',
+          async () =>
+            invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.vision', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+              env: { RHACHET_LEVEL_CONCURRENCY: '' },
+            }),
+        );
 
-      then('CLAMP: the stone refuses as a CONSTRAINT, exit 2', () => {
-        // .why = an empty string is `!== undefined`, so it reaches `asGuardPositiveInt`
-        //        rather than defer to the default — `parseInt('')` is `NaN`, and a NaN
-        //        bound never binds. the throw prevents a pour that fans out uncapped
-        //        while the operator believes a bound is in force
-        expect(result.code).toEqual(2);
-      });
+        then('CLAMP: the stone refuses as a CONSTRAINT, exit 2', () => {
+          // .why = an empty string is `!== undefined`, so it reaches `asGuardPositiveInt`
+          //        rather than defer to the default — `parseInt('')` is `NaN`, and a NaN
+          //        bound never binds. the throw prevents a pour that fans out uncapped
+          //        while the operator believes a bound is in force
+          expect(result.code).toEqual(2);
+        });
 
-      then('CLAMP: the message names the env var and the fault', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('positive integer');
-        expect(output).toContain('RHACHET_LEVEL_CONCURRENCY');
-      });
+        then('CLAMP: the message names the env var and the fault', () => {
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('positive integer');
+          expect(output).toContain('RHACHET_LEVEL_CONCURRENCY');
+        });
 
-      then('the refusal renders `declares ""` — distinct from the abc variant', () => {
-        // .why = the byte string `declares ""` is the value under test here; the
-        //        snapshot is the oracle. a regression that drops the quotes or merges
-        //        the two templates would surface here and not at [t0]
-        const output = result.stdout + result.stderr;
-        expect(output).toMatchSnapshot();
-      });
-    });
+        then(
+          'the refusal renders `declares ""` — distinct from the abc variant',
+          () => {
+            // .why = the byte string `declares ""` is the value under test here; the
+            //        snapshot is the oracle. a regression that drops the quotes or merges
+            //        the two templates would surface here and not at [t0]
+            const output = result.stdout + result.stderr;
+            expect(output).toMatchSnapshot();
+          },
+        );
+      },
+    );
   });
 });

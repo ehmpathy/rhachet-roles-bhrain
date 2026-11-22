@@ -372,12 +372,14 @@ human decision on whether to use approach A or B.
     });
 
     when('[t2] robot attempts to block 1.design again', () => {
-      const result = useThen('block shows nudge again (not skipped)', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.design', as: 'blocked', route: '.' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'block shows nudge again (not skipped)',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.design', as: 'blocked', route: '.' },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('stdout contains nudge (trigger was reset)', () => {

@@ -2,8 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
-
-import { findsertRouteGitignore } from '../../../../gitignore/findsertRouteGitignore';
+import { findsertRouteGitignore } from '@src/domain.operations/route/gitignore/findsertRouteGitignore';
 
 /**
  * .what = appends a review peer meter to reviewPeerMeters.jsonl

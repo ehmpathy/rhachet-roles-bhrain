@@ -1,4 +1,4 @@
-import type { RouteStoneGuardReviewSelf } from '../../../../../domain.objects/Driver/RouteStoneGuard';
+import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 /**
  * .what = the (stone, slug) pairs whose guard still declares the retired `hashbar:` key

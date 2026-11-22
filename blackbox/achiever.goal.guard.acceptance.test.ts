@@ -94,7 +94,9 @@ describe('achiever.goal.guard.acceptance', () => {
   });
 
   given('[case4] Bash tool with rm command on .goals/', () => {
-    const scene = { tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-rm' }) };
+    const scene = {
+      tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-rm' }),
+    };
 
     when('[t0] command is rm -rf .goals/', () => {
       const result = useThen('invoke goal.guard', async () => {
@@ -117,7 +119,9 @@ describe('achiever.goal.guard.acceptance', () => {
   });
 
   given('[case5] Bash tool with cat command on .goals/', () => {
-    const scene = { tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-cat' }) };
+    const scene = {
+      tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-cat' }),
+    };
 
     when('[t0] command is cat .goals/branch/file.yaml', () => {
       const result = useThen('invoke goal.guard', async () => {
@@ -139,7 +143,9 @@ describe('achiever.goal.guard.acceptance', () => {
   });
 
   given('[case6] Bash tool with mv command on .goals/', () => {
-    const scene = { tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-mv' }) };
+    const scene = {
+      tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-mv' }),
+    };
 
     when('[t0] command is mv .goals/ .goals.bak', () => {
       const result = useThen('invoke goal.guard', async () => {
@@ -187,7 +193,9 @@ describe('achiever.goal.guard.acceptance', () => {
   });
 
   given('[case8] .goals-archive path (similar name, different dir)', () => {
-    const scene = { tempDir: genTempDirForGoals({ slug: 'goal-guard-archive' }) };
+    const scene = {
+      tempDir: genTempDirForGoals({ slug: 'goal-guard-archive' }),
+    };
 
     when('[t0] path is .goals-archive/old.yaml', () => {
       const result = useThen('invoke goal.guard', async () => {
@@ -232,7 +240,9 @@ describe('achiever.goal.guard.acceptance', () => {
   });
 
   given('[case10] Bash tool with safe command', () => {
-    const scene = { tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-safe' }) };
+    const scene = {
+      tempDir: genTempDirForGoals({ slug: 'goal-guard-bash-safe' }),
+    };
 
     when('[t0] command does not reference .goals/', () => {
       const result = useThen('invoke goal.guard', async () => {

@@ -1,5 +1,4 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import {
@@ -45,7 +44,9 @@ describe('reflect.snapshot.backup', () => {
       });
 
       then('the refusal renders whole', () => {
-        expect(sanitizeReflectOutputForSnapshot(result.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(result.stderr),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -88,7 +89,9 @@ describe('reflect.snapshot.backup', () => {
       });
 
       then('the refusal renders whole', () => {
-        expect(sanitizeReflectOutputForSnapshot(result.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(result.stderr),
+        ).toMatchSnapshot();
       });
     });
   });

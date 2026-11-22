@@ -62,10 +62,15 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         expect(result.stdout).toContain('kept, no change');
       });
 
-      then('the kept and upgrade rows name their source template (from=)', () => {
-        expect(result.stdout).toContain('from = templates/2.kept.guard');
-        expect(result.stdout).toContain('from = templates/5.1.execution.guard');
-      });
+      then(
+        'the kept and upgrade rows name their source template (from=)',
+        () => {
+          expect(result.stdout).toContain('from = templates/2.kept.guard');
+          expect(result.stdout).toContain(
+            'from = templates/5.1.execution.guard',
+          );
+        },
+      );
 
       then('the plan rollup counts upgrades as available, not upgraded', () => {
         expect(result.stdout).toContain('summary =');
@@ -78,7 +83,9 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         expect(result.stdout).toContain('the way reveals itself');
         // this fixture holds 9.broken (absent-source), so a whole-route apply
         // would fail the B3 gate — the footer must caveat, not dangle a hint
-        expect(result.stdout).toContain('1 guard blocked — a full apply is refused');
+        expect(result.stdout).toContain(
+          '1 guard blocked — a full apply is refused',
+        );
         expect(result.stdout).not.toContain(
           'to apply: rhx route.guard.upgrade --mode apply',
         );
@@ -190,14 +197,17 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         expect(result.stdout).not.toContain('5.10.other.guard');
       });
 
-      then('the clean to-apply hint is shown (no blocked guard in scope)', () => {
-        // the --stone filter isolates 5.1.execution (a clean upgrade), so this
-        // plan CAN be applied whole — the footer shows the affordance, not a caveat
-        expect(result.stdout).toContain(
-          'to apply: rhx route.guard.upgrade --mode apply',
-        );
-        expect(result.stdout).not.toContain('blocked');
-      });
+      then(
+        'the clean to-apply hint is shown (no blocked guard in scope)',
+        () => {
+          // the --stone filter isolates 5.1.execution (a clean upgrade), so this
+          // plan CAN be applied whole — the footer shows the affordance, not a caveat
+          expect(result.stdout).toContain(
+            'to apply: rhx route.guard.upgrade --mode apply',
+          );
+          expect(result.stdout).not.toContain('blocked');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -225,12 +235,15 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         expect(result.stderr.toLowerCase()).toContain('route');
       });
 
-      then('🔴 the refusal opens with the qualified header, never bare `error:`', () => {
-        expect(result.stderr).toContain(
-          '✋ ConstraintError: no bound route found. use --route to specify.',
-        );
-        expect(result.stderr).not.toContain('error: no bound route');
-      });
+      then(
+        '🔴 the refusal opens with the qualified header, never bare `error:`',
+        () => {
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: no bound route found. use --route to specify.',
+          );
+          expect(result.stderr).not.toContain('error: no bound route');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
@@ -405,94 +418,99 @@ describe('driver.route.guard-upgrade.acceptance', () => {
     });
   });
 
-  given('[case10] a guard whose template fails to parse (invalid-source)', () => {
-    const scene = useBeforeAll(async () => {
-      const setup = await setupRoute('guard-upgrade-invalidsource');
-      // seed a template that parseStoneGuard rejects (self+peer slug clash),
-      // plus a route guard whose provenance points at it
-      const badTemplate = [
-        'reviews:',
-        '  self:',
-        '    - slug: dup',
-        '      say: "hi"',
-        '  peer:',
-        '    - slug: dup',
-        '      run: echo hi',
-      ].join('\n');
-      const local = [
-        'provenance:',
-        '  uri: templates/6.invalid.guard',
-        '',
-        'artifacts:',
-        '  - $route/x.md',
-        '',
-        'judges:',
-        '  - echo "local"',
-      ].join('\n');
-      await fs.writeFile(
-        path.join(setup.tempDir, 'templates', '6.invalid.guard'),
-        badTemplate,
-      );
-      await fs.writeFile(
-        path.join(setup.tempDir, 'route', '6.invalid.guard'),
-        local,
-      );
-      return setup;
-    });
-
-    when('[t0] plan --stone 6.invalid (non-fatal preview)', () => {
-      const result = useThen('the plan succeeds', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.upgrade',
-          args: { route: 'route', stone: '6.invalid' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0 (plan never fails)', () => {
-        expect(result.code).toBe(0);
-      });
-
-      then('the row reports invalid source', () => {
-        expect(result.stdout).toContain('invalid source');
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] apply --stone 6.invalid (blocked)', () => {
-      const result = useThen('the apply is blocked', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.upgrade',
-          args: { route: 'route', stone: '6.invalid', mode: 'apply' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 2 (constraint)', () => {
-        expect(result.code).toBe(2);
-      });
-
-      then('the error names the invalid guard', () => {
-        expect(result.stderr).toContain('6.invalid.guard');
-      });
-
-      then('the guard file is NOT written', async () => {
-        expect(await readGuard(scene.tempDir, '6.invalid.guard')).toContain(
-          'echo "local"',
+  given(
+    '[case10] a guard whose template fails to parse (invalid-source)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const setup = await setupRoute('guard-upgrade-invalidsource');
+        // seed a template that parseStoneGuard rejects (self+peer slug clash),
+        // plus a route guard whose provenance points at it
+        const badTemplate = [
+          'reviews:',
+          '  self:',
+          '    - slug: dup',
+          '      say: "hi"',
+          '  peer:',
+          '    - slug: dup',
+          '      run: echo hi',
+        ].join('\n');
+        const local = [
+          'provenance:',
+          '  uri: templates/6.invalid.guard',
+          '',
+          'artifacts:',
+          '  - $route/x.md',
+          '',
+          'judges:',
+          '  - echo "local"',
+        ].join('\n');
+        await fs.writeFile(
+          path.join(setup.tempDir, 'templates', '6.invalid.guard'),
+          badTemplate,
         );
+        await fs.writeFile(
+          path.join(setup.tempDir, 'route', '6.invalid.guard'),
+          local,
+        );
+        return setup;
       });
 
-      then('stderr matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      when('[t0] plan --stone 6.invalid (non-fatal preview)', () => {
+        const result = useThen('the plan succeeds', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.upgrade',
+            args: { route: 'route', stone: '6.invalid' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 0 (plan never fails)', () => {
+          expect(result.code).toBe(0);
+        });
+
+        then('the row reports invalid source', () => {
+          expect(result.stdout).toContain('invalid source');
+        });
+
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+
+      when('[t1] apply --stone 6.invalid (blocked)', () => {
+        const result = useThen('the apply is blocked', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.upgrade',
+            args: { route: 'route', stone: '6.invalid', mode: 'apply' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 2 (constraint)', () => {
+          expect(result.code).toBe(2);
+        });
+
+        then('the error names the invalid guard', () => {
+          expect(result.stderr).toContain('6.invalid.guard');
+        });
+
+        then('the guard file is NOT written', async () => {
+          expect(await readGuard(scene.tempDir, '6.invalid.guard')).toContain(
+            'echo "local"',
+          );
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+        });
+      });
+    },
+  );
 
   given('[case11] an explicit --route that does not exist', () => {
-    const scene = useBeforeAll(async () => setupRoute('guard-upgrade-badroute'));
+    const scene = useBeforeAll(async () =>
+      setupRoute('guard-upgrade-badroute'),
+    );
 
     when('[t0] --route points at a mistyped dir', () => {
       const result = useThen('it fails loud', async () =>
@@ -798,9 +816,12 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         }),
       );
 
-      then('exit code is 0 (plan never fails, even with blockers present)', () => {
-        expect(result.code).toBe(0);
-      });
+      then(
+        'exit code is 0 (plan never fails, even with blockers present)',
+        () => {
+          expect(result.code).toBe(0);
+        },
+      );
 
       then('all six decision states render in the one plan', () => {
         expect(result.stdout).toContain('skipped, no provenance');
@@ -811,17 +832,20 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         expect(result.stdout).toContain('unknown var: $FOO');
       });
 
-      then('the plan writes zero guards across the whole mixed set', async () => {
-        expect(await readGuard(scene.tempDir, '5.1.execution.guard')).toContain(
-          'old frame',
-        );
-        expect(await readGuard(scene.tempDir, '6.invalid.guard')).toContain(
-          'echo "local"',
-        );
-        expect(await readGuard(scene.tempDir, '4.unknownvar.guard')).toContain(
-          'echo "local"',
-        );
-      });
+      then(
+        'the plan writes zero guards across the whole mixed set',
+        async () => {
+          expect(
+            await readGuard(scene.tempDir, '5.1.execution.guard'),
+          ).toContain('old frame');
+          expect(await readGuard(scene.tempDir, '6.invalid.guard')).toContain(
+            'echo "local"',
+          );
+          expect(
+            await readGuard(scene.tempDir, '4.unknownvar.guard'),
+          ).toContain('echo "local"');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -865,72 +889,75 @@ describe('driver.route.guard-upgrade.acceptance', () => {
     });
   });
 
-  given('[case18] a template with a copy-time var AND a runtime var (uc.6)', () => {
-    const scene = useBeforeAll(async () => {
-      const setup = await setupRoute('guard-upgrade-varreplay');
-      // the template carries BOTH $BEHAVIOR_DIR_REL (a copy-time var, replayed at
-      // upgrade to the route's rel dir) AND $route (a runtime var, left LITERAL).
-      // this proves the two substitution passes do not interfere (vision uc.6).
-      const template = [
-        'provenance:',
-        '  uri: templates/varreplay.guard',
-        '',
-        'artifacts:',
-        '  - $BEHAVIOR_DIR_REL/x.md',
-        '',
-        'judges:',
-        '  - echo "new $route"',
-      ].join('\n');
-      const local = [
-        'provenance:',
-        '  uri: templates/varreplay.guard',
-        '',
-        'artifacts:',
-        '  - route/x.md',
-        '',
-        'judges:',
-        '  - echo "old $route"',
-      ].join('\n');
-      await fs.writeFile(
-        path.join(setup.tempDir, 'templates', 'varreplay.guard'),
-        template,
-      );
-      await fs.writeFile(
-        path.join(setup.tempDir, 'route', '3.varreplay.guard'),
-        local,
-      );
-      return setup;
-    });
-
-    when('[t0] apply --stone 3.varreplay', () => {
-      const result = useThen('the apply succeeds', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.upgrade',
-          args: { route: 'route', stone: '3.varreplay', mode: 'apply' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toBe(0);
+  given(
+    '[case18] a template with a copy-time var AND a runtime var (uc.6)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const setup = await setupRoute('guard-upgrade-varreplay');
+        // the template carries BOTH $BEHAVIOR_DIR_REL (a copy-time var, replayed at
+        // upgrade to the route's rel dir) AND $route (a runtime var, left LITERAL).
+        // this proves the two substitution passes do not interfere (vision uc.6).
+        const template = [
+          'provenance:',
+          '  uri: templates/varreplay.guard',
+          '',
+          'artifacts:',
+          '  - $BEHAVIOR_DIR_REL/x.md',
+          '',
+          'judges:',
+          '  - echo "new $route"',
+        ].join('\n');
+        const local = [
+          'provenance:',
+          '  uri: templates/varreplay.guard',
+          '',
+          'artifacts:',
+          '  - route/x.md',
+          '',
+          'judges:',
+          '  - echo "old $route"',
+        ].join('\n');
+        await fs.writeFile(
+          path.join(setup.tempDir, 'templates', 'varreplay.guard'),
+          template,
+        );
+        await fs.writeFile(
+          path.join(setup.tempDir, 'route', '3.varreplay.guard'),
+          local,
+        );
+        return setup;
       });
 
-      then('the copy-time var is replayed to the route rel dir', async () => {
-        const guard = await readGuard(scene.tempDir, '3.varreplay.guard');
-        // $BEHAVIOR_DIR_REL was replaced with the route's rel dir ("route")
-        expect(guard).not.toContain('$BEHAVIOR_DIR_REL');
-        expect(guard).toContain('route/x.md');
-      });
+      when('[t0] apply --stone 3.varreplay', () => {
+        const result = useThen('the apply succeeds', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.upgrade',
+            args: { route: 'route', stone: '3.varreplay', mode: 'apply' },
+            cwd: scene.tempDir,
+          }),
+        );
 
-      then('the runtime var is left literal', async () => {
-        const guard = await readGuard(scene.tempDir, '3.varreplay.guard');
-        // $route is a runtime var — it must survive the upgrade unsubstituted
-        expect(guard).toContain('echo "new $route"');
-      });
+        then('exit code is 0', () => {
+          expect(result.code).toBe(0);
+        });
 
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('the copy-time var is replayed to the route rel dir', async () => {
+          const guard = await readGuard(scene.tempDir, '3.varreplay.guard');
+          // $BEHAVIOR_DIR_REL was replaced with the route's rel dir ("route")
+          expect(guard).not.toContain('$BEHAVIOR_DIR_REL');
+          expect(guard).toContain('route/x.md');
+        });
+
+        then('the runtime var is left literal', async () => {
+          const guard = await readGuard(scene.tempDir, '3.varreplay.guard');
+          // $route is a runtime var — it must survive the upgrade unsubstituted
+          expect(guard).toContain('echo "new $route"');
+        });
+
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

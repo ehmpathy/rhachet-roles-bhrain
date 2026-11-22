@@ -1,6 +1,5 @@
 import type { RouteStoneGuardBlockerType } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
-
-import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
+import { setStoneGuardBlockerReport } from '@src/domain.operations/route/drive/setStoneGuardBlockerReport';
 
 /**
  * .what = the shared tail for a setStoneAsPassed blocked return

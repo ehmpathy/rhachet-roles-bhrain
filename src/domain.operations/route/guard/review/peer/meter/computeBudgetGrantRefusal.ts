@@ -1,4 +1,4 @@
-import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = the slice of a peer meter the grant gate reads

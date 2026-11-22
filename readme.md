@@ -1,3 +1,5 @@
+# rhachet-roles-bhrain
+
 # 🦉 rhachet-roles-bhrain
 
 ![test](https://github.com/ehmpathy/rhachet-roles-bhrain/workflows/test/badge.svg)
@@ -126,9 +128,9 @@ produces
       └─ estimate: $0.3290
 
 🪵 logs
-   ├─ scope: .log/bhrain/review/2025-12-23T00-39-00-673Z/input.scope.json
-   ├─ metrics: .log/bhrain/review/2025-12-23T00-39-00-673Z/metrics.expected.json
-   └─ tokens: .log/bhrain/review/2025-12-23T00-39-00-673Z/tokens.expected.md
+   ├─ scope: .log/bhrain/review/$timestamp/input.scope.json
+   ├─ metrics: .log/bhrain/review/$timestamp/metrics.expected.json
+   └─ tokens: .log/bhrain/review/$timestamp/tokens.expected.md
 
 🦉 let's review!
    └─ elapsed: 85s ✓
@@ -147,8 +149,8 @@ produces
       └─ total: $0.5629
 
 🌊 output
-   ├─ logs: .log/bhrain/review/2025-12-23T00-39-00-673Z
-   └─ review: .review/bhrain/v2025-12-23T00-39-00-645Z/[feedback].[given].by_robot.md
+   ├─ logs: .log/bhrain/review/$timestamp
+   └─ review: .review/bhrain/v$timestamp/[feedback].[given].by_robot.md
 ```
 
 ## `run --repo bhrain --skill reflect`
@@ -192,9 +194,9 @@ produces
       └─ total: $0.2036
 
 🌊 output
-   ├─ draft: .draft/v2025-12-26T22-11-28-309Z
-   ├─ pure: .draft/v2025-12-26T22-11-28-309Z/pure
-   └─ sync: .draft/v2025-12-26T22-11-28-309Z/sync
+   ├─ draft: .draft/v$timestamp
+   ├─ pure: .draft/v$timestamp/pure
+   └─ sync: .draft/v$timestamp/sync
 
 🪨 results
    ├─ created: 5

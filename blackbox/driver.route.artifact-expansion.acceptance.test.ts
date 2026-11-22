@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-artifact-expansion');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-artifact-expansion',
+);
 
 /**
  * .what = acceptance tests for $route variable in guard artifact globs
@@ -61,7 +64,8 @@ describe('driver.route.artifact-expansion.acceptance', () => {
       });
 
       then('output mentions blocked (not path error)', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         // if $route was not expanded, glob would look for literal "$route/" dir
         // and we'd see weird errors, not clean "blocked" or "artifact" messages
         expect(output).toMatch(/blocked|artifact/);
@@ -88,7 +92,8 @@ describe('driver.route.artifact-expansion.acceptance', () => {
       });
 
       then('output mentions approval (artifact was found)', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         // if $route was broken, we'd get "artifact not found" error
         // correct behavior: artifact found, wait for approval
         expect(output).toMatch(/approv|wait/);
@@ -173,31 +178,41 @@ describe('driver.route.artifact-expansion.acceptance', () => {
     });
 
     when('[t0] artifact created in nested route', () => {
-      const result = useThen('artifact is detected via $route expansion', async () => {
-        // create artifact in nested route directory
-        await fs.writeFile(
-          path.join(scene.tempDir, scene.nestedRoute, '1.vision.md'),
-          '# Vision\n\nNested test vision.',
-        );
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: scene.nestedRoute, as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'artifact is detected via $route expansion',
+        async () => {
+          // create artifact in nested route directory
+          await fs.writeFile(
+            path.join(scene.tempDir, scene.nestedRoute, '1.vision.md'),
+            '# Vision\n\nNested test vision.',
+          );
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: scene.nestedRoute, as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
-      then('exit code is non-zero (blocked by approval, not path error)', () => {
-        expect(result.code).not.toEqual(0);
-      });
+      then(
+        'exit code is non-zero (blocked by approval, not path error)',
+        () => {
+          expect(result.code).not.toEqual(0);
+        },
+      );
 
-      then('output mentions approval (artifact was found at expanded path)', () => {
-        // the key assertion: if $route was not expanded, glob would look for
-        // ".behavior/test-feature/$route/1.vision*.md" which doesn't exist
-        // correct behavior: $route -> ".behavior/test-feature", finds artifact
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/approv|wait/);
-        expect(output).not.toContain('not found');
-      });
+      then(
+        'output mentions approval (artifact was found at expanded path)',
+        () => {
+          // the key assertion: if $route was not expanded, glob would look for
+          // ".behavior/test-feature/$route/1.vision*.md" which doesn't exist
+          // correct behavior: $route -> ".behavior/test-feature", finds artifact
+          const output =
+            result.stdout.toLowerCase() + result.stderr.toLowerCase();
+          expect(output).toMatch(/approv|wait/);
+          expect(output).not.toContain('not found');
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();

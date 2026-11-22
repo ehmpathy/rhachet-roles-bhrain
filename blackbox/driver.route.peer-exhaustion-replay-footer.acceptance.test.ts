@@ -58,7 +58,11 @@ describe('driver.route.peer-exhaustion-replay-footer.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -84,51 +88,63 @@ describe('driver.route.peer-exhaustion-replay-footer.acceptance', () => {
       return { tempDir };
     });
 
-    when('[t0] route.drive --when hook.onBoot replays the budget-exhausted halt', () => {
-      const result = useThen('replay renders the halt', async () =>
-        invokeRouteSkill({
-          skill: 'route.drive',
-          args: { route: '.', when: 'hook.onBoot' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('replay shows the reviews (l1 exhausted, l3 re-budgeted + live)', () => {
-        expect(result.stdout).toContain('l1-reviewer');
-        expect(result.stdout).toMatch(/l1-reviewer[\s\S]*exhausted/);
-        expect(result.stdout).toContain('l3-reviewer');
-      });
-
-      then('CLAMP: no FALSE HALT — the re-budgeted replay never claims the ladder is spent', () => {
-        // .why = the vision's core invariant forbids any "budget exhausted / halted / human
-        //        required" read while a higher, non-terminal level still has work. l3 has
-        //        been re-budgeted and is live, so this replay must NOT frame the ladder as
-        //        halted — that halt text would directly contradict the footer's "a human is
-        //        only needed once every level is terminal" (two opposite reads in one stdout)
-        expect(result.stdout).not.toContain('budget exhausted');
-        expect(result.stdout).not.toContain('halted');
-        expect(result.stdout).not.toContain('please ask a human');
-      });
-
-      then('CLAMP: the "path continues" footer reaches the replay surface', () => {
-        // .why = the D5 deliverable — the replay a fresh session lands on must name the
-        //        terminal level, the live level, and the re-drive command, not just the
-        //        live route.stone.set pass. the footer self-gates on unlockTransition, so
-        //        it renders here precisely because l1 (exhausted) sits below live l3
-        expect(result.stdout).toContain('the path continues');
-        expect(result.stdout).toContain(
-          'l1 is terminal (exhausted 🌙) — it no longer blocks you',
+    when(
+      '[t0] route.drive --when hook.onBoot replays the budget-exhausted halt',
+      () => {
+        const result = useThen('replay renders the halt', async () =>
+          invokeRouteSkill({
+            skill: 'route.drive',
+            args: { route: '.', when: 'hook.onBoot' },
+            cwd: scene.tempDir,
+          }),
         );
-        expect(result.stdout).toContain('l3 has engaged');
-        expect(result.stdout).toMatch(/l3 has engaged[\s\S]*--as arrived/);
-        expect(result.stdout).toContain(
-          'a human is only needed once every level is terminal',
-        );
-      });
 
-      then('replay snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then(
+          'replay shows the reviews (l1 exhausted, l3 re-budgeted + live)',
+          () => {
+            expect(result.stdout).toContain('l1-reviewer');
+            expect(result.stdout).toMatch(/l1-reviewer[\s\S]*exhausted/);
+            expect(result.stdout).toContain('l3-reviewer');
+          },
+        );
+
+        then(
+          'CLAMP: no FALSE HALT — the re-budgeted replay never claims the ladder is spent',
+          () => {
+            // .why = the vision's core invariant forbids any "budget exhausted / halted / human
+            //        required" read while a higher, non-terminal level still has work. l3 has
+            //        been re-budgeted and is live, so this replay must NOT frame the ladder as
+            //        halted — that halt text would directly contradict the footer's "a human is
+            //        only needed once every level is terminal" (two opposite reads in one stdout)
+            expect(result.stdout).not.toContain('budget exhausted');
+            expect(result.stdout).not.toContain('halted');
+            expect(result.stdout).not.toContain('please ask a human');
+          },
+        );
+
+        then(
+          'CLAMP: the "path continues" footer reaches the replay surface',
+          () => {
+            // .why = the D5 deliverable — the replay a fresh session lands on must name the
+            //        terminal level, the live level, and the re-drive command, not just the
+            //        live route.stone.set pass. the footer self-gates on unlockTransition, so
+            //        it renders here precisely because l1 (exhausted) sits below live l3
+            expect(result.stdout).toContain('the path continues');
+            expect(result.stdout).toContain(
+              'l1 is terminal (exhausted 🌙) — it no longer blocks you',
+            );
+            expect(result.stdout).toContain('l3 has engaged');
+            expect(result.stdout).toMatch(/l3 has engaged[\s\S]*--as arrived/);
+            expect(result.stdout).toContain(
+              'a human is only needed once every level is terminal',
+            );
+          },
+        );
+
+        then('replay snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
   });
 });

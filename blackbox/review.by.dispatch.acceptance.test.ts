@@ -1,6 +1,6 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
@@ -35,40 +35,57 @@ describe('review.by.dispatch.acceptance', () => {
   // dispatch-tolerance boundaries — deterministic, no LLM
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-rhx1] the base dispatched via rhx against an absent target role', () => {
-    when('[t0] rhx review.by --repo bhrain --role reviewer -- --role ghost runs', () => {
-      const res = useThen('it fails fast on the target role, not the dispatch flags', async () => {
-        const cwd = await genReviewByFixture({
-          slug: 'review-by-rhx1',
-          clone: ASSETS_DIR,
-        });
-        return invokeReviewByViaRhx({ targetRole: 'ghost', cwd });
-      });
+  given(
+    '[case-rhx1] the base dispatched via rhx against an absent target role',
+    () => {
+      when(
+        '[t0] rhx review.by --repo bhrain --role reviewer -- --role ghost runs',
+        () => {
+          const res = useThen(
+            'it fails fast on the target role, not the dispatch flags',
+            async () => {
+              const cwd = await genReviewByFixture({
+                slug: 'review-by-rhx1',
+                clone: ASSETS_DIR,
+              });
+              return invokeReviewByViaRhx({ targetRole: 'ghost', cwd });
+            },
+          );
 
-      then('exit 1', () => {
-        expect(res.code).toBe(1);
-      });
+          then('exit 1', () => {
+            expect(res.code).toBe(1);
+          });
 
-      then('the forwarded --repo/--skill are tolerated (no unknown-flag error)', () => {
-        // rhachet forwards --skill/--repo/--role into argv; the base must not reject them, or
-        // we would see an unknown-flag error instead of the real target-role fault below
-        expect(res.stderr).not.toContain('unknown flag');
-        expect(res.stderr).not.toContain('--skill');
-        expect(res.stderr).not.toContain('--repo');
-      });
+          then(
+            'the forwarded --repo/--skill are tolerated (no unknown-flag error)',
+            () => {
+              // rhachet forwards --skill/--repo/--role into argv; the base must not reject them, or
+              // we would see an unknown-flag error instead of the real target-role fault below
+              expect(res.stderr).not.toContain('unknown flag');
+              expect(res.stderr).not.toContain('--skill');
+              expect(res.stderr).not.toContain('--repo');
+            },
+          );
 
-      then('the error names the absent target role (last-wins reached the parser)', () => {
-        // `-- --role ghost` overrode the forwarded dispatch `--role reviewer` (last-wins), so the
-        // base tried to run ghost's rubrics and failed fast — proves the passthrough arg landed
-        expect(res.stderr).toContain('role not found');
-        expect(res.stderr).toContain('role=ghost');
-      });
+          then(
+            'the error names the absent target role (last-wins reached the parser)',
+            () => {
+              // `-- --role ghost` overrode the forwarded dispatch `--role reviewer` (last-wins), so the
+              // base tried to run ghost's rubrics and failed fast — proves the passthrough arg landed
+              expect(res.stderr).toContain('role not found');
+              expect(res.stderr).toContain('role=ghost');
+            },
+          );
 
-      then('the refusal message renders whole (snapshot)', () => {
-        expect(asStderrMessageLine({ stderr: res.stderr })).toMatchSnapshot();
-      });
-    });
-  });
+          then('the refusal message renders whole (snapshot)', () => {
+            expect(
+              asStderrMessageLine({ stderr: res.stderr }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   given('[case-rhx2] a genuine typo passed through the dispatch layer', () => {
     when('[t0] rhx ... -- --role demo --rool oops runs', () => {
@@ -109,19 +126,22 @@ describe('review.by.dispatch.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx review.by --repo bhrain --role reviewer -- --role demo runs',
       () => {
-        const res = useThen('the full dispatch chain runs and passes', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-rhx3',
-            clone: ASSETS_DIR,
-          });
-          const cli = await invokeReviewByViaRhx({
-            targetRole: DEMO_ROLE,
-            paths: 'src/clean.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli };
-        });
+        const res = useThen(
+          'the full dispatch chain runs and passes',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-rhx3',
+              clone: ASSETS_DIR,
+            });
+            const cli = await invokeReviewByViaRhx({
+              targetRole: DEMO_ROLE,
+              paths: 'src/clean.ts',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli };
+          },
+        );
 
         then('exit 0', () => {
           expect(res.cli.code).toBe(0);

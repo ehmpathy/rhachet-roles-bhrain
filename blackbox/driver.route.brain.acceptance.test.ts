@@ -116,7 +116,7 @@ describe('driver.route.brain.acceptance', () => {
    */
   const sanitizeHaltCauseForSnapshot = (output: string): string =>
     output.replace(
-      /      ├─ this driver runs[\s\S]*?(?=      └─ or remove)/,
+      / {6}├─ this driver runs[\s\S]*?(?= {6}└─ or remove)/,
       '      ├─ <cause-block>\n      │\n',
     );
 
@@ -139,9 +139,7 @@ describe('driver.route.brain.acceptance', () => {
         then(
           'it names the brain the stone prescribed, in the `where do we go?` bucket',
           () => {
-            expect(res.cli.stdout).toContain(
-              '└─ brain = claude-sonnet-5[1m]',
-            );
+            expect(res.cli.stdout).toContain('└─ brain = claude-sonnet-5[1m]');
           },
         );
 
@@ -162,7 +160,9 @@ describe('driver.route.brain.acceptance', () => {
 
         then('it offers the escape, and names the guard by PATH', () => {
           // the second remedy, and the one a driver who cannot enroll must reach for
-          expect(res.cli.stdout).toContain("remove `brain:` from the stone's guard");
+          expect(res.cli.stdout).toContain(
+            "remove `brain:` from the stone's guard",
+          );
           expect(res.cli.stdout).toContain('1.vision.guard');
         });
 
@@ -176,16 +176,19 @@ describe('driver.route.brain.acceptance', () => {
           },
         );
 
-        then('the halt is a BRANCH of the drive tree, owl and root first', () => {
-          // 🔴 .why = `S13` — a halt that opens on its own header reads as a second tool
-          //    beside the drive, never as the drive's own answer
-          expect(res.cli.stdout).toMatch(
-            /^🦉 where were we\?\n\n🗿 route\.drive\n   ├─ where do we go\?/,
-          );
-          expect(res.cli.stdout).toContain(
-            '   └─ ✋ halted, brain switch could not land',
-          );
-        });
+        then(
+          'the halt is a BRANCH of the drive tree, owl and root first',
+          () => {
+            // 🔴 .why = `S13` — a halt that opens on its own header reads as a second tool
+            //    beside the drive, never as the drive's own answer
+            expect(res.cli.stdout).toMatch(
+              /^🦉 where were we\?\n\n🗿 route\.drive\n {3}├─ where do we go\?/,
+            );
+            expect(res.cli.stdout).toContain(
+              '   └─ ✋ halted, brain switch could not land',
+            );
+          },
+        );
 
         then('stdout has good vibes, cause block scrubbed', () => {
           // the rows above assert strings; only this row pins the frame — order, indent,
@@ -375,16 +378,19 @@ describe('driver.route.brain.acceptance', () => {
           expect(res.cli.stdout).toContain('brain = claude-opus-5[1m]');
         });
 
-        then('it is a LINE in `where do we go?`, never a section above it', () => {
-          // .why = "which brain prices this stone?" is the same kind of question as "which
-          //        route?" and "which stone?", so it is read in the same bucket
-          const stdout = res.cli.stdout;
-          expect(stdout).not.toContain('⟨inherited — unconfirmed⟩');
-          expect(stdout).not.toContain('last set by');
-          expect(stdout.indexOf('stone = 2.criteria')).toBeLessThan(
-            stdout.indexOf('brain = claude-opus-5[1m]'),
-          );
-        });
+        then(
+          'it is a LINE in `where do we go?`, never a section above it',
+          () => {
+            // .why = "which brain prices this stone?" is the same kind of question as "which
+            //        route?" and "which stone?", so it is read in the same bucket
+            const stdout = res.cli.stdout;
+            expect(stdout).not.toContain('⟨inherited — unconfirmed⟩');
+            expect(stdout).not.toContain('last set by');
+            expect(stdout.indexOf('stone = 2.criteria')).toBeLessThan(
+              stdout.indexOf('brain = claude-opus-5[1m]'),
+            );
+          },
+        );
 
         then('it is an ATTRIBUTION, never a fresh switch', () => {
           // the sticky half: a brainless stone dispatches naught, so no halt renders and

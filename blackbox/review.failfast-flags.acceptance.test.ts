@@ -1,10 +1,9 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import { asExecResultOrThrow } from './.test/asExecResultOrThrow';
-import { sanitizeTimeForSnapshot } from './.test/invokeRouteSkill';
 import { execAsync, genTempDirForRhachet } from './.test/invokeReviewSkill';
+import { sanitizeTimeForSnapshot } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -41,29 +40,32 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case1] an unrecognized flag is passed', () => {
     when('[t0] review skill invoked with a flag it does not know', () => {
-      const res = useThen('invoke review skill with an unknown flag', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-unknown',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with an unknown flag',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-unknown',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --bogus-flag`,
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: `--rules "rules/*.md" --paths "src/dirty.ts" --bogus-flag`,
+            cwd: tempDir,
+          });
 
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end cli ---\n');
+          console.log('\n--- cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('\n--- cli.stderr ---');
+          console.log(cli.stderr);
+          console.log('--- end cli ---\n');
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
@@ -77,7 +79,9 @@ describe('review.failfast-flags.acceptance', () => {
       });
 
       then('stderr points to --help', async () => {
-        expect(res.cli.stderr).toContain('run with --help for the full flag list');
+        expect(res.cli.stderr).toContain(
+          'run with --help for the full flag list',
+        );
       });
 
       // .why = stderr is a caller-visible cli contract surface; snapshot it so a
@@ -93,36 +97,41 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case2] --paths-with is given with no glob', () => {
     when('[t0] review skill invoked with a bare --paths-with', () => {
-      const res = useThen('invoke review skill with a bare --paths-with', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-bare-paths-with',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with a bare --paths-with',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-bare-paths-with',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths-with`,
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: `--rules "rules/*.md" --paths-with`,
+            cwd: tempDir,
+          });
 
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end cli ---\n');
+          console.log('\n--- cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('\n--- cli.stderr ---');
+          console.log(cli.stderr);
+          console.log('--- end cli ---\n');
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
       });
 
       then('stderr states --paths-with requires a glob', async () => {
-        expect(res.cli.stderr).toContain('--paths-with requires a glob pattern');
+        expect(res.cli.stderr).toContain(
+          '--paths-with requires a glob pattern',
+        );
       });
 
       then('the full stderr body is pinned', async () => {
@@ -136,36 +145,41 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case3] --paths-wout is given with no glob', () => {
     when('[t0] review skill invoked with a bare --paths-wout', () => {
-      const res = useThen('invoke review skill with a bare --paths-wout', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-bare-paths-wout',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with a bare --paths-wout',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-bare-paths-wout',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths-with "src/**/*.ts" --paths-wout`,
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: `--rules "rules/*.md" --paths-with "src/**/*.ts" --paths-wout`,
+            cwd: tempDir,
+          });
 
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end cli ---\n');
+          console.log('\n--- cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('\n--- cli.stderr ---');
+          console.log(cli.stderr);
+          console.log('--- end cli ---\n');
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
       });
 
       then('stderr states --paths-wout requires a glob', async () => {
-        expect(res.cli.stderr).toContain('--paths-wout requires a glob pattern');
+        expect(res.cli.stderr).toContain(
+          '--paths-wout requires a glob pattern',
+        );
       });
 
       then('the full stderr body is pinned', async () => {
@@ -240,57 +254,69 @@ describe('review.failfast-flags.acceptance', () => {
    *        review. all three typos ride one call, so the clamp proves one round
    *        names every refusal, not merely the first (rule.forbid.failhide).
    */
-  given('[case5] --focus, --join, and --goal are given unrecognized modes', () => {
-    when('[t0] review skill invoked with --focus pul --join unoin --goal all', () => {
-      const res = useThen('invoke review skill with typo modes', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-bad-choices',
-          clone: ASSETS_DIR,
-        });
+  given(
+    '[case5] --focus, --join, and --goal are given unrecognized modes',
+    () => {
+      when(
+        '[t0] review skill invoked with --focus pul --join unoin --goal all',
+        () => {
+          const res = useThen(
+            'invoke review skill with typo modes',
+            async () => {
+              const tempDir = genTempDirForRhachet({
+                slug: 'review-failfast-flags-bad-choices',
+                clone: ASSETS_DIR,
+              });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+              await execAsync('npx rhachet roles link --role reviewer', {
+                cwd: tempDir,
+              });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --focus pul --join unoin --goal all`,
-          cwd: tempDir,
-        });
+              const cli = await invokeReviewSkillRaw({
+                args: `--rules "rules/*.md" --paths "src/dirty.ts" --focus pul --join unoin --goal all`,
+                cwd: tempDir,
+              });
 
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end cli ---\n');
+              console.log('\n--- cli.stdout ---');
+              console.log(cli.stdout);
+              console.log('\n--- cli.stderr ---');
+              console.log(cli.stderr);
+              console.log('--- end cli ---\n');
 
-        return { cli };
-      });
+              return { cli };
+            },
+          );
 
-      then('cli exits with a constraint code', async () => {
-        expect(res.cli.code).toEqual(2);
-      });
+          then('cli exits with a constraint code', async () => {
+            expect(res.cli.code).toEqual(2);
+          });
 
-      then('stderr names the valid modes of each flag, with its typo', async () => {
-        expect(res.cli.stderr).toContain(
-          '--focus must be push or pull (received: pul)',
-        );
-        expect(res.cli.stderr).toContain(
-          '--join must be intersect or union (received: unoin)',
-        );
-        expect(res.cli.stderr).toContain(
-          '--goal must be exhaustive or representative (received: all)',
-        );
-      });
+          then(
+            'stderr names the valid modes of each flag, with its typo',
+            async () => {
+              expect(res.cli.stderr).toContain(
+                '--focus must be push or pull (received: pul)',
+              );
+              expect(res.cli.stderr).toContain(
+                '--join must be intersect or union (received: unoin)',
+              );
+              expect(res.cli.stderr).toContain(
+                '--goal must be exhaustive or representative (received: all)',
+              );
+            },
+          );
 
-      then('no review ran', async () => {
-        expect(res.cli.stdout).not.toContain('blockers');
-      });
+          then('no review ran', async () => {
+            expect(res.cli.stdout).not.toContain('blockers');
+          });
 
-      then('the full stderr body is pinned', async () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
-      });
-    });
-  });
+          then('the full stderr body is pinned', async () => {
+            expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   /**
    * usecase: a flag that expects a value is typed with its value forgotten
@@ -302,23 +328,26 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case6] a flag that expects a value is given none', () => {
     when('[t0] review skill invoked with a bare --diffs', () => {
-      const res = useThen('invoke review skill with a bare --diffs', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-valueless',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with a bare --diffs',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-valueless',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --diffs`,
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: `--rules "rules/*.md" --paths "src/dirty.ts" --diffs`,
+            cwd: tempDir,
+          });
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
@@ -345,23 +374,26 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case7] --brain names a slug no package registers', () => {
     when('[t0] review skill invoked with that brain', () => {
-      const res = useThen('invoke review skill with the ghost brain', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-brain-ghost',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with the ghost brain',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-brain-ghost',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --brain ghost/model/tier`,
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: `--rules "rules/*.md" --paths "src/dirty.ts" --brain ghost/model/tier`,
+            cwd: tempDir,
+          });
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
@@ -395,43 +427,49 @@ describe('review.failfast-flags.acceptance', () => {
    *        refs that matched naught (rule.forbid.failhide)
    */
   given('[case8] --refs is given with no glob', () => {
-    when('[t0] review skill invoked with a bare --refs beside a valid scope', () => {
-      const res = useThen('invoke review skill with a bare --refs', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-bare-refs',
-          clone: ASSETS_DIR,
-        });
+    when(
+      '[t0] review skill invoked with a bare --refs beside a valid scope',
+      () => {
+        const res = useThen(
+          'invoke review skill with a bare --refs',
+          async () => {
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-failfast-flags-bare-refs',
+              clone: ASSETS_DIR,
+            });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+            await execAsync('npx rhachet roles link --role reviewer', {
+              cwd: tempDir,
+            });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --refs`,
-          cwd: tempDir,
-        });
+            const cli = await invokeReviewSkillRaw({
+              args: `--rules "rules/*.md" --paths "src/dirty.ts" --refs`,
+              cwd: tempDir,
+            });
 
-        return { cli };
-      });
-
-      then('cli exits with a constraint code', async () => {
-        expect(res.cli.code).toEqual(2);
-      });
-
-      then('stderr states --refs requires a glob', async () => {
-        expect(res.cli.stderr).toContain(
-          '✋ ConstraintError: --refs requires a glob pattern',
+            return { cli };
+          },
         );
-      });
 
-      then('no review ran', async () => {
-        expect(res.cli.stdout).not.toContain('blockers');
-      });
+        then('cli exits with a constraint code', async () => {
+          expect(res.cli.code).toEqual(2);
+        });
 
-      then('the full stderr body is pinned', async () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
-      });
-    });
+        then('stderr states --refs requires a glob', async () => {
+          expect(res.cli.stderr).toContain(
+            '✋ ConstraintError: --refs requires a glob pattern',
+          );
+        });
+
+        then('no review ran', async () => {
+          expect(res.cli.stdout).not.toContain('blockers');
+        });
+
+        then('the full stderr body is pinned', async () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
+        });
+      },
+    );
   });
   /**
    * usecase: a flag form the cost cli already reads, or a token no flag reads
@@ -443,23 +481,26 @@ describe('review.failfast-flags.acceptance', () => {
    */
   given('[case9] a flag form or token the parser must read or refuse', () => {
     when('[t0] --brain=value names a slug no package registers', () => {
-      const res = useThen('invoke review skill with --brain=value', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-eq-form',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with --brain=value',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-eq-form',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: '--rules "rules/*.md" --paths "src/dirty.ts" --brain=ghost/model/tier',
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: '--rules "rules/*.md" --paths "src/dirty.ts" --brain=ghost/model/tier',
+            cwd: tempDir,
+          });
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
@@ -484,30 +525,35 @@ describe('review.failfast-flags.acceptance', () => {
     });
 
     when('[t1] --focus is given twice', () => {
-      const res = useThen('invoke review skill with --focus twice', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-repeated',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with --focus twice',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-repeated',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: '--rules "rules/*.md" --paths "src/dirty.ts" --focus push --focus pull',
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: '--rules "rules/*.md" --paths "src/dirty.ts" --focus push --focus pull',
+            cwd: tempDir,
+          });
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
       });
 
       then('stderr names the repeated flag', async () => {
-        expect(res.cli.stderr).toContain('1 flag given more than once: --focus');
+        expect(res.cli.stderr).toContain(
+          '1 flag given more than once: --focus',
+        );
       });
 
       then('the hint names every flag the parser lets repeat', async () => {
@@ -527,30 +573,35 @@ describe('review.failfast-flags.acceptance', () => {
     });
 
     when('[t2] a stray positional no flag reads', () => {
-      const res = useThen('invoke review skill with a stray positional', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-stray',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke review skill with a stray positional',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-failfast-flags-stray',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
 
-        const cli = await invokeReviewSkillRaw({
-          args: '--rules "rules/*.md" --paths "src/dirty.ts" src/dirty.ts',
-          cwd: tempDir,
-        });
+          const cli = await invokeReviewSkillRaw({
+            args: '--rules "rules/*.md" --paths "src/dirty.ts" src/dirty.ts',
+            cwd: tempDir,
+          });
 
-        return { cli };
-      });
+          return { cli };
+        },
+      );
 
       then('cli exits with a constraint code', async () => {
         expect(res.cli.code).toEqual(2);
       });
 
       then('stderr names the stray argument', async () => {
-        expect(res.cli.stderr).toContain('1 argument no flag reads: src/dirty.ts');
+        expect(res.cli.stderr).toContain(
+          '1 argument no flag reads: src/dirty.ts',
+        );
       });
 
       then('no review ran', async () => {
@@ -606,42 +657,48 @@ describe('review.failfast-flags.acceptance', () => {
    *        refuse while the caller believes a split was declared (the --refs twin, [case8])
    */
   given('[case10] --partition is given with no declaration', () => {
-    when('[t0] review skill invoked with a bare --partition beside a valid scope', () => {
-      const res = useThen('invoke review skill with a bare --partition', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-failfast-flags-bare-partition',
-          clone: ASSETS_DIR,
-        });
+    when(
+      '[t0] review skill invoked with a bare --partition beside a valid scope',
+      () => {
+        const res = useThen(
+          'invoke review skill with a bare --partition',
+          async () => {
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-failfast-flags-bare-partition',
+              clone: ASSETS_DIR,
+            });
 
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+            await execAsync('npx rhachet roles link --role reviewer', {
+              cwd: tempDir,
+            });
 
-        const cli = await invokeReviewSkillRaw({
-          args: `--rules "rules/*.md" --paths "src/dirty.ts" --partition`,
-          cwd: tempDir,
-        });
+            const cli = await invokeReviewSkillRaw({
+              args: `--rules "rules/*.md" --paths "src/dirty.ts" --partition`,
+              cwd: tempDir,
+            });
 
-        return { cli };
-      });
-
-      then('cli exits with a constraint code', async () => {
-        expect(res.cli.code).toEqual(2);
-      });
-
-      then('stderr states --partition requires a declaration', async () => {
-        expect(res.cli.stderr).toContain(
-          "--partition requires a declaration, '<slug>=<globs>'",
+            return { cli };
+          },
         );
-      });
 
-      then('no review ran', async () => {
-        expect(res.cli.stdout).not.toContain('blockers');
-      });
+        then('cli exits with a constraint code', async () => {
+          expect(res.cli.code).toEqual(2);
+        });
 
-      then('the full stderr body is pinned', async () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
-      });
-    });
+        then('stderr states --partition requires a declaration', async () => {
+          expect(res.cli.stderr).toContain(
+            "--partition requires a declaration, '<slug>=<globs>'",
+          );
+        });
+
+        then('no review ran', async () => {
+          expect(res.cli.stdout).not.toContain('blockers');
+        });
+
+        then('the full stderr body is pinned', async () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
+        });
+      },
+    );
   });
 });

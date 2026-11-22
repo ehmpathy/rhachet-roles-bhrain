@@ -5,8 +5,7 @@ import {
   RouteBouncerCache,
   RouteBouncerProtection,
 } from '@src/domain.objects/Driver';
-
-import { getAllBindFlagsByBranch } from '../bind/getAllBindFlagsByBranch';
+import { getAllBindFlagsByBranch } from '@src/domain.operations/route/bind/getAllBindFlagsByBranch';
 
 /**
  * .what = reads bouncer caches from bound routes (or cwd as fallback) and aggregates

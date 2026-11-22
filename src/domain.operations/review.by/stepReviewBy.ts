@@ -1,9 +1,9 @@
 import type { IsoDuration } from 'iso-time';
 import * as path from 'path';
 
+import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 import { getAllSettledResultsInBoundedPool } from '@src/utils/getAllSettledResultsInBoundedPool';
 
-import type { ContextReviewBrainSupply } from '../brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 import { asReviewRubricOutputPath } from './asReviewRubricOutputPath';
 import { asReviewRubricResultOfOutcome } from './asReviewRubricResultOfOutcome';
 import { asReviewRubricsConfig } from './asReviewRubricsConfig';

@@ -28,7 +28,10 @@ describe('driver.route.passage-consolidation.acceptance', () => {
         });
 
         // create artifact
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
+        await fs.writeFile(
+          path.join(tempDir, '1.vision.md'),
+          '# Vision\n\nTest',
+        );
 
         // invoke skill
         const cli = await invokeRouteSkill({
@@ -54,10 +57,13 @@ describe('driver.route.passage-consolidation.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('passage.jsonl contains entry with stone name and status passed', () => {
-        expect(res.passageContent).toContain('"stone":"1.vision"');
-        expect(res.passageContent).toContain('"status":"passed"');
-      });
+      then(
+        'passage.jsonl contains entry with stone name and status passed',
+        () => {
+          expect(res.passageContent).toContain('"stone":"1.vision"');
+          expect(res.passageContent).toContain('"status":"passed"');
+        },
+      );
 
       then('no separate .passed file is created', () => {
         expect(res.passedFileExists).toBe(false);
@@ -99,10 +105,13 @@ describe('driver.route.passage-consolidation.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('passage.jsonl contains entry with stone name and status approved', () => {
-        expect(res.passageContent).toContain('"stone":"1.vision"');
-        expect(res.passageContent).toContain('"status":"approved"');
-      });
+      then(
+        'passage.jsonl contains entry with stone name and status approved',
+        () => {
+          expect(res.passageContent).toContain('"stone":"1.vision"');
+          expect(res.passageContent).toContain('"status":"approved"');
+        },
+      );
 
       then('no separate .approved file is created', () => {
         expect(res.approvedFileExists).toBe(false);
@@ -110,50 +119,56 @@ describe('driver.route.passage-consolidation.acceptance', () => {
     });
 
     when('[t2] stone is blocked by judge', () => {
-      const res = useThen('invoke set --as passed on blocked stone', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'passage-consolidate-block',
-          clone: ASSETS_GUARDED_DIR,
-        });
+      const res = useThen(
+        'invoke set --as passed on blocked stone',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'passage-consolidate-block',
+            clone: ASSETS_GUARDED_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // create artifact for blocked stone
-        await fs.writeFile(
-          path.join(tempDir, '2.blocked.md'),
-          '# Blocked artifact\n\ncontent with issues',
-        );
+          // create artifact for blocked stone
+          await fs.writeFile(
+            path.join(tempDir, '2.blocked.md'),
+            '# Blocked artifact\n\ncontent with issues',
+          );
 
-        // invoke skill
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '2.blocked', route: '.', as: 'passed' },
-          cwd: tempDir,
-        });
+          // invoke skill
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '2.blocked', route: '.', as: 'passed' },
+            cwd: tempDir,
+          });
 
-        // read passage.jsonl
-        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8');
+          // read passage.jsonl
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          const passageContent = await fs.readFile(passagePath, 'utf-8');
 
-        // check for old-style blocker.json file
-        const blockerFileExists = await fs
-          .access(path.join(tempDir, '.route', '2.blocked.blocker.json'))
-          .then(() => true)
-          .catch(() => false);
+          // check for old-style blocker.json file
+          const blockerFileExists = await fs
+            .access(path.join(tempDir, '.route', '2.blocked.blocker.json'))
+            .then(() => true)
+            .catch(() => false);
 
-        return { cli, tempDir, passageContent, blockerFileExists };
-      });
+          return { cli, tempDir, passageContent, blockerFileExists };
+        },
+      );
 
       then('cli exits with non-zero code (blocked)', () => {
         expect(res.cli.code).not.toEqual(0);
       });
 
-      then('passage.jsonl contains entry with stone name and status blocked', () => {
-        expect(res.passageContent).toContain('"stone":"2.blocked"');
-        expect(res.passageContent).toContain('"status":"blocked"');
-      });
+      then(
+        'passage.jsonl contains entry with stone name and status blocked',
+        () => {
+          expect(res.passageContent).toContain('"stone":"2.blocked"');
+          expect(res.passageContent).toContain('"status":"blocked"');
+        },
+      );
 
       then('no separate .blocker.json file is created', () => {
         expect(res.blockerFileExists).toBe(false);
@@ -163,40 +178,43 @@ describe('driver.route.passage-consolidation.acceptance', () => {
 
   given('[case2] passage.jsonl is append-only', () => {
     when('[t0] multiple operations on same stone', () => {
-      const res = useThen('invoke approve then pass on same stone', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'passage-append-only',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'invoke approve then pass on same stone',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'passage-append-only',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // create artifact
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+          // create artifact
+          await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
 
-        // first: approve
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'approved' },
-          cwd: tempDir,
-        });
+          // first: approve
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'approved' },
+            cwd: tempDir,
+          });
 
-        // second: pass
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: tempDir,
-        });
+          // second: pass
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: tempDir,
+          });
 
-        // read passage.jsonl
-        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        const passageContent = await fs.readFile(passagePath, 'utf-8');
-        const lines = passageContent.split('\n').filter(Boolean);
+          // read passage.jsonl
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          const passageContent = await fs.readFile(passagePath, 'utf-8');
+          const lines = passageContent.split('\n').filter(Boolean);
 
-        return { cli, tempDir, passageContent, lines };
-      });
+          return { cli, tempDir, passageContent, lines };
+        },
+      );
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
@@ -208,15 +226,18 @@ describe('driver.route.passage-consolidation.acceptance', () => {
         expect(res.passageContent).toContain('"status":"passed"');
       });
 
-      then('entries are in chronological order (approved before passed)', () => {
-        const approvedLine = res.lines.findIndex((l) =>
-          l.includes('"status":"approved"'),
-        );
-        const passedLine = res.lines.findIndex((l) =>
-          l.includes('"status":"passed"'),
-        );
-        expect(approvedLine).toBeLessThan(passedLine);
-      });
+      then(
+        'entries are in chronological order (approved before passed)',
+        () => {
+          const approvedLine = res.lines.findIndex((l) =>
+            l.includes('"status":"approved"'),
+          );
+          const passedLine = res.lines.findIndex((l) =>
+            l.includes('"status":"passed"'),
+          );
+          expect(approvedLine).toBeLessThan(passedLine);
+        },
+      );
     });
   });
 

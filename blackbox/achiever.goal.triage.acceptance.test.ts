@@ -1,14 +1,13 @@
 import * as fs from 'fs/promises';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { execAsync } from './.test/invokeRouteSkill';
 import {
   createGoalYaml,
-  createPartialGoalYaml,
   genTempDirForGoals,
   invokeGoalSkill,
   sanitizeGoalOutputForSnapshot,
 } from './.test/invokeGoalSkill';
+import { execAsync } from './.test/invokeRouteSkill';
 
 /**
  * .what = acceptance tests for goal triage flow via CLI skills
@@ -31,30 +30,33 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t0] first ask is created as a goal', () => {
-      const result = useThen('invoke goal.memory.set for first ask', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'fix-auth-test',
-          why: {
-            ask: 'fix the flaky test in auth.test.ts',
-            purpose: 'ci should pass before merge',
-            benefit: 'team can ship',
-          },
-          what: { outcome: 'auth.test.ts passes reliably' },
-          how: {
-            task: 'run test in isolation, identify flake source',
-            gate: '10 consecutive passes',
-          },
-          status: { choice: 'enqueued', reason: 'goal created from triage' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set for first ask',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'fix-auth-test',
+            why: {
+              ask: 'fix the flaky test in auth.test.ts',
+              purpose: 'ci should pass before merge',
+              benefit: 'team can ship',
+            },
+            what: { outcome: 'auth.test.ts passes reliably' },
+            how: {
+              task: 'run test in isolation, identify flake source',
+              gate: '10 consecutive passes',
+            },
+            status: { choice: 'enqueued', reason: 'goal created from triage' },
+            source: 'peer:human',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'repo' },
-          cwd: scene.tempDir,
-          stdin: goalYaml,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'repo' },
+            cwd: scene.tempDir,
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -70,30 +72,33 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] second ask is created as a goal', () => {
-      const result = useThen('invoke goal.memory.set for second ask', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'update-readme-env',
-          why: {
-            ask: 'update the readme to mention the new env var',
-            purpose: 'docs should be current for new contributors',
-            benefit: 'reduces first-time setup friction',
-          },
-          what: { outcome: 'readme documents the new env var' },
-          how: {
-            task: 'edit readme, add env var to configuration section',
-            gate: 'env var name and example are documented',
-          },
-          status: { choice: 'enqueued', reason: 'goal created from triage' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set for second ask',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'update-readme-env',
+            why: {
+              ask: 'update the readme to mention the new env var',
+              purpose: 'docs should be current for new contributors',
+              benefit: 'reduces first-time setup friction',
+            },
+            what: { outcome: 'readme documents the new env var' },
+            how: {
+              task: 'edit readme, add env var to configuration section',
+              gate: 'env var name and example are documented',
+            },
+            status: { choice: 'enqueued', reason: 'goal created from triage' },
+            source: 'peer:human',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'repo' },
-          cwd: scene.tempDir,
-          stdin: goalYaml,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'repo' },
+            cwd: scene.tempDir,
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -109,30 +114,33 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t2] third ask is created as a goal', () => {
-      const result = useThen('invoke goal.memory.set for third ask', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'notify-slack-done',
-          why: {
-            ask: 'notify me on slack when done',
-            purpose: 'human wants visibility into completion',
-            benefit: 'can move on to next task promptly',
-          },
-          what: { outcome: 'slack message sent upon completion' },
-          how: {
-            task: 'call slack api with completion message',
-            gate: 'slack message delivered',
-          },
-          status: { choice: 'enqueued', reason: 'goal created from triage' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set for third ask',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'notify-slack-done',
+            why: {
+              ask: 'notify me on slack when done',
+              purpose: 'human wants visibility into completion',
+              benefit: 'can move on to next task promptly',
+            },
+            what: { outcome: 'slack message sent upon completion' },
+            how: {
+              task: 'call slack api with completion message',
+              gate: 'slack message delivered',
+            },
+            status: { choice: 'enqueued', reason: 'goal created from triage' },
+            source: 'peer:human',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'repo' },
-          cwd: scene.tempDir,
-          stdin: goalYaml,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'repo' },
+            cwd: scene.tempDir,
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -185,13 +193,16 @@ describe('achiever.goal.triage.acceptance', () => {
         });
       });
 
-      const filterResult = useThen('invoke goal.memory.get --status enqueued', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.get',
-          args: { scope: 'repo', 'status.choice': 'enqueued' },
-          cwd: scene.tempDir,
-        });
-      });
+      const filterResult = useThen(
+        'invoke goal.memory.get --status enqueued',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.get',
+            args: { scope: 'repo', 'status.choice': 'enqueued' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('filtered result excludes inflight goal', () => {
         expect(filterResult.stdout).not.toContain('fix-auth-test');
@@ -200,7 +211,9 @@ describe('achiever.goal.triage.acceptance', () => {
       });
 
       then('filter stdout has good vibes', () => {
-        expect(sanitizeGoalOutputForSnapshot(filterResult.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(filterResult.stdout),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -208,8 +221,12 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case2] triage of asks with goal coverage', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-coverage' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-triage-coverage', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-triage-coverage', {
+        cwd: tempDir,
+      });
 
       // create an ask to cover via hook.onTalk
       await invokeGoalSkill({
@@ -230,28 +247,31 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t0] goal created with coverage hash', () => {
-      const result = useThen('invoke goal.memory.set with --covers', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'complete-task',
-          why: {
-            ask: 'complete this task',
-            purpose: 'task must be done',
-            benefit: 'progress is made',
-          },
-          what: { outcome: 'task is complete' },
-          how: { task: 'do the work', gate: 'work is done' },
-          status: { choice: 'enqueued', reason: 'goal created from triage' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set with --covers',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'complete-task',
+            why: {
+              ask: 'complete this task',
+              purpose: 'task must be done',
+              benefit: 'progress is made',
+            },
+            what: { outcome: 'task is complete' },
+            how: { task: 'do the work', gate: 'work is done' },
+            status: { choice: 'enqueued', reason: 'goal created from triage' },
+            source: 'peer:human',
+          });
 
-        // use the real abbreviated ask hash from the inventory
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'repo', covers: scene.askHash },
-          cwd: scene.tempDir,
-          stdin: goalYaml,
-        });
-      });
+          // use the real abbreviated ask hash from the inventory
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'repo', covers: scene.askHash },
+            cwd: scene.tempDir,
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -271,8 +291,12 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case3] goal status transitions through full lifecycle', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-lifecycle' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-triage-lifecycle', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-triage-lifecycle', {
+        cwd: tempDir,
+      });
 
       // create initial goal
       const goalYaml = createGoalYaml({
@@ -283,7 +307,10 @@ describe('achiever.goal.triage.acceptance', () => {
           benefit: 'confidence in the system',
         },
         what: { outcome: 'all statuses work' },
-        how: { task: 'transition through statuses', gate: 'all transitions succeed' },
+        how: {
+          task: 'transition through statuses',
+          gate: 'all transitions succeed',
+        },
         status: { choice: 'enqueued', reason: 'initial creation' },
         source: 'peer:human',
       });
@@ -299,18 +326,21 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t0] goal transitions to blocked', () => {
-      const result = useThen('invoke goal.memory.set --status blocked', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'lifecycle-goal',
-            'status.choice': 'blocked',
-          },
-          cwd: scene.tempDir,
-          stdin: 'blocked on external dependency',
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set --status blocked',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'lifecycle-goal',
+              'status.choice': 'blocked',
+            },
+            cwd: scene.tempDir,
+            stdin: 'blocked on external dependency',
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -326,18 +356,21 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] goal transitions to inflight', () => {
-      const result = useThen('invoke goal.memory.set --status inflight', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'lifecycle-goal',
-            'status.choice': 'inflight',
-          },
-          cwd: scene.tempDir,
-          stdin: 'dependency resolved, work resumed',
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set --status inflight',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'lifecycle-goal',
+              'status.choice': 'inflight',
+            },
+            cwd: scene.tempDir,
+            stdin: 'dependency resolved, work resumed',
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -353,18 +386,21 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t2] goal transitions to fulfilled', () => {
-      const result = useThen('invoke goal.memory.set --status fulfilled', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'lifecycle-goal',
-            'status.choice': 'fulfilled',
-          },
-          cwd: scene.tempDir,
-          stdin: 'all transitions verified successfully',
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set --status fulfilled',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'lifecycle-goal',
+              'status.choice': 'fulfilled',
+            },
+            cwd: scene.tempDir,
+            stdin: 'all transitions verified successfully',
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -383,23 +419,30 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case4] partial goals via CLI flags', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-partial-flags' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-partial-flags', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-partial-flags', {
+        cwd: tempDir,
+      });
       return { tempDir };
     });
 
     when('[t0] partial goal with slug and one field flag', () => {
-      const result = useThen('invoke goal.memory.set with --slug and --why.ask', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'quick-capture-test',
-            'why.ask': 'fix the flaky test',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with --slug and --why.ask',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'quick-capture-test',
+              'why.ask': 'fix the flaky test',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -431,16 +474,19 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] partial goal with slug only (minimal capture)', () => {
-      const result = useThen('invoke goal.memory.set with only --slug', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'minimal-capture-test',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with only --slug',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'minimal-capture-test',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -468,19 +514,22 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t2] partial goal with multiple field flags', () => {
-      const result = useThen('invoke goal.memory.set with multiple flags', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'multi-field-test',
-            'why.ask': 'fix the flaky test',
-            'why.purpose': 'ci needs to pass',
-            'what.outcome': 'test passes reliably',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with multiple flags',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'multi-field-test',
+              'why.ask': 'fix the flaky test',
+              'why.purpose': 'ci needs to pass',
+              'what.outcome': 'test passes reliably',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -490,9 +539,12 @@ describe('achiever.goal.triage.acceptance', () => {
         expect(result.stdout).toContain('multi-field-test');
       });
 
-      then('stdout shows status.choice = incomplete (still omitted fields)', () => {
-        expect(result.stdout).toContain('choice = incomplete');
-      });
+      then(
+        'stdout shows status.choice = incomplete (still omitted fields)',
+        () => {
+          expect(result.stdout).toContain('choice = incomplete');
+        },
+      );
 
       then('omitted markers only for fields not provided', () => {
         // provided fields should show in treebucket format (content block, not inline = value)
@@ -511,18 +563,21 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t3] update partial goal with additional fields', () => {
-      const result = useThen('invoke goal.memory.set to add more fields', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'quick-capture-test',
-            'why.purpose': 'ci must pass before merge',
-            'why.benefit': 'team can ship',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set to add more fields',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'quick-capture-test',
+              'why.purpose': 'ci must pass before merge',
+              'why.benefit': 'team can ship',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -549,19 +604,22 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t4] complete a partial goal with all rest fields', () => {
-      const result = useThen('invoke goal.memory.set to complete the goal', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'quick-capture-test',
-            'what.outcome': 'test passes 10 consecutive runs',
-            'how.task': 'diagnose flake, apply fix',
-            'how.gate': '10 consecutive passes',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set to complete the goal',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'quick-capture-test',
+              'what.outcome': 'test passes 10 consecutive runs',
+              'how.task': 'diagnose flake, apply fix',
+              'how.gate': '10 consecutive passes',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -586,22 +644,29 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case5] partial goals negative cases', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-partial-negative' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-partial-negative', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-partial-negative', {
+        cwd: tempDir,
+      });
       return { tempDir };
     });
 
     when('[t0] partial goal without slug', () => {
-      const result = useThen('invoke goal.memory.set with field flags but no slug', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            'why.ask': 'fix the flaky test',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with field flags but no slug',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              'why.ask': 'fix the flaky test',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -613,17 +678,20 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] invalid status value', () => {
-      const result = useThen('invoke goal.memory.set with invalid status', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'invalid-status-test',
-            status: 'invalid-status',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with invalid status',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'invalid-status-test',
+              status: 'invalid-status',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -638,8 +706,12 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case6] goal.triage.infer shows incomplete goals separately', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-incomplete' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-triage-incomplete', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-triage-incomplete', {
+        cwd: tempDir,
+      });
 
       // create a complete goal (all required fields)
       const completeGoalYaml = createGoalYaml({
@@ -728,13 +800,16 @@ describe('achiever.goal.triage.acceptance', () => {
         });
       });
 
-      const result = useThen('invoke goal.triage.infer after completion', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'repo' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer after completion',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'repo' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -743,7 +818,9 @@ describe('achiever.goal.triage.acceptance', () => {
       then('stdout does not show incomplete goals section', () => {
         // when all goals are complete, should not have "incomplete goals" section
         // or should show empty
-        expect(result.stdout.toLowerCase()).not.toMatch(/incomplete goals.*\n.*-/);
+        expect(result.stdout.toLowerCase()).not.toMatch(
+          /incomplete goals.*\n.*-/,
+        );
       });
 
       then('stdout has good vibes', () => {
@@ -755,19 +832,26 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case7] goal.triage.infer negative cases', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-negative' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-triage-negative', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-triage-negative', {
+        cwd: tempDir,
+      });
       return { tempDir };
     });
 
     when('[t0] invalid scope value', () => {
-      const result = useThen('invoke goal.triage.infer with invalid scope', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'invalid-scope' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer with invalid scope',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'invalid-scope' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -782,9 +866,13 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case8] route scope goal persistence', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-route-scope' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-route-scope', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-route-scope', {
+        cwd: tempDir,
+      });
 
       // create a .behavior route directory with proper bind flag
       const routeDir = `${tempDir}/.behavior/v2026_04_05.test-route`;
@@ -799,30 +887,33 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t0] goal.memory.set with --scope route within a route', () => {
-      const result = useThen('invoke goal.memory.set --scope route', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'route-scoped-goal',
-          why: {
-            ask: 'test route scope',
-            purpose: 'verify route isolation',
-            benefit: 'confidence in scope behavior',
-          },
-          what: { outcome: 'goal persists in route .goals/' },
-          how: {
-            task: 'create goal with --scope route',
-            gate: 'goal file exists in route .goals/',
-          },
-          status: { choice: 'enqueued', reason: 'route scope test' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set --scope route',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'route-scoped-goal',
+            why: {
+              ask: 'test route scope',
+              purpose: 'verify route isolation',
+              benefit: 'confidence in scope behavior',
+            },
+            what: { outcome: 'goal persists in route .goals/' },
+            how: {
+              task: 'create goal with --scope route',
+              gate: 'goal file exists in route .goals/',
+            },
+            status: { choice: 'enqueued', reason: 'route scope test' },
+            source: 'peer:human',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'route' },
-          cwd: scene.routeDir, // invoke from within the route
-          stdin: goalYaml,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'route' },
+            cwd: scene.routeDir, // invoke from within the route
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -837,36 +928,47 @@ describe('achiever.goal.triage.acceptance', () => {
       });
     });
 
-    when('[t1] goal.memory.get with --scope route retrieves route goals', () => {
-      const result = useThen('invoke goal.memory.get --scope route', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.get',
-          args: { scope: 'route' },
-          cwd: scene.routeDir,
+    when(
+      '[t1] goal.memory.get with --scope route retrieves route goals',
+      () => {
+        const result = useThen(
+          'invoke goal.memory.get --scope route',
+          async () => {
+            return invokeGoalSkill({
+              skill: 'goal.memory.get',
+              args: { scope: 'route' },
+              cwd: scene.routeDir,
+            });
+          },
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
         });
-      });
 
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
+        then('stdout contains the route-scoped goal', () => {
+          expect(result.stdout).toContain('route-scoped-goal');
+        });
 
-      then('stdout contains the route-scoped goal', () => {
-        expect(result.stdout).toContain('route-scoped-goal');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeGoalOutputForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then('stdout has good vibes', () => {
+          expect(
+            sanitizeGoalOutputForSnapshot(result.stdout),
+          ).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t2] goal.triage.infer with --scope route shows route state', () => {
-      const result = useThen('invoke goal.triage.infer --scope route', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'route' },
-          cwd: scene.routeDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer --scope route',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'route' },
+            cwd: scene.routeDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -883,13 +985,16 @@ describe('achiever.goal.triage.acceptance', () => {
 
     when('[t3] route scope isolation from repo scope', () => {
       // repo scope should NOT see route-scoped goals
-      const result = useThen('invoke goal.memory.get --scope repo', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.get',
-          args: { scope: 'repo' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.get --scope repo',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.get',
+            args: { scope: 'repo' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -905,23 +1010,30 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case9] partial goal blocks onStop until complete (journey)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-onstop-incomplete' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-onstop-incomplete', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-onstop-incomplete', {
+        cwd: tempDir,
+      });
       return { tempDir };
     });
 
     when('[t0] partial goal is created', () => {
-      const result = useThen('invoke goal.memory.set with partial goal', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'incomplete-blocks-session',
-            'why.ask': 'test onStop halt behavior',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set with partial goal',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'incomplete-blocks-session',
+              'why.ask': 'test onStop halt behavior',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -937,13 +1049,16 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] hook.onStop fires with incomplete goal', () => {
-      const result = useThen('invoke goal.triage.infer --when hook.onStop', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'repo', when: 'hook.onStop' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer --when hook.onStop',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'repo', when: 'hook.onStop' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 2 (halt)', () => {
         expect(result.code).toEqual(2);
@@ -959,21 +1074,24 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t2] partial goal is completed', () => {
-      const result = useThen('invoke goal.memory.set to complete the goal', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: {
-            scope: 'repo',
-            slug: 'incomplete-blocks-session',
-            'why.purpose': 'verify onStop unblocks',
-            'why.benefit': 'confidence in hook behavior',
-            'what.outcome': 'session can end',
-            'how.task': 'complete all fields',
-            'how.gate': 'onStop exits 0',
-          },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.set to complete the goal',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: {
+              scope: 'repo',
+              slug: 'incomplete-blocks-session',
+              'why.purpose': 'verify onStop unblocks',
+              'why.benefit': 'confidence in hook behavior',
+              'what.outcome': 'session can end',
+              'how.task': 'complete all fields',
+              'how.gate': 'onStop exits 0',
+            },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -992,13 +1110,16 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t3] hook.onStop fires with complete goals', () => {
-      const result = useThen('invoke goal.triage.infer --when hook.onStop after completion', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'repo', when: 'hook.onStop' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer --when hook.onStop after completion',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'repo', when: 'hook.onStop' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0 (pass)', () => {
         expect(result.code).toEqual(0);
@@ -1022,33 +1143,40 @@ describe('achiever.goal.triage.acceptance', () => {
   given('[case10] route scope negative cases', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-route-negative' });
-      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
-      await execAsync('git checkout -b feat/test-route-negative', { cwd: tempDir });
+      await execAsync('npx rhachet roles link --role achiever', {
+        cwd: tempDir,
+      });
+      await execAsync('git checkout -b feat/test-route-negative', {
+        cwd: tempDir,
+      });
       return { tempDir };
     });
 
     when('[t0] --scope route outside a route directory', () => {
-      const result = useThen('invoke goal.memory.set --scope route', async () => {
-        const goalYaml = createGoalYaml({
-          slug: 'should-fail',
-          why: {
-            ask: 'test',
-            purpose: 'test',
-            benefit: 'test',
-          },
-          what: { outcome: 'test' },
-          how: { task: 'test', gate: 'test' },
-          status: { choice: 'enqueued', reason: 'test' },
-          source: 'peer:human',
-        });
+      const result = useThen(
+        'invoke goal.memory.set --scope route',
+        async () => {
+          const goalYaml = createGoalYaml({
+            slug: 'should-fail',
+            why: {
+              ask: 'test',
+              purpose: 'test',
+              benefit: 'test',
+            },
+            what: { outcome: 'test' },
+            how: { task: 'test', gate: 'test' },
+            status: { choice: 'enqueued', reason: 'test' },
+            source: 'peer:human',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.memory.set',
-          args: { scope: 'route' },
-          cwd: scene.tempDir, // NOT in a route directory
-          stdin: goalYaml,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.memory.set',
+            args: { scope: 'route' },
+            cwd: scene.tempDir, // NOT in a route directory
+            stdin: goalYaml,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -1060,13 +1188,16 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] goal.memory.get --scope route outside a route', () => {
-      const result = useThen('invoke goal.memory.get --scope route', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.memory.get',
-          args: { scope: 'route' },
-          cwd: scene.tempDir, // NOT in a route directory
-        });
-      });
+      const result = useThen(
+        'invoke goal.memory.get --scope route',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.memory.get',
+            args: { scope: 'route' },
+            cwd: scene.tempDir, // NOT in a route directory
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -1078,13 +1209,16 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t2] goal.triage.infer --scope route outside a route', () => {
-      const result = useThen('invoke goal.triage.infer --scope route', async () => {
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { scope: 'route' },
-          cwd: scene.tempDir, // NOT in a route directory
-        });
-      });
+      const result = useThen(
+        'invoke goal.triage.infer --scope route',
+        async () => {
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { scope: 'route' },
+            cwd: scene.tempDir, // NOT in a route directory
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);

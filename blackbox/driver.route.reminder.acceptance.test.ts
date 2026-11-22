@@ -73,7 +73,9 @@ const asPidFromStdout = (stdout: string): number => {
 const asPidFromHandle = (handleContent: string): number => {
   const match = handleContent.match(/\d+/);
   if (!match)
-    throw new Error(`no pid found in the reminder handle file: ${handleContent}`);
+    throw new Error(
+      `no pid found in the reminder handle file: ${handleContent}`,
+    );
   return Number(match[0]);
 };
 
@@ -194,37 +196,40 @@ describe('driver.route.reminder.acceptance', () => {
   });
 
   given('[case2] a human asks the gen skill for help', () => {
-    when('[t0] route.reminder.gen --help runs via the real skill wrapper', () => {
-      const res = useThen('invoke the gen skill with --help', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'reminder-gen-help',
-          clone: ASSETS_DIR,
+    when(
+      '[t0] route.reminder.gen --help runs via the real skill wrapper',
+      () => {
+        const res = useThen('invoke the gen skill with --help', async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'reminder-gen-help',
+            clone: ASSETS_DIR,
+          });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
+          const cli = await invokeRouteSkill({
+            skill: 'route.reminder.gen',
+            args: { help: true },
+            cwd: tempDir,
+          });
+          return { cli };
         });
-        await execAsync('npx rhachet roles link --role driver', {
-          cwd: tempDir,
+
+        then('the skill loads and exits clean', () => {
+          expect(res.cli.code).toEqual(0);
         });
-        const cli = await invokeRouteSkill({
-          skill: 'route.reminder.gen',
-          args: { help: true },
-          cwd: tempDir,
+
+        then('it prints the usage block (help on demand)', () => {
+          expect(res.cli.stdout).toContain('route.reminder');
+          expect(res.cli.stdout).toContain('--route');
+          expect(res.cli.stdout).toContain('--clone-addr');
         });
-        return { cli };
-      });
 
-      then('the skill loads and exits clean', () => {
-        expect(res.cli.code).toEqual(0);
-      });
-
-      then('it prints the usage block (help on demand)', () => {
-        expect(res.cli.stdout).toContain('route.reminder');
-        expect(res.cli.stdout).toContain('--route');
-        expect(res.cli.stdout).toContain('--clone-addr');
-      });
-
-      then('the full --help usage block matches its snapshot', () => {
-        expect(scrubReminderStdout(res.cli.stdout)).toMatchSnapshot();
-      });
-    });
+        then('the full --help usage block matches its snapshot', () => {
+          expect(scrubReminderStdout(res.cli.stdout)).toMatchSnapshot();
+        });
+      },
+    );
   });
 
   given(
@@ -426,9 +431,12 @@ describe('driver.route.reminder.acceptance', () => {
             },
           );
 
-          then('route.drive exits clean (the auto-sync never breaks the drive)', () => {
-            expect(res.drive.code).toEqual(0);
-          });
+          then(
+            'route.drive exits clean (the auto-sync never breaks the drive)',
+            () => {
+              expect(res.drive.code).toEqual(0);
+            },
+          );
 
           then('route.drive still surfaces its stone guidance', () => {
             // the reminder sync is auxiliary — the drive's core output is unaffected
@@ -440,10 +448,13 @@ describe('driver.route.reminder.acceptance', () => {
             expect(scrubReminderStdout(res.drive.stdout)).toMatchSnapshot();
           });
 
-          then('the auto-wire wrote the per-session reminder pid handle', () => {
-            // the handle file proves route.drive findserted + spawned the daemon with no manual step
-            expect(res.ls.stdout).toContain('daemon.of=reminder-driveon');
-          });
+          then(
+            'the auto-wire wrote the per-session reminder pid handle',
+            () => {
+              // the handle file proves route.drive findserted + spawned the daemon with no manual step
+              expect(res.ls.stdout).toContain('daemon.of=reminder-driveon');
+            },
+          );
 
           then('a follow-up del reaps the auto-wired reminder cleanly', () => {
             expect(res.del.code).toEqual(0);
@@ -503,16 +514,22 @@ describe('driver.route.reminder.acceptance', () => {
             return { cli };
           });
 
-          then('the daemon self-exits route-complete and logs its reason', () => {
-            // exit 0 proves the full shell chain reached the completion self-exit
-            expect(res.cli.code).toEqual(0);
-            expect(res.cli.stdout).toContain('route.reminder.daemon exited');
-            expect(res.cli.stdout).toContain('reason=route-complete');
-          });
+          then(
+            'the daemon self-exits route-complete and logs its reason',
+            () => {
+              // exit 0 proves the full shell chain reached the completion self-exit
+              expect(res.cli.code).toEqual(0);
+              expect(res.cli.stdout).toContain('route.reminder.daemon exited');
+              expect(res.cli.stdout).toContain('reason=route-complete');
+            },
+          );
 
-          then('the completed-route self-exit stdout matches its snapshot', () => {
-            expect(scrubReminderStdout(res.cli.stdout)).toMatchSnapshot();
-          });
+          then(
+            'the completed-route self-exit stdout matches its snapshot',
+            () => {
+              expect(scrubReminderStdout(res.cli.stdout)).toMatchSnapshot();
+            },
+          );
         },
       );
     },
@@ -635,11 +652,14 @@ describe('driver.route.reminder.acceptance', () => {
             },
           );
 
-          then('it reports the daemon already live, no duplicate spawned', () => {
-            expect(res.cli.code).toEqual(0);
-            expect(res.cli.stdout).toContain('already live');
-            expect(res.cli.stdout).toContain('no duplicate spawned');
-          });
+          then(
+            'it reports the daemon already live, no duplicate spawned',
+            () => {
+              expect(res.cli.code).toEqual(0);
+              expect(res.cli.stdout).toContain('already live');
+              expect(res.cli.stdout).toContain('no duplicate spawned');
+            },
+          );
 
           then('the findsert-hit stdout matches its shell snapshot', () => {
             expect(scrubReminderStdout(res.cli.stdout)).toMatchSnapshot();

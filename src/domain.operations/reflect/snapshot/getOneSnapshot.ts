@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import type { ReflectScope } from '../scope/getReflectScope';
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
 
 /**
  * .what = details of a specific snapshot

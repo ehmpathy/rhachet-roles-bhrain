@@ -1,6 +1,7 @@
 import { UnexpectedCodePathError } from 'helpful-errors';
 
-import { formatRouteDriveHeader } from '../drive/formatRouteDriveHeader';
+import { formatRouteDriveHeader } from '@src/domain.operations/route/drive/formatRouteDriveHeader';
+
 import { asStoneBrainEffort } from './asStoneBrainEffort';
 import { asStoneBrainSlug } from './asStoneBrainSlug';
 import { formatStoneBrainUndispatched } from './formatStoneBrainUndispatched';

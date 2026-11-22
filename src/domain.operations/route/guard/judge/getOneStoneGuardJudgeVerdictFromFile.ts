@@ -1,11 +1,10 @@
 import * as path from 'path';
 
 import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
+import { asGuardArtifactIteration } from '@src/domain.operations/route/guard/artifact/asGuardArtifactIteration';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
+import { asExitCodeFromArtifactContent } from '@src/domain.operations/route/guard/asExitCodeFromArtifactContent';
 import { getOneJudgeArtifactContent } from '@src/domain.operations/route/judges/getOneJudgeArtifactContent';
-
-import { asGuardArtifactIteration } from '../artifact/asGuardArtifactIteration';
-import { asExitCodeClass } from '../asExitCodeClass';
-import { asExitCodeFromArtifactContent } from '../asExitCodeFromArtifactContent';
 
 /**
  * .what = reads one judge file's iteration and exit class, or null if its name carries no

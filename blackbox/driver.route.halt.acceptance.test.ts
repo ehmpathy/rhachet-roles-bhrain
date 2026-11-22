@@ -28,57 +28,62 @@ describe('driver.route.halt.acceptance', () => {
   // DRIVER WALL (--as blocked, no guard blocker) → halt ✋
   // =========================================================================
 
-  given('[case1] a driver-wall blocked stone (status blocked, no blocker)', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'halt-blocked',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-halt-blocked', {
-        cwd: tempDir,
-      });
-      await invokeRouteSkill({
-        skill: 'route.bind.set',
-        args: { route: '.' },
-        cwd: tempDir,
-      });
-      // artifact so the stone is the current (unpassed) stone
-      await fs.writeFile(
-        path.join(tempDir, '1.feature.md'),
-        '# Feature\n\nImplemented.',
-      );
-      // seed a driver wall: status 'blocked' with NO guard blocker
-      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(
-        path.join(tempDir, '.route', 'passage.jsonl'),
-        JSON.stringify({ stone: '1.feature', status: 'blocked' }) + '\n',
-      );
-      return { tempDir };
-    });
-
-    when('[t0] route.drive is invoked in direct mode (no --when)', () => {
-      const result = useThen('route.drive surfaces the wall', async () =>
-        invokeRouteSkill({
-          skill: 'route.drive',
-          args: {},
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0 (direct mode never blocks)', () => {
-        expect(result.code).toEqual(0);
+  given(
+    '[case1] a driver-wall blocked stone (status blocked, no blocker)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'halt-blocked',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-halt-blocked', {
+          cwd: tempDir,
+        });
+        await invokeRouteSkill({
+          skill: 'route.bind.set',
+          args: { route: '.' },
+          cwd: tempDir,
+        });
+        // artifact so the stone is the current (unpassed) stone
+        await fs.writeFile(
+          path.join(tempDir, '1.feature.md'),
+          '# Feature\n\nImplemented.',
+        );
+        // seed a driver wall: status 'blocked' with NO guard blocker
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({ stone: '1.feature', status: 'blocked' }) + '\n',
+        );
+        return { tempDir };
       });
 
-      then('stdout names the driver-wall halt', () => {
-        expect(result.stdout).toContain('marked blocked');
-      });
+      when('[t0] route.drive is invoked in direct mode (no --when)', () => {
+        const result = useThen('route.drive surfaces the wall', async () =>
+          invokeRouteSkill({
+            skill: 'route.drive',
+            args: {},
+            cwd: scene.tempDir,
+          }),
+        );
 
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('exit code is 0 (direct mode never blocks)', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('stdout names the driver-wall halt', () => {
+          expect(result.stdout).toContain('marked blocked');
+        });
+
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   given('[case2] a driver-wall blocked stone, read at onBoot', () => {
     const scene = useBeforeAll(async () => {
@@ -167,12 +172,14 @@ describe('driver.route.halt.acceptance', () => {
     });
 
     when('[t0] route.drive is invoked in direct mode (no --when)', () => {
-      const result = useThen('route.drive surfaces the exhausted halt', async () =>
-        invokeRouteSkill({
-          skill: 'route.drive',
-          args: {},
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'route.drive surfaces the exhausted halt',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.drive',
+            args: {},
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 0 (direct mode never blocks)', () => {
@@ -408,11 +415,14 @@ describe('driver.route.halt.acceptance', () => {
           }),
       );
 
-      then('exit code is 1 (a malfunction escalates, never blocks the stop)', () => {
-        // malfunction is a halt(malfunction) → the stop is allowed (not exit 2),
-        // but the exit-1 escalation code carries the broken state to a human
-        expect(result.code).toEqual(1);
-      });
+      then(
+        'exit code is 1 (a malfunction escalates, never blocks the stop)',
+        () => {
+          // malfunction is a halt(malfunction) → the stop is allowed (not exit 2),
+          // but the exit-1 escalation code carries the broken state to a human
+          expect(result.code).toEqual(1);
+        },
+      );
 
       then('output names the malfunction halt', () => {
         const combined = result.stdout + result.stderr;

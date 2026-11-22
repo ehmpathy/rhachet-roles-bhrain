@@ -1,9 +1,11 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { genTempDir, given, then, when } from 'test-fns';
 
-import { asSnapshotSafe, invokeResearchSkill } from './.test/invokeResearchSkill';
+import {
+  asSnapshotSafe,
+  invokeResearchSkill,
+} from './.test/invokeResearchSkill';
 
 /**
  * .what = create a temp directory ready for init.research tests
@@ -15,7 +17,10 @@ const genResearchTestDir = (input: { slug: string }): string => {
     git: true,
     symlink: [
       // symlink rhachet-roles-bhrain package structure
-      { at: 'node_modules/rhachet-roles-bhrain/package.json', to: 'package.json' },
+      {
+        at: 'node_modules/rhachet-roles-bhrain/package.json',
+        to: 'package.json',
+      },
       { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
     ],
   });
@@ -36,10 +41,13 @@ const genResearchTestDir = (input: { slug: string }): string => {
   );
 
   // link researcher role (sync since genTempDir returns sync)
-  require('child_process').execSync('npx rhachet roles link --role researcher', {
-    cwd: tempDir,
-    stdio: 'pipe',
-  });
+  require('child_process').execSync(
+    'npx rhachet roles link --role researcher',
+    {
+      cwd: tempDir,
+      stdio: 'pipe',
+    },
+  );
 
   // create a feature branch (not main/master)
   require('child_process').execSync('git checkout -b test/init-research', {
@@ -76,7 +84,9 @@ describe('init.research', () => {
         // check research dir created
         const researchDirs = await fs.readdir(path.join(tempDir, '.research'));
         expect(researchDirs.length).toEqual(1);
-        expect(researchDirs[0]).toMatch(/^v\d{4}_\d{2}_\d{2}\.consensus-algorithms$/);
+        expect(researchDirs[0]).toMatch(
+          /^v\d{4}_\d{2}_\d{2}\.consensus-algorithms$/,
+        );
 
         // check templates created
         const researchDir = path.join(tempDir, '.research', researchDirs[0]!);

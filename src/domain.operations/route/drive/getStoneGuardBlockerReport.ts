@@ -1,6 +1,5 @@
 import { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
-
-import { getLatestPassageForStone } from '../passage/getLatestPassageForStone';
+import { getLatestPassageForStone } from '@src/domain.operations/route/passage/getLatestPassageForStone';
 
 /**
  * .what = reads the blocker report for a stone

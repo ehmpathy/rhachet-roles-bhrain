@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import { UnexpectedCodePathError } from 'helpful-errors';
 
-import { isEEXIST } from '../guard/isEEXIST';
+import { isEEXIST } from '@src/domain.operations/route/guard/isEEXIST';
+
 import {
   asReapClaimPath,
   delAbandonedDriveStateLock,

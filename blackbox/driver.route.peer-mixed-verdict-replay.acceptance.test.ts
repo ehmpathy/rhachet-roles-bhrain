@@ -63,7 +63,11 @@ describe('driver.route.peer-mixed-verdict-replay.acceptance', () => {
         //    no review round runs, l1 never spends its budget, and l3 never unlocks to
         //    malfunction. the mixed-verdict halt this suite replays would then never
         //    occur — and [t0]/[t1] would assert against a bare, unrelated halt
-        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -88,12 +92,15 @@ describe('driver.route.peer-mixed-verdict-replay.acceptance', () => {
         }),
       );
 
-      then('CLAMP: replay names BOTH the malfunction AND the exhaustion', () => {
-        // .why = the bare replay message dropped the reason entirely; the fix must
-        //        carry every reason that co-occurs to the second surface too
-        expect(result.stdout).toMatch(/malfunction/i);
-        expect(result.stdout).toContain('budget exhausted');
-      });
+      then(
+        'CLAMP: replay names BOTH the malfunction AND the exhaustion',
+        () => {
+          // .why = the bare replay message dropped the reason entirely; the fix must
+          //        carry every reason that co-occurs to the second surface too
+          expect(result.stdout).toMatch(/malfunction/i);
+          expect(result.stdout).toContain('budget exhausted');
+        },
+      );
 
       then('CLAMP: replay offers the overrule remedy', () => {
         expect(result.stdout).toContain('overrule the malfunction');

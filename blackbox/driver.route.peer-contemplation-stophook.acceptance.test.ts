@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-contemplation',
+);
 
 /**
  * .what = extracts the shared reply-prompt block from a surface's stdout
@@ -41,7 +44,9 @@ describe('driver.route.peer-contemplation-stophook.acceptance', () => {
         clone: ASSETS_DIR,
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blocker.sh', {
+        cwd: tempDir,
+      });
       await execAsync('chmod +x .test/mock-review-clean.sh', { cwd: tempDir });
       await fs.writeFile(
         path.join(tempDir, '1.execute.md'),
@@ -51,27 +56,30 @@ describe('driver.route.peer-contemplation-stophook.acceptance', () => {
     });
 
     when('[t0] the driver reaches the halt via all three surfaces', () => {
-      const result = useThen('each surface emits the reply-prompt', async () => {
-        // surface A: --as passed (also persists the contemplation blocker)
-        const passed = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-        // surface B: --as arrived (aliases to passed)
-        const arrived = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'arrived' },
-          cwd: scene.tempDir,
-        });
-        // surface C: the stophook (route.drive onStop reads the persisted blocker)
-        const stophook = await invokeRouteSkill({
-          skill: 'route.drive',
-          args: { route: '.', when: 'hook.onStop' },
-          cwd: scene.tempDir,
-        });
-        return { passed, arrived, stophook };
-      });
+      const result = useThen(
+        'each surface emits the reply-prompt',
+        async () => {
+          // surface A: --as passed (also persists the contemplation blocker)
+          const passed = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+          // surface B: --as arrived (aliases to passed)
+          const arrived = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'arrived' },
+            cwd: scene.tempDir,
+          });
+          // surface C: the stophook (route.drive onStop reads the persisted blocker)
+          const stophook = await invokeRouteSkill({
+            skill: 'route.drive',
+            args: { route: '.', when: 'hook.onStop' },
+            cwd: scene.tempDir,
+          });
+          return { passed, arrived, stophook };
+        },
+      );
 
       then('all three surfaces block (exit 2)', () => {
         expect(result.passed.code).toEqual(2);
@@ -80,8 +88,12 @@ describe('driver.route.peer-contemplation-stophook.acceptance', () => {
       });
 
       then('each surface renders the reply-prompt', () => {
-        expect(result.passed.stdout).toContain('the reviewers await your reply');
-        expect(result.arrived.stdout).toContain('the reviewers await your reply');
+        expect(result.passed.stdout).toContain(
+          'the reviewers await your reply',
+        );
+        expect(result.arrived.stdout).toContain(
+          'the reviewers await your reply',
+        );
         expect(result.stophook.stdout).toContain(
           'the reviewers await your reply',
         );

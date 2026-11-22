@@ -1,6 +1,6 @@
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import { getOneCacheSafePeerReviewArtifact } from '@src/domain.operations/route/guard/review/peer/getOneCacheSafePeerReviewArtifact';
 
-import { getOneCacheSafePeerReviewArtifact } from '../getOneCacheSafePeerReviewArtifact';
 import { computeReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { isReviewPeerSkippedForBudget } from './isReviewPeerSkippedForBudget';
 

@@ -1,7 +1,7 @@
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { compareStonePrefix } from '@src/domain.operations/route/stones/compareStonePrefix';
+import { getStoneOrderPrefixFromName } from '@src/domain.operations/route/stones/computeStoneOrderPrefix';
 
-import { compareStonePrefix } from '../stones/compareStonePrefix';
-import { getStoneOrderPrefixFromName } from '../stones/computeStoneOrderPrefix';
 import { getAllPassageReportsRaw } from './getAllPassageReportsRaw';
 
 /**

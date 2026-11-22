@@ -81,11 +81,14 @@ describe('review.brain-stale.acceptance', () => {
         invokeReviewWithStaleBrain({ cwd: scene.tempDir, home: scene.home }),
       );
 
-      then('CLAMP: exit 2 — a constraint the caller fixes, never a malfunction', () => {
-        // .why = a stale slug is caller-fixable. a bare `not.toEqual(0)` would also pass for
-        //        exit 1, the code an uncaught crash returns
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'CLAMP: exit 2 — a constraint the caller fixes, never a malfunction',
+        () => {
+          // .why = a stale slug is caller-fixable. a bare `not.toEqual(0)` would also pass for
+          //        exit 1, the code an uncaught crash returns
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('CLAMP: the refusal names the stale slug', () => {
         const output = result.stdout + result.stderr;
@@ -104,7 +107,9 @@ describe('review.brain-stale.acceptance', () => {
 
       then('the rendered refusal is pinned', () => {
         const output = sanitizeTimeForSnapshot(result.stdout + result.stderr);
-        expect(asRefusalBlock({ output, hint: REFUSAL_HINT })).toMatchSnapshot();
+        expect(
+          asRefusalBlock({ output, hint: REFUSAL_HINT }),
+        ).toMatchSnapshot();
       });
     });
   });

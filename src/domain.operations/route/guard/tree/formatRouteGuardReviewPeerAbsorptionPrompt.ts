@@ -1,7 +1,8 @@
-import { ABSORPTION_CONCEDE_SEQUENCE } from '../review/peer/absorptionConcedeSequence';
-import { asRouteStoneStanceCommand } from '../review/peer/asRouteStoneStanceCommand';
-import { computeTotalUndeclaredConcerns } from '../review/peer/computeTotalUndeclaredConcerns';
-import type { RouteGuardReviewPeerUndeclared } from '../review/peer/computeUndeclaredConcerns';
+import { ABSORPTION_CONCEDE_SEQUENCE } from '@src/domain.operations/route/guard/review/peer/absorptionConcedeSequence';
+import { asRouteStoneStanceCommand } from '@src/domain.operations/route/guard/review/peer/asRouteStoneStanceCommand';
+import { computeTotalUndeclaredConcerns } from '@src/domain.operations/route/guard/review/peer/computeTotalUndeclaredConcerns';
+import type { RouteGuardReviewPeerUndeclared } from '@src/domain.operations/route/guard/review/peer/computeUndeclaredConcerns';
+
 import { asBranchBodyLines } from './asBranchBodyLines';
 import { asReviewPeerLaneHeadLines } from './asReviewPeerLaneHeadLines';
 

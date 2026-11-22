@@ -11,7 +11,7 @@ import {
   when,
 } from 'test-fns';
 
-import { genContextReviewBrainSupplyDemo } from './__test_assets__/genContextReviewBrainSupplyDemo';
+import { genContextReviewBrainSupplyDemo } from './.test.assets/genContextReviewBrainSupplyDemo';
 import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
 import { getRouteInflight } from './drive/getRouteInflight';
 import { asRouteStoneSetCommandHead } from './guard/review/peer/asRouteStoneSetCommandHead';

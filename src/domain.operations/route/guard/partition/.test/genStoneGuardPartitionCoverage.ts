@@ -1,9 +1,9 @@
 import { asReviewPartitionsFromFlags } from '@src/domain.operations/review/partition/asReviewPartitionsFromFlags';
 import { getAllTargetsByPartition } from '@src/domain.operations/review/partition/getAllTargetsByPartition';
 
-import { asStoneGuardPartitionGap } from '../asStoneGuardPartitionGap';
-import type { StoneGuardPartitionCoverage } from '../getOneStoneGuardPartitionCoverage';
-import type { RouteGuardPartitionScope } from '../RouteGuardPartitionScope';
+import { asStoneGuardPartitionGap } from '@src/domain.operations/route/guard/partition/asStoneGuardPartitionGap';
+import type { StoneGuardPartitionCoverage } from '@src/domain.operations/route/guard/partition/getOneStoneGuardPartitionCoverage';
+import type { RouteGuardPartitionScope } from '@src/domain.operations/route/guard/partition/RouteGuardPartitionScope';
 
 /**
  * .what = a coverage fixture built through the real pure splitter and gap transformers

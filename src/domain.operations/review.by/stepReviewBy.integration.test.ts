@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
-import { genContextReviewBrainSupplyDemo } from '../route/__test_assets__/genContextReviewBrainSupplyDemo';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+
 import { stepReviewBy } from './stepReviewBy';
 
 /**

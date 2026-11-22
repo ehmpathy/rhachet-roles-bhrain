@@ -1,9 +1,9 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { getAllStoneGuardJudgeVerdicts } from '@src/domain.operations/route/guard/judge/getAllStoneGuardJudgeVerdicts';
+import { isJudgeRungHeld } from '@src/domain.operations/route/guard/judge/isJudgeRungHeld';
+import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 
-import { getStoneGuardOverruledLevels } from '../../judges/getStoneGuardOverruledLevels';
-import { getAllStoneGuardJudgeVerdicts } from '../judge/getAllStoneGuardJudgeVerdicts';
-import { isJudgeRungHeld } from '../judge/isJudgeRungHeld';
 import { computeStoneReviewInputHash } from './computeStoneReviewInputHash';
 import {
   computeReviewActiveLevel,

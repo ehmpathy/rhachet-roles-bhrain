@@ -1,4 +1,4 @@
-import { getAllPassageReportsRaw } from '../../passage/getAllPassageReportsRaw';
+import { getAllPassageReportsRaw } from '@src/domain.operations/route/passage/getAllPassageReportsRaw';
 
 /**
  * .what = a stone's rewind generation — how many times it has been rewound

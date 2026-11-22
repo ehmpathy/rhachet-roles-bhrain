@@ -1,4 +1,5 @@
-import type { ReviewPeerVerdict } from '../review/peer/meter/computeReviewPeerVerdict';
+import type { ReviewPeerVerdict } from '@src/domain.operations/route/guard/review/peer/meter/computeReviewPeerVerdict';
+
 import { computeStoneGuardExhaustedApprovalBypass } from './computeStoneGuardExhaustedApprovalBypass';
 
 /**

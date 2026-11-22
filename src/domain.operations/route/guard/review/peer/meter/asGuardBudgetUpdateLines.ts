@@ -1,4 +1,4 @@
-import { asMeterCountDisplay } from '../../../asMeterCountDisplay';
+import { asMeterCountDisplay } from '@src/domain.operations/route/guard/asMeterCountDisplay';
 
 /**
  * the suffix on a budget line for a lane a DISPUTE has quieted.

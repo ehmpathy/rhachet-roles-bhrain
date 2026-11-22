@@ -1,8 +1,8 @@
 import path from 'path';
 
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import type { ReviewerBrainRow } from './asReviewerBrains';
 import { asReviewerBrains } from './asReviewerBrains';
 import { dispatchBrainSwitch } from './dispatchBrainSwitch';

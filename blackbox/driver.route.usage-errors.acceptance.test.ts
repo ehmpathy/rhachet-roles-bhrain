@@ -52,11 +52,14 @@ describe('driver.route.usage-errors.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the caller must fix the value)', () => {
-        // a malformed --add is bad user input, not a server malfunction:
-        // exit 2 per rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint)
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must fix the value)',
+        () => {
+          // a malformed --add is bad user input, not a server malfunction:
+          // exit 2 per rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint)
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the error is on stderr, not stdout', () => {
         // rule.forbid.stdout-on-exit-errors: stdout may be hidden on a non-zero exit
@@ -84,17 +87,22 @@ describe('driver.route.usage-errors.acceptance', () => {
     });
 
     when('[t0] the grant action is not allow|block|get', () => {
-      const result = useThen('the mutate command rejects the action', async () =>
-        invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'bogus' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'the mutate command rejects the action',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'bogus' },
+            cwd: scene.tempDir,
+          }),
       );
 
-      then('exit code is 2 (constraint — the caller must fix the action)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must fix the action)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the usage guidance is on stderr, not stdout', () => {
         // rule.forbid.stdout-on-exit-errors: the usage text is an error path
@@ -120,12 +128,15 @@ describe('driver.route.usage-errors.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('🔴 the refusal opens with the qualified header, never bare `error:`', () => {
-        expect(result.stderr).toContain(
-          '✋ ConstraintError: no bound route found. use --route to specify.',
-        );
-        expect(result.stderr).not.toContain('error: no bound route');
-      });
+      then(
+        '🔴 the refusal opens with the qualified header, never bare `error:`',
+        () => {
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: no bound route found. use --route to specify.',
+          );
+          expect(result.stderr).not.toContain('error: no bound route');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('mutate grant route unbound');
@@ -147,12 +158,14 @@ describe('driver.route.usage-errors.acceptance', () => {
     });
 
     when('[t0] the required --add flag is omitted', () => {
-      const result = useThen('the budget command rejects the invocation', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.budget',
-          args: { for: 'review', stone: '1.feature' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'the budget command rejects the invocation',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.budget',
+            args: { for: 'review', stone: '1.feature' },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 2 (constraint — the caller must add the flag)', () => {
@@ -173,12 +186,14 @@ describe('driver.route.usage-errors.acceptance', () => {
     });
 
     when('[t1] --help is asked with no other flag', () => {
-      const result = useThen('the budget command answers with its usage', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.budget',
-          args: { help: true },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'the budget command answers with its usage',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.budget',
+            args: { help: true },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 0 (a help request is not a refusal)', () => {
@@ -186,7 +201,9 @@ describe('driver.route.usage-errors.acceptance', () => {
       });
 
       then('🔴 the usage is on stdout, and no absent --for is blamed', () => {
-        expect(result.stdout).toContain('route.guard.budget - extend peer reviewer budget');
+        expect(result.stdout).toContain(
+          'route.guard.budget - extend peer reviewer budget',
+        );
         expect(result.stdout).toContain('--level');
         expect(result.stderr).not.toContain('--for is required');
       });
@@ -303,13 +320,16 @@ describe('driver.route.usage-errors.acceptance', () => {
           expect(result.code).toEqual(2);
         });
 
-        then('stderr opens with the qualified ConstraintError header, framed where owed', () => {
-          const lead = refusal.frame ? FRAME_OF_REFUSAL : '';
-          expect(result.stderr.startsWith(`${lead}${refusal.header}`)).toEqual(
-            true,
-          );
-          expect(result.stdout).not.toContain('ConstraintError');
-        });
+        then(
+          'stderr opens with the qualified ConstraintError header, framed where owed',
+          () => {
+            const lead = refusal.frame ? FRAME_OF_REFUSAL : '';
+            expect(
+              result.stderr.startsWith(`${lead}${refusal.header}`),
+            ).toEqual(true);
+            expect(result.stdout).not.toContain('ConstraintError');
+          },
+        );
 
         then('stderr matches snapshot', () => {
           expect(result.stderr).toMatchSnapshot(refusal.snapshot);
@@ -318,46 +338,60 @@ describe('driver.route.usage-errors.acceptance', () => {
     );
   });
 
-  given('[case13] route.guard.budget on a route whose guards name other stones', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'usage-budget-stoneless',
-        clone: path.join(__dirname, '.test/assets/route-peer-budget-multilevel'),
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-usage-budget-stoneless', {
-        cwd: tempDir,
-      });
-      return { tempDir };
-    });
-
-    when('[t0] --stone names a stone with no guard file', () => {
-      const result = useThen('the budget command refuses', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', stone: '9.absent', route: '.' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 2 (constraint — the caller must name a guarded stone)', () => {
-        expect(result.code).toEqual(2);
-      });
-
-      then('stderr opens with the owl frame, then the qualified ConstraintError header', () => {
-        expect(
-          result.stderr.startsWith(
-            `${FRAME_OF_REFUSAL}✋ ConstraintError: no guard file found for stone 9.absent`,
+  given(
+    '[case13] route.guard.budget on a route whose guards name other stones',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'usage-budget-stoneless',
+          clone: path.join(
+            __dirname,
+            '.test/assets/route-peer-budget-multilevel',
           ),
-        ).toEqual(true);
-        expect(result.stdout).not.toContain('ConstraintError');
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-usage-budget-stoneless', {
+          cwd: tempDir,
+        });
+        return { tempDir };
       });
 
-      then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('budget stone unguarded');
+      when('[t0] --stone names a stone with no guard file', () => {
+        const result = useThen('the budget command refuses', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.budget',
+            args: { for: 'review', add: '2', stone: '9.absent', route: '.' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then(
+          'exit code is 2 (constraint — the caller must name a guarded stone)',
+          () => {
+            expect(result.code).toEqual(2);
+          },
+        );
+
+        then(
+          'stderr opens with the owl frame, then the qualified ConstraintError header',
+          () => {
+            expect(
+              result.stderr.startsWith(
+                `${FRAME_OF_REFUSAL}✋ ConstraintError: no guard file found for stone 9.absent`,
+              ),
+            ).toEqual(true);
+            expect(result.stdout).not.toContain('ConstraintError');
+          },
+        );
+
+        then('stderr matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot('budget stone unguarded');
+        });
       });
-    });
-  });
+    },
+  );
 
   /**
    * 🔴 .the three cases below are the CLAMP on i005/r009 n1 + n2.
@@ -484,23 +518,32 @@ describe('driver.route.usage-errors.acceptance', () => {
           }),
       );
 
-      then('exit code is 2 (constraint — the caller must fix the value)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must fix the value)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
-      then('🔴 the error names BOTH the value given and the value wanted', () => {
-        // rule.require.errors-name-the-fix: the bare form named only what was typed, so a driver
-        // who did not already know the one legal value had to guess (raised i005/r009 n1)
-        expect(result.stderr).toContain('reveiw');
-        expect(result.stderr).toContain('"review"');
-      });
+      then(
+        '🔴 the error names BOTH the value given and the value wanted',
+        () => {
+          // rule.require.errors-name-the-fix: the bare form named only what was typed, so a driver
+          // who did not already know the one legal value had to guess (raised i005/r009 n1)
+          expect(result.stderr).toContain('reveiw');
+          expect(result.stderr).toContain('"review"');
+        },
+      );
 
-      then('🔴 a wrong value earns the same guidance an absent one does', () => {
-        // the defect this clamps: a four-way split on one command, where an omitted flag taught
-        // the gate and a typo'd one taught naught
-        expect(result.stderr).toContain('route.guard.budget');
-        expect(result.stdout).not.toContain('route.guard.budget');
-      });
+      then(
+        '🔴 a wrong value earns the same guidance an absent one does',
+        () => {
+          // the defect this clamps: a four-way split on one command, where an omitted flag taught
+          // the gate and a typo'd one taught naught
+          expect(result.stderr).toContain('route.guard.budget');
+          expect(result.stdout).not.toContain('route.guard.budget');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('budget --for wrong value');
@@ -560,7 +603,9 @@ describe('driver.route.usage-errors.acceptance', () => {
         // the whole reason --help matters here: the warrant rules are NEW, so a driver types
         // --help precisely to learn them
         expect(result.stdout).toContain('the grant is REFUSED by default');
-        expect(result.stdout).toContain('a live URGENT concession on the stone');
+        expect(result.stdout).toContain(
+          'a live URGENT concession on the stone',
+        );
         expect(result.stdout).toContain('a target reviewer that has run dry');
         expect(result.stdout).toContain('a --stone that named one stone');
       });
@@ -648,12 +693,14 @@ describe('driver.route.usage-errors.acceptance', () => {
     });
 
     when('[t0] --route is passed and --stone is not', () => {
-      const result = useThen('the get command refuses the invocation', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.get',
-          args: { route: '.' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'the get command refuses the invocation',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.get',
+            args: { route: '.' },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 2 (constraint — the caller forgot a flag)', () => {
@@ -662,18 +709,21 @@ describe('driver.route.usage-errors.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('the refusal is on stderr, not stdout, and classed caller-fault', () => {
-        // 🔴 .why the class is pinned beside the message = `error: <Class>: <message>` is
-        //    this repo's failloud render, and the class names WHO must fix it —
-        //    `BadRequestError` says the caller, `MalfunctionError` says the server
-        //    (`rule.require.failloud`). a bare message assertion would stay green through
-        //    a re-class, so the driver would be told the opposite of the truth about
-        //    whose fault it is while the suite reported no change
-        expect(result.stderr).toContain(
-          '✋ ConstraintError: --stone is required',
-        );
-        expect(result.stdout).not.toContain('--stone is required');
-      });
+      then(
+        'the refusal is on stderr, not stdout, and classed caller-fault',
+        () => {
+          // 🔴 .why the class is pinned beside the message = `error: <Class>: <message>` is
+          //    this repo's failloud render, and the class names WHO must fix it —
+          //    `BadRequestError` says the caller, `MalfunctionError` says the server
+          //    (`rule.require.failloud`). a bare message assertion would stay green through
+          //    a re-class, so the driver would be told the opposite of the truth about
+          //    whose fault it is while the suite reported no change
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: --stone is required',
+          );
+          expect(result.stdout).not.toContain('--stone is required');
+        },
+      );
 
       then('no stack trace, no absolute path, no node version', () => {
         // 🔴 the three artifacts of the crash this boundary replaced. each is asserted
@@ -716,15 +766,18 @@ describe('driver.route.usage-errors.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('the refusal names the flag, on stderr, classed caller-fault', () => {
-        // .why the class rides along = see the peer note in [case6]; the class is the
-        //    half that says whose fault it is, and it is the half a bare message
-        //    assertion cannot hold
-        expect(result.stderr).toContain(
-          '✋ ConstraintError: --mechanism is required',
-        );
-        expect(result.stdout).not.toContain('--mechanism is required');
-      });
+      then(
+        'the refusal names the flag, on stderr, classed caller-fault',
+        () => {
+          // .why the class rides along = see the peer note in [case6]; the class is the
+          //    half that says whose fault it is, and it is the half a bare message
+          //    assertion cannot hold
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: --mechanism is required',
+          );
+          expect(result.stdout).not.toContain('--mechanism is required');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('stone.judge --mechanism absent');
@@ -749,12 +802,15 @@ describe('driver.route.usage-errors.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('the refusal names the flag, on stderr, classed caller-fault', () => {
-        expect(result.stderr).toContain(
-          '✋ ConstraintError: --stone is required',
-        );
-        expect(result.stdout).not.toContain('--stone is required');
-      });
+      then(
+        'the refusal names the flag, on stderr, classed caller-fault',
+        () => {
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: --stone is required',
+          );
+          expect(result.stdout).not.toContain('--stone is required');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('stone.judge --stone absent');
@@ -789,46 +845,54 @@ describe('driver.route.usage-errors.acceptance', () => {
     });
   });
 
-  given('[case8] route.stone.set with an --as the contract does not name', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'usage-stone-set-badas',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-usage-stone-set', {
-        cwd: tempDir,
-      });
-      return { tempDir };
-    });
-
-    when('[t0] --as carries a value outside the allowed set', () => {
-      const result = useThen('the set command refuses the action', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.feature', route: '.', as: 'bogus' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 2 (constraint — the caller must fix the value)', () => {
-        expect(result.code).toEqual(2);
+  given(
+    '[case8] route.stone.set with an --as the contract does not name',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'usage-stone-set-badas',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-usage-stone-set', {
+          cwd: tempDir,
+        });
+        return { tempDir };
       });
 
-      then('the refusal enumerates the allowed actions, on stderr', () => {
-        // 🔴 .why enumerated = `rule.require.errors-name-the-fix`. a bare "invalid --as"
-        //    tells the driver naught about what to type instead, and this message is the
-        //    one place the full passage vocabulary is rendered to a human
-        expect(result.stderr).toContain('--as must be');
-        expect(result.stderr).toContain('"promised"');
-        expect(result.stdout).not.toContain('--as must be');
-      });
+      when('[t0] --as carries a value outside the allowed set', () => {
+        const result = useThen('the set command refuses the action', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.feature', route: '.', as: 'bogus' },
+            cwd: scene.tempDir,
+          }),
+        );
 
-      then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('stone.set --as invalid');
+        then(
+          'exit code is 2 (constraint — the caller must fix the value)',
+          () => {
+            expect(result.code).toEqual(2);
+          },
+        );
+
+        then('the refusal enumerates the allowed actions, on stderr', () => {
+          // 🔴 .why enumerated = `rule.require.errors-name-the-fix`. a bare "invalid --as"
+          //    tells the driver naught about what to type instead, and this message is the
+          //    one place the full passage vocabulary is rendered to a human
+          expect(result.stderr).toContain('--as must be');
+          expect(result.stderr).toContain('"promised"');
+          expect(result.stdout).not.toContain('--as must be');
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot('stone.set --as invalid');
+        });
       });
-    });
-  });
+    },
+  );
 
   given('[case9] route.bind.set with --route omitted', () => {
     const scene = useBeforeAll(async () => {
@@ -897,62 +961,72 @@ describe('driver.route.usage-errors.acceptance', () => {
    *            a real flag with its own refusals elsewhere in the corpus, so a pin here
    *            would grade that verb rather than the shared boundary.
    */
-  given('[case10] a bare --into on subcommands that do not own the flag', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'usage-bare-into',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-usage-bare-into', {
-        cwd: tempDir,
-      });
-      return { tempDir };
-    });
-
-    const SUBCOMMANDS = [
-      'route.stone.get',
-      'route.drive',
-      'route.bind.get',
-      'route.guard.upgrade',
-    ] as const;
-
-    for (const skill of SUBCOMMANDS) {
-      when(`[t0] ${skill} is invoked with a bare --into`, () => {
-        const result = useThen(`${skill} refuses the bare flag`, async () =>
-          invokeRouteSkill({
-            skill,
-            args: { into: true },
-            cwd: scene.tempDir,
-          }),
-        );
-
-        then('exit code is 2 (constraint — the caller must fix the flag)', () => {
-          expect(result.code).toEqual(2);
+  given(
+    '[case10] a bare --into on subcommands that do not own the flag',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'usage-bare-into',
+          clone: ASSETS_DIR,
         });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-usage-bare-into', {
+          cwd: tempDir,
+        });
+        return { tempDir };
+      });
 
-        then('the refusal is the shared one, on stderr', () => {
-          // 🔴 the same three lines on every verb — that sameness IS the claim. a
-          //    per-verb hint here would be decoy guidance for a command the driver
-          //    never ran, which is why the boundary keeps its message generic
-          expect(result.stderr).toContain(
-            '✋ ConstraintError: --into given with no value',
+      const SUBCOMMANDS = [
+        'route.stone.get',
+        'route.drive',
+        'route.bind.get',
+        'route.guard.upgrade',
+      ] as const;
+
+      for (const skill of SUBCOMMANDS) {
+        when(`[t0] ${skill} is invoked with a bare --into`, () => {
+          const result = useThen(`${skill} refuses the bare flag`, async () =>
+            invokeRouteSkill({
+              skill,
+              args: { into: true },
+              cwd: scene.tempDir,
+            }),
           );
-          expect(result.stderr).toContain('fix: --into <value>, or see --help');
-          expect(result.stdout).not.toContain('--into given with no value');
-        });
 
-        then('no stack trace, no node version', () => {
-          expect(result.stderr).not.toContain('at Object.');
-          expect(result.stderr).not.toContain('Node.js v');
-        });
+          then(
+            'exit code is 2 (constraint — the caller must fix the flag)',
+            () => {
+              expect(result.code).toEqual(2);
+            },
+          );
 
-        then('stderr matches snapshot', () => {
-          expect(result.stderr).toMatchSnapshot(`${skill} bare --into`);
+          then('the refusal is the shared one, on stderr', () => {
+            // 🔴 the same three lines on every verb — that sameness IS the claim. a
+            //    per-verb hint here would be decoy guidance for a command the driver
+            //    never ran, which is why the boundary keeps its message generic
+            expect(result.stderr).toContain(
+              '✋ ConstraintError: --into given with no value',
+            );
+            expect(result.stderr).toContain(
+              'fix: --into <value>, or see --help',
+            );
+            expect(result.stdout).not.toContain('--into given with no value');
+          });
+
+          then('no stack trace, no node version', () => {
+            expect(result.stderr).not.toContain('at Object.');
+            expect(result.stderr).not.toContain('Node.js v');
+          });
+
+          then('stderr matches snapshot', () => {
+            expect(result.stderr).toMatchSnapshot(`${skill} bare --into`);
+          });
         });
-      });
-    }
-  });
+      }
+    },
+  );
 
   given('[case11] route.review with an --open the host does not hold', () => {
     const scene = useBeforeAll(async () => {
@@ -979,9 +1053,12 @@ describe('driver.route.usage-errors.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the caller must fix the opener)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must fix the opener)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the refusal quotes the opener back, on stderr', () => {
         // 🔴 .why this is its own case = this branch refuses BEFORE the inner try, so

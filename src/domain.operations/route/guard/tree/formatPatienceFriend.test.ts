@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { getSelfReviewArticulationPath } from '../review/self/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from '@src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
+
 import { formatPatienceFriend } from './formatPatienceFriend';
 
 describe('formatPatienceFriend', () => {

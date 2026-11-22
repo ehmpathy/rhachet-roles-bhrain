@@ -1,4 +1,5 @@
-import { getAllReviewLevelsAsc } from '../../getAllReviewLevelsAsc';
+import { getAllReviewLevelsAsc } from '@src/domain.operations/route/guard/review/getAllReviewLevelsAsc';
+
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { isLevelOverruled } from './isLevelOverruled';
 import { isReviewPeerVerdictTerminal } from './isReviewPeerVerdictTerminal';

@@ -42,7 +42,9 @@ describe('driver.route.judge-overrule-peer.acceptance', () => {
         });
         await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
         await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
-        await execAsync('chmod +x .test/mock-judge-exit-1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-judge-exit-1.sh', {
+          cwd: tempDir,
+        });
 
         await fs.writeFile(
           path.join(tempDir, '1.feature.md'),
@@ -52,36 +54,39 @@ describe('driver.route.judge-overrule-peer.acceptance', () => {
         return { tempDir };
       });
 
-      when('[t0] initial pass attempted (peers pass, judge malfunctions)', () => {
-        const result = useThen(
-          'pass fails due to judge malfunction',
-          async () =>
-            invokeRouteSkill({
-              skill: 'route.stone.set',
-              args: { stone: '1.feature', route: '.', as: 'passed' },
-              cwd: scene.tempDir,
-            }),
-        );
+      when(
+        '[t0] initial pass attempted (peers pass, judge malfunctions)',
+        () => {
+          const result = useThen(
+            'pass fails due to judge malfunction',
+            async () =>
+              invokeRouteSkill({
+                skill: 'route.stone.set',
+                args: { stone: '1.feature', route: '.', as: 'passed' },
+                cwd: scene.tempDir,
+              }),
+          );
 
-        then('exit code is 2 (constraint block), not 1', () => {
-          // .why = a malfunctioned judge yields passage = malfunction, which blocks the stone with
-          //        exit 2 (a human must overrule) — pin the precise code, not merely non-zero
-          expect(result.code).toEqual(2);
-        });
+          then('exit code is 2 (constraint block), not 1', () => {
+            // .why = a malfunctioned judge yields passage = malfunction, which blocks the stone with
+            //        exit 2 (a human must overrule) — pin the precise code, not merely non-zero
+            expect(result.code).toEqual(2);
+          });
 
-        then('passage is malfunction', () => {
-          expect(result.stdout).toContain('passage = malfunction');
-        });
+          then('passage is malfunction', () => {
+            expect(result.stdout).toContain('passage = malfunction');
+          });
 
-        then('both peer reviewers ran and cleared', () => {
-          expect(result.stdout).toContain('basic-checker');
-          expect(result.stdout).toContain('premium-checker');
-        });
+          then('both peer reviewers ran and cleared', () => {
+            expect(result.stdout).toContain('basic-checker');
+            expect(result.stdout).toContain('premium-checker');
+          });
 
-        then('snapshot matches', () => {
-          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-        });
-      });
+          then('snapshot matches', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
+      );
 
       when('[t1] human overrules the judge rung', () => {
         const result = useThen('overrule succeeds', async () =>
@@ -161,7 +166,9 @@ describe('driver.route.judge-overrule-peer.acceptance', () => {
         });
         await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
         await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
-        await execAsync('chmod +x .test/mock-judge-exit-1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-judge-exit-1.sh', {
+          cwd: tempDir,
+        });
 
         await fs.writeFile(
           path.join(tempDir, '1.feature.md'),
@@ -206,9 +213,12 @@ describe('driver.route.judge-overrule-peer.acceptance', () => {
           },
         );
 
-        then('snapshot shows the judge-rung force (approval + overrule)', () => {
-          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-        });
+        then(
+          'snapshot shows the judge-rung force (approval + overrule)',
+          () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          },
+        );
       });
 
       when('[t1] pass attempted after force', () => {

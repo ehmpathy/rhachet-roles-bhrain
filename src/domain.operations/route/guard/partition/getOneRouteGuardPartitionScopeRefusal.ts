@@ -1,7 +1,8 @@
 import * as path from 'path';
 
-import { findStoneByName } from '../../stones/findStoneByName';
-import { getAllStones } from '../../stones/getAllStones';
+import { findStoneByName } from '@src/domain.operations/route/stones/findStoneByName';
+import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
+
 import { getAllGuardPeerSlugs } from './getAllGuardPeerSlugs';
 import type { RouteGuardPartitionScope } from './RouteGuardPartitionScope';
 

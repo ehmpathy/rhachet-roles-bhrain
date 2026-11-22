@@ -54,7 +54,7 @@ const asStableDriveStdout = (stdout: string | undefined): string | undefined =>
       // /g: the volatile temp-dir can appear more than once (e.g. a driver-wall
       // block prints it in both `route = ...` and the blocker `reason:` path) — mask
       // every occurrence, else a real timestamp+hash bakes into the snapshot and flakes
-      /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/g,
+      /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/g,
       '.temp/genTempDir.symlink/<ts>.$1.<hash>',
     )
     .split(`${REPO_ROOT_FOR_MASK}/`)
@@ -256,7 +256,7 @@ describe('stepRouteDrive.integration', () => {
       then('stdout matches snapshot (normalized)', () => {
         // mask timestamp and hash, keep slug visible
         const normalized = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(normalized).toMatchSnapshot();
@@ -283,7 +283,7 @@ describe('stepRouteDrive.integration', () => {
       then('stdout matches snapshot (normalized)', () => {
         // mask timestamp and hash, keep slug visible
         const normalized = result.emit?.stdout?.replace(
-          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.(?:r[a-f0-9]+\.)?([^.]+)\.[a-f0-9]+/,
           '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(normalized).toMatchSnapshot();

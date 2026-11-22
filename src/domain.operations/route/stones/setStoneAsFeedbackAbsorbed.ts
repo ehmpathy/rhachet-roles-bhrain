@@ -1,20 +1,20 @@
 import { ConstraintError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
-import { asCountedNoun } from '@src/utils/asCountedNoun';
-
-import { asGuardDisplayPath } from '../guard/asGuardDisplayPath';
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
-import { asRouteStoneAbsorbCommand } from '../guard/review/peer/asRouteStoneAbsorbCommand';
-import { asRouteStoneStanceCommand } from '../guard/review/peer/asRouteStoneStanceCommand';
-import { assertValidPeerReviewSlug } from '../guard/review/peer/assertValidPeerReviewSlug';
-import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
+import { asGuardDisplayPath } from '@src/domain.operations/route/guard/asGuardDisplayPath';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+import { asRouteStoneAbsorbCommand } from '@src/domain.operations/route/guard/review/peer/asRouteStoneAbsorbCommand';
+import { asRouteStoneStanceCommand } from '@src/domain.operations/route/guard/review/peer/asRouteStoneStanceCommand';
+import { assertValidPeerReviewSlug } from '@src/domain.operations/route/guard/review/peer/assertValidPeerReviewSlug';
+import { getAllStoneUndeclaredConcerns } from '@src/domain.operations/route/guard/review/peer/getAllStoneUndeclaredConcerns';
 import {
   getOneRouteGuardReviewPeerFeedbackAbsorptionStatus,
   type RouteGuardReviewPeerFeedbackUnabsorbed,
-} from '../guard/review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
-import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
-import { setPassageReport } from '../passage/setPassageReport';
+} from '@src/domain.operations/route/guard/review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
+import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '@src/domain.operations/route/guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
+import { asCountedNoun } from '@src/utils/asCountedNoun';
+
 import { findOneStoneByPattern } from './asStoneGlob';
 import { asStoneNotFoundError } from './asStoneNotFoundError';
 import { getAllStones } from './getAllStones';

@@ -1,14 +1,14 @@
 import { UnexpectedCodePathError } from 'helpful-errors';
 
+import { SEGMENTS_OF_PEER_REVIEWS_DIR } from '@src/domain.operations/asPeerReviewOutputName';
 // a sanctioned exposure, declared in src/domain.operations/review/partition/.readme.md
 import { asReviewPartitionDeclarationText } from '@src/domain.operations/review/partition/asReviewPartitionDeclarationText';
+import { asGuardBindNarrowLever } from '@src/domain.operations/route/guard/asGuardBindNarrowLever';
+import { asGuardDisplayPath } from '@src/domain.operations/route/guard/asGuardDisplayPath';
+import { asRouteGuardPartitionCommand } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionCommand';
+import { asRouteStoneAbsorbCommand } from '@src/domain.operations/route/guard/review/peer/asRouteStoneAbsorbCommand';
+import type { RouteGuardReviewPeerFeedbackUnabsorbed } from '@src/domain.operations/route/guard/review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
 
-import { SEGMENTS_OF_PEER_REVIEWS_DIR } from '../../../asPeerReviewOutputName';
-import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
-import { asGuardDisplayPath } from '../asGuardDisplayPath';
-import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartitionCommand';
-import { asRouteStoneAbsorbCommand } from '../review/peer/asRouteStoneAbsorbCommand';
-import type { RouteGuardReviewPeerFeedbackUnabsorbed } from '../review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
 import { asBranchBodyLines } from './asBranchBodyLines';
 import { asReviewPeerLaneHeadLines } from './asReviewPeerLaneHeadLines';
 

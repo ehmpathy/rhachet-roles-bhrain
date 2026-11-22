@@ -2,9 +2,9 @@ import * as fs from 'fs/promises';
 import { MalfunctionError } from 'helpful-errors';
 import * as path from 'path';
 
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
 import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
-import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
 import { RouteInflight } from './RouteInflight';
 
 /**

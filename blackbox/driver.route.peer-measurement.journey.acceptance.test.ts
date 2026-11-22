@@ -1,6 +1,5 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useBeforeAll, useThen, useWhen, when } from 'test-fns';
 
 import {
@@ -49,7 +48,9 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // make the mock reviewer executable
-      await execAsync('chmod +x .test/mock-review-numeric.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-numeric.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -116,21 +117,27 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
         expect(result.stdout).toContain('cached');
       });
 
-      then('the marker is still absent (deterministic tactic recovered)', () => {
-        expect(result.stdout).not.toContain('tallied by reviewer@');
-      });
+      then(
+        'the marker is still absent (deterministic tactic recovered)',
+        () => {
+          expect(result.stdout).not.toContain('tallied by reviewer@');
+        },
+      );
 
-      then('the cache-run stdout matches the fresh-run stdout (modulo time)', () => {
-        // the ONLY difference should be duration/cached markers, which the sanitizer folds.
-        // if the union-narrowed re-parsers dropped the tally on cache-read, this would diverge.
-        const firstReviewLines = sanitizeTimeForSnapshot(firstRun.stdout)
-          .split('\n')
-          .filter((l) => l.includes('blocker') || l.includes('nitpick'));
-        const cacheReviewLines = sanitizeTimeForSnapshot(result.stdout)
-          .split('\n')
-          .filter((l) => l.includes('blocker') || l.includes('nitpick'));
-        expect(cacheReviewLines).toEqual(firstReviewLines);
-      });
+      then(
+        'the cache-run stdout matches the fresh-run stdout (modulo time)',
+        () => {
+          // the ONLY difference should be duration/cached markers, which the sanitizer folds.
+          // if the union-narrowed re-parsers dropped the tally on cache-read, this would diverge.
+          const firstReviewLines = sanitizeTimeForSnapshot(firstRun.stdout)
+            .split('\n')
+            .filter((l) => l.includes('blocker') || l.includes('nitpick'));
+          const cacheReviewLines = sanitizeTimeForSnapshot(result.stdout)
+            .split('\n')
+            .filter((l) => l.includes('blocker') || l.includes('nitpick'));
+          expect(cacheReviewLines).toEqual(firstReviewLines);
+        },
+      );
 
       then('cache-run stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -179,65 +186,77 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
   // the stone blocks as a malfunction with NO `tallied by` marker. this is the deterministic
   // half of the blueprint's journey design (its [t4] crash timestep) proven end-to-end, so a
   // human sees the real blocked stdout, not just an isolated integration assertion.
-  given('[journey] a stone reviewed by a reviewer that crashes (non-zero exit)', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-measurement-journey-crash',
-        clone: ASSETS_DIR,
+  given(
+    '[journey] a stone reviewed by a reviewer that crashes (non-zero exit)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-measurement-journey-crash',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-crash.sh', {
+          cwd: tempDir,
+        });
+
+        return { tempDir };
       });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-crash.sh', { cwd: tempDir });
+      // [t0] preconditions — the artifact the reviewer will review
+      when('[t0] the artifact is written', () => {
+        const result = useThen('artifact is created', async () => {
+          await fs.writeFile(
+            path.join(scene.tempDir, '2.crash.md'),
+            '# crash\n\nthis is the artifact under review.',
+          );
+          return { created: true };
+        });
 
-      return { tempDir };
-    });
+        then('the artifact exists', () => {
+          expect(result.created).toBe(true);
+        });
+      });
 
-    // [t0] preconditions — the artifact the reviewer will review
-    when('[t0] the artifact is written', () => {
-      const result = useThen('artifact is created', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, '2.crash.md'),
-          '# crash\n\nthis is the artifact under review.',
+      // [t1] the crashed reviewer blocks the stone as a malfunction, never rescued
+      when('[t1] the stone is passed (crashed reviewer)', () => {
+        const result = useThen(
+          'the guard runs the crashed reviewer',
+          async () =>
+            invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '2.crash', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            }),
         );
-        return { created: true };
-      });
 
-      then('the artifact exists', () => {
-        expect(result.created).toBe(true);
-      });
-    });
+        then('exit code is 2 (stone blocked)', () => {
+          // a malfunction gates as ONE blocker, never zero: an unread verdict cannot be assumed
+          // clean (`asPeerGivenVerdict`, contract.reviewer-output). so the judge reads
+          // `✗ blocked` here where it once read `✓ allowed`, and the stone halts on exit 2
+          expect(result.code).toEqual(2);
+        });
 
-    // [t1] the crashed reviewer blocks the stone as a malfunction, never rescued
-    when('[t1] the stone is passed (crashed reviewer)', () => {
-      const result = useThen('the guard runs the crashed reviewer', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '2.crash', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
+        then('stdout reports a malfunction, not a passage', () => {
+          expect(result.stdout).toContain('malfunction');
+          expect(result.stdout).not.toContain('passage = allowed');
+        });
 
-      then('exit code is 2 (stone blocked)', () => {
-        // a malfunction gates as ONE blocker, never zero: an unread verdict cannot be assumed
-        // clean (`asPeerGivenVerdict`, contract.reviewer-output). so the judge reads
-        // `✗ blocked` here where it once read `✓ allowed`, and the stone halts on exit 2
-        expect(result.code).toEqual(2);
-      });
+        then(
+          'the crashed reviewer shows NO tallied-by marker (never rescued)',
+          () => {
+            expect(result.stdout).not.toContain('tallied by reviewer@');
+          },
+        );
 
-      then('stdout reports a malfunction, not a passage', () => {
-        expect(result.stdout).toContain('malfunction');
-        expect(result.stdout).not.toContain('passage = allowed');
+        then('crash-path stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-
-      then('the crashed reviewer shows NO tallied-by marker (never rescued)', () => {
-        expect(result.stdout).not.toContain('tallied by reviewer@');
-      });
-
-      then('crash-path stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   // the numeric-REJECTION path, through the real CLI — a distinct variant from both the
   // clean pass and the crash malfunction. the reviewer runs fine and reports a real blocker
@@ -245,65 +264,75 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
   // the reviewed? judge blocks the stone because 1 blocker exceeds the 0 allowed. this proves
   // a caller sees the correct blocked stdout for a substantive rejection, not just a crash or a
   // clean pass (rule.require.acceptance-journey-coverage).
-  given('[journey] a stone reviewed by a reviewer that reports a blocker', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-measurement-journey-reject',
-        clone: ASSETS_DIR,
+  given(
+    '[journey] a stone reviewed by a reviewer that reports a blocker',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-measurement-journey-reject',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-blockers.sh', {
+          cwd: tempDir,
+        });
+
+        return { tempDir };
       });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-blockers.sh', {
-        cwd: tempDir,
+      // [t0] preconditions — the artifact the reviewer will review
+      when('[t0] the artifact is written', () => {
+        const result = useThen('artifact is created', async () => {
+          await fs.writeFile(
+            path.join(scene.tempDir, '3.reject.md'),
+            '# reject\n\nthis is the artifact under review.',
+          );
+          return { created: true };
+        });
+
+        then('the artifact exists', () => {
+          expect(result.created).toBe(true);
+        });
       });
 
-      return { tempDir };
-    });
-
-    // [t0] preconditions — the artifact the reviewer will review
-    when('[t0] the artifact is written', () => {
-      const result = useThen('artifact is created', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, '3.reject.md'),
-          '# reject\n\nthis is the artifact under review.',
+      // [t1] the reviewer reports a blocker; the judge rejects the stone on substance
+      when('[t1] the stone is passed (reviewer reports a blocker)', () => {
+        const result = useThen(
+          'the guard runs the blocker reviewer',
+          async () =>
+            invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '3.reject', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            }),
         );
-        return { created: true };
-      });
 
-      then('the artifact exists', () => {
-        expect(result.created).toBe(true);
-      });
-    });
+        then('exit code is 2 (stone blocked)', () => {
+          // a real `1 blocker` over a `0` allowance: the reviewer's verdict is readable, and the
+          // judge reads `✗ blocked` on substance. the cause differs from the crash path above,
+          // where the one blocker is the score an unread verdict earns
+          expect(result.code).toEqual(2);
+        });
 
-    // [t1] the reviewer reports a blocker; the judge rejects the stone on substance
-    when('[t1] the stone is passed (reviewer reports a blocker)', () => {
-      const result = useThen('the guard runs the blocker reviewer', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.reject', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
+        then('stdout reports the blocker count, not a passage', () => {
+          expect(result.stdout).toContain('1 blocker');
+          expect(result.stdout).not.toContain('passage = allowed');
+        });
 
-      then('exit code is 2 (stone blocked)', () => {
-        // a real `1 blocker` over a `0` allowance: the reviewer's verdict is readable, and the
-        // judge reads `✗ blocked` on substance. the cause differs from the crash path above,
-        // where the one blocker is the score an unread verdict earns
-        expect(result.code).toEqual(2);
-      });
+        then(
+          'the reviewer shows NO tallied-by marker (deterministic verbatim)',
+          () => {
+            expect(result.stdout).not.toContain('tallied by reviewer@');
+          },
+        );
 
-      then('stdout reports the blocker count, not a passage', () => {
-        expect(result.stdout).toContain('1 blocker');
-        expect(result.stdout).not.toContain('passage = allowed');
+        then('reject-path stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-
-      then('the reviewer shows NO tallied-by marker (deterministic verbatim)', () => {
-        expect(result.stdout).not.toContain('tallied by reviewer@');
-      });
-
-      then('reject-path stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

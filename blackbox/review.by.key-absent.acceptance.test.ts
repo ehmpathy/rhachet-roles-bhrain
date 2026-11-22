@@ -2,10 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import {
-  DEMO_ROLE,
-  genReviewByFixture,
-} from './.test/invokeReviewBySkill';
+import { DEMO_ROLE, genReviewByFixture } from './.test/invokeReviewBySkill';
 import {
   asChildEnv,
   invokeShellCommand,
@@ -109,11 +106,14 @@ describe('review.by.key-absent.acceptance', () => {
         }),
       );
 
-      then('CLAMP: the fix reaches the human — the key and the command that fills it', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('OPENROUTER_API_KEY');
-        expect(output).toContain(KEY_SET_COMMAND);
-      });
+      then(
+        'CLAMP: the fix reaches the human — the key and the command that fills it',
+        () => {
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('OPENROUTER_API_KEY');
+          expect(output).toContain(KEY_SET_COMMAND);
+        },
+      );
 
       then('CLAMP: the child refusal is named a ConstraintError', () => {
         const output = result.stdout + result.stderr;
@@ -144,11 +144,14 @@ describe('review.by.key-absent.acceptance', () => {
         }),
       );
 
-      then('CLAMP: the fix reaches the human — the key and the command that fills it', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('OPENROUTER_API_KEY');
-        expect(output).toContain(KEY_SET_COMMAND);
-      });
+      then(
+        'CLAMP: the fix reaches the human — the key and the command that fills it',
+        () => {
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('OPENROUTER_API_KEY');
+          expect(output).toContain(KEY_SET_COMMAND);
+        },
+      );
 
       then('CLAMP: the child refusal is named a ConstraintError', () => {
         const output = result.stdout + result.stderr;

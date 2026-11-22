@@ -2,8 +2,8 @@ import * as path from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { setPassageReport } from '../passage/setPassageReport';
 import { getStoneGuardOverruledLevels } from './getStoneGuardOverruledLevels';
 
 /**

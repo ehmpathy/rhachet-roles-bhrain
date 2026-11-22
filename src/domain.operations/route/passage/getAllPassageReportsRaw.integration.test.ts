@@ -4,8 +4,9 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import { getAllPassageReportsRaw } from './getAllPassageReportsRaw';
 
 /**

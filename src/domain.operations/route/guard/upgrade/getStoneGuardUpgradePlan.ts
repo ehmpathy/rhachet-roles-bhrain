@@ -3,8 +3,8 @@ import * as path from 'path';
 
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { getOneGuardProvenance } from '@src/domain.operations/getOneGuardProvenance';
+import { parseStoneGuard } from '@src/domain.operations/route/guard/parseStoneGuard';
 
-import { parseStoneGuard } from '../parseStoneGuard';
 import type { GuardUpgradeResult } from './GuardUpgradeResult';
 import { getAllGuardUpgradeWarnings } from './getAllGuardUpgradeWarnings';
 import { getGuardDiff } from './getGuardDiff';

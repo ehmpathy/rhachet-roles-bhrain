@@ -1,9 +1,8 @@
 import * as fs from 'fs/promises';
 import { HelpfulError } from 'helpful-errors';
 
+import { isHumanTurn } from '@src/domain.operations/transcript/isHumanTurn';
 import { getFsErrorCode } from '@src/utils/fs/getFsErrorCode';
-
-import { isHumanTurn } from '../transcript/isHumanTurn';
 
 /**
  * .what = is this entry a message the human TYPED but the harness has not delivered yet?

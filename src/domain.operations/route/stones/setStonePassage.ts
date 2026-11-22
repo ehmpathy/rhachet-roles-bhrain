@@ -1,7 +1,6 @@
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
-import { setPassageReport } from '../passage/setPassageReport';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
 /**
  * .what = marks a stone as passed via passage report

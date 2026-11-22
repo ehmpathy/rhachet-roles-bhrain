@@ -1,16 +1,17 @@
-import { asConcessionReasonDisplay } from '../guard/review/peer/asConcessionReasonDisplay';
-import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
-import { isRouteGuardConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
-import { getReviewPeerLadderStatus } from '../guard/review/peer/meter/getReviewPeerLadderStatus';
+import { asConcessionReasonDisplay } from '@src/domain.operations/route/guard/review/peer/asConcessionReasonDisplay';
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
+import { isRouteGuardConcessionExhaustion } from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
+import { getReviewPeerLadderStatus } from '@src/domain.operations/route/guard/review/peer/meter/getReviewPeerLadderStatus';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
-} from '../guard/tree/formatBlockRemedyGroups';
-import { formatGuardReviewLadderFooter } from '../guard/tree/formatGuardReviewLadderFooter';
+} from '@src/domain.operations/route/guard/tree/formatBlockRemedyGroups';
+import { formatGuardReviewLadderFooter } from '@src/domain.operations/route/guard/tree/formatGuardReviewLadderFooter';
 import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
-} from '../guard/tree/formatGuardTree';
+} from '@src/domain.operations/route/guard/tree/formatGuardTree';
+
 import { formatRouteDriveHaltLeverLead } from './formatRouteDriveHaltLeverLead';
 import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 

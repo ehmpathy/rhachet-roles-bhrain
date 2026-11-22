@@ -1,4 +1,4 @@
-import { RUNTIME_GUARD_VAR_NAMES } from '../RUNTIME_GUARD_VAR_NAMES';
+import { RUNTIME_GUARD_VAR_NAMES } from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
 
 /**
  * the set of `$VAR` tokens a guard may legitimately carry after a copy-time replay:

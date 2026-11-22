@@ -4,11 +4,11 @@ import { ConstraintError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 
-import { getAllAnnotations } from '../annotation/getAllAnnotations';
-import { getAllSavepoints } from '../savepoint/getAllSavepoints';
-import { setSavepoint } from '../savepoint/setSavepoint';
-import type { ReflectScope } from '../scope/getReflectScope';
-import { getTranscriptSource } from '../transcript/getTranscriptSource';
+import { getAllAnnotations } from '@src/domain.operations/reflect/annotation/getAllAnnotations';
+import { getAllSavepoints } from '@src/domain.operations/reflect/savepoint/getAllSavepoints';
+import { setSavepoint } from '@src/domain.operations/reflect/savepoint/setSavepoint';
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+import { getTranscriptSource } from '@src/domain.operations/reflect/transcript/getTranscriptSource';
 
 /**
  * .what = a snapshot bundles transcript + savepoints + annotations

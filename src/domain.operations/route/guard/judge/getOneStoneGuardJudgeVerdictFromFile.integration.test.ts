@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { genTempDir, getError, given, then, when } from 'test-fns';
 
+import { asGuardArtifactIteration } from '@src/domain.operations/route/guard/artifact/asGuardArtifactIteration';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
 import { getOneJudgeArtifactContent } from '@src/domain.operations/route/judges/getOneJudgeArtifactContent';
 
-import { asGuardArtifactIteration } from '../artifact/asGuardArtifactIteration';
-import { asExitCodeClass } from '../asExitCodeClass';
 import { getOneStoneGuardJudgeVerdictFromFile } from './getOneStoneGuardJudgeVerdictFromFile';
 
 describe('getOneStoneGuardJudgeVerdictFromFile', () => {

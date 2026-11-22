@@ -6,11 +6,11 @@ import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+import { asRouteStoneDisposition } from '@src/domain.operations/route/drive/asRouteStoneDisposition';
+import { getLatestPassageForStone } from '@src/domain.operations/route/passage/getLatestPassageForStone';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
-import { asRouteStoneDisposition } from '../drive/asRouteStoneDisposition';
-import { getLatestPassageForStone } from '../passage/getLatestPassageForStone';
-import { setPassageReport } from '../passage/setPassageReport';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');

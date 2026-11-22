@@ -24,10 +24,15 @@ describe('driver.route.rewind-drive.acceptance', () => {
         });
 
         // link the driver role
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create artifact for 1.vision
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
+        await fs.writeFile(
+          path.join(tempDir, '1.vision.md'),
+          '# Vision\n\nTest',
+        );
 
         // pass the stone
         await invokeRouteSkill({
@@ -75,7 +80,9 @@ describe('driver.route.rewind-drive.acceptance', () => {
       });
 
       then('drive after rewind does NOT show complete', () => {
-        expect(res.driveAfterRewind.stdout.toLowerCase()).not.toContain('route complete');
+        expect(res.driveAfterRewind.stdout.toLowerCase()).not.toContain(
+          'route complete',
+        );
       });
 
       then('drive before rewind stdout matches snapshot', () => {
@@ -96,11 +103,19 @@ describe('driver.route.rewind-drive.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // create artifacts for all stones
-        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
-        await fs.writeFile(path.join(tempDir, '2.criteria.md'), '# Criteria\n\nTest');
+        await fs.writeFile(
+          path.join(tempDir, '1.vision.md'),
+          '# Vision\n\nTest',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '2.criteria.md'),
+          '# Criteria\n\nTest',
+        );
         await fs.writeFile(path.join(tempDir, '3.plan.md'), '# Plan\n\nTest');
 
         // pass all stones
@@ -143,17 +158,24 @@ describe('driver.route.rewind-drive.acceptance', () => {
       });
 
       then('drive before rewind shows route complete', () => {
-        expect(res.driveComplete.stdout.toLowerCase()).toContain('route complete');
+        expect(res.driveComplete.stdout.toLowerCase()).toContain(
+          'route complete',
+        );
       });
 
       then('drive after rewind shows 2.criteria as next', () => {
         expect(res.driveAfterRewind.stdout).toContain('2.criteria');
       });
 
-      then('drive after rewind does NOT auto-pass (artifacts exist but rewound)', () => {
-        // key: artifacts exist for 2.criteria and 3.plan, but rewind prevents auto-pass
-        expect(res.driveAfterRewind.stdout.toLowerCase()).not.toContain('route complete');
-      });
+      then(
+        'drive after rewind does NOT auto-pass (artifacts exist but rewound)',
+        () => {
+          // key: artifacts exist for 2.criteria and 3.plan, but rewind prevents auto-pass
+          expect(res.driveAfterRewind.stdout.toLowerCase()).not.toContain(
+            'route complete',
+          );
+        },
+      );
 
       then('drive complete stdout matches snapshot', () => {
         expect(res.driveComplete.stdout).toMatchSnapshot();
@@ -167,56 +189,94 @@ describe('driver.route.rewind-drive.acceptance', () => {
 
   given('[case3] gitignored guard artifacts are deleted on rewind', () => {
     when('[t0] .route has gitignore that ignores all files', () => {
-      const res = useThen('create gitignored artifacts then rewind', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'rewind-drive-case3',
-          clone: ASSETS_DIR,
-        });
+      const res = useThen(
+        'create gitignored artifacts then rewind',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'rewind-drive-case3',
+            clone: ASSETS_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // create .route and .reviews/peer/ directories
-        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
+          // create .route and .reviews/peer/ directories
+          await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+          await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
+            recursive: true,
+          });
 
-        // create gitignore that ignores all content in .reviews/peer/
-        await fs.writeFile(path.join(tempDir, '.reviews', 'peer', '.gitignore'), '*\n');
+          // create gitignore that ignores all content in .reviews/peer/
+          await fs.writeFile(
+            path.join(tempDir, '.reviews', 'peer', '.gitignore'),
+            '*\n',
+          );
 
-        // create guard artifacts (would be ignored by gitignore)
-        await fs.writeFile(
-          path.join(tempDir, '.reviews', 'peer', '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md'),
-          '# review',
-        );
-        await fs.writeFile(
-          path.join(tempDir, '.route', '1.vision.guard.judge.i1.abc.j1.md'),
-          '# judge',
-        );
+          // create guard artifacts (would be ignored by gitignore)
+          await fs.writeFile(
+            path.join(
+              tempDir,
+              '.reviews',
+              'peer',
+              '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md',
+            ),
+            '# review',
+          );
+          await fs.writeFile(
+            path.join(tempDir, '.route', '1.vision.guard.judge.i1.abc.j1.md'),
+            '# judge',
+          );
 
-        // count files before
-        const reviewFilesBefore = await fs.readdir(path.join(tempDir, '.reviews', 'peer'));
-        const reviewCountBefore = reviewFilesBefore.filter((f) => f.includes('._.review.'));
-        const judgeFilesBefore = await fs.readdir(path.join(tempDir, '.route'));
-        const judgeCountBefore = judgeFilesBefore.filter((f) => f.includes('.guard.judge.'));
+          // count files before
+          const reviewFilesBefore = await fs.readdir(
+            path.join(tempDir, '.reviews', 'peer'),
+          );
+          const reviewCountBefore = reviewFilesBefore.filter((f) =>
+            f.includes('._.review.'),
+          );
+          const judgeFilesBefore = await fs.readdir(
+            path.join(tempDir, '.route'),
+          );
+          const judgeCountBefore = judgeFilesBefore.filter((f) =>
+            f.includes('.guard.judge.'),
+          );
 
-        // invoke rewind
-        const cli = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'rewound' },
-          cwd: tempDir,
-        });
+          // invoke rewind
+          const cli = await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'rewound' },
+            cwd: tempDir,
+          });
 
-        // count files after
-        const reviewFilesAfter = await fs.readdir(path.join(tempDir, '.reviews', 'peer'));
-        const reviewCountAfter = reviewFilesAfter.filter((f) => f.includes('._.review.'));
-        const judgeFilesAfter = await fs.readdir(path.join(tempDir, '.route'));
-        const judgeCountAfter = judgeFilesAfter.filter((f) => f.includes('.guard.judge.'));
+          // count files after
+          const reviewFilesAfter = await fs.readdir(
+            path.join(tempDir, '.reviews', 'peer'),
+          );
+          const reviewCountAfter = reviewFilesAfter.filter((f) =>
+            f.includes('._.review.'),
+          );
+          const judgeFilesAfter = await fs.readdir(
+            path.join(tempDir, '.route'),
+          );
+          const judgeCountAfter = judgeFilesAfter.filter((f) =>
+            f.includes('.guard.judge.'),
+          );
 
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('--- end ---\n');
+          console.log('\n--- cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('--- end ---\n');
 
-        return { cli, reviewCountBefore, reviewCountAfter, judgeCountBefore, judgeCountAfter, tempDir };
-      });
+          return {
+            cli,
+            reviewCountBefore,
+            reviewCountAfter,
+            judgeCountBefore,
+            judgeCountAfter,
+            tempDir,
+          };
+        },
+      );
 
       then('guard artifacts existed before rewind', () => {
         expect(res.reviewCountBefore).toHaveLength(1);
@@ -345,7 +405,9 @@ describe('driver.route.rewind-drive.acceptance', () => {
       then('has full history: passed, rewound (cascade), passed', () => {
         expect(res.lines.length).toBeGreaterThanOrEqual(5);
         const history = res.lines.map((l: string) => JSON.parse(l));
-        const visionHistory = history.filter((e: { stone: string }) => e.stone === '1.vision');
+        const visionHistory = history.filter(
+          (e: { stone: string }) => e.stone === '1.vision',
+        );
         expect(visionHistory.map((e: { status: string }) => e.status)).toEqual([
           'passed',
           'rewound',

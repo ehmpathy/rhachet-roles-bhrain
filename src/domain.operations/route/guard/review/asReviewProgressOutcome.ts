@@ -1,4 +1,4 @@
-import type { GuardProgressEvent } from '../../../../domain.objects/Driver/GuardProgressEvent';
+import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 
 /**
  * .what = the `review` half of a guard progress outcome, from one review's exit

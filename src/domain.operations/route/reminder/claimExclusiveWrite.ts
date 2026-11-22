@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
 
 /**
  * .what = writes `body` to `path` create-exclusively (`wx`); returns `{ claimed: true }` when THIS

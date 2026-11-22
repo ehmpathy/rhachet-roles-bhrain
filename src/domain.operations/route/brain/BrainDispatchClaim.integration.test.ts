@@ -3,7 +3,8 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+
 import { BRAIN_DISPATCH_CLAIM_WINDOW_MS } from './BrainDispatchClaim';
 
 /**

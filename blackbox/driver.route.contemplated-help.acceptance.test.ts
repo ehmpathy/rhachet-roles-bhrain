@@ -8,7 +8,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-contemplation',
+);
 
 /**
  * .what = acceptance test for the discoverability of the new absorbed status

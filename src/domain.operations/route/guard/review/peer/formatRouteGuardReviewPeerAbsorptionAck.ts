@@ -1,6 +1,6 @@
+import { asMeterCountDisplay } from '@src/domain.operations/route/guard/asMeterCountDisplay';
 import { asCountedNoun } from '@src/utils/asCountedNoun';
 
-import { asMeterCountDisplay } from '../../asMeterCountDisplay';
 import { ABSORPTION_CONCEDE_STEPS } from './absorptionConcedeSequence';
 import type { ReviewConcernRef } from './asReviewConcernRef';
 import { asReviewConcernRefLabel } from './asReviewConcernRef';

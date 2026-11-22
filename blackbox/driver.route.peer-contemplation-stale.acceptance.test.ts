@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-contemplation',
+);
 
 /**
  * .what = acceptance test for hash-scoped contemplation (usecase 8)
@@ -31,7 +34,9 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
         clone: ASSETS_DIR,
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blocker.sh', {
+        cwd: tempDir,
+      });
       await execAsync('chmod +x .test/mock-review-clean.sh', { cwd: tempDir });
       await fs.writeFile(
         path.join(tempDir, '1.execute.md'),
@@ -49,9 +54,7 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
           f.includes('_.given.by_peer.architect.md') &&
           !f.endsWith('.report.md') &&
           // pick the one WITHOUT a paired taken yet
-          !files.includes(
-            f.replace('._.given.by_peer.', '._.taken.by_self.'),
-          ),
+          !files.includes(f.replace('._.given.by_peer.', '._.taken.by_self.')),
       )!;
       const takenName = givenName.replace(
         '._.given.by_peer.',
@@ -102,18 +105,21 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
     });
 
     when('[t1] the artifact changes (new content hash)', () => {
-      const result = useThen('the stone blocks on a stale contemplation', async () => {
-        // change the artifact → the guard re-runs architect at a NEW hash
-        await fs.writeFile(
-          path.join(scene.tempDir, '1.execute.md'),
-          '# execute\n\nthe work under review — round two, edited.\n',
-        );
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+      const result = useThen(
+        'the stone blocks on a stale contemplation',
+        async () => {
+          // change the artifact → the guard re-runs architect at a NEW hash
+          await fs.writeFile(
+            path.join(scene.tempDir, '1.execute.md'),
+            '# execute\n\nthe work under review — round two, edited.\n',
+          );
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('the stone is blocked again (exit 2)', () => {
         expect(result.code).toEqual(2);

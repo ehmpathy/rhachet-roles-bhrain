@@ -1,16 +1,16 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
-import { logOutputHead } from '@src/.test/logOutputHead';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { logOutputHead } from '@src/.test/logOutputHead';
+
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -31,69 +31,80 @@ describe('review.refs-single.acceptance', () => {
    * usecase.3: ref content is accessible to rules in review
    */
   given('[case1] single ref file provided to review', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to single file', () => {
-      const res = useThen('invoke review skill with single ref', async () => {
-        // clone fixture to temp dir
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-refs-single',
-          clone: ASSETS_DIR,
+    when.repeatably(REPEATABLE_CONFIG)(
+      '[t0] review skill invoked with --refs set to single file',
+      () => {
+        const res = useThen('invoke review skill with single ref', async () => {
+          // clone fixture to temp dir
+          const tempDir = genTempDirForRhachet({
+            slug: 'review-refs-single',
+            clone: ASSETS_DIR,
+          });
+          const outputPath = path.join(tempDir, 'review-refs-single.md');
+
+          // link the reviewer role via rhachet
+          await execAsync('npx rhachet roles link --role reviewer', {
+            cwd: tempDir,
+          });
+
+          // invoke skill with single ref
+          const cli = await invokeReviewSkill({
+            rules: 'rules/rule.verify-refs-included.md',
+            paths: 'src/clean.ts',
+            refs: 'behavior/getWeather/criteria.blackbox.md',
+            output: outputPath,
+            focus: 'push',
+            goal: 'representative',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+            cwd: tempDir,
+          });
+
+          // log cli output for debug
+          console.log('\n--- cli.stdout ---');
+          console.log(cli.stdout);
+          console.log('\n--- cli.stderr ---');
+          console.log(cli.stderr);
+          console.log('--- end cli ---\n');
+
+          // read output
+          const review = await fs.readFile(outputPath, 'utf-8');
+
+          // log for visibility
+          logOutputHead({ label: 'review-refs-single.md', output: review });
+
+          return { cli, review };
         });
-        const outputPath = path.join(tempDir, 'review-refs-single.md');
 
-        // link the reviewer role via rhachet
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
+        then('cli completes successfully', async () => {
+          expect(res.cli.stderr).not.toContain('Error');
         });
 
-        // invoke skill with single ref
-        const cli = await invokeReviewSkill({
-          rules: 'rules/rule.verify-refs-included.md',
-          paths: 'src/clean.ts',
-          refs: 'behavior/getWeather/criteria.blackbox.md',
-          output: outputPath,
-          focus: 'push',
-          goal: 'representative',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd: tempDir,
+        then('cli stdout shows refs count = 1 in metrics', async () => {
+          // one --refs file, so the files tree reads `refs: 1`
+          expect(res.cli.stdout).toContain('refs: 1');
         });
 
-        // log cli output for debug
-        console.log('\n--- cli.stdout ---');
-        console.log(cli.stdout);
-        console.log('\n--- cli.stderr ---');
-        console.log(cli.stderr);
-        console.log('--- end cli ---\n');
+        then(
+          'the metrics.expected block matches its snapshot (computed before the brain)',
+          () => {
+            // the scope tree and estimate are deterministic; the verdict summary is the brain's
+            expect(
+              asReviewMetricsExpectedBlock({ stdout: res.cli.stdout }),
+            ).toMatchSnapshot();
+          },
+        );
 
-        // read output
-        const review = await fs.readFile(outputPath, 'utf-8');
-
-        // log for visibility
-        logOutputHead({ label: 'review-refs-single.md', output: review });
-
-        return { cli, review };
-      });
-
-      then('cli completes successfully', async () => {
-        expect(res.cli.stderr).not.toContain('Error');
-      });
-
-      then('cli stdout shows refs count = 1 in metrics', async () => {
-        // one --refs file, so the files tree reads `refs: 1`
-        expect(res.cli.stdout).toContain('refs: 1');
-      });
-
-      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
-        // the scope tree and estimate are deterministic; the verdict summary is the brain's
-        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
-      });
-
-      then('review contains no blockers (refs section was accessible)', async () => {
-        // the rule.verify-refs-included.md passes when refs are accessible
-        // it only raises blocker if refs section is absent when expected
-        // check for actual blocker issues (# blocker.N:) not just the word in summary
-        expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
-        expect(res.review).toContain('0 blockers');
-      });
-    });
+        then(
+          'review contains no blockers (refs section was accessible)',
+          async () => {
+            // the rule.verify-refs-included.md passes when refs are accessible
+            // it only raises blocker if refs section is absent when expected
+            // check for actual blocker issues (# blocker.N:) not just the word in summary
+            expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
+            expect(res.review).toContain('0 blockers');
+          },
+        );
+      },
+    );
   });
 });

@@ -4,8 +4,9 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
-import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
+import { asStableGuardEmit } from '@src/domain.operations/route/.test.assets/asStableGuardEmit';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
+
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStones } from './getAllStones';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';

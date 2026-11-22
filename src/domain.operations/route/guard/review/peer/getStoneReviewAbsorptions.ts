@@ -1,8 +1,8 @@
 import { MalfunctionError } from 'helpful-errors';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { getAllPassageReportsRaw } from '@src/domain.operations/route/passage/getAllPassageReportsRaw';
 
-import { getAllPassageReportsRaw } from '../../../passage/getAllPassageReportsRaw';
 import { asReviewAbsorptionKey } from './asReviewAbsorptionKey';
 import { asReviewGivenKey } from './asReviewGivenKey';
 import { getPassageReportsSinceLastRewind } from './getPassageReportsSinceLastRewind';

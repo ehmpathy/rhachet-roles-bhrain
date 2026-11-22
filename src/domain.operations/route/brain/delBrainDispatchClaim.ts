@@ -1,4 +1,5 @@
-import { delOneFile } from '../drive/delOneFile';
+import { delOneFile } from '@src/domain.operations/route/drive/delOneFile';
+
 import { asBrainDispatchClaimPath } from './BrainDispatchClaim';
 
 /**

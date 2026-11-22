@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import { UnexpectedCodePathError } from 'helpful-errors';
 
-import { withEnoentAsNull } from '../withEnoentAsNull';
+import { withEnoentAsNull } from '@src/domain.operations/route/withEnoentAsNull';
+
 import { asStrictPositiveInteger } from './asStrictPositiveInteger';
 import { getRouteReminderPidPath } from './getRouteReminderPidPath';
 

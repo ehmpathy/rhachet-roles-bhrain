@@ -1,6 +1,6 @@
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { setPassageReport } from '../../passage/setPassageReport';
 import { withStoneGenerationHold } from './withStoneGenerationHold';
 
 /**

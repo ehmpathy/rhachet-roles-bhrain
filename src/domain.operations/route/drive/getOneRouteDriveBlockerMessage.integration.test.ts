@@ -7,10 +7,10 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
+import { asStableGuardEmit } from '@src/domain.operations/route/.test.assets/asStableGuardEmit';
+import { setRouteGuardPartitions } from '@src/domain.operations/route/guard/partition/setRouteGuardPartitions';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 
-import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
-import { setRouteGuardPartitions } from '../guard/partition/setRouteGuardPartitions';
-import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
 import { getOneRouteDriveBlockerMessage } from './getOneRouteDriveBlockerMessage';
 
 /**

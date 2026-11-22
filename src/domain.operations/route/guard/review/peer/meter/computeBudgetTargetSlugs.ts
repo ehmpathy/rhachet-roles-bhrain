@@ -1,4 +1,4 @@
-import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = the reviewer slugs a bulk `--add` may touch, given the live meters and an optional

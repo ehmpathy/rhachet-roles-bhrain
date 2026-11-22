@@ -1,9 +1,9 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+
 import {
   asStderrMessageLine,
   DEMO_ROLE,
@@ -176,96 +176,120 @@ describe('review.by.acceptance', () => {
     );
   });
 
-  given('[case3] --for a single valid slug, code is clean → DISINTERMEDIATE', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --for runs', () => {
-      const res = useThen('it runs only that rubric and passes', async () => {
-        const cwd = await genReviewByFixture({
-          slug: 'review-by-case3',
-          clone: ASSETS_DIR,
+  given(
+    '[case3] --for a single valid slug, code is clean → DISINTERMEDIATE',
+    () => {
+      when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --for runs', () => {
+        const res = useThen('it runs only that rubric and passes', async () => {
+          const cwd = await genReviewByFixture({
+            slug: 'review-by-case3',
+            clone: ASSETS_DIR,
+          });
+          const cli = await invokeReviewBySkill({
+            role: DEMO_ROLE,
+            for: 'demo-arrow-only',
+            paths: 'src/clean.ts',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+            cwd,
+          });
+          return { cli };
         });
-        const cli = await invokeReviewBySkill({
-          role: DEMO_ROLE,
-          for: 'demo-arrow-only',
-          paths: 'src/clean.ts',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd,
+
+        then('exit 0', () => {
+          expect(res.cli.code).toBe(0);
         });
-        return { cli };
-      });
 
-      then('exit 0', () => {
-        expect(res.cli.code).toBe(0);
-      });
-
-      then('stdout is the RAW base review, NOT the review.by tree', () => {
-        // `--for` disintermediates to the base review's stdout, so a route guard peer slot wraps
-        // a normal review, not a review.by tree (rule.require.review-by-disintermediates)
-        expectDisintermediatedRawReview({
-          stdout: res.cli.stdout,
-          slug: 'demo-arrow-only',
+        then('stdout is the RAW base review, NOT the review.by tree', () => {
+          // `--for` disintermediates to the base review's stdout, so a route guard peer slot wraps
+          // a normal review, not a review.by tree (rule.require.review-by-disintermediates)
+          expectDisintermediatedRawReview({
+            stdout: res.cli.stdout,
+            slug: 'demo-arrow-only',
+          });
         });
-      });
 
-      then('the disintermediated raw-review stdout is stable (full snapshot)', () => {
-        // the rubric-scoped half of the exhaustive matrix (the aggregate/global half is case1/2/13).
-        // clean code gives a deterministic 0/0 verdict, so once the volatile telemetry blocks
-        // are dropped (sanitizeRawReviewForSnapshot), the full disintermediated shape snapshots
-        // stably — vibechecks the exact drop-in-for-plain-review output.
-        expect(
-          sanitizeRawReviewForSnapshot(res.cli.stdout),
-        ).toMatchSnapshot();
+        then(
+          'the disintermediated raw-review stdout is stable (full snapshot)',
+          () => {
+            // the rubric-scoped half of the exhaustive matrix (the aggregate/global half is case1/2/13).
+            // clean code gives a deterministic 0/0 verdict, so once the volatile telemetry blocks
+            // are dropped (sanitizeRawReviewForSnapshot), the full disintermediated shape snapshots
+            // stably — vibechecks the exact drop-in-for-plain-review output.
+            expect(
+              sanitizeRawReviewForSnapshot(res.cli.stdout),
+            ).toMatchSnapshot();
+          },
+        );
       });
-    });
-  });
+    },
+  );
 
-  given('[case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --for on dirty', () => {
-      const res = useThen('it runs only that rubric and finds blockers', async () => {
-        const cwd = await genReviewByFixture({
-          slug: 'review-by-case3neg',
-          clone: ASSETS_DIR,
-        });
-        const cli = await invokeReviewBySkill({
-          role: DEMO_ROLE,
-          for: 'demo-arrow-only',
-          paths: 'src/dirty.ts',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd,
-        });
-        return { cli };
-      });
+  given(
+    '[case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE',
+    () => {
+      when.repeatably(REPEATABLE_CONFIG)(
+        '[t0] review.by --for on dirty',
+        () => {
+          const res = useThen(
+            'it runs only that rubric and finds blockers',
+            async () => {
+              const cwd = await genReviewByFixture({
+                slug: 'review-by-case3neg',
+                clone: ASSETS_DIR,
+              });
+              const cli = await invokeReviewBySkill({
+                role: DEMO_ROLE,
+                for: 'demo-arrow-only',
+                paths: 'src/dirty.ts',
+                brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+                cwd,
+              });
+              return { cli };
+            },
+          );
 
-      then('exit 2 (blockers present)', () => {
-        expect(res.cli.code).toBe(2);
-      });
+          then('exit 2 (blockers present)', () => {
+            expect(res.cli.code).toBe(2);
+          });
 
-      then('stdout is the RAW base review with findings, NOT the review.by tree', () => {
-        // findings also disintermediate: the base review's blocker-tier stdout is handed through
-        // verbatim, so a guard tallies off a normal review
-        expectDisintermediatedRawReview({
-          stdout: res.cli.stdout,
-          slug: 'demo-arrow-only',
-        });
-      });
+          then(
+            'stdout is the RAW base review with findings, NOT the review.by tree',
+            () => {
+              // findings also disintermediate: the base review's blocker-tier stdout is handed through
+              // verbatim, so a guard tallies off a normal review
+              expectDisintermediatedRawReview({
+                stdout: res.cli.stdout,
+                slug: 'demo-arrow-only',
+              });
+            },
+          );
 
-      then('the base review carries a summary block a guard can parse', () => {
-        expect(res.cli.stdout).toContain('summary');
-        expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
-        expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
-      });
+          then(
+            'the base review carries a summary block a guard can parse',
+            () => {
+              expect(res.cli.stdout).toContain('summary');
+              expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
+              expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
+            },
+          );
 
-      then('the disintermediated findings-path stdout is stable (full snapshot)', () => {
-        // the findings half of the rubric-scoped matrix. the single-violation fixture pins the
-        // verdict (1 blocker / 0 nitpicks); findings prose lives in the review file, not stdout
-        // (genReviewOutputStdout echoes only header + review path + summary), so the sanitized
-        // stdout is deterministic and carries no review.by tree — proves the guard-consumed
-        // dirty stdout is a plain review (rule.require.review-by-disintermediates)
-        expect(
-          sanitizeRawReviewForSnapshot(res.cli.stdout),
-        ).toMatchSnapshot();
-      });
-    });
-  });
+          then(
+            'the disintermediated findings-path stdout is stable (full snapshot)',
+            () => {
+              // the findings half of the rubric-scoped matrix. the single-violation fixture pins the
+              // verdict (1 blocker / 0 nitpicks); findings prose lives in the review file, not stdout
+              // (genReviewOutputStdout echoes only header + review path + summary), so the sanitized
+              // stdout is deterministic and carries no review.by tree — proves the guard-consumed
+              // dirty stdout is a plain review (rule.require.review-by-disintermediates)
+              expect(
+                sanitizeRawReviewForSnapshot(res.cli.stdout),
+              ).toMatchSnapshot();
+            },
+          );
+        },
+      );
+    },
+  );
 
   given('[case4] --for one slug on a multi-rubric role', () => {
     when.repeatably(REPEATABLE_CONFIG)(
@@ -323,7 +347,9 @@ describe('review.by.acceptance', () => {
           // --for disintermediates to the base review, so the raw sanitizer applies. the
           // isolation asserts FIRST, so a `--resnap` cannot pin a render that leaked r-two
           expect(res.cli.stdout).not.toContain('r-two');
-          expect(sanitizeRawReviewForSnapshot(res.cli.stdout)).toMatchSnapshot();
+          expect(
+            sanitizeRawReviewForSnapshot(res.cli.stdout),
+          ).toMatchSnapshot();
         });
       },
     );
@@ -331,24 +357,27 @@ describe('review.by.acceptance', () => {
 
   given('[case5] --paths + --brain forward to the review engine', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by forwards scope', () => {
-      const res = useThen('it runs review against the given paths', async () => {
-        const cwd = await genReviewByFixture({
-          slug: 'review-by-case5',
-          clone: ASSETS_DIR,
-        });
-        const cli = await invokeReviewBySkill({
-          role: DEMO_ROLE,
-          paths: 'src/clean.ts',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd,
-        });
-        const out = await readRubricOutput({
-          cwd,
-          role: DEMO_ROLE,
-          slug: 'demo-arrow-only',
-        });
-        return { cli, out };
-      });
+      const res = useThen(
+        'it runs review against the given paths',
+        async () => {
+          const cwd = await genReviewByFixture({
+            slug: 'review-by-case5',
+            clone: ASSETS_DIR,
+          });
+          const cli = await invokeReviewBySkill({
+            role: DEMO_ROLE,
+            paths: 'src/clean.ts',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+            cwd,
+          });
+          const out = await readRubricOutput({
+            cwd,
+            role: DEMO_ROLE,
+            slug: 'demo-arrow-only',
+          });
+          return { cli, out };
+        },
+      );
 
       then('the review ran and wrote its output file', () => {
         expect(res.out).not.toBeNull();
@@ -617,42 +646,42 @@ rubrics:
     // a `prefer` rubric can only yield nitpicks, never blockers, so the exit must stay 0
     // regardless of the reviewer's score. the exit code holds whether or not the LLM emits a
     // nitpick at all; the stdout is snapped with the brain-decided bytes masked.
-    when.repeatably(REPEATABLE_CONFIG)(
-      '[t0] a prefer rubric runs',
-      () => {
-        const res = useThen('it never exits with the blocker code', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-case14',
-            clone: ASSETS_DIR,
-          });
-          const preferRulePath =
-            '.agent/repo=demo/role=demo/briefs/rules/rule.prefer.lowercase.md';
-          await setDemoRoleRubrics({
-            cwd,
-            ruleFiles: {
-              [preferRulePath]:
-                '### prefer lowercase comments\n\nprefer lowercase in comments.\n\nviolation = nitpick (never a blocker)\n',
-            },
-            rubricsYml: `rubrics:
+    when.repeatably(REPEATABLE_CONFIG)('[t0] a prefer rubric runs', () => {
+      const res = useThen('it never exits with the blocker code', async () => {
+        const cwd = await genReviewByFixture({
+          slug: 'review-by-case14',
+          clone: ASSETS_DIR,
+        });
+        const preferRulePath =
+          '.agent/repo=demo/role=demo/briefs/rules/rule.prefer.lowercase.md';
+        await setDemoRoleRubrics({
+          cwd,
+          ruleFiles: {
+            [preferRulePath]:
+              '### prefer lowercase comments\n\nprefer lowercase in comments.\n\nviolation = nitpick (never a blocker)\n',
+          },
+          rubricsYml: `rubrics:
   - slug: demo-lowercase
     purpose: prefer lowercase comments
     rules: [${preferRulePath}]
 `,
-          });
-          const cli = await invokeReviewBySkill({
-            role: DEMO_ROLE,
-            paths: 'src/clean.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli };
         });
-
-        then('exit 0 — a nitpick never escalates to the blocker exit (2)', () => {
-          expect(res.cli.code).toBe(0);
+        const cli = await invokeReviewBySkill({
+          role: DEMO_ROLE,
+          paths: 'src/clean.ts',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+          cwd,
         });
+        return { cli };
+      });
 
-        then('the prefer-rubric contract stdout is stable (masked snapshot)', () => {
+      then('exit 0 — a nitpick never escalates to the blocker exit (2)', () => {
+        expect(res.cli.code).toBe(0);
+      });
+
+      then(
+        'the prefer-rubric contract stdout is stable (masked snapshot)',
+        () => {
           // the exit asserts FIRST, so a `--resnap` cannot pin a blocker exit as truth.
           // what the brain decides is masked, never carved out
           // (rule.require.contract-snapshot-exhaustiveness): the header vibe and the row
@@ -674,15 +703,18 @@ rubrics:
             '[VIBE]',
             ...lines
               .slice(1, atRow)
-              .map((line) => line.replace(/^( *)[├└]─ rubrics$/, '$1[RAIL]─ rubrics')),
-            lines[atRow]!
-              .replace(/^( {3})[│ ]( {2}└─ r1 )/, '$1[RAIL]$2')
-              .replace(/ [✓✗]$/, ' [MARK]'),
+              .map((line) =>
+                line.replace(/^( *)[├└]─ rubrics$/, '$1[RAIL]─ rubrics'),
+              ),
+            lines[atRow]!.replace(
+              /^( {3})[│ ]( {2}└─ r1 )/,
+              '$1[RAIL]$2',
+            ).replace(/ [✓✗]$/, ' [MARK]'),
           ].join('\n');
           expect(masked).toMatchSnapshot();
-        });
-      },
-    );
+        },
+      );
+    });
   });
 
   given('[case15] --for one slug, code violates it (the guard shape)', () => {
@@ -717,26 +749,32 @@ rubrics:
           expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
         });
 
-        then('stdout is the RAW base review, NOT the review.by tree (guard drop-in)', () => {
-          // the guard-invocation shape: a guard runs `review.by --role X --for $rubric`, captures
-          // this stdout, and tallies off it. disintermediation makes it a plain review, so the
-          // guard wraps a normal review, not review.by chrome
-          // (rule.require.review-by-disintermediates).
-          expectDisintermediatedRawReview({
-            stdout: res.cli.stdout,
-            slug: 'demo-arrow-only',
-          });
-        });
+        then(
+          'stdout is the RAW base review, NOT the review.by tree (guard drop-in)',
+          () => {
+            // the guard-invocation shape: a guard runs `review.by --role X --for $rubric`, captures
+            // this stdout, and tallies off it. disintermediation makes it a plain review, so the
+            // guard wraps a normal review, not review.by chrome
+            // (rule.require.review-by-disintermediates).
+            expectDisintermediatedRawReview({
+              stdout: res.cli.stdout,
+              slug: 'demo-arrow-only',
+            });
+          },
+        );
 
-        then('the guard-shape captured stdout is stable (full snapshot)', () => {
-          // the exact stdout a route guard captures when it dispatches `review.by --for` as a
-          // peer. the sanitized snapshot proves what the guard tallies: a plain review with a
-          // parseable summary, never a review.by tree. proven live end to end in
-          // review.by.guard-peer.acceptance.test.ts.
-          expect(
-            sanitizeRawReviewForSnapshot(res.cli.stdout),
-          ).toMatchSnapshot();
-        });
+        then(
+          'the guard-shape captured stdout is stable (full snapshot)',
+          () => {
+            // the exact stdout a route guard captures when it dispatches `review.by --for` as a
+            // peer. the sanitized snapshot proves what the guard tallies: a plain review with a
+            // parseable summary, never a review.by tree. proven live end to end in
+            // review.by.guard-peer.acceptance.test.ts.
+            expect(
+              sanitizeRawReviewForSnapshot(res.cli.stdout),
+            ).toMatchSnapshot();
+          },
+        );
       },
     );
   });
@@ -847,10 +885,13 @@ rubrics:
         expect(res.stdout).toContain('--role');
       });
 
-      then('the full usage text is stable (usage line + drift snapshot)', () => {
-        expect(res.stdout).toContain('usage:');
-        expect(res.stdout).toMatchSnapshot();
-      });
+      then(
+        'the full usage text is stable (usage line + drift snapshot)',
+        () => {
+          expect(res.stdout).toContain('usage:');
+          expect(res.stdout).toMatchSnapshot();
+        },
+      );
     });
   });
 
@@ -888,24 +929,28 @@ rubrics:
     });
   });
 
-  given('[case21] a mechanic role whose rubrics.yml declares the turtle vibe', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --role mechanic runs', () => {
-      const res = useThen(
-        'the turtle vibe rides the rubrics.yml all the way to stdout',
-        async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-case21',
-            clone: ASSETS_DIR,
-          });
-          // a named role (mechanic) declares the ehmpathy seaturtle vibe in its own rubrics.yml —
-          // proves the roundtrip end to end: role author's yml → communicator globs role=mechanic
-          // → asVibe reads the block → genReviewByStdout renders the swapped glyphs, with the
-          // role name carried into the `review.by --role mechanic` anchor
-          await setDemoRoleRubrics({
-            cwd,
-            role: 'mechanic',
-            ruleFiles: { [ARROW_RULE_PATH]: ARROW_RULE_BODY },
-            rubricsYml: `vibe:
+  given(
+    '[case21] a mechanic role whose rubrics.yml declares the turtle vibe',
+    () => {
+      when.repeatably(REPEATABLE_CONFIG)(
+        '[t0] review.by --role mechanic runs',
+        () => {
+          const res = useThen(
+            'the turtle vibe rides the rubrics.yml all the way to stdout',
+            async () => {
+              const cwd = await genReviewByFixture({
+                slug: 'review-by-case21',
+                clone: ASSETS_DIR,
+              });
+              // a named role (mechanic) declares the ehmpathy seaturtle vibe in its own rubrics.yml —
+              // proves the roundtrip end to end: role author's yml → communicator globs role=mechanic
+              // → asVibe reads the block → genReviewByStdout renders the swapped glyphs, with the
+              // role name carried into the `review.by --role mechanic` anchor
+              await setDemoRoleRubrics({
+                cwd,
+                role: 'mechanic',
+                ruleFiles: { [ARROW_RULE_PATH]: ARROW_RULE_BODY },
+                rubricsYml: `vibe:
   mascot: 🐢
   artifact: 🐚
 
@@ -913,52 +958,61 @@ rubrics:
   - slug: mech-arrow-only
     rules: [${ARROW_RULE_PATH}]
 `,
+              });
+              const cli = await invokeReviewBySkill({
+                role: 'mechanic',
+                paths: 'src/clean.ts',
+                brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+                cwd,
+              });
+              return { cli };
+            },
+          );
+
+          then('mascot is the seaturtle', () => {
+            expect(res.cli.stdout).toContain('🐢');
           });
-          const cli = await invokeReviewBySkill({
-            role: 'mechanic',
-            paths: 'src/clean.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
+
+          then('artifact is the shell', () => {
+            expect(res.cli.stdout).toContain('🐚');
           });
-          return { cli };
+
+          then(
+            'the mechanic turtle-vibe contract stdout is stable (snapshot)',
+            () => {
+              // clean code gives an all-pass, deterministic run snapped whole — locks the full tree,
+              // the swapped glyphs and the `review.by --role mechanic` anchor, so the named-role
+              // rubrics.yml roundtrips to the exact render
+              expect(
+                sanitizeReviewByOutputForSnapshot(res.cli.stdout),
+              ).toMatchSnapshot();
+            },
+          );
         },
       );
+    },
+  );
 
-      then('mascot is the seaturtle', () => {
-        expect(res.cli.stdout).toContain('🐢');
-      });
-
-      then('artifact is the shell', () => {
-        expect(res.cli.stdout).toContain('🐚');
-      });
-
-      then('the mechanic turtle-vibe contract stdout is stable (snapshot)', () => {
-        // clean code gives an all-pass, deterministic run snapped whole — locks the full tree,
-        // the swapped glyphs and the `review.by --role mechanic` anchor, so the named-role
-        // rubrics.yml roundtrips to the exact render
-        expect(
-          sanitizeReviewByOutputForSnapshot(res.cli.stdout),
-        ).toMatchSnapshot();
-      });
-    });
-  });
-
-  given('[case22] a behaver role whose rubrics.yml declares the beaver vibe', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --role behaver runs', () => {
-      const res = useThen(
-        'the beaver vibe rides the rubrics.yml all the way to stdout',
-        async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-case22',
-            clone: ASSETS_DIR,
-          });
-          // a second named role (behaver) with a different vibe — the beaver + log — shows the
-          // vibe is read per-role from its own rubrics.yml, not baked into the engine
-          await setDemoRoleRubrics({
-            cwd,
-            role: 'behaver',
-            ruleFiles: { [ARROW_RULE_PATH]: ARROW_RULE_BODY },
-            rubricsYml: `vibe:
+  given(
+    '[case22] a behaver role whose rubrics.yml declares the beaver vibe',
+    () => {
+      when.repeatably(REPEATABLE_CONFIG)(
+        '[t0] review.by --role behaver runs',
+        () => {
+          const res = useThen(
+            'the beaver vibe rides the rubrics.yml all the way to stdout',
+            async () => {
+              const cwd = await genReviewByFixture({
+                slug: 'review-by-case22',
+                clone: ASSETS_DIR,
+              });
+              // a second named role (behaver) with a different vibe — the beaver + log — shows the
+              // vibe is read per-role from its own rubrics.yml, not baked into the engine
+              await setDemoRoleRubrics({
+                cwd,
+                role: 'behaver',
+                ruleFiles: { [ARROW_RULE_PATH]: ARROW_RULE_BODY },
+                rubricsYml: `vibe:
   mascot: 🦫
   artifact: 🪵
 
@@ -966,34 +1020,39 @@ rubrics:
   - slug: behaver-arrow-only
     rules: [${ARROW_RULE_PATH}]
 `,
+              });
+              const cli = await invokeReviewBySkill({
+                role: 'behaver',
+                paths: 'src/clean.ts',
+                brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+                cwd,
+              });
+              return { cli };
+            },
+          );
+
+          then('mascot is the beaver', () => {
+            expect(res.cli.stdout).toContain('🦫');
           });
-          const cli = await invokeReviewBySkill({
-            role: 'behaver',
-            paths: 'src/clean.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
+
+          then('artifact is the log', () => {
+            expect(res.cli.stdout).toContain('🪵');
           });
-          return { cli };
+
+          then(
+            'the behaver beaver-vibe contract stdout is stable (snapshot)',
+            () => {
+              // a distinct all-pass render shows the second role's vibe roundtrips independently — the
+              // beaver glyphs and the `review.by --role behaver` anchor, locked whole
+              expect(
+                sanitizeReviewByOutputForSnapshot(res.cli.stdout),
+              ).toMatchSnapshot();
+            },
+          );
         },
       );
-
-      then('mascot is the beaver', () => {
-        expect(res.cli.stdout).toContain('🦫');
-      });
-
-      then('artifact is the log', () => {
-        expect(res.cli.stdout).toContain('🪵');
-      });
-
-      then('the behaver beaver-vibe contract stdout is stable (snapshot)', () => {
-        // a distinct all-pass render shows the second role's vibe roundtrips independently — the
-        // beaver glyphs and the `review.by --role behaver` anchor, locked whole
-        expect(
-          sanitizeReviewByOutputForSnapshot(res.cli.stdout),
-        ).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   /**
    * .what = each argv form the parser reads before it may run a paid review
@@ -1138,39 +1197,45 @@ rubrics:
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by runs the two-rule rubric on clean code',
       () => {
-        const res = useThen('both rules load and the rubric passes', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-case-multirule',
-            clone: ASSETS_DIR,
-          });
-          const secondRulePath =
-            '.agent/repo=demo/role=demo/briefs/rules/rule.forbid.var-keyword.md';
-          await setDemoRoleRubrics({
-            cwd,
-            ruleFiles: {
-              [ARROW_RULE_PATH]: ARROW_RULE_BODY,
-              [secondRulePath]:
-                '### no-var\n\nnever use the `var` keyword; use const or let.\n\nviolation = blocker\n',
-            },
-            rubricsYml: `rubrics:
+        const res = useThen(
+          'both rules load and the rubric passes',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-case-multirule',
+              clone: ASSETS_DIR,
+            });
+            const secondRulePath =
+              '.agent/repo=demo/role=demo/briefs/rules/rule.forbid.var-keyword.md';
+            await setDemoRoleRubrics({
+              cwd,
+              ruleFiles: {
+                [ARROW_RULE_PATH]: ARROW_RULE_BODY,
+                [secondRulePath]:
+                  '### no-var\n\nnever use the `var` keyword; use const or let.\n\nviolation = blocker\n',
+              },
+              rubricsYml: `rubrics:
   - slug: demo-two-rules
     rules:
       - ${ARROW_RULE_PATH}
       - ${secondRulePath}
 `,
-          });
-          const cli = await invokeReviewBySkill({
-            role: DEMO_ROLE,
-            paths: 'src/clean.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli };
-        });
+            });
+            const cli = await invokeReviewBySkill({
+              role: DEMO_ROLE,
+              paths: 'src/clean.ts',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli };
+          },
+        );
 
-        then('exit 0 — both rules loaded, no glob-found-nada malfunction', () => {
-          expect(res.cli.code).toBe(0);
-        });
+        then(
+          'exit 0 — both rules loaded, no glob-found-nada malfunction',
+          () => {
+            expect(res.cli.code).toBe(0);
+          },
+        );
 
         then('the rubric shows a pass mark, never a malfunction row', () => {
           // the mark is checked ON the rubric row, never a bare `✓` (see [case1])

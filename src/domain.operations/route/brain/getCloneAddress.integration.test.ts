@@ -7,8 +7,8 @@ import { given, then, useBeforeAll, when } from 'test-fns';
 import { promisify } from 'util';
 
 import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asCloneAddress } from './asCloneAddress';
 import { getCloneAddress, WHOAMI_TIMEOUT_MS } from './getCloneAddress';
 

@@ -2,7 +2,8 @@
 // route peer row and the review.by row share, so both draw through one formatter
 // (rule.forbid.duplicate-format-tree-operations). a second copy here would drift from it.
 // a sanctioned exposure, declared in src/domain.operations/route/guard/tree/.readme.md
-import type { ReviewerTreeState } from '../route/guard/tree/formatGuardReviewerTree';
+import type { ReviewerTreeState } from '@src/domain.operations/route/guard/tree/formatGuardReviewerTree';
+
 import type { ReviewVerdict } from './ReviewByResult';
 
 /**

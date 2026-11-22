@@ -19,7 +19,9 @@ describe('driver.route.get.acceptance', () => {
         });
 
         // link the driver role
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         // invoke skill
         const cli = await invokeRouteSkill({
@@ -53,7 +55,9 @@ describe('driver.route.get.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.get',
@@ -81,7 +85,9 @@ describe('driver.route.get.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.get',
@@ -114,7 +120,9 @@ describe('driver.route.get.acceptance', () => {
         await execAsync(`mkdir -p "${subdirRoute}"`, { cwd: tempDir });
         await execAsync(`mv *.stone "${subdirRoute}/"`, { cwd: tempDir });
 
-        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
 
         const cli = await invokeRouteSkill({
           skill: 'route.stone.get',
@@ -135,9 +143,7 @@ describe('driver.route.get.acceptance', () => {
 
       then('output shows full relative path to stone', () => {
         // path should show .behavior/2026-02-01.getWeather/1.vision.stone
-        expect(res.cli.stdout).toContain(
-          `${res.subdirRoute}/1.vision.stone`,
-        );
+        expect(res.cli.stdout).toContain(`${res.subdirRoute}/1.vision.stone`);
       });
     });
   });

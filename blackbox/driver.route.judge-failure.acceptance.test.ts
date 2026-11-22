@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { given, then, useThen, when, useBeforeAll } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
   execAsync,
@@ -82,24 +82,29 @@ describe('driver.route.judge-failure.acceptance', () => {
     });
 
     when('[t1] route.stone.set --as passed is invoked again', () => {
-      const result = useThen('judge still fails (not cached as passed)', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
+      const result = useThen(
+        'judge still fails (not cached as passed)',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
       );
 
       then('exit code is 2 (failure)', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('judge is NOT cached as passed (should re-run or show failed)', () => {
-        // if it were wrongly cached as passed, it would exit 0
-        // the judge should either re-run and fail, or show cached failure
-        expect(result.stdout).toContain('judge');
-        expect(result.stderr).toContain('blocked');
-      });
+      then(
+        'judge is NOT cached as passed (should re-run or show failed)',
+        () => {
+          // if it were wrongly cached as passed, it would exit 0
+          // the judge should either re-run and fail, or show cached failure
+          expect(result.stdout).toContain('judge');
+          expect(result.stderr).toContain('blocked');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();

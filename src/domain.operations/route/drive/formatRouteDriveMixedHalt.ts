@@ -1,11 +1,12 @@
-import { asGuardReasonHead } from '../guard/asGuardReasonHead';
-import { formatGuardMalfunctionClearLines } from '../guard/formatGuardMalfunctionClearLines';
-import { asExhaustedReasonForDisplay } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import { asGuardReasonHead } from '@src/domain.operations/route/guard/asGuardReasonHead';
+import { formatGuardMalfunctionClearLines } from '@src/domain.operations/route/guard/formatGuardMalfunctionClearLines';
+import { asExhaustedReasonForDisplay } from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
-} from '../guard/tree/formatBlockRemedyGroups';
-import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+} from '@src/domain.operations/route/guard/tree/formatBlockRemedyGroups';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
+
 import { formatRouteDriveHaltLeverLead } from './formatRouteDriveHaltLeverLead';
 import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 
