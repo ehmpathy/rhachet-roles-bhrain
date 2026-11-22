@@ -4,6 +4,7 @@ import * as path from 'path';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { getOneGuardProvenance } from '@src/domain.operations/getOneGuardProvenance';
 
+import { isPathWithinRoot } from '../../isPathWithinRoot';
 import { parseStoneGuard } from '../parseStoneGuard';
 import type { GuardUpgradeResult } from './GuardUpgradeResult';
 import { getAllGuardUpgradeWarnings } from './getAllGuardUpgradeWarnings';
@@ -14,7 +15,6 @@ import { getOneGuardContent } from './getOneGuardContent';
 import { getOneGuardTemplateContentOrNull } from './getOneGuardTemplateContentOrNull';
 import { getOneGuardTemplatePathOrNull } from './getOneGuardTemplatePathOrNull';
 import { getUnknownGuardVars } from './getUnknownGuardVars';
-import { isPathWithinRoot } from './isPathWithinRoot';
 
 /**
  * .what = parses guard content, yielding the parsed guard or null when it is not a guard

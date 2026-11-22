@@ -1105,14 +1105,14 @@ describe('stepRouteDrive.integration', () => {
         () => {
           // record spawns; return this process's own (live) pid so the handle reads live and the
           // happy path never signals it (the jest worker is safe)
-          const spawns: { route: string; cloneAddr: string }[] = [];
+          const spawns: { repoRoot: string; cloneAddr: string }[] = [];
           const result = useThen('returns stone guidance', async () => {
             process.env.RHACHET_CLONE_SERIAL = 'clone-case15';
             return stepRouteDrive(
               { route: scene.tempDir },
               {
                 spawnDaemon: async (i) => {
-                  spawns.push({ route: i.route, cloneAddr: i.cloneAddr });
+                  spawns.push({ repoRoot: i.repoRoot, cloneAddr: i.cloneAddr });
                   return { pid: process.pid };
                 },
               },
@@ -1125,11 +1125,16 @@ describe('stepRouteDrive.integration', () => {
           });
 
           then(
-            'the auto-wire spawned exactly one reminder daemon for the session',
-            () => {
+            'the auto-wire spawned exactly one reminder daemon for the clone',
+            async () => {
               expect(spawns).toEqual([
-                // getRouteDriverCloneAddr auto-prefixes the raw env serial with '@:'
-                { route: scene.tempDir, cloneAddr: '@:clone-case15' },
+                // the daemon anchors on the route's repo root — the temp repo itself, a literal
+                // oracle, never the anchor op; getRouteDriverCloneAddr auto-prefixes the raw env
+                // serial with '@:'
+                {
+                  repoRoot: scene.tempDir,
+                  cloneAddr: '@:clone-case15',
+                },
               ]);
             },
           );
@@ -1198,7 +1203,8 @@ describe('stepRouteDrive.integration', () => {
             'the benign fault lands in the WATCHED per-session reminder log',
             async () => {
               const logPath = getRouteReminderLogPath({
-                route: scene.tempDir,
+                // the temp repo itself, by its real path: a literal oracle, never the anchor op
+                repoRoot: await fs.realpath(scene.tempDir),
                 // getRouteDriverCloneAddr auto-prefixes the raw env serial with '@:'
                 cloneAddr: '@:clone-case16',
               });

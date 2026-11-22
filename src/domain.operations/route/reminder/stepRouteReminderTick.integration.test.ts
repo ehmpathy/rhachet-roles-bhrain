@@ -1,8 +1,13 @@
+import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { genRouteWithPassage } from '../.test/genRouteWithPassage';
 import { REMINDER_NUDGE_PROSE } from './REMINDER_NUDGE_PROSE';
+import { setRouteReminderFocus } from './setRouteReminderFocus';
 import { stepRouteReminderTick } from './stepRouteReminderTick';
+
+// the clone the reminder serves; each scene focuses it on its own route (the temp dir anchors it)
+const CLONE_ADDR = '@:driver-1';
 
 /**
  * .what = integration cases for stepRouteReminderTick
@@ -26,13 +31,22 @@ describe('stepRouteReminderTick.integration', () => {
         calls.push(say);
         return { reached: true as const };
       };
+      await setRouteReminderFocus({
+        repoRoot: route,
+        cloneAddr: CLONE_ADDR,
+        route,
+      });
       return { route, calls, sayToClone };
     });
 
     when('[t0] the tick runs', () => {
       const outcome = useBeforeAll(async () =>
         stepRouteReminderTick(
-          { route: scene.route, cloneAddr: '@:driver-1', sayTimeoutMs: 30_000 },
+          {
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+            sayTimeoutMs: 30_000,
+          },
           { sayToClone: scene.sayToClone },
         ),
       );
@@ -67,13 +81,22 @@ describe('stepRouteReminderTick.integration', () => {
         calls.push(say);
         return { reached: true as const };
       };
+      await setRouteReminderFocus({
+        repoRoot: route,
+        cloneAddr: CLONE_ADDR,
+        route,
+      });
       return { route, calls, sayToClone };
     });
 
     when('[t0] the tick runs', () => {
       const outcome = useBeforeAll(async () =>
         stepRouteReminderTick(
-          { route: scene.route, cloneAddr: '@:driver-1', sayTimeoutMs: 30_000 },
+          {
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+            sayTimeoutMs: 30_000,
+          },
           { sayToClone: scene.sayToClone },
         ),
       );
@@ -81,6 +104,7 @@ describe('stepRouteReminderTick.integration', () => {
       then('the daemon exits with reason route-not-live', () => {
         expect(outcome).toEqual({
           action: 'exit',
+          route: scene.route,
           reason: 'route-not-live',
           status: 'blocked',
         });
@@ -110,6 +134,11 @@ describe('stepRouteReminderTick.integration', () => {
           calls.push(say);
           return { reached: true as const };
         };
+        await setRouteReminderFocus({
+          repoRoot: route,
+          cloneAddr: CLONE_ADDR,
+          route,
+        });
         return { route, calls, sayToClone };
       });
 
@@ -117,8 +146,8 @@ describe('stepRouteReminderTick.integration', () => {
         const outcome = useBeforeAll(async () =>
           stepRouteReminderTick(
             {
-              route: scene.route,
-              cloneAddr: '@:driver-1',
+              repoRoot: scene.route,
+              cloneAddr: CLONE_ADDR,
               sayTimeoutMs: 30_000,
             },
             { sayToClone: scene.sayToClone },
@@ -128,6 +157,7 @@ describe('stepRouteReminderTick.integration', () => {
         then('the daemon exits with reason route-not-live', () => {
           expect(outcome).toEqual({
             action: 'exit',
+            route: scene.route,
             reason: 'route-not-live',
             status,
           });
@@ -158,13 +188,22 @@ describe('stepRouteReminderTick.integration', () => {
         calls.push(say);
         return { reached: true as const };
       };
+      await setRouteReminderFocus({
+        repoRoot: route,
+        cloneAddr: CLONE_ADDR,
+        route,
+      });
       return { route, calls, sayToClone };
     });
 
     when('[t0] the tick runs', () => {
       const outcome = useBeforeAll(async () =>
         stepRouteReminderTick(
-          { route: scene.route, cloneAddr: '@:driver-1', sayTimeoutMs: 30_000 },
+          {
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+            sayTimeoutMs: 30_000,
+          },
           { sayToClone: scene.sayToClone },
         ),
       );
@@ -172,6 +211,7 @@ describe('stepRouteReminderTick.integration', () => {
       then('the daemon exits with reason route-complete', () => {
         expect(outcome).toEqual({
           action: 'exit',
+          route: scene.route,
           reason: 'route-complete',
           status: 'passed',
         });
@@ -212,6 +252,11 @@ describe('stepRouteReminderTick.integration', () => {
           calls.push(say);
           return { reached: true as const };
         };
+        await setRouteReminderFocus({
+          repoRoot: route,
+          cloneAddr: CLONE_ADDR,
+          route,
+        });
         return { route, calls, sayToClone };
       });
 
@@ -219,8 +264,8 @@ describe('stepRouteReminderTick.integration', () => {
         const outcome = useBeforeAll(async () =>
           stepRouteReminderTick(
             {
-              route: scene.route,
-              cloneAddr: '@:driver-1',
+              repoRoot: scene.route,
+              cloneAddr: CLONE_ADDR,
               sayTimeoutMs: 30_000,
             },
             { sayToClone: scene.sayToClone },
@@ -230,6 +275,7 @@ describe('stepRouteReminderTick.integration', () => {
         then('the daemon exits with reason route-complete', () => {
           expect(outcome).toEqual({
             action: 'exit',
+            route: scene.route,
             reason: 'route-complete',
             status: 'passed',
           });
@@ -256,6 +302,11 @@ describe('stepRouteReminderTick.integration', () => {
           reached: false as const,
           reason: 'clone not LIVE',
         });
+        await setRouteReminderFocus({
+          repoRoot: route,
+          cloneAddr: CLONE_ADDR,
+          route,
+        });
         return { route, sayToClone };
       });
 
@@ -263,8 +314,8 @@ describe('stepRouteReminderTick.integration', () => {
         const outcome = useBeforeAll(async () =>
           stepRouteReminderTick(
             {
-              route: scene.route,
-              cloneAddr: '@:driver-1',
+              repoRoot: scene.route,
+              cloneAddr: CLONE_ADDR,
               sayTimeoutMs: 30_000,
             },
             { sayToClone: scene.sayToClone },
@@ -274,6 +325,7 @@ describe('stepRouteReminderTick.integration', () => {
         then('the daemon exits with reason session-dead (anti-clog)', () => {
           expect(outcome).toEqual({
             action: 'exit',
+            route: scene.route,
             reason: 'session-dead',
             status: 'arrived',
           });
@@ -281,4 +333,156 @@ describe('stepRouteReminderTick.integration', () => {
       });
     },
   );
+
+  given('[case9] a clone whose focus was never written', () => {
+    const scene = useBeforeAll(async () => {
+      const { route } = await genRouteWithPassage({
+        lines: [{ stone: '5.1.execution', status: 'arrived' }],
+      });
+      const calls: { addr: string; what: string }[] = [];
+      const sayToClone = async (say: { addr: string; what: string }) => {
+        calls.push(say);
+        return { reached: true as const };
+      };
+      return { route, calls, sayToClone };
+    });
+
+    when('[t0] the tick runs', () => {
+      const outcome = useBeforeAll(async () =>
+        stepRouteReminderTick(
+          {
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+            sayTimeoutMs: 30_000,
+          },
+          { sayToClone: scene.sayToClone },
+        ),
+      );
+
+      then('the daemon exits route-not-live, with no route named', () => {
+        expect(outcome).toEqual({
+          action: 'exit',
+          reason: 'route-not-live',
+          route: null,
+          status: null,
+        });
+      });
+
+      then('no nudge is sent about a guess', () => {
+        expect(scene.calls).toHaveLength(0);
+      });
+    });
+  });
+
+  given(
+    '[case10] one clone whose focus moved from a halted route A to a live route B',
+    () => {
+      // the refocus: one daemon serves the clone, and each tick reads the focus. once the drive
+      // moves the focus to B, the next tick nudges about B — no daemon came or went
+      const scene = useBeforeAll(async () => {
+        const { route: routeA } = await genRouteWithPassage({
+          lines: [
+            { stone: '5.1.execution', status: 'blocked', blocker: 'approval' },
+          ],
+        });
+        const { route: routeB } = await genRouteWithPassage({
+          lines: [{ stone: '5.1.execution', status: 'arrived' }],
+        });
+        const calls: { addr: string; what: string }[] = [];
+        const sayToClone = async (say: { addr: string; what: string }) => {
+          calls.push(say);
+          return { reached: true as const };
+        };
+        // one anchor for the clone: route A's temp dir holds the clone handle
+        const repoRoot = routeA;
+        await setRouteReminderFocus({
+          repoRoot,
+          cloneAddr: CLONE_ADDR,
+          route: routeA,
+        });
+        await setRouteReminderFocus({
+          repoRoot,
+          cloneAddr: CLONE_ADDR,
+          route: routeB,
+        });
+        return { repoRoot, routeB, calls, sayToClone };
+      });
+
+      when('[t0] the tick runs', () => {
+        const outcome = useBeforeAll(async () =>
+          stepRouteReminderTick(
+            {
+              repoRoot: scene.repoRoot,
+              cloneAddr: CLONE_ADDR,
+              sayTimeoutMs: 30_000,
+            },
+            { sayToClone: scene.sayToClone },
+          ),
+        );
+
+        then('it nudges about route B, the focus', () => {
+          expect(outcome).toEqual({
+            action: 'nudged',
+            route: scene.routeB,
+            status: 'arrived',
+          });
+        });
+
+        then('exactly one nudge is sent', () => {
+          expect(scene.calls).toHaveLength(1);
+        });
+      });
+    },
+  );
+
+  given('[case11] a clone whose focus names a route dir since deleted', () => {
+    // a stale focus: the route dir was pruned after the drive wrote the focus. the activity read
+    // finds no passage, so the daemon exits route-not-live and names the vanished route
+    const scene = useBeforeAll(async () => {
+      const { route: repoRoot } = await genRouteWithPassage({
+        lines: [{ stone: '5.1.execution', status: 'arrived' }],
+      });
+      const routeGone = path.join(repoRoot, '.behavior', 'v1.pruned');
+      await setRouteReminderFocus({
+        repoRoot,
+        cloneAddr: CLONE_ADDR,
+        route: routeGone,
+      });
+      const calls: { addr: string; what: string }[] = [];
+      const sayToClone = async (say: { addr: string; what: string }) => {
+        calls.push(say);
+        return { reached: true as const };
+      };
+      return { repoRoot, routeGone, calls, sayToClone };
+    });
+
+    when('[t0] the tick runs', () => {
+      const outcome = useBeforeAll(async () =>
+        stepRouteReminderTick(
+          {
+            repoRoot: scene.repoRoot,
+            cloneAddr: CLONE_ADDR,
+            sayTimeoutMs: 30_000,
+          },
+          { sayToClone: scene.sayToClone },
+        ),
+      );
+
+      then(
+        'the daemon exits route-not-live, and names the vanished route',
+        () => {
+          expect(outcome).toEqual({
+            action: 'exit',
+            reason: 'route-not-live',
+            route: scene.routeGone,
+            status: null,
+          });
+        },
+      );
+
+      then('no nudge is sent', () => {
+        expect(scene.calls).toHaveLength(0);
+      });
+    });
+  });
 });

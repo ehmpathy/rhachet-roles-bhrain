@@ -34,7 +34,7 @@ describe('getRouteReminderLogPresence.integration', () => {
           'it reports present:false — no daemon was ever registered',
           async () => {
             const result = await getRouteReminderLogPresence({
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: CLONE_ADDR,
             });
             expect(result).toEqual({ present: false });
@@ -52,9 +52,10 @@ describe('getRouteReminderLogPresence.integration', () => {
         // the daemon opens the log on spawn; simulate a registered-then-exited session with a log file
         // present (as the spawn leaves it) and NO pid handle (as a reap leaves it) — the "went quiet" state
         const logPath = getRouteReminderLogPath({
-          route,
+          repoRoot: route,
           cloneAddr: CLONE_ADDR,
         });
+        await fs.mkdir(path.dirname(logPath), { recursive: true });
         await fs.writeFile(
           logPath,
           'route.reminder.daemon exited reason=session-dead\n',
@@ -67,7 +68,7 @@ describe('getRouteReminderLogPresence.integration', () => {
           'it reports present:true — a daemon WAS registered (now gone quiet)',
           async () => {
             const result = await getRouteReminderLogPresence({
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: CLONE_ADDR,
             });
             expect(result).toEqual({ present: true });

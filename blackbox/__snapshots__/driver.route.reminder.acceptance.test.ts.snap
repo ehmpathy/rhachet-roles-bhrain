@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.reminder.acceptance given: [case1] a fresh route with no reminder set when: [t0] route.reminder.get runs via the real skill wrapper then: the get stdout matches the shell snapshot a human reads 1`] = `
-"reminder is not live — no daemon was ever registered for this session; register one with route.reminder.gen (or it auto-registers on the next route.drive while the route is a live drive)
+"reminder is not live — no daemon is registered for this clone under <tmpdir>; register one with route.reminder.gen (or the next route.drive of a live route registers one). a clone in another worktree keeps its reminder under that worktree: run get from there
 "
 `;
 
@@ -11,26 +11,26 @@ exports[`driver.route.reminder.acceptance given: [case1] a fresh route with no r
 `;
 
 exports[`driver.route.reminder.acceptance given: [case2] a human asks the gen skill for help when: [t0] route.reminder.gen --help runs via the real skill wrapper then: the full --help usage block matches its snapshot 1`] = `
-"route.reminder — manage a driver session RouteReminder daemon
+"route.reminder — manage a driver clone RouteReminder daemon (one per clone)
 
 commands:
-  gen     register (findsert) the daemon; spawns one if absent
-  get     report whether the reminder is live, and its pid
+  gen     focus the reminder on a route, and register (findsert) the daemon
+  get     report whether the reminder is live, its pid, and its focus route
   del     deregister — stop the daemon and clear the handle
   daemon  the detached loop a register spawns (not called by hand)
 
 flags:
-  --route <path>         the route dir            (default: the bound route)
-  --clone-addr <addr>    the driver clone addr    (default: this session addr)
-  --interval-ms <n>      cadence in ms            (default: 1200000 = 20m)
-  --say-timeout-ms <n>   inject-call bound in ms  (default: 30000 = 30s)
+  --route <path>         gen only: the route to focus   (default: the bound route)
+  --clone-addr <addr>    the driver clone addr          (default: this clone addr)
+  --repo-root <path>     daemon only: the clone anchor  (required; the register passes it)
+  --interval-ms <n>      cadence in ms                  (default: 1200000 = 20m)
+  --say-timeout-ms <n>   inject-call bound in ms        (default: 30000 = 30s)
 
 note:
-  gen/get/del derive both flags on their own when run inside a bound,
-  enrolled session: --route defaults to the branch bound route (rhx
-  route.bind.set), --clone-addr defaults to this session own addr
-  (RHACHET_CLONE_SERIAL). pass either flag to override — e.g. to inspect a
-  DIFFERENT route or session.
+  one clone holds one reminder, whatever routes it drives. the reminder
+  nudges about its focus: the live route the clone drove last (route.drive
+  sets it; gen sets it too, except that a route which is not a live drive
+  never moves a live daemon off its focus). get and del take no --route.
 
   --clone-addr takes the SAME "@:"-prefixed address \`rhx clone say\` and
   \`rhx clone whoami\` use — e.g. \`@:<serial>\` (the serial from
@@ -38,18 +38,18 @@ note:
   clone. one address form everywhere — no bare-serial variant is accepted.
 
 example:
-  route.reminder.get                       (inside a bound, enrolled session)
+  route.reminder.get                       (inside an enrolled session)
   route.reminder.gen --route .behavior/my-feature --clone-addr @:driver-1
 "
 `;
 
 exports[`driver.route.reminder.acceptance given: [case3] a blocked route (the daemon must self-exit at once, no live clone) when: [t0] route.reminder.daemon runs the real loop against the blocked route then: the daemon self-exit stdout matches its shell snapshot 1`] = `
-"route.reminder.daemon exited: reason=route-not-live ticks=1 route=. clone=@:driver-1
+"route.reminder.daemon exited: reason=route-not-live ticks=1 focus=. clone=@:driver-1
 "
 `;
 
-exports[`driver.route.reminder.acceptance given: [case4] a fresh blocked route — gen drives the REAL detached-spawn path when: [t0] route.reminder.gen runs the real register path then: the real gen-spawn stdout matches its shell snapshot 1`] = `
-"reminder daemon spawned (pid <pid>) but the route is not a live drive (route-not-live) — it self-exits on arrival; daemon log: <tmpdir>
+exports[`driver.route.reminder.acceptance given: [case4] a fresh blocked route — gen through the real skill spawns none when: [t0] route.reminder.gen runs the real register path then: the gen stdout matches its shell snapshot 1`] = `
+"reminder not spawned — focus . is not a live drive (route-not-live, status blocked); the next route.drive of a live route registers it
 "
 `;
 
@@ -90,31 +90,173 @@ exports[`driver.route.reminder.acceptance given: [case5] the AUTO-WIRE — route
 `;
 
 exports[`driver.route.reminder.acceptance given: [case6] a COMPLETED route (every stone passed — the daemon self-exits route-complete) when: [t0] route.reminder.daemon runs the real loop against the completed route then: the completed-route self-exit stdout matches its snapshot 1`] = `
-"route.reminder.daemon exited: reason=route-complete ticks=1 route=. clone=@:driver-1
+"route.reminder.daemon exited: reason=route-complete ticks=1 focus=. clone=@:driver-1
 "
 `;
 
 exports[`driver.route.reminder.acceptance given: [case7] a live drive but an unreachable clone (dead session — the daemon self-exits session-dead) when: [t0] route.reminder.daemon runs the real loop, reaches the bogus clone, and fails reach-state then: the dead-session self-exit stdout matches its snapshot 1`] = `
-"route.reminder.daemon exited: reason=session-dead ticks=1 route=. clone=@:driver-1
+"route.reminder.daemon exited: reason=session-dead ticks=1 focus=. clone=@:driver-1
 "
 `;
 
-exports[`driver.route.reminder.acceptance given: [case8] a session whose handle already names a live daemon (findsert hit) when: [t0] route.reminder.gen runs against the already-live session then: the findsert-hit stdout matches its shell snapshot 1`] = `
-"reminder already live — daemon pid <pid> (no duplicate spawned)
+exports[`driver.route.reminder.acceptance given: [case8] a clone whose handle already names a live daemon (findsert hit) when: [t0] route.reminder.gen runs against the already-live clone then: the findsert-hit stdout matches its shell snapshot 1`] = `
+"reminder already live — daemon pid <pid>, focus . (no duplicate spawned)
 "
 `;
 
-exports[`driver.route.reminder.acceptance given: [case9] a session whose handle names a genuinely live daemon (deregister) when: [t0] route.reminder.del runs against the live daemon then: the deregister-success stdout matches its shell snapshot 1`] = `
+exports[`driver.route.reminder.acceptance given: [case9] a clone whose handle names a genuinely live daemon (deregister) when: [t0] route.reminder.del runs against the live daemon then: the deregister-success stdout matches its shell snapshot 1`] = `
 "reminder deregistered — live daemon stopped, handle cleared
 "
 `;
 
-exports[`driver.route.reminder.acceptance given: [case10] a session whose handle names a genuinely live daemon (detect) when: [t0] route.reminder.get runs against the live session then: the live-detect stdout matches its shell snapshot 1`] = `
-"reminder is live — daemon pid <pid>
+exports[`driver.route.reminder.acceptance given: [case10] a clone whose handle names a genuinely live daemon (detect) when: [t0] route.reminder.get runs against the live clone then: the live-detect stdout matches its shell snapshot 1`] = `
+"reminder is live — daemon pid <pid>, focus .
 "
 `;
 
-exports[`driver.route.reminder.acceptance given: [case13] a session whose auto-respawn breaker has tripped (circuit-broken) when: [t0] route.reminder.get runs against the circuit-broken session then: the circuit-broken stdout matches its shell snapshot 1`] = `
-"reminder is not live — auto-respawn is CIRCUIT-BROKEN after 6 consecutive crash-on-arrivals (the spawn keeps dying on boot); the drive will NOT re-spawn it until you re-arm. fix: repair the spawn, then run route.reminder.gen. crash history: <tmpdir>
+exports[`driver.route.reminder.acceptance given: [case13] a clone whose auto-respawn breaker has tripped (circuit-broken) when: [t0] route.reminder.get runs against the circuit-broken clone then: the circuit-broken stdout matches its shell snapshot 1`] = `
+"reminder is not live — auto-respawn is circuit-broken after 6 consecutive crash-on-arrivals (the spawn dies on each boot); the drive will not re-spawn it until you re-arm. fix: repair the spawn, then run route.reminder.gen. crash history: <tmpdir>/.agent/.cache/repo=bhrain/role=driver/skill=route.reminder/daemon.of=reminder-driveon.session=~40~3adriver-1.log
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case14] get and del calls that pass --route when: [t0] route.reminder.get --route runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, and names the fix 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: route.reminder.get takes no --route — the reminder is one per clone, and follows the route the clone drives
+   └─ fix: drop --route; to reach another clone's reminder, pass --clone-addr @:<serial>
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case14] get and del calls that pass --route when: [t1] route.reminder.del --route runs via the real skill wrapper then: it exits 2 with the same refusal, named for del 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: route.reminder.del takes no --route — the reminder is one per clone, and follows the route the clone drives
+   └─ fix: drop --route; to reach another clone's reminder, pass --clone-addr @:<serial>
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case15] the other caller slips, through the real skill wrappers when: [t0] route.reminder.get --repo-root runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, with a fix and no stack 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: route.reminder.get takes no --repo-root — it acts on the reminder of the worktree it runs in
+   └─ fix: drop --repo-root; to reach another worktree's reminder, run route.reminder.get from that worktree
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case15] the other caller slips, through the real skill wrappers when: [t1] route.reminder.del --repo-root runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, with a fix and no stack 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: route.reminder.del takes no --repo-root — it acts on the reminder of the worktree it runs in
+   └─ fix: drop --repo-root; to reach another worktree's reminder, run route.reminder.del from that worktree
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case15] the other caller slips, through the real skill wrappers when: [t2] route.reminder.get with a bare serial for --clone-addr runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, with a fix and no stack 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 'driver-1' is not a clone address — clone addresses start with '@:'. did you mean '@:driver-1'?
+   └─ fix: use '@:driver-1'
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case15] the other caller slips, through the real skill wrappers when: [t3] route.reminder.gen with a --route that is not a dir runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, with a fix and no stack 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: the route "v9.typo" is not a dir — the reminder cannot focus on it
+   └─ fix: pass the path of a route dir, e.g. --route .behavior/my-feature
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case15] the other caller slips, through the real skill wrappers when: [t4] route.reminder.daemon with no --repo-root runs via the real skill wrapper then: it exits 2 behind a ConstraintError header, with a fix and no stack 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --repo-root is required
+   └─ fix: e.g. --repo-root /path/to/repo
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case16] a live route whose clone home cannot be made when: [t0] route.reminder.gen runs via the real skill wrapper then: the malfunction frame matches the shell snapshot a human reads 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: ENOTDIR: not a directory, open '<tmpdir>/.agent/.cache/repo=bhrain/role=driver/skill=route.reminder/daemon.of=reminder-driveon.session=~40~3adriver-1.pid'
+   ├─ fix: a defect in route.reminder, not a flag to change; report it with its stack
+   └─ stack <frames>
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case17] one clone drives two live routes in one repo, through route.drive when: [t0] the clone drives route A, then route B then: get names the one live daemon, with its focus on route B 1`] = `
+"reminder is live — daemon pid <pid>, focus .behavior/route-b
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case17] one clone drives two live routes in one repo, through route.drive when: [t1] del stops the clone reminder then: del stops the one daemon, and it is dead 1`] = `
+"reminder deregistered — live daemon stopped, handle cleared
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case18] a fresh live route — gen through the real skill spawns one when: [t0] route.reminder.gen runs the real register path then: the gen stdout matches its shell snapshot 1`] = `
+"reminder registered — daemon spawned and live (pid <pid>), focus .
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case19] a clone whose pid handle is torn when: [t0] route.reminder.get runs via the real skill wrapper then: it exits 2 and names del as the fix 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: the reminder handle is torn — its body is not a pid, so no daemon can be read from it
+   └─ fix: clear it with: rhx route.reminder.del (it removes a torn handle; the next live drive registers afresh)
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case19] a clone whose pid handle is torn when: [t1] route.reminder.del runs via the real skill wrapper then: it clears the torn handle and says so 1`] = `
+"reminder handle was torn (it held "12x", not a pid) — cleared <tmpdir>/.agent/.cache/repo=bhrain/role=driver/skill=route.reminder/daemon.of=reminder-driveon.session=~40~3adriver-1.pid; the next live drive registers afresh
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case19] a clone whose pid handle is torn when: [t2] route.reminder.get runs after the del then: it reads a clean not-live state 1`] = `
+"reminder is not live — no daemon is registered for this clone under <tmpdir>; register one with route.reminder.gen (or the next route.drive of a live route registers one). a clone in another worktree keeps its reminder under that worktree: run get from there
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case20] one clone drives a route that then halts, through route.drive when: [t1] the route halts, and the clone drives it again then: get names the focus route and its halt 1`] = `
+"reminder is not live — its focus .behavior/route-a is not a live drive (route-not-live, status blocked); the next route.drive of a live route registers it
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case21] a clone that holds legacy per-route handles when: [t0] route.reminder.del runs via the real skill wrapper then: the del stdout matches its shell snapshot 1`] = `
+"reminder deregistered — 1 legacy daemon(s) stopped (no clone daemon was live)
+RouteReminder legacy daemon reaped — pid <pid>, handle <tmpdir>/.behavior/v1.old/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.pid
+RouteReminder legacy handle kept, reap faulted (<tmpdir>/.behavior/v1.torn/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.pid): the pid file is torn — fix: the file names no pid; remove <tmpdir>/.behavior/v1.torn/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.pid, then run rhx route.reminder.gen
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case22] gen with no --route when: [t0] no route is bound to the branch then: it exits 2 and names --route and the bind as fixes 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --route is required
+   └─ fix: e.g. --route .behavior/my-feature (or bind one first: rhx route.bind.set --route <path>)
+
+"
+`;
+
+exports[`driver.route.reminder.acceptance given: [case22] gen with no --route when: [t1] a route is bound to the branch then: gen spawns a daemon focused on the bound route 1`] = `
+"reminder registered — daemon spawned and live (pid <pid>), focus .behavior/route-a
 "
 `;

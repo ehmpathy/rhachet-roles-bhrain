@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`surfaceRouteReminderFault.integration given: [case1] an enrolled session whose clone log is writable when: [t0] a benign fault is surfaced then: the fault line is appended to the WATCHED clone reminder log 1`] = `
+"RouteReminder auto-sync fault (drive proceeds — continuity may be degraded): spawn EACCES (benign)
+"
+`;
+
+exports[`surfaceRouteReminderFault.integration given: [case2] a plain (non-enrolled) session — no clone address when: [t0] a fault is surfaced with no RHACHET_CLONE_SERIAL then: it falls to the stderr floor (no clone log) 1`] = `"RouteReminder auto-sync fault (drive proceeds — continuity may be degraded): boom with no clone"`;
+
+exports[`surfaceRouteReminderFault.integration given: [case3] an enrolled session whose log write ITSELF faults when: [t0] a fault is surfaced but the log append faults then: it falls to the stderr floor, re-states BOTH faults (never hidden) 1`] = `"RouteReminder auto-sync fault (drive proceeds — continuity may be degraded): original fault [also: reminder-log write faulted: ENOTDIR: not a directory, mkdir '<anchor>/.agent/.cache/repo=bhrain/role=driver/skill=route.reminder']"`;

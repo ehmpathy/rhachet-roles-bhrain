@@ -60,7 +60,7 @@ export const stepRouteDrive = async (
   },
   context?: {
     spawnDaemon?: (input: {
-      route: string;
+      repoRoot: string;
       cloneAddr: string;
       intervalMs: number;
       sayTimeoutMs: number;
@@ -125,7 +125,8 @@ export const stepRouteDrive = async (
     reports: passageReportsRaw,
   });
 
-  // keep this driver session's RouteReminder in sync with the route's live state (auto start/stop)
+  // keep this clone's one RouteReminder pointed at this route, in sync with its live state
+  // (auto start/stop; a move to another route refocuses the clone's daemon, never a second spawn)
   // .why = the wish's headline: "the route system upserts the reminder into cron as needed… halt it
   //        when the route is blocked". route.drive runs as a hook inside the driver clone on every
   //        boot/stop, so it is the pulse that findserts the reminder while the route is a live drive
@@ -158,7 +159,7 @@ export const stepRouteDrive = async (
     if (reminderError instanceof RouteReminderOrphanError) throw reminderError;
 
     // every other fault leaves no process loose → surface to the watched channel, drive proceeds
-    await surfaceRouteReminderFault({ route, error: reminderError });
+    await surfaceRouteReminderFault({ from: route, error: reminderError });
   });
 
   // the latest passage entry per stone, threaded through every branch below (hook pre-check,

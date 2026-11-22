@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 import { given, then, when } from 'test-fns';
 
 import { asRouteReminderProcessFaultError } from './asRouteReminderProcessFaultError';
+import { RouteReminderPidMalformedError } from './RouteReminderPidMalformedError';
 
 describe('asRouteReminderProcessFaultError', () => {
   given('an EPERM fault — the pid-reuse residual', () => {
@@ -10,7 +11,7 @@ describe('asRouteReminderProcessFaultError', () => {
     when('mapped', () => {
       const mapped = asRouteReminderProcessFaultError({
         error,
-        route: '.behavior/my-feature',
+        repoRoot: '/tmp/repo-x',
         cloneAddr: '@:driver-1',
       });
 
@@ -30,13 +31,38 @@ describe('asRouteReminderProcessFaultError', () => {
     });
   });
 
+  given('a torn clone handle — its body is not a pid', () => {
+    const error = new RouteReminderPidMalformedError(
+      'RouteReminder pid file is malformed',
+      { pidPath: '/tmp/repo-x/x.pid', raw: '12x' },
+    );
+
+    when('mapped', () => {
+      const mapped = asRouteReminderProcessFaultError({
+        error,
+        repoRoot: '/tmp/repo-x',
+        cloneAddr: '@:driver-1',
+      });
+
+      then('it becomes a BadRequestError (exit 2 constraint)', () => {
+        expect(mapped).toBeInstanceOf(BadRequestError);
+      });
+
+      then('it names the torn handle and the one verb that clears it', () => {
+        expect((mapped as Error).message).toContain('torn');
+        expect((mapped as Error).message).toContain('rhx route.reminder.del');
+        expect((mapped as Error).message).toContain('.pid');
+      });
+    });
+  });
+
   given('a non-EPERM errno (EINVAL) — not the residual', () => {
     const error = Object.assign(new Error('kill EINVAL'), { code: 'EINVAL' });
 
     when('mapped', () => {
       const mapped = asRouteReminderProcessFaultError({
         error,
-        route: '.behavior/my-feature',
+        repoRoot: '/tmp/repo-x',
         cloneAddr: '@:driver-1',
       });
 
@@ -52,7 +78,7 @@ describe('asRouteReminderProcessFaultError', () => {
     when('mapped', () => {
       const mapped = asRouteReminderProcessFaultError({
         error,
-        route: '.behavior/my-feature',
+        repoRoot: '/tmp/repo-x',
         cloneAddr: '@:driver-1',
       });
 

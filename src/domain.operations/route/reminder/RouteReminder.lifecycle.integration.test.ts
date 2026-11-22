@@ -9,6 +9,7 @@ import { asNodeErrnoCode } from '../asNodeErrnoCode';
 import { delRouteReminder } from './delRouteReminder';
 import { genRouteReminder } from './genRouteReminder';
 import { getRouteReminder } from './getRouteReminder';
+import { DIR_OF_ROUTE_REMINDER_HANDLES } from './getRouteReminderHandlePath';
 import { getRouteReminderPidPath } from './getRouteReminderPidPath';
 import { isProcessAlive } from './isProcessAlive';
 import { stopProcess } from './stopProcess';
@@ -89,20 +90,25 @@ describe('RouteReminder.lifecycle.integration', () => {
   given('[case1] a route with no reminder set', () => {
     const scene = useBeforeAll(async () => {
       const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-life-'));
-      await fs.mkdir(path.join(route, '.route'), { recursive: true });
+      await fs.mkdir(path.join(route, DIR_OF_ROUTE_REMINDER_HANDLES), {
+        recursive: true,
+      });
       return { route };
     });
 
     when('[t0] the reminder is detected before any register', () => {
       then('no reminder is set', async () => {
         expect(
-          await getRouteReminder({ route: scene.route, cloneAddr: CLONE_ADDR }),
+          await getRouteReminder({
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+          }),
         ).toBeNull();
       });
 
       then('the journey step matches its snapshot', async () => {
         const found = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         // pin the arc's first frame: a bare route yields no live reminder
@@ -117,7 +123,7 @@ describe('RouteReminder.lifecycle.integration', () => {
       const registered = useBeforeAll(async () =>
         genRouteReminder(
           {
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
             intervalMs: null,
             sayTimeoutMs: null,
@@ -132,10 +138,10 @@ describe('RouteReminder.lifecycle.integration', () => {
       });
 
       then(
-        'the pid handle is written into .route/ under a per-session name',
+        'the pid handle is written into the clone home under a per-clone name',
         async () => {
           const pidPath = getRouteReminderPidPath({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
           });
           // the handle name carries the escape-folded session token, so two sessions never
@@ -150,7 +156,7 @@ describe('RouteReminder.lifecycle.integration', () => {
 
       then('detect now finds the live daemon', async () => {
         const found = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         expect(found?.pid).toEqual(registered.pid);
@@ -160,7 +166,7 @@ describe('RouteReminder.lifecycle.integration', () => {
         'a DIFFERENT session on the same route sees no reminder (per-session scope)',
         async () => {
           const other = await getRouteReminder({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: '@:driver-2',
           });
           expect(other).toBeNull();
@@ -169,7 +175,7 @@ describe('RouteReminder.lifecycle.integration', () => {
 
       then('the journey step matches its snapshot', async () => {
         const found = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         // pin the register frame: created + a live handle, pid scrubbed to a stable token
@@ -180,7 +186,7 @@ describe('RouteReminder.lifecycle.integration', () => {
           detectedPid: asScrubbedPid(found?.pid),
           handleName: path.basename(
             getRouteReminderPidPath({
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: CLONE_ADDR,
             }),
           ),
@@ -191,12 +197,12 @@ describe('RouteReminder.lifecycle.integration', () => {
     when('[t2] the reminder is registered again (findsert)', () => {
       const outcome = useBeforeAll(async () => {
         const first = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         const again = await genRouteReminder(
           {
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
             intervalMs: null,
             sayTimeoutMs: null,
@@ -227,7 +233,7 @@ describe('RouteReminder.lifecycle.integration', () => {
 
     when('[t3] the reminder is deregistered', () => {
       const result = useBeforeAll(async () =>
-        delRouteReminder({ route: scene.route, cloneAddr: CLONE_ADDR }),
+        delRouteReminder({ repoRoot: scene.route, cloneAddr: CLONE_ADDR }),
       );
 
       then('it reports the live daemon was stopped', () => {
@@ -236,14 +242,17 @@ describe('RouteReminder.lifecycle.integration', () => {
 
       then('detect now finds no reminder', async () => {
         expect(
-          await getRouteReminder({ route: scene.route, cloneAddr: CLONE_ADDR }),
+          await getRouteReminder({
+            repoRoot: scene.route,
+            cloneAddr: CLONE_ADDR,
+          }),
         ).toBeNull();
       });
 
       then('the pid handle file is removed', async () => {
         const exists = await isFilePresent(
           getRouteReminderPidPath({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
           }),
         );
@@ -252,12 +261,12 @@ describe('RouteReminder.lifecycle.integration', () => {
 
       then('the journey step matches its snapshot', async () => {
         const found = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         const handleExists = await isFilePresent(
           getRouteReminderPidPath({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
           }),
         );
@@ -273,7 +282,7 @@ describe('RouteReminder.lifecycle.integration', () => {
 
     when('[t4] deregister runs again on the absent reminder', () => {
       const result = useBeforeAll(async () =>
-        delRouteReminder({ route: scene.route, cloneAddr: CLONE_ADDR }),
+        delRouteReminder({ repoRoot: scene.route, cloneAddr: CLONE_ADDR }),
       );
 
       then('it is an idempotent no-op (none stopped)', () => {
@@ -293,14 +302,16 @@ describe('RouteReminder.lifecycle.integration', () => {
   given('[case2] a stale pid file left by a crashed daemon', () => {
     const scene = useBeforeAll(async () => {
       const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-stale-'));
-      await fs.mkdir(path.join(route, '.route'), { recursive: true });
+      await fs.mkdir(path.join(route, DIR_OF_ROUTE_REMINDER_HANDLES), {
+        recursive: true,
+      });
       // spawn a real process, capture its pid, then kill it → the pid is now dead
       const { pid } = genSleeperProcess();
       process.kill(pid, 'SIGKILL');
       // wait until the pid is TRULY dead (deterministic poll), then write it as a stale handle
       await awaitPidDead(pid);
       await fs.writeFile(
-        getRouteReminderPidPath({ route, cloneAddr: CLONE_ADDR }),
+        getRouteReminderPidPath({ repoRoot: route, cloneAddr: CLONE_ADDR }),
         String(pid),
       );
       return { route, deadPid: pid };
@@ -312,7 +323,7 @@ describe('RouteReminder.lifecycle.integration', () => {
         async () => {
           expect(
             await getRouteReminder({
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: CLONE_ADDR,
             }),
           ).toBeNull();
@@ -321,7 +332,7 @@ describe('RouteReminder.lifecycle.integration', () => {
 
       then('the journey step matches its snapshot', async () => {
         const found = await getRouteReminder({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
         });
         // pin the stale-read frame: a dead pointer reads as absent, never as live
@@ -333,7 +344,7 @@ describe('RouteReminder.lifecycle.integration', () => {
       const registered = useBeforeAll(async () =>
         genRouteReminder(
           {
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: CLONE_ADDR,
             intervalMs: null,
             sayTimeoutMs: null,
@@ -374,7 +385,9 @@ describe('RouteReminder.lifecycle.integration', () => {
         const route = await fs.mkdtemp(
           path.join(os.tmpdir(), 'reminder-reconcile-'),
         );
-        await fs.mkdir(path.join(route, '.route'), { recursive: true });
+        await fs.mkdir(path.join(route, DIR_OF_ROUTE_REMINDER_HANDLES), {
+          recursive: true,
+        });
         return { route };
       });
 
@@ -386,7 +399,7 @@ describe('RouteReminder.lifecycle.integration', () => {
             // the fake host boundary: spawn a real sleeper, then write a corrupt handle to simulate a
             // concurrent writer that claimed the slot first (forces EEXIST → the reconcile fault path)
             const spawnSleeperThenCorruptHandle = async (spawnInput: {
-              route: string;
+              repoRoot: string;
               cloneAddr: string;
               intervalMs: number;
               sayTimeoutMs: number;
@@ -396,7 +409,7 @@ describe('RouteReminder.lifecycle.integration', () => {
               spawnedInReconcile.push(pid);
               await fs.writeFile(
                 getRouteReminderPidPath({
-                  route: spawnInput.route,
+                  repoRoot: spawnInput.repoRoot,
                   cloneAddr: spawnInput.cloneAddr,
                 }),
                 '123abc',
@@ -406,7 +419,7 @@ describe('RouteReminder.lifecycle.integration', () => {
             const error = await getError(
               genRouteReminder(
                 {
-                  route: scene.route,
+                  repoRoot: scene.route,
                   cloneAddr: CLONE_ADDR,
                   intervalMs: null,
                   sayTimeoutMs: null,
@@ -449,9 +462,11 @@ describe('RouteReminder.lifecycle.integration', () => {
           const route = await fs.mkdtemp(
             path.join(os.tmpdir(), 'reminder-corrupt-'),
           );
-          await fs.mkdir(path.join(route, '.route'), { recursive: true });
+          await fs.mkdir(path.join(route, DIR_OF_ROUTE_REMINDER_HANDLES), {
+            recursive: true,
+          });
           await fs.writeFile(
-            getRouteReminderPidPath({ route, cloneAddr: CLONE_ADDR }),
+            getRouteReminderPidPath({ repoRoot: route, cloneAddr: CLONE_ADDR }),
             raw,
           );
           return { route };
@@ -466,7 +481,7 @@ describe('RouteReminder.lifecycle.integration', () => {
               // error (or a silent return) would regress the malformed-state contract.
               const error = await getError(
                 getRouteReminder({
-                  route: scene.route,
+                  repoRoot: scene.route,
                   cloneAddr: CLONE_ADDR,
                 }),
               );

@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genRouteReminder.integration given: [case5] two legacy handles of this clone: one torn, one live when: [t0] the clone findserts its reminder then: the kept line matches the snapshot, its path masked 1`] = `"RouteReminder legacy handle kept, reap faulted (<repo>/.behavior/v1.torn/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.pid): the pid file is torn — fix: the file names no pid; remove <repo>/.behavior/v1.torn/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.pid, then run rhx route.reminder.gen"`;
