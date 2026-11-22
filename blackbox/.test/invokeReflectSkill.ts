@@ -92,6 +92,8 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     .replace(/\/tmp\/[^\s]*[^\s.,;:]/g, '[TEMP_PATH]')
     // sanitize temp directory ISO timestamp prefix (e.g., 2026-03-17T19-06-58.037Z)
     .replace(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d{3}Z/g, '[ISO_TEMP]')
+    // drop the autoprune run id test-fns stamps after the temp dir prefix (e.g., .rd7fcb47c)
+    .replace(/\[ISO_TEMP\]\.r[a-f0-9]{8}\./g, '[ISO_TEMP].')
     // sanitize temp directory hash suffix (e.g., .eb7d5802)
     // lookahead matches: whitespace, end, period, or slash (for paths like gitrepo=...eb7d5802/)
     .replace(/\.[a-f0-9]{8}(?=\s|$|\.|\/)/g, '.[HASH]')

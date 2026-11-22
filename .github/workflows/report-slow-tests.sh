@@ -15,6 +15,7 @@
 # guarantee:
 #   - exit 0 = report written to $GITHUB_STEP_SUMMARY (or /dev/null locally)
 #   - exit 0 = empty shard (0 test files) — a legitimate state, stated explicitly
+#   - exit 0 = skipped shard (every test skipped) — a legitimate state, stated explicitly
 #   - exit 1 = non-empty report yielded zero real durations (schema drift)
 ######################################################################
 set -eu
@@ -29,6 +30,14 @@ summary="${GITHUB_STEP_SUMMARY:-/dev/null}"
 # an empty shard (no matched files) is legitimate — say so explicitly, never fail.
 if [[ "$total" -eq 0 ]]; then
   echo "slow-test report: 0 test files in $results (empty shard)" >> "$summary"
+  exit 0
+fi
+
+# a shard whose every test skipped (e.g., a suite gated on a credential or a host tool) ran no
+# test, so it holds no duration to rank — legitimate, stated explicitly, never a schema alarm.
+ran=$(jq '[.testResults[] | select(any(.assertionResults[]?; .status == "passed" or .status == "failed"))] | length' "$results")
+if [[ "$ran" -eq 0 ]]; then
+  echo "slow-test report: $total test files in $results, every test skipped" >> "$summary"
   exit 0
 fi
 
