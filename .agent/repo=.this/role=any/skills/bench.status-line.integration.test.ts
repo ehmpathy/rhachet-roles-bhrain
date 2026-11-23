@@ -23,22 +23,58 @@ const SKILL = path.join(
   '.agent/repo=.this/role=any/skills/bench.status-line.sh',
 );
 
+/**
+ * .what = runs the skill in a cwd and captures its streams and exit code
+ * .why = each path drives the same entrypoint a human types
+ *
+ * .note = a spawn that never ran, or ended on a signal, throws with the command, cwd, and
+ *         cause, so it can never read as the skill's own `exit 1 = an arm failed`
+ */
 const runSkill = (input: {
   args: string[];
   cwd: string | null;
 }): { stdout: string; stderr: string; exitCode: number } => {
+  const cwd =
+    input.cwd ?? fs.realpathSync(genTempDir({ slug: 'bench-status-line' }));
   const result = spawnSync('bash', [SKILL, ...input.args], {
-    cwd:
-      input.cwd ?? fs.realpathSync(genTempDir({ slug: 'bench-status-line' })),
+    cwd,
     encoding: 'utf-8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+  if (result.error || result.status === null)
+    throw Object.assign(
+      new Error(
+        `bench spawn did not complete: bash ${SKILL} ${input.args.join(' ')} in ${cwd}; signal=${result.signal}`,
+      ),
+      { cause: result.error },
+    );
   return {
-    stdout: result.stdout ?? '',
-    stderr: result.stderr ?? '',
-    exitCode: result.status ?? 1,
+    stdout: result.stdout,
+    stderr: result.stderr,
+    exitCode: result.status,
   };
 };
+
+/**
+ * .what = a temp dir that holds a stub bash reader where the package would install it
+ * .why = the bench refuses before any arm where no reader is installed, so a case that must
+ *        reach an arm needs the reader path present
+ */
+const genTempDirWithReader = (input: { slug: string }): string => {
+  const tempDir = fs.realpathSync(genTempDir({ slug: input.slug }));
+  const readerPath = path.join(tempDir, PATH_OF_READER);
+  fs.mkdirSync(path.dirname(readerPath), { recursive: true });
+  fs.writeFileSync(readerPath, ':\n');
+  return tempDir;
+};
+const PATH_OF_READER =
+  'node_modules/rhachet-roles-bhrain/dist/domain.roles/driver/skills/route.status.line.sh';
+
+/**
+ * .what = how many arms the measure output reports a figure for
+ */
+const countRepaintFigures = (input: { stdout: string }): number =>
+  input.stdout.match(/s cpu per repaint/g)?.length ?? 0;
 
 /**
  * .what = the measure output with its volatile bytes masked
@@ -51,6 +87,8 @@ const asMaskedMeasure = (input: { stdout: string }): string =>
 
 /**
  * .what = the refusals the skill owes before any arm runs, one per row
+ * .why = each is a contract surface a human meets; its text and exit code must not drift
+ *        unseen. each runs in an empty temp dir, which holds no installed reader
  */
 const REFUSALS: { slug: string; args: string[]; stderr: string }[] = [
   {
@@ -73,6 +111,11 @@ const REFUSALS: { slug: string; args: string[]; stderr: string }[] = [
     args: ['--runs', '0'],
     stderr: '✋ ConstraintError: --runs must be a positive integer',
   },
+  {
+    slug: 'no-reader-installed',
+    args: ['--runs', '1'],
+    stderr: `✋ ConstraintError: no bash reader at ${PATH_OF_READER}; run bench.status-line from a repo whose installed rhachet-roles-bhrain ships route.status.line.sh`,
+  },
 ];
 
 describe('bench.status-line.integration', () => {
@@ -85,11 +128,13 @@ describe('bench.status-line.integration', () => {
         expect(ran.stdout).toContain('rhx bench.status-line --runs');
       });
 
-      then('it lists all ten arms and the exit contract', () => {
+      then('it lists all twelve arms and the exit contract', () => {
         expect(ran.stdout).toContain('a legacy miss');
         expect(ran.stdout).toContain('a legacy warm');
         expect(ran.stdout).toContain('· a miss via that subpath');
         expect(ran.stdout).toContain('· the unbound glob');
+        expect(ran.stdout).toContain('· bare bash');
+        expect(ran.stdout).toContain('· the bash reader');
         expect(ran.stdout).toContain('exit 0 = measured, exit 1 = an arm failed, exit 2 = bad input');
       });
 
@@ -117,19 +162,46 @@ describe('bench.status-line.integration', () => {
     }),
   );
 
-  given('[case6] a bench run from the gitroot, where the package resolves', () => {
-    const ran = useBeforeAll(async () =>
-      runSkill({ args: ['--runs', '1'], cwd: ROOT }),
-    );
-
+  given('[case7] a bench run from the gitroot, where the package resolves', () => {
+    // the cache dir is shared: the node records (`branch=*.json`) and the bash reader's
+    // pointers (`branch=*.route`). the miss arms must drop the first and keep the second,
+    // or a bench blanks the live line of every seat in this repo
     when('[t0] the bench measures one repaint per arm', () => {
+      const ran = useBeforeAll(async () => {
+        const cacheDir = path.join(
+          ROOT,
+          '.agent/.cache/repo=bhrain/role=driver/skill=route.status.line',
+        );
+        const pointerPath = path.join(
+          cacheDir,
+          'branch=bench.pointer-probe.route',
+        );
+        fs.mkdirSync(cacheDir, { recursive: true });
+        fs.writeFileSync(pointerPath, 'some/route\n');
+
+        // the planted pointer is removed on every path, so a faulted run leaves no residue
+        try {
+          const result = runSkill({ args: ['--runs', '1'], cwd: ROOT });
+          const pointerAfter = fs.existsSync(pointerPath)
+            ? fs.readFileSync(pointerPath, 'utf-8')
+            : null;
+          return { ...result, pointerAfter };
+        } finally {
+          fs.rmSync(pointerPath, { force: true });
+        }
+      });
+
       then('it exits 0, with no stderr', () => {
         expect(ran.exitCode).toEqual(0);
         expect(ran.stderr).toEqual('');
       });
 
-      then('it reports a figure for each of the ten arms', () => {
-        expect(ran.stdout.match(/s cpu per repaint/g)?.length).toEqual(10);
+      then('its miss arms keep the bash reader pointer the cache dir holds', () => {
+        expect(ran.pointerAfter).toEqual('some/route\n');
+      });
+
+      then('it reports a figure for each of the twelve arms', () => {
+        expect(countRepaintFigures({ stdout: ran.stdout })).toEqual(12);
       });
 
       then('the measure renders as its snapshot, figures masked', () => {
@@ -138,12 +210,17 @@ describe('bench.status-line.integration', () => {
     });
   });
 
-  given('[case7] a bench run where an arm cannot run', () => {
-    // a temp dir is no git repo, so the git spawn arm fails on its probe
-    const ran = useBeforeAll(async () => runSkill({ args: ['--runs', '1'], cwd: null }),
-    );
-
+  given('[case8] a bench run where an arm cannot run', () => {
+    // a temp dir is no git repo, so the git spawn arm fails on its probe; a stub reader
+    // passes the up-front reader check so the run reaches the arms
     when('[t0] the bench reaches the git spawn arm', () => {
+      const ran = useBeforeAll(async () =>
+        runSkill({
+          args: ['--runs', '1'],
+          cwd: genTempDirWithReader({ slug: 'bench-status-line-arm-fault' }),
+        }),
+      );
+
       then('it exits 1 with the qualified arm fault', () => {
         expect(ran.exitCode).toEqual(1);
         expect(ran.stderr).toContain(

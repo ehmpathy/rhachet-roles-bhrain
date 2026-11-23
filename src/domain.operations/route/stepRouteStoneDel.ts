@@ -1,8 +1,9 @@
-import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
+import { setRouteStatusLineFileOrWarn } from './statusLine/file/setRouteStatusLineFileOrWarn';
 import { asStoneGlob, isStoneInGlob } from './stones/asStoneGlob';
+import { assertRouteFound } from './stones/assertRouteFound';
 import { delStone } from './stones/delStone';
 import { getAllStoneArtifacts } from './stones/getAllStoneArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -28,15 +29,13 @@ export const stepRouteStoneDel = async (input: {
 }> => {
   // validate at least one stone pattern provided
   if (input.stones.length === 0) {
-    throw new BadRequestError('at least one --stone required', {});
+    throw new BadRequestError('at least one --stone required', {
+      route: input.route,
+    });
   }
 
-  // validate route dir found; the headline names the route, so a bag would only repeat it
-  try {
-    await fs.access(input.route);
-  } catch {
-    throw new BadRequestError(`route not found: ${input.route}`);
-  }
+  // validate route dir found
+  await assertRouteFound({ route: input.route });
 
   // collect patterns from all stone inputs
   const patterns = input.stones.map((s) => asStoneGlob({ pattern: s }));
@@ -152,6 +151,13 @@ export const stepRouteStoneDel = async (input: {
 
   const countDelete = deleted.length;
   const countRetain = retained.length;
+
+  // refresh the status file the status line reads: a deleted stone may have been the next one
+  if (countDelete > 0)
+    await setRouteStatusLineFileOrWarn({
+      route: input.route,
+      pointerAuthority: 'flag',
+    });
 
   // format output via formatRouteStoneEmit
   const stdout = formatRouteStoneEmit({

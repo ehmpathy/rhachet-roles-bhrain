@@ -37,6 +37,8 @@ path: 1.vision.stone
 
 exports[`driver.route.stone.add.acceptance given: [case4] invalid stone name - no numeric prefix when: [t0] invoke with invalid stone name then: stderr matches snapshot 1`] = `
 "✋ ConstraintError: stone name must have numeric prefix followed by at least one alpha segment (e.g., 3.1.6.research.custom)
+
+stone: research.custom
 "
 `;
 
@@ -87,6 +89,8 @@ hint: --help for usage
 `;
 
 exports[`driver.route.stone.add.acceptance given: [case10] route not found when: [t0] invoke with nonexistent route then: stderr matches snapshot 1`] = `
-"✋ ConstraintError: route not found: ./nonexistent
+"✋ ConstraintError: route not found: ./nonexistent; check --route, or run rhx route.bind.get
+
+route: ./nonexistent
 "
 `;

@@ -672,7 +672,9 @@ describe('stepRouteStatusLineCached.integration', () => {
           slug: 'statusline-cached-case9',
           git: true,
         });
-        execSync('git checkout -b vlad/test-statusline-bind', { cwd: tempDir });
+        execSync('git checkout -b human/test-statusline-bind', {
+          cwd: tempDir,
+        });
         const routeDir = path.join(tempDir, 'my-route');
         fs.mkdirSync(routeDir, { recursive: true });
         fs.writeFileSync(path.join(routeDir, '0.wish.md'), '# wish');
@@ -874,7 +876,7 @@ describe('stepRouteStatusLineCached.integration', () => {
       const tempDir = fs.realpathSync(
         genTempDir({ slug: 'statusline-cached-case9b', git: true }),
       );
-      execSync('git checkout -b vlad/test-statusline-subdir', {
+      execSync('git checkout -b human/test-statusline-subdir', {
         cwd: tempDir,
       });
       const routeDir = path.join(tempDir, 'my-route');
@@ -925,7 +927,7 @@ describe('stepRouteStatusLineCached.integration', () => {
       const tempDir = fs.realpathSync(
         genTempDir({ slug: 'statusline-cached-case9c', git: true }),
       );
-      execSync('git checkout -b vlad/test-statusline-rebind', {
+      execSync('git checkout -b human/test-statusline-rebind', {
         cwd: tempDir,
       });
       const routeDir = path.join(tempDir, 'my-route');
@@ -937,7 +939,7 @@ describe('stepRouteStatusLineCached.integration', () => {
       );
       const cachePath = asRouteStatusLineCachePath({
         cwd: tempDir,
-        branch: 'vlad/test-statusline-rebind',
+        branch: 'human/test-statusline-rebind',
       });
       return { tempDir, cachePath };
     });

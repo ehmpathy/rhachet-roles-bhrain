@@ -79,7 +79,7 @@ describe('getOneRouteStatusLineBranch.integration', () => {
         });
         const worktreeDir = path.join(tempDir, '.worktrees', 'seat');
         childProcess.execSync(
-          `git worktree add -q -b vlad/fix-status-line ${worktreeDir}`,
+          `git worktree add -q -b human/fix-status-line ${worktreeDir}`,
           { cwd: tempDir },
         );
         return { tempDir, worktreeDir };
@@ -90,7 +90,7 @@ describe('getOneRouteStatusLineBranch.integration', () => {
           "it names the worktree's own branch, not the main checkout's",
           () => {
             const out = readBranchWithSpawnCount({ cwd: scene.worktreeDir });
-            expect(out.branch).toEqual('vlad/fix-status-line');
+            expect(out.branch).toEqual('human/fix-status-line');
             expect(out.branch).toEqual(
               getBranchFromGit({ cwd: scene.worktreeDir }),
             );

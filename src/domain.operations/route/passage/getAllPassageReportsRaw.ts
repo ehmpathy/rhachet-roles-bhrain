@@ -5,6 +5,7 @@ import * as path from 'path';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { withEnoentAsNull } from '../withEnoentAsNull';
+import { MESSAGE_OF_TORN_PASSAGE_LINE } from './MESSAGE_OF_TORN_PASSAGE_LINE';
 
 /**
  * .what = every passage entry from passage.jsonl, in raw append (file) order
@@ -50,16 +51,13 @@ export const getAllPassageReportsRaw = async (input: {
       try {
         return new PassageReport(JSON.parse(entry.line));
       } catch (error) {
-        throw new UnexpectedCodePathError(
-          'passage.jsonl has a torn/unparseable line — cannot read route status',
-          {
-            passagePath,
-            lineNumber: entry.lineNumber,
-            line: entry.line,
-            hint: 'the append-only passage.jsonl holds one JSON object per line; a partial/torn line must be repaired or removed',
-            parseError: error instanceof Error ? error.message : String(error),
-          },
-        );
+        throw new UnexpectedCodePathError(MESSAGE_OF_TORN_PASSAGE_LINE, {
+          passagePath,
+          lineNumber: entry.lineNumber,
+          line: entry.line,
+          hint: 'the append-only passage.jsonl holds one JSON object per line; a partial/torn line must be repaired or removed',
+          parseError: error instanceof Error ? error.message : String(error),
+        });
       }
     });
 };

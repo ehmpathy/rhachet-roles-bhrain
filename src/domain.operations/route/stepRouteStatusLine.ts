@@ -38,15 +38,39 @@ import { getAllStones } from './stones/getAllStones';
  * .note = `degradeRow` is the stderr row when the phase derivation faulted and the line fell
  *         back to the plain stone, else null. it is data, never printed here: the cli entry is
  *         the one writer of stderr, and the cache stores the row so a hit replays it whole
+ *
+ * .note = `stone` and `phase` name the parts the line shows, for the status file a writer
+ *         keeps beside the route: the stone name and the phase location (`yield`,
+ *         `review.self`, `review.peer`, `judge`). each is null where the line shows none
  */
 export const stepRouteStatusLine = async (input: {
   route: string;
-}): Promise<{ line: string; degradeRow: string | null }> => {
+}): Promise<{
+  line: string;
+  degradeRow: string | null;
+  stone: string | null;
+  phase: StatusLinePhase['of'] | null;
+}> => {
   // derive the route's status-line state, then render it
   const { state, degradeRow } = await getRouteStatusLineState({
     route: input.route,
   });
-  return { line: asStatusLine(state), degradeRow };
+  return {
+    line: asStatusLine(state),
+    degradeRow,
+    ...asStatusLineParts({ state }),
+  };
+};
+
+/**
+ * .what = the stone name and phase location a state shows, each null where it shows none
+ * .why = the status file names the parts of its line; this reads them off the state union
+ */
+const asStatusLineParts = (input: {
+  state: RouteStatusLineState;
+}): { stone: string | null; phase: StatusLinePhase['of'] | null } => {
+  if (input.state.kind !== 'stone') return { stone: null, phase: null };
+  return { stone: input.state.stone, phase: input.state.phase?.of ?? null };
 };
 
 /**
@@ -73,8 +97,20 @@ type RouteStatusLineState =
  *         - the PHASE derivation is BEST-EFFORT: a fault there yields a degrade row and a
  *           null phase (the plain '🗿 <stone>' line), so a failure in the enhancement never
  *           regresses the base feature to a blank line.
- *         - the DISPOSITION is a cheap passage read (never the fault source); it is always
- *           derived, even when the phase degrades.
+ *         - the PASSAGE read that feeds the disposition is STRICT, like the stone lookup: the
+ *           next-stone computation reads the same passage.jsonl first
+ *           (`getAllStoneDriveArtifacts`), so a corrupt passage faults there and blanks the
+ *           line by design. the next stone itself rests on that passage, so no line could
+ *           name it. the disposition is always derived, even when the phase degrades.
+ *
+ * .note = the latest passage is read in raw file order (`getLatestPassageForStone`), never
+ *         via `getAllPassageReports`, whose sticky re-bucket would surface a stale 'blocked'
+ *         after a human 'approved' (the approve-then-wait window)
+ *
+ * .note = the passage reason rides into the disposition, so a CONCESSION exhaustion reads as
+ *         `push` here, as the onStop hook reads it. without it the line would pin 👋 while
+ *         the hook tells the driver to top up their own budget: two reads of one state
+ *         (`rule.require.single-source-of-truth-for-render`). it costs no extra read
  */
 const getRouteStatusLineState = async (input: {
   route: string;
@@ -98,24 +134,13 @@ const getRouteStatusLineState = async (input: {
   const stoneFirst = asFirstStoneOrNull({ stones: nextStones });
   if (!stoneFirst) return { state: { kind: 'complete' }, degradeRow: null };
 
-  // read the latest passage for this stone (cheap) — it drives BOTH the disposition and,
-  // when a guard blocker is present, the phase location
-  // .note = getLatestPassageForStone reads raw file order (true chronological latest); it
-  //         must NOT read getAllPassageReports, whose sticky re-bucket would surface a
-  //         stale 'blocked' after a human 'approved' (the approve-then-wait window)
+  // read the latest passage for this stone: it drives the disposition and the blocker phase
   const latest = await getLatestPassageForStone({
     stone: stoneFirst.name,
     route,
   });
 
   // disposition (push | halt): the one value the onStop hook also reads
-  //
-  // .note = the reason rides along so a CONCESSION exhaustion reads as `push` here too.
-  //         without it the statusline would pin 👋 (a human is needed) while the onStop
-  //         hook blocks the stop and tells the driver to top up their own budget — two
-  //         opposite reads of one state, which is the drift
-  //         `rule.require.single-source-of-truth-for-render` exists to close. it costs
-  //         no extra read: `latest` is already in hand.
   const disposition = asRouteStoneDisposition({
     status: latest?.status ?? null,
     blocker: latest?.blocker ?? null,
@@ -218,102 +243,133 @@ const getPhaseFromBlocker = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<StatusLinePhase> => {
-  // self-review blocker → the self-review phase with its r{done}/{total} counter
-  if (input.blocker === 'review.self') return await getSelfPhase(input);
+  // the review the blocker stopped in, by the exhaustive map
+  const review = REVIEW_OF_BLOCKER[input.blocker];
 
-  // any peer-review blocker (active, exhausted, feedbackUnabsorbed, undeclared) → the peer
-  // depth l{level}@i{rounds}
-  //
-  // .note = 'review.peer.undeclared' belongs here rather than in the judge fallthrough
-  //         below: the stance gate fires BEFORE the hash and before any judge runs, so
-  //         a judge phase would name a place the work never reached
-  if (
-    input.blocker === 'review.peer' ||
-    input.blocker === 'review.peer.exhausted' ||
-    input.blocker === 'review.peer.unabsorbed' ||
-    input.blocker === 'review.peer.undeclared' ||
-    input.blocker === 'review.peer.malpartitioned' ||
-    input.blocker === 'review.peer.constraint'
-  )
-    return await getPeerPhase(input);
+  // self-review blocker → the self-review phase with its r{done}/{total} counter
+  if (review === 'self')
+    return asSelfPhase({
+      stone: input.stone,
+      promises: await getStonePromises(input),
+    });
+
+  // peer-review blocker → the peer depth l{level}@i{rounds}
+  if (review === 'peer')
+    return asPeerPhase({
+      stone: input.stone,
+      meters: await getAllRouteStoneGuardReviewPeerMeters({
+        route: input.route,
+        stone: input.stone.name,
+      }),
+    });
 
   // a judge or approval blocker → the judge phase
   return { of: 'judge' };
 };
 
 /**
+ * .what = the review each guard blocker stopped in
+ * .why = a Record over the closed blocker union, so a new blocker kind fails the compile
+ *        here until it is placed, never falls through to `judge` unseen
+ *
+ * .note = 'review.peer.undeclared' maps to peer, never judge: the stance gate fires BEFORE
+ *         the hash and before any judge runs, so a judge phase would name a place the work
+ *         never reached
+ */
+const REVIEW_OF_BLOCKER: Record<
+  RouteStoneGuardBlockerType,
+  'self' | 'peer' | 'judge'
+> = {
+  'review.self': 'self',
+  'review.peer': 'peer',
+  'review.peer.exhausted': 'peer',
+  'review.peer.unabsorbed': 'peer',
+  'review.peer.undeclared': 'peer',
+  'review.peer.malpartitioned': 'peer',
+  'review.peer.constraint': 'peer',
+  judge: 'judge',
+  approval: 'judge',
+};
+
+/**
  * .what = derives the phase the work is actively in when no guard blocker names it
  * .why = between passage attempts (or on a driver wall / exhausted / malfunction status), the
  *        "where" comes from the review state: peer under way > self under way > the stone yields
+ *
+ * .note = each review state is read once and handed to the phase it decides, so the "started"
+ *         check and the depth it shows come from one snapshot
  */
 const getPhaseFromReviewState = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<StatusLinePhase> => {
-  const guard = input.stone.guard;
-
   // an unguarded stone still yields its artifact (no reviews to be in)
-  if (!guard) return { of: 'yield' };
+  if (!input.stone.guard) return { of: 'yield' };
 
   // peer review under way? (any reviewer has consumed a round)
   const meters = await getAllRouteStoneGuardReviewPeerMeters({
     route: input.route,
     stone: input.stone.name,
   });
-  const peerStarted = meters.some((m) => m.rounds > 0);
-  if (peerStarted) return await getPeerPhase(input);
+  if (isPeerReviewStarted({ meters }))
+    return asPeerPhase({ stone: input.stone, meters });
 
   // self review under way? (any self-review promised)
-  const promises = await getStonePromises({
-    stone: input.stone,
-    route: input.route,
-  });
-  if (promises.length > 0) return await getSelfPhase(input);
+  const promises = await getStonePromises(input);
+  if (promises.length > 0) return asSelfPhase({ stone: input.stone, promises });
 
   // no review started → the stone still yields its artifact
   return { of: 'yield' };
 };
 
 /**
- * .what = derives the review.self phase with its r{done}/{total} counter
+ * .what = whether any peer reviewer has consumed a round
+ */
+const isPeerReviewStarted = (input: {
+  meters: RouteStoneGuardReviewPeerMeter[];
+}): boolean => input.meters.some((meter) => meter.rounds > 0);
+
+/**
+ * .what = the review.self phase with its r{done}/{total} counter
  * .why = names the self-review progress from promised slugs vs the guard's self-reviews
  */
-const getSelfPhase = async (input: {
+const asSelfPhase = (input: {
   stone: RouteStone;
-  route: string;
-}): Promise<StatusLinePhase> => {
-  const guard = input.stone.guard;
+  promises: { slug: string }[];
+}): StatusLinePhase => {
   // defensive: a self-review phase without a guard cannot count — fall back to yield
-  if (!guard) return { of: 'yield' };
+  if (!input.stone.guard) return { of: 'yield' };
 
-  const selfReviews = getGuardSelfReviews(guard);
-  const promises = await getStonePromises({
-    stone: input.stone,
-    route: input.route,
+  const selfReviews = getGuardSelfReviews(input.stone.guard);
+  const done = computePromisedReviewCount({
+    selfReviews,
+    promisedSlugs: asPromisedSlugs({ promises: input.promises }),
   });
-  const promisedSlugs = new Set(promises.map((p) => p.slug));
-  const done = computePromisedReviewCount({ selfReviews, promisedSlugs });
   return { of: 'review.self', done, total: selfReviews.length };
 };
 
 /**
- * .what = derives the review.peer phase with its l{level}@i{rounds} depth
+ * .what = the set of self-review slugs a stone has promised
+ */
+const asPromisedSlugs = (input: {
+  promises: { slug: string }[];
+}): Set<string> => new Set(input.promises.map((promise) => promise.slug));
+
+/**
+ * .what = the review.peer phase with its l{level}@i{rounds} depth
  * .why = names the peer-review depth from the guard's peer reviews + their round meters
  */
-const getPeerPhase = async (input: {
+const asPeerPhase = (input: {
   stone: RouteStone;
-  route: string;
-}): Promise<StatusLinePhase> => {
-  const guard = input.stone.guard;
+  meters: RouteStoneGuardReviewPeerMeter[];
+}): StatusLinePhase => {
   // defensive: a peer-review phase without a guard cannot measure — fall back to yield
-  if (!guard) return { of: 'yield' };
+  if (!input.stone.guard) return { of: 'yield' };
 
-  const peerReviews = getGuardPeerReviews(guard);
-  const meters = await getAllRouteStoneGuardReviewPeerMeters({
-    route: input.route,
-    stone: input.stone.name,
+  const depth = asHighestStartedPeerDepth({
+    peerReviews: getGuardPeerReviews(input.stone.guard),
+    meters: input.meters,
   });
-  const depth = asHighestStartedPeerDepth({ peerReviews, meters });
   return { of: 'review.peer', level: depth.level, rounds: depth.rounds };
 };
 
