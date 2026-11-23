@@ -13,13 +13,14 @@ import {
 } from 'rhachet';
 import type { Artifact } from 'rhachet-artifact';
 import type { GitFile } from 'rhachet-artifact-git';
-import { withRetry, withTimeout } from 'wrapper-fns';
 
 import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain.objects/Focus';
 import { type ContextOpenAI, sdkOpenAi } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
+import { withRetry } from '@src/domain.roles/thinker/withRetry';
+import { withTimeout } from '@src/domain.roles/thinker/withTimeout';
 
 // exported so that we can pass them through to <ponder> too
 export const BRIEFS_FOR_TRIAGE = getThinkerBriefs([

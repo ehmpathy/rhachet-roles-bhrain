@@ -22,9 +22,5 @@ exclude:
   - /declastruct-aws@ # via rhachet. contract/sdks/index.js <-> getDeclastructAwsProvider.js
   - /@aws-sdk\+ # via declastruct-aws. STSClient.js <-> httpAuthSchemeProvider.js; resolveProfileData.js <-> resolveAssumeRoleCredentials.js
 
-  # 🟡 prod dependencies — a held exception, fulcrum F4 of route v2026_11_19.declapract.upgrade.
-  #    the org cycles (helpful-errors 1.5, domain-objects 0.31) are gone: package.json pins every
-  #    transitive copy to the clean release via pnpm overrides. the two left sit in third-party
-  #    packages with no clean release. each line names its fix; drop it once that lands.
-  - /bottleneck@ # 2.19.5 is the last release. Bottleneck.js <-> Group.js. via wrapper-fns + @ehmpathy/as-command (both latest still pin it). dispatched to both owners
-  - /readable-stream@ # 2.3.8 + 4.7.0 (latest). _stream_duplex.js <-> _stream_{readable,writable}.js. via archiver (captureSnapshot zip). replace: a zip writer on node:stream
+  # prod dependencies — none. a prod-dep cycle is fixed by an override to a clean release
+  # (helpful-errors, domain-objects: see pnpm.overrides) or by a replaced dependency, never here

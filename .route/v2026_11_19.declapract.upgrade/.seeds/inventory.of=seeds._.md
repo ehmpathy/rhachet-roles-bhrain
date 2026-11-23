@@ -7,3 +7,4 @@
 | S3-upgrade-keeps-every-behavior | the upgrade keeps every behavior main's jest config owed | F5, jest.repo.ts |
 | S4-f4-is-the-drivers-call | F4 settles on the simplest sound design, reason in its entry | F4 |
 | S5-green-pr-by-2200z | pr up and green by the hour, same day | route |
+| S6-no-exclusion-left-behind | no prod cycle exclude stays; replace the deps; drive 3.2–3.4 | F4, `.dpdmrc.yaml` |

@@ -1,0 +1,19 @@
+{
+  "key": "288d27501237ac6a",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(cli): a --role after -- overrides the dispatch role (1.52.0 regression)",
+  "description": "## .what\nrhachet 1.52.0 reads a `--role` that follows `--` as the dispatch role.\n\n## .repro\n```\nrhx review.by --repo bhrain --role reviewer -- --role ghost\n```\n- 1.51.0: dispatches to bhrain/reviewer/review.by, which receives `--role ghost` (correct)\n- 1.52.0: `no skill \\\"review.by\\\" found with --repo bhrain --role ghost`\n\n## .why it matters\n`--` must end rhachet dispatch flags; every role wrapper that forwards a target `--role` breaks.\n\n## .ask\nstop the dispatch arg parse at `--`; add a clamp test.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 53,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

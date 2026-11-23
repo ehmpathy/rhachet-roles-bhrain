@@ -26,15 +26,16 @@ the upgrade adds `test:lint:cycles` (dpdm over `src/**`, node_modules included, 
 ## .rework: clean
 delete the four prod lines in `.dpdmrc.yaml`. no caller depends on them.
 
-## .confidence: 80%, why not higher
-the mechanic rule names a prod exclude a blocker, and B acts against that stated bound. the case for B rests on "unfixable here", which the bump trial measured; the director granted the call.
+## .confidence: 90%, why not higher
+the swaps are proven by types, lint, unit, and the snapshot integration suites; the live thinker steps that use `withRetry` / `withTimeout` are retired from ci, so their runtime path is proven only by the unit clamps.
 
 ## .where
 `.dpdmrc.yaml`; found in stone `3.1.repair.test.defects`.
 
 ## .verdict
-ruled by the driver, on the director's grant: **upgrade, then hold only the third-party residue**.
-- the org cycles are eliminated, not excluded: `pnpm.overrides` pins every transitive `helpful-errors@<1.7` to 1.7.5 and every `domain-objects@<0.34` to 0.34.0, the clean releases. types, unit (5638), and integration (3930) pass under the overrides
-- two stay excluded, each line with its fix: `bottleneck` (2.19.5 is its last release; reached only via wrapper-fns and @ehmpathy/as-command, dispatched to both owners, `485257c39520be13` + `36db125e9fb634f6`) and `readable-stream` (4.7.0, latest, still cyclic; a dream to replace archiver's zip writer)
-- this is the simplest sound design: one override block and a two-line exclude. a dependency swap in two feature paths cannot be proven by the green-pr deadline
-- 🟡 the stone's self review forbids any prod exclude; the residue is surfaced to the director, not hidden
+ruled by the driver, under a director bound of no prod exclude left behind: **C for the third-party residue, overrides for the org cycles. zero prod excludes.**
+- org cycles: `pnpm.overrides` pins every transitive `helpful-errors@<1.7` to 1.7.5 and every `domain-objects@<0.34` to 0.34.0, the clean releases
+- `bottleneck`: no longer installed. `wrapper-fns` was used for `withRetry` + `withTimeout` only, in 10 thinker steps; each is now a local operation at `src/domain.roles/thinker/` (unit clamped). `@ehmpathy/as-command` wrapped one codegen command, which now runs plain
+- `readable-stream`: no longer installed. `captureSnapshot` zips with `fflate` (zero deps, one bundled file) in place of `archiver`; the snapshot integration suites (32 tests) read the zip back via `unzip`. install reason: `appendix/package.install.reason.for_fflate.md`
+- `.dpdmrc.yaml` holds dev excludes only; `test:lint` passes
+- the upstream asks (`485257c39520be13`, `36db125e9fb634f6`) stay queued: they would let other consumers keep wrapper-fns and as-command

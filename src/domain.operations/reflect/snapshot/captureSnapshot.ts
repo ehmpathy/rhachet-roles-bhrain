@@ -1,4 +1,4 @@
-import archiver from 'archiver';
+import { type Zippable, zipSync } from 'fflate';
 import * as fs from 'fs';
 import { ConstraintError } from 'helpful-errors';
 import * as os from 'os';
@@ -235,22 +235,29 @@ export const captureSnapshot = async (input: {
 };
 
 /**
+ * .what = the files of a directory, as a tree fflate can zip
+ * .why = fflate zips an in-memory tree: a dir is a nested object, a file its bytes
+ */
+const asZippableOfDir = (input: { dir: string }): Zippable =>
+  Object.fromEntries(
+    fs.readdirSync(input.dir, { withFileTypes: true }).map((entry) => {
+      const entryPath = path.join(input.dir, entry.name);
+      if (entry.isDirectory())
+        return [entry.name, asZippableOfDir({ dir: entryPath })];
+      return [entry.name, new Uint8Array(fs.readFileSync(entryPath))];
+    }),
+  );
+
+/**
  * .what = creates a zip archive from a directory
  * .why = bundles snapshot contents into a single file
+ * .note = fflate has no dependencies, so no require cycle ships with it (archiver carried
+ *         readable-stream's)
  */
-const createZipArchive = (
+const createZipArchive = async (
   sourceDir: string,
   outputPath: string,
 ): Promise<void> => {
-  return new Promise((done, reject) => {
-    const output = fs.createWriteStream(outputPath);
-    const archive = archiver('zip', { zlib: { level: 9 } });
-
-    output.on('close', () => done());
-    archive.on('error', (err) => reject(err));
-
-    archive.pipe(output);
-    archive.directory(sourceDir, false);
-    archive.finalize();
-  });
+  const zipped = zipSync(asZippableOfDir({ dir: sourceDir }), { level: 9 });
+  fs.writeFileSync(outputPath, zipped);
 };
