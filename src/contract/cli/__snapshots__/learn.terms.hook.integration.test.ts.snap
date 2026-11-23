@@ -12,7 +12,7 @@ exports[`learn.terms.hook.integration given: [case1] a split-layout repo with th
 `;
 
 exports[`learn.terms.hook.integration given: [case1] a split-layout repo with the learner linked when: [t1] set on runs then: the file diff is the one hook block alone: set on - the diff, split layout 1`] = `
-"@@ -84,2 +84,13 @@
+"@@ -85,2 +85,13 @@
          ]
 +      },
 +      {
