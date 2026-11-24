@@ -178,23 +178,29 @@ describe('driver.route.peer-budget-approval-persistence.acceptance', () => {
     // =========================================================================
 
     when('[t4] another artifact change, approval still persists', () => {
-      const result = useThen('pass succeeds (approval still persists)', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v4-more-changes";',
-        );
+      const result = useThen(
+        'pass succeeds (approval still persists)',
+        async () => {
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v4-more-changes";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);

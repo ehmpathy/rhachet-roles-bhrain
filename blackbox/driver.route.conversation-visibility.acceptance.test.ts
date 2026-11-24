@@ -63,71 +63,77 @@ describe('driver.route.conversation-visibility.acceptance', () => {
       return { tempDir, peerDir };
     });
 
-    when('[t0] driver attempts --as passed, guard re-runs both reviewers', () => {
-      const result = useThen('guard runs the reviewers', async () => {
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+    when(
+      '[t0] driver attempts --as passed, guard re-runs both reviewers',
+      () => {
+        const result = useThen('guard runs the reviewers', async () => {
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+
+          // read the current-generation givens (exclude the seeded 00000000 hash)
+          const files = await fs.readdir(scene.peerDir);
+          const givenOf = async (slug: string) => {
+            const name = files.find(
+              (f) =>
+                f.includes(`_.given.by_peer.${slug}.md`) &&
+                !f.endsWith('.report.md') &&
+                !f.includes('00000000'),
+            )!;
+            return fs.readFile(path.join(scene.peerDir, name), 'utf-8');
+          };
+          return {
+            seer: await givenOf('seer'),
+            blind: await givenOf('blind'),
+          };
         });
 
-        // read the current-generation givens (exclude the seeded 00000000 hash)
-        const files = await fs.readdir(scene.peerDir);
-        const givenOf = async (slug: string) => {
-          const name = files.find(
-            (f) =>
-              f.includes(`_.given.by_peer.${slug}.md`) &&
-              !f.endsWith('.report.md') &&
-              !f.includes('00000000'),
-          )!;
-          return fs.readFile(path.join(scene.peerDir, name), 'utf-8');
-        };
-        return {
-          seer: await givenOf('seer'),
-          blind: await givenOf('blind'),
-        };
-      });
+        // .retired = this case once asserted `conversation seen (4 files)` — the seer read both
+        //            lanes' dialogue. that intent is retired on purpose: `$conversation` is now
+        //            lane-scoped (getAllRouteGuardReviewPeerConversationFiles, `slug`), so the seer
+        //            reads its own given + taken only. the lane-scope clamp below is its forward twin
+        then('the opt-in seer saw its OWN prior dialogue (2 files)', () => {
+          expect(result.seer).toContain('## conversation seen (2 files)');
+          expect(result.seer).toContain('_.given.by_peer.seer.md');
+          expect(result.seer).toContain('_.taken.by_self.seer.md');
+        });
 
-      // .retired = this case once asserted `conversation seen (4 files)` — the seer read both
-      //            lanes' dialogue. that intent is retired on purpose: `$conversation` is now
-      //            lane-scoped (getAllRouteGuardReviewPeerConversationFiles, `slug`), so the seer
-      //            reads its own given + taken only. the lane-scope clamp below is its forward twin
-      then('the opt-in seer saw its OWN prior dialogue (2 files)', () => {
-        expect(result.seer).toContain('## conversation seen (2 files)');
-        expect(result.seer).toContain('_.given.by_peer.seer.md');
-        expect(result.seer).toContain('_.taken.by_self.seer.md');
-      });
+        then(
+          '🔴 and never the other lane — the conversation is lane-scoped',
+          () => {
+            // each lane reads only its own given + the driver's taken to it — unscoped, the
+            // conversation grows lanes × rounds into the uncacheable tail
+            // (getAllRouteGuardReviewPeerConversationFiles, `slug`)
+            expect(result.seer).not.toContain('_.given.by_peer.blind.md');
+            expect(result.seer).not.toContain('_.taken.by_self.blind.md');
+          },
+        );
 
-      then('🔴 and never the other lane — the conversation is lane-scoped', () => {
-        // each lane reads only its own given + the driver's taken to it — unscoped, the
-        // conversation grows lanes × rounds into the uncacheable tail
-        // (getAllRouteGuardReviewPeerConversationFiles, `slug`)
-        expect(result.seer).not.toContain('_.given.by_peer.blind.md');
-        expect(result.seer).not.toContain('_.taken.by_self.blind.md');
-      });
+        then('the opt-in seer converged — dropped the blocker (0)', () => {
+          expect(result.seer).toContain('blockers: 0');
+          expect(result.seer).toContain("the driver's .taken claims FIXED");
+        });
 
-      then('the opt-in seer converged — dropped the blocker (0)', () => {
-        expect(result.seer).toContain('blockers: 0');
-        expect(result.seer).toContain("the driver's .taken claims FIXED");
-      });
+        then('the blind reviewer saw no conversation (0 files)', () => {
+          expect(result.blind).toContain('## conversation seen (0 files)');
+        });
 
-      then('the blind reviewer saw no conversation (0 files)', () => {
-        expect(result.blind).toContain('## conversation seen (0 files)');
-      });
+        then('the blind reviewer held the blocker (1) — no convergence', () => {
+          expect(result.blind).toContain('blockers: 1');
+          expect(result.blind).toContain('the design lacks a bounded context');
+        });
 
-      then('the blind reviewer held the blocker (1) — no convergence', () => {
-        expect(result.blind).toContain('blockers: 1');
-        expect(result.blind).toContain('the design lacks a bounded context');
-      });
+        then('seer given matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.seer)).toMatchSnapshot();
+        });
 
-      then('seer given matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.seer)).toMatchSnapshot();
-      });
-
-      then('blind given matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.blind)).toMatchSnapshot();
-      });
-    });
+        then('blind given matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.blind)).toMatchSnapshot();
+        });
+      },
+    );
   });
 
   given('[case2] a first round with no prior generation', () => {
@@ -168,12 +174,17 @@ describe('driver.route.conversation-visibility.acceptance', () => {
         expect(result.seer).toContain('## conversation seen (0 files)');
       });
 
-      then('the guard did not crash (exit 2 is the contemplation block)', () => {
-        expect(result.invoked.code).toEqual(2);
-      });
+      then(
+        'the guard did not crash (exit 2 is the contemplation block)',
+        () => {
+          expect(result.invoked.code).toEqual(2);
+        },
+      );
 
       then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.invoked.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeTimeForSnapshot(result.invoked.stdout),
+        ).toMatchSnapshot();
       });
     });
   });

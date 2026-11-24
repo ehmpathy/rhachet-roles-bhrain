@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
-import { isPathFound } from '../isPathFound';
+import { isPathFound } from '@src/domain.operations/route/isPathFound';
 
 /**
  * .what = the ordinals an archived name may take, in order: 0 is the bare name, then .1, .2, …

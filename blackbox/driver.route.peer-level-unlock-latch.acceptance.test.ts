@@ -204,15 +204,18 @@ describe('driver.route.peer-level-unlock-latch.acceptance', () => {
         expect(result.stdout).toContain('l3, 2/5');
       });
 
-      then('the latch stays ONE row — it is not re-appended each pass', async () => {
-        // .why = the ledger is append-only, so an unguarded write would add a row per
-        //        level per pass forever. one row per (stone, level) is the whole fact,
-        //        and the `!has` guard in runStoneGuardReviews is what holds it to one
-        const pours = (await getPourRows({ cwd: scene.tempDir })).filter(
-          (r) => r.status === 'poured' && r.level === 3,
-        );
-        expect(pours).toHaveLength(1);
-      });
+      then(
+        'the latch stays ONE row — it is not re-appended each pass',
+        async () => {
+          // .why = the ledger is append-only, so an unguarded write would add a row per
+          //        level per pass forever. one row per (stone, level) is the whole fact,
+          //        and the `!has` guard in runStoneGuardReviews is what holds it to one
+          const pours = (await getPourRows({ cwd: scene.tempDir })).filter(
+            (r) => r.status === 'poured' && r.level === 3,
+          );
+          expect(pours).toHaveLength(1);
+        },
+      );
 
       // 🔴 the LATCH pass — l1 is non-terminal and l3 pours anyway, so this announce
       //    is the one that proves the latch to a human. see [t0] for the full why

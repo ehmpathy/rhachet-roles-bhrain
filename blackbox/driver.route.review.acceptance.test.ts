@@ -25,7 +25,9 @@ describe('driver.route.review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-review-case1', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review-case1', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -64,7 +66,7 @@ describe('driver.route.review.acceptance', () => {
       });
 
       then('shows artifact path with symbol', () => {
-        expect(result.stdout).toMatch(/\[([\+\~\-])\]/);
+        expect(result.stdout).toMatch(/\[([+~-])\]/);
         expect(result.stdout).toContain('1.stone.i1.md');
       });
 
@@ -90,7 +92,9 @@ describe('driver.route.review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-review-case2', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review-case2', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -219,7 +223,9 @@ describe('driver.route.review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-review-case5', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review-case5', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({

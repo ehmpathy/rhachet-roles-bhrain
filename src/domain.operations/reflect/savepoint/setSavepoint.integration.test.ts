@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
-import { getReflectScope } from '../scope/getReflectScope';
+import { getReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+
 import { setSavepoint } from './setSavepoint';
 
 describe('setSavepoint', () => {

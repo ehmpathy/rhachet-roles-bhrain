@@ -11,10 +11,10 @@ import {
 } from 'test-fns';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
+import { getOneStoneRewindGeneration } from '@src/domain.operations/route/guard/round/getOneStoneRewindGeneration';
 
-import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
-import { enumRouteGuardReviewPeerFiles } from '../guard/review/peer/enumRouteGuardReviewPeerFiles';
-import { getOneStoneRewindGeneration } from '../guard/round/getOneStoneRewindGeneration';
 import { setStoneAsPassed } from './setStoneAsPassed';
 import { setStoneAsRewound } from './setStoneAsRewound';
 

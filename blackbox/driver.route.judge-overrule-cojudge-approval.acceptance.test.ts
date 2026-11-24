@@ -45,7 +45,9 @@ describe('driver.route.judge-overrule-cojudge-approval.acceptance', () => {
         });
         await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
         await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
-        await execAsync('chmod +x .test/mock-judge-exit-1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-judge-exit-1.sh', {
+          cwd: tempDir,
+        });
 
         await fs.writeFile(
           path.join(tempDir, '1.feature.md'),
@@ -62,44 +64,47 @@ describe('driver.route.judge-overrule-cojudge-approval.acceptance', () => {
         return { tempDir };
       });
 
-      when('[t0] human overrules the judge rung, then a pass is attempted', () => {
-        const result = useThen(
-          'the pass stays blocked — the overrule forgave the crash, not the approval',
-          async () => {
-            await invokeRouteSkill({
-              skill: 'route.stone.set',
-              args: { stone: '1.feature', route: '.', as: 'overruled' },
-              cwd: scene.tempDir,
-            });
-            return invokeRouteSkill({
-              skill: 'route.stone.set',
-              args: { stone: '1.feature', route: '.', as: 'passed' },
-              cwd: scene.tempDir,
-            });
-          },
-        );
+      when(
+        '[t0] human overrules the judge rung, then a pass is attempted',
+        () => {
+          const result = useThen(
+            'the pass stays blocked — the overrule forgave the crash, not the approval',
+            async () => {
+              await invokeRouteSkill({
+                skill: 'route.stone.set',
+                args: { stone: '1.feature', route: '.', as: 'overruled' },
+                cwd: scene.tempDir,
+              });
+              return invokeRouteSkill({
+                skill: 'route.stone.set',
+                args: { stone: '1.feature', route: '.', as: 'passed' },
+                cwd: scene.tempDir,
+              });
+            },
+          );
 
-        then('exit code is 2 (constraint block), not 1 (malfunction)', () => {
-          // .why = the awaited approved? gate exits 2 (a legitimate constraint hold), so the pass
-          //        blocks with exit 2 — a loose .not.toEqual(0) would let a malfunction (exit 1)
-          //        masquerade as a legitimate block
-          expect(result.code).toEqual(2);
-        });
+          then('exit code is 2 (constraint block), not 1 (malfunction)', () => {
+            // .why = the awaited approved? gate exits 2 (a legitimate constraint hold), so the pass
+            //        blocks with exit 2 — a loose .not.toEqual(0) would let a malfunction (exit 1)
+            //        masquerade as a legitimate block
+            expect(result.code).toEqual(2);
+          });
 
-        then('passage is blocked, NOT overruled or allowed', () => {
-          expect(result.stdout).toContain('passage = blocked');
-          expect(result.stdout).not.toContain('passage = overruled');
-          expect(result.stdout).not.toContain('passage = allowed');
-        });
+          then('passage is blocked, NOT overruled or allowed', () => {
+            expect(result.stdout).toContain('passage = blocked');
+            expect(result.stdout).not.toContain('passage = overruled');
+            expect(result.stdout).not.toContain('passage = allowed');
+          });
 
-        then('the blocked reason names the untouched approval gate', () => {
-          expect(result.stdout.toLowerCase()).toContain('approv');
-        });
+          then('the blocked reason names the untouched approval gate', () => {
+            expect(result.stdout.toLowerCase()).toContain('approv');
+          });
 
-        then('snapshot matches', () => {
-          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-        });
-      });
+          then('snapshot matches', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 
@@ -117,7 +122,9 @@ describe('driver.route.judge-overrule-cojudge-approval.acceptance', () => {
         });
         await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
         await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
-        await execAsync('chmod +x .test/mock-judge-exit-1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-judge-exit-1.sh', {
+          cwd: tempDir,
+        });
 
         await fs.writeFile(
           path.join(tempDir, '1.feature.md'),

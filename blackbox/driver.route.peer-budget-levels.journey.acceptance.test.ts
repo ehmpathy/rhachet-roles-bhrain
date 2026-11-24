@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-levels');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-levels',
+);
 
 /**
  * .what = comprehensive journey test for peer review budgets with levels
@@ -66,7 +69,11 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -105,7 +112,11 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -133,7 +144,11 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -175,7 +190,11 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -207,7 +226,11 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -225,23 +248,26 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         expect(output).toContain('exhaust');
       });
 
-      then('the exhaustion halts on an URGENT concession — the budget lever AND a human grant are both owed (S16)', () => {
-        // the journey concedes each round as `urgent` (a shipped harm), so at exhaustion
-        // every skipped lane carries a LIVE urgent concession — its stance is against its
-        // latest given, since an exhausted lane mints no newer one. under S16 an urgent
-        // concession is NOT shed by the judge: its harm ships if unfixed, so the round is
-        // owed a human's grant (define.invariant.review.peer.budget.urgent-earns-budget).
-        // the halt names the concession, offers the driver's own budget lever, AND warns
-        // that a human must grant — the human-approval BYPASS the journey exercises at [t5].
-        // (a `better`-only exhaustion would instead be SHED and PASS, no halt — S16.)
-        const output = result.stdout.toLowerCase();
-        expect(output).toContain(
-          'you conceded — the round to confirm your fix needs more budget',
-        );
-        expect(output).toContain('an urgent concession stands');
-        expect(output).toContain('increase budget');
-        expect(output).toMatch(/approve as-is|a human must grant/);
-      });
+      then(
+        'the exhaustion halts on an URGENT concession — the budget lever AND a human grant are both owed (S16)',
+        () => {
+          // the journey concedes each round as `urgent` (a shipped harm), so at exhaustion
+          // every skipped lane carries a LIVE urgent concession — its stance is against its
+          // latest given, since an exhausted lane mints no newer one. under S16 an urgent
+          // concession is NOT shed by the judge: its harm ships if unfixed, so the round is
+          // owed a human's grant (define.invariant.review.peer.budget.urgent-earns-budget).
+          // the halt names the concession, offers the driver's own budget lever, AND warns
+          // that a human must grant — the human-approval BYPASS the journey exercises at [t5].
+          // (a `better`-only exhaustion would instead be SHED and PASS, no halt — S16.)
+          const output = result.stdout.toLowerCase();
+          expect(output).toContain(
+            'you conceded — the round to confirm your fix needs more budget',
+          );
+          expect(output).toContain('an urgent concession stands');
+          expect(output).toContain('increase budget');
+          expect(output).toMatch(/approve as-is|a human must grant/);
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -297,181 +323,235 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
   // STONE 2: WITHIN-BUDGET PASS (no approval needed)
   // ===========================================================================
 
-  given('[journey] stone 2.deploy: within-budget pass, no approval needed', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-budget-levels-deploy',
-        clone: ASSETS_DIR,
-      });
+  given(
+    '[journey] stone 2.deploy: within-budget pass, no approval needed',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-budget-levels-deploy',
+          clone: ASSETS_DIR,
+        });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-deployer.sh', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-deployer.sh', {
+          cwd: tempDir,
+        });
 
-      // pre-pass stone 1 to get to stone 2
-      await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, 'src', 'feature.ts'), 'export const f = 1;');
-      await fs.writeFile(path.join(tempDir, '.test', 'primo-should-pass'), '');
-      await fs.writeFile(path.join(tempDir, '.test', 'cheapo-should-pass'), '');
-      await invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: { stone: '1.execute', route: '.', as: 'passed' },
-        cwd: tempDir,
-      });
-
-      return { tempDir };
-    });
-
-    when('[t0] artifact created, reviewer passes within budget', () => {
-      const result = useThen('stone passes automatically', async () => {
-        await fs.mkdir(path.join(scene.tempDir, 'deploy'), { recursive: true });
+        // pre-pass stone 1 to get to stone 2
+        await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'deploy', 'config.yaml'),
-          'replicas: 3',
+          path.join(tempDir, 'src', 'feature.ts'),
+          'export const f = 1;',
         );
-
-        // make deployer pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'deployer-should-pass'), '');
-
-        return invokeRouteSkill({
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'primo-should-pass'),
+          '',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'cheapo-should-pass'),
+          '',
+        );
+        await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '2.deploy', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+          args: { stone: '1.execute', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        return { tempDir };
+      });
+
+      when('[t0] artifact created, reviewer passes within budget', () => {
+        const result = useThen('stone passes automatically', async () => {
+          await fs.mkdir(path.join(scene.tempDir, 'deploy'), {
+            recursive: true,
+          });
+          await fs.writeFile(
+            path.join(scene.tempDir, 'deploy', 'config.yaml'),
+            'replicas: 3',
+          );
+
+          // make deployer pass
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'deployer-should-pass'),
+            '',
+          );
+
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '2.deploy', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        });
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('passage allowed (no approval needed)', () => {
+          expect(result.stdout).toContain('passage = allowed');
+        });
+
+        then('no approval judge ran', () => {
+          expect(result.stdout.toLowerCase()).not.toContain('approved?');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });
-
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('passage allowed (no approval needed)', () => {
-        expect(result.stdout).toContain('passage = allowed');
-      });
-
-      then('no approval judge ran', () => {
-        expect(result.stdout.toLowerCase()).not.toContain('approved?');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   // ===========================================================================
   // STONE 3: WITHIN-BUDGET + EXPLICIT APPROVAL JUDGE
   // ===========================================================================
 
-  given('[journey] stone 3.release: within-budget + explicit approval judge', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-budget-levels-release',
-        clone: ASSETS_DIR,
-      });
+  given(
+    '[journey] stone 3.release: within-budget + explicit approval judge',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-budget-levels-release',
+          clone: ASSETS_DIR,
+        });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-releaser.sh', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-releaser.sh', {
+          cwd: tempDir,
+        });
 
-      // pre-pass stones 1 and 2 to get to stone 3
-      await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, 'src', 'feature.ts'), 'export const f = 1;');
-      await fs.writeFile(path.join(tempDir, '.test', 'primo-should-pass'), '');
-      await fs.writeFile(path.join(tempDir, '.test', 'cheapo-should-pass'), '');
-      await invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: { stone: '1.execute', route: '.', as: 'passed' },
-        cwd: tempDir,
-      });
-
-      await fs.mkdir(path.join(tempDir, 'deploy'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, 'deploy', 'config.yaml'), 'replicas: 3');
-      await fs.writeFile(path.join(tempDir, '.test', 'deployer-should-pass'), '');
-      await invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: { stone: '2.deploy', route: '.', as: 'passed' },
-        cwd: tempDir,
-      });
-
-      return { tempDir };
-    });
-
-    when('[t0] artifact created, reviewer passes but approval still needed', () => {
-      const result = useThen('blocked by explicit approval judge', async () => {
-        await fs.mkdir(path.join(scene.tempDir, 'release'), { recursive: true });
+        // pre-pass stones 1 and 2 to get to stone 3
+        await fs.mkdir(path.join(tempDir, 'src'), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'release', 'notes.md'),
-          '# Release Notes\n\nv1.0.0',
+          path.join(tempDir, 'src', 'feature.ts'),
+          'export const f = 1;',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'primo-should-pass'),
+          '',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'cheapo-should-pass'),
+          '',
+        );
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.execute', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        await fs.mkdir(path.join(tempDir, 'deploy'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, 'deploy', 'config.yaml'),
+          'replicas: 3',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.test', 'deployer-should-pass'),
+          '',
+        );
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '2.deploy', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        return { tempDir };
+      });
+
+      when(
+        '[t0] artifact created, reviewer passes but approval still needed',
+        () => {
+          const result = useThen(
+            'blocked by explicit approval judge',
+            async () => {
+              await fs.mkdir(path.join(scene.tempDir, 'release'), {
+                recursive: true,
+              });
+              await fs.writeFile(
+                path.join(scene.tempDir, 'release', 'notes.md'),
+                '# Release Notes\n\nv1.0.0',
+              );
+
+              // make releaser pass
+              await fs.writeFile(
+                path.join(scene.tempDir, '.test', 'releaser-should-pass'),
+                '',
+              );
+
+              return invokeRouteSkill({
+                skill: 'route.stone.set',
+                args: { stone: '3.release', route: '.', as: 'passed' },
+                cwd: scene.tempDir,
+              });
+            },
+          );
+
+          then('exit code is non-zero', () => {
+            expect(result.code).not.toEqual(0);
+          });
+
+          then('reviewer passed', () => {
+            expect(result.stdout).toContain('releaser');
+          });
+
+          then('blocked by approval judge', () => {
+            expect(result.stdout.toLowerCase()).toContain('approved?');
+          });
+
+          then('requires human approval', () => {
+            const output = result.stdout.toLowerCase();
+            expect(output).toMatch(/approv|wait/);
+          });
+
+          then('stdout has good vibes', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
+      );
+
+      when('[t1] human approves', () => {
+        const result = useThen('approval succeeds', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.release', route: '.', as: 'approved' },
+            cwd: scene.tempDir,
+          }),
         );
 
-        // make releaser pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'releaser-should-pass'), '');
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.release', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });
 
-      then('exit code is non-zero', () => {
-        expect(result.code).not.toEqual(0);
+      when('[t2] pass after approval', () => {
+        const result = useThen('stone passes', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.release', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('passage allowed', () => {
+          expect(result.stdout).toContain('passage = allowed');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-
-      then('reviewer passed', () => {
-        expect(result.stdout).toContain('releaser');
-      });
-
-      then('blocked by approval judge', () => {
-        expect(result.stdout.toLowerCase()).toContain('approved?');
-      });
-
-      then('requires human approval', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/approv|wait/);
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] human approves', () => {
-      const result = useThen('approval succeeds', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.release', route: '.', as: 'approved' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t2] pass after approval', () => {
-      const result = useThen('stone passes', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.release', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('passage allowed', () => {
-        expect(result.stdout).toContain('passage = allowed');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

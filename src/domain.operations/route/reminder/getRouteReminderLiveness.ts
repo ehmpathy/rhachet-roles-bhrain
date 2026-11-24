@@ -1,6 +1,6 @@
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { getLatestPassageForRoute } from '@src/domain.operations/route/passage/getLatestPassageForRoute';
 
-import { getLatestPassageForRoute } from '../passage/getLatestPassageForRoute';
 import { isReminderLiveForPassageStatus } from './isReminderLiveForPassageStatus';
 
 // .note = the `../passage/` import is intra-context composition, NOT a cross-context scope leak.

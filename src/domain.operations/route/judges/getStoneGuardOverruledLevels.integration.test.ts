@@ -4,8 +4,8 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/meter/JUDGE_LEVEL';
 
-import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
 import { getStoneGuardOverruledLevels } from './getStoneGuardOverruledLevels';
 
 /**

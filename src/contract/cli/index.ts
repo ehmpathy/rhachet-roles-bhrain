@@ -32,12 +32,22 @@ import {
 /**
  * .what = lazy members for the three brain-bound commands
  * .why = the module (and its brain imports) loads on call, never on an import of the aggregate
+ * .note = a typed `require`, not `import()`: under node16 a dynamic `import()` in a commonjs file
+ *         looks up its path in esm mode and demands a file extension, which the jest `@src`
+ *         mappers cannot follow. `require` and `typeof import()` look up in commonjs mode
  */
-const review = async (): Promise<void> => (await import('./review')).review();
-const reviewBy = async (): Promise<void> =>
-  (await import('./review.by')).reviewBy();
-const reflect = async (): Promise<void> =>
-  (await import('./reflect')).reflect();
+const review = async (): Promise<void> => {
+  const mod: typeof import('./review') = require('./review');
+  return mod.review();
+};
+const reviewBy = async (): Promise<void> => {
+  const mod: typeof import('./review.by') = require('./review.by');
+  return mod.reviewBy();
+};
+const reflect = async (): Promise<void> => {
+  const mod: typeof import('./reflect') = require('./reflect');
+  return mod.reflect();
+};
 
 export const cli = {
   review,

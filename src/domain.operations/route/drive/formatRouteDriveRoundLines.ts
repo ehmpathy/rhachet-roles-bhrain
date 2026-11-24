@@ -1,8 +1,8 @@
-import { asStoneGuardCounter } from '../guard/asStoneGuardCounter';
+import { asStoneGuardCounter } from '@src/domain.operations/route/guard/asStoneGuardCounter';
 import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
-} from '../guard/tree/formatGuardTree';
+} from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = whether a lane approved with naught to say — no blocker, no nitpick, no declared mark

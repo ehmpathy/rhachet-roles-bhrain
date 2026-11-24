@@ -3,8 +3,7 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
-
-import { withEnoentAsNull } from '../withEnoentAsNull';
+import { withEnoentAsNull } from '@src/domain.operations/route/withEnoentAsNull';
 
 /**
  * .what = every passage entry from passage.jsonl, in raw append (file) order

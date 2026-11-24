@@ -1,6 +1,6 @@
 import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
 
-import { enumRouteFiles } from '../artifact/enumRouteFiles';
 import { getAllStoneGuardJudgeVerdictsFromFiles } from './getAllStoneGuardJudgeVerdictsFromFiles';
 
 /**

@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import type { ReflectScope } from '../scope/getReflectScope';
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
 
 /**
  * .what = a savepoint captures git diff state at a moment in time

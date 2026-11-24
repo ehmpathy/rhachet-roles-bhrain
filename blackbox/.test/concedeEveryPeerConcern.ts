@@ -18,7 +18,7 @@ import { invokeRouteSkill } from './invokeRouteSkill';
  *        gate existed
  *
  * .note = 🔴 this is the blackbox twin of
- *         `src/domain.operations/route/__test_assets__/concedeEveryPeerConcern.ts`.
+ *         `src/domain.operations/route/.test.assets/concedeEveryPeerConcern.ts`.
  *         they are deliberately NOT shared: that one mutates in-process, while this one
  *         drives the real cli in a temp dir so the passage ledger records the stance the
  *         way a real driver's would. the READ of the undeclared set goes through the

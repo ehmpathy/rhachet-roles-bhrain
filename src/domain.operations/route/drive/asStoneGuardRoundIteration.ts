@@ -1,5 +1,5 @@
-import { getRouteGuardReviewPeerPathMeta } from '../guard/review/peer/getRouteGuardReviewPeerPathMeta';
-import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+import { getRouteGuardReviewPeerPathMeta } from '@src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerPathMeta';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = the iteration of a stone's latest review round — the highest iteration any lane's

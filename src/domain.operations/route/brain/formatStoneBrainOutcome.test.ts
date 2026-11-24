@@ -1,7 +1,8 @@
 import { UnexpectedCodePathError } from 'helpful-errors';
 import { getError, given, then, when } from 'test-fns';
 
-import { formatRouteDriveHeader } from '../drive/formatRouteDriveHeader';
+import { formatRouteDriveHeader } from '@src/domain.operations/route/drive/formatRouteDriveHeader';
+
 import { formatStoneBrainOutcome } from './formatStoneBrainOutcome';
 
 /**

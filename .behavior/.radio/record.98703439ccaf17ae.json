@@ -1,0 +1,19 @@
+{
+  "key": "98703439ccaf17ae",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "with-bottleneck"
+  },
+  "exid": null,
+  "title": "fix(deps): drop bottleneck, its last release holds a require cycle",
+  "description": "## .what\n`bottleneck@2.19.5` (its last release) holds a require cycle, `lib/Bottleneck.js <-> lib/Group.js`. the declapract `test:lint:cycles` check (dpdm, node_modules included) reds every consumer that reaches it through with-bottleneck.\n\n## .ask\nback `genBottleneck` with a cycle-free limiter (e.g. an in-house queue, or `p-limit`), same contract, so consumers can drop their `/bottleneck@` exclude.\n\nfirst seen in rhachet-roles-bhrain `.route/v2026_11_19.declapract.upgrade`, stone 3.1 (fulcrum F4).",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": "findsert",
+  "heldSeq": 50,
+  "recordStatus": "DROPPED",
+  "reason": "dropped: wrong owner: with-bottleneck 0.1.2 holds no bottleneck dep; the prod paths run through @ehmpathy/as-command and wrapper-fns",
+  "deliveredExid": null
+}

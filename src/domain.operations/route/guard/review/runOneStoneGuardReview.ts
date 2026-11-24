@@ -11,27 +11,27 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 import { asPeerReviewOutputName } from '@src/domain.operations/asPeerReviewOutputName';
 import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
-import { genPeerReviewsDir } from '@src/domain.operations/route/guard/review/peer/genPeerReviewsDir';
-import { setPeerReviewStdoutArtifact } from '@src/domain.operations/route/guard/review/peer/setPeerReviewStdoutArtifact';
-import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
-import { isErrorOfDenial } from '@src/utils/fs/isErrorOfDenial';
-
 // .note = a declared cross-context contract (rule.forbid.scope-leaks): the review runner is the one runner the guard and review.by share.
 //         its lift to a neutral home is held at fulcrum F97 of route v2026_09_20.review-cost-meter
 //         the runner's side also owns the shape of a run that never started (a precondition fault)
-import { asReviewRunOfPreconditionFault } from '../../../review/asReviewRunOfPreconditionFault';
-import { runOneReview } from '../../../review/runOneReview';
-import { asCmdWithRuntimeVars } from '../asCmdWithRuntimeVars';
-import { asExitCodeClass } from '../asExitCodeClass';
-import { asGuardCmdFreeOfNpx } from '../asGuardCmdFreeOfNpx';
-import { asRuntimeGuardBinPaths } from '../asRuntimeGuardBinPaths';
-import { asStoneGuardCounter } from '../asStoneGuardCounter';
-import { isCmdOfRuntimeVar } from '../isCmdOfRuntimeVar';
-import type { RuntimeGuardVarName } from '../RUNTIME_GUARD_VAR_NAMES';
-import { setStoneGuardRoundOutput } from '../round/setStoneGuardRoundOutput';
-import { asArtifactPassageFooter } from '../tree/asArtifactPassageFooter';
-import { formatArtifactFooters } from '../tree/formatArtifactFooters';
-import { formatArtifactStreamBuckets } from '../tree/formatArtifactStreamBuckets';
+import { asReviewRunOfPreconditionFault } from '@src/domain.operations/review/asReviewRunOfPreconditionFault';
+import { runOneReview } from '@src/domain.operations/review/runOneReview';
+import { asCmdWithRuntimeVars } from '@src/domain.operations/route/guard/asCmdWithRuntimeVars';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
+import { asGuardCmdFreeOfNpx } from '@src/domain.operations/route/guard/asGuardCmdFreeOfNpx';
+import { asRuntimeGuardBinPaths } from '@src/domain.operations/route/guard/asRuntimeGuardBinPaths';
+import { asStoneGuardCounter } from '@src/domain.operations/route/guard/asStoneGuardCounter';
+import { isCmdOfRuntimeVar } from '@src/domain.operations/route/guard/isCmdOfRuntimeVar';
+import type { RuntimeGuardVarName } from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
+import { genPeerReviewsDir } from '@src/domain.operations/route/guard/review/peer/genPeerReviewsDir';
+import { setPeerReviewStdoutArtifact } from '@src/domain.operations/route/guard/review/peer/setPeerReviewStdoutArtifact';
+import { setStoneGuardRoundOutput } from '@src/domain.operations/route/guard/round/setStoneGuardRoundOutput';
+import { asArtifactPassageFooter } from '@src/domain.operations/route/guard/tree/asArtifactPassageFooter';
+import { formatArtifactFooters } from '@src/domain.operations/route/guard/tree/formatArtifactFooters';
+import { formatArtifactStreamBuckets } from '@src/domain.operations/route/guard/tree/formatArtifactStreamBuckets';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
+import { isErrorOfDenial } from '@src/utils/fs/isErrorOfDenial';
+
 import { asConversationVar } from './asConversationVar';
 import { asSanitizedPeerReviewSlug } from './peer/asSanitizedPeerReviewSlug';
 import { getAllRouteGuardReviewPeerConversationFiles } from './peer/getAllRouteGuardReviewPeerConversationFiles';

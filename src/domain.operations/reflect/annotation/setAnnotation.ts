@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import type { ReflectScope } from '../scope/getReflectScope';
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
 
 /**
  * .what = an annotation labels a moment in the timeline for reflection

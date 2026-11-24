@@ -11,6 +11,7 @@
 .claude/*.lock
 .claude/scheduled_tasks.lock
 .env
+.log/slowtest/
 .review
 .rhachet
 .route/.bouncer.cache.json

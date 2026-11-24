@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import type { IsoTimeStamp } from 'iso-time';
 
-import { findsertReviewSelfGitignore } from '../../../gitignore/findsertReviewSelfGitignore';
+import { findsertReviewSelfGitignore } from '@src/domain.operations/route/gitignore/findsertReviewSelfGitignore';
+
 import { asComparablePath } from './asComparablePath';
 import { asIsoTimeStampFromMtime } from './asIsoTimeStampFromMtime';
 import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';

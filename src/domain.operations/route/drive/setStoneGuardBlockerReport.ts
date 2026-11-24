@@ -3,8 +3,7 @@ import {
   RouteStoneGuardBlockerReport,
   type RouteStoneGuardBlockerType,
 } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
-
-import { setPassageReport } from '../passage/setPassageReport';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
 /**
  * .what = writes the blocker report for a stone

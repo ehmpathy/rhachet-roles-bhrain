@@ -146,9 +146,17 @@ describe('driver.route.approval-tty', () => {
         let result: { stdout: string; stderr: string; code: number };
         try {
           const execResult = await execAsync(cmd, { cwd: process.cwd() });
-          result = { stdout: execResult.stdout, stderr: execResult.stderr, code: 0 };
+          result = {
+            stdout: execResult.stdout,
+            stderr: execResult.stderr,
+            code: 0,
+          };
         } catch (error: unknown) {
-          const execError = error as { stdout: string; stderr: string; code: number };
+          const execError = error as {
+            stdout: string;
+            stderr: string;
+            code: number;
+          };
           result = {
             stdout: execError.stdout ?? '',
             stderr: execError.stderr ?? '',
@@ -167,9 +175,17 @@ describe('driver.route.approval-tty', () => {
         let result: { stdout: string; stderr: string; code: number };
         try {
           const execResult = await execAsync(cmd, { cwd: process.cwd() });
-          result = { stdout: execResult.stdout, stderr: execResult.stderr, code: 0 };
+          result = {
+            stdout: execResult.stdout,
+            stderr: execResult.stderr,
+            code: 0,
+          };
         } catch (error: unknown) {
-          const execError = error as { stdout: string; stderr: string; code: number };
+          const execError = error as {
+            stdout: string;
+            stderr: string;
+            code: number;
+          };
           result = {
             stdout: execError.stdout ?? '',
             stderr: execError.stderr ?? '',

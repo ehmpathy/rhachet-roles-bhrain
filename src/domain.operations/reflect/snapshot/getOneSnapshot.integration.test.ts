@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { getReflectScope } from '../scope/getReflectScope';
+import { getReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+
 import { captureSnapshot } from './captureSnapshot';
 import { getOneSnapshot } from './getOneSnapshot';
 

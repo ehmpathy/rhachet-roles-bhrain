@@ -38,16 +38,29 @@ const getAnthropicAtomsVersioned = async (): Promise<
   Pick<BrainAtom, 'repo' | 'slug' | 'spec'>[]
 > => {
   // load the package config; an absent package is a legitimate empty answer
-  const module = await import(
-    'rhachet-brains-anthropic/dist/domain.operations/atoms/BrainAtom.config'
-  ).catch((error: unknown) => {
-    if (isModuleAbsent({ error })) return null;
-    throw error;
-  });
+  const module = getAnthropicAtomConfigModule();
   if (!module) return [];
 
   // keep only the versioned slugs; an alias must never stand in for a version
   return Object.entries(module.CONFIG_BY_ATOM_SLUG)
     .filter(([slug]) => /\/v\d/.test(slug))
     .map(([slug, config]) => ({ repo: 'anthropic', slug, spec: config.spec }));
+};
+
+/**
+ * .what = the anthropic atom config module, or null when the package is absent
+ * .why = the package publishes no subpath for its atom config, so this reads its dist path
+ *
+ * .note = a typed `require`, not `import()`: under node16 a dynamic `import()` in a commonjs
+ *         file demands a file extension. an absent package is the one error caught
+ */
+const getAnthropicAtomConfigModule = ():
+  | typeof import('rhachet-brains-anthropic/dist/domain.operations/atoms/BrainAtom.config')
+  | null => {
+  try {
+    return require('rhachet-brains-anthropic/dist/domain.operations/atoms/BrainAtom.config');
+  } catch (error) {
+    if (isModuleAbsent({ error })) return null;
+    throw error;
+  }
 };

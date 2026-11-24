@@ -206,10 +206,19 @@ describe('reflect.on.token.spend', () => {
     const configDir = path.join(tempDir, '.claude-config');
     const projectDir = path.join(configDir, 'projects', '-repo-demo');
     fs.mkdirSync(projectDir, { recursive: true });
-    fs.writeFileSync(path.join(projectDir, `${uuidOne}.jsonl`), genSessionJsonl());
-    fs.writeFileSync(path.join(projectDir, `${uuidTwo}.jsonl`), genSessionJsonl());
+    fs.writeFileSync(
+      path.join(projectDir, `${uuidOne}.jsonl`),
+      genSessionJsonl(),
+    );
+    fs.writeFileSync(
+      path.join(projectDir, `${uuidTwo}.jsonl`),
+      genSessionJsonl(),
+    );
     const tornPath = path.join(tempDir, `${uuidTorn}.jsonl`);
-    fs.writeFileSync(tornPath, '{"type":"user"}\n{"type":"ass\n{"type":"user"}\n');
+    fs.writeFileSync(
+      tornPath,
+      '{"type":"user"}\n{"type":"ass\n{"type":"user"}\n',
+    );
     const tornPathTwo = path.join(tempDir, `${uuidTornTwo}.jsonl`);
     fs.writeFileSync(
       tornPathTwo,
@@ -232,7 +241,12 @@ describe('reflect.on.token.spend', () => {
 
     // a home dir whose `~/.claude/projects` also holds uuidOne, so a uuid lookup is ambiguous
     const homeDir = path.join(tempDir, 'home');
-    const homeProjectDir = path.join(homeDir, '.claude', 'projects', '-repo-demo');
+    const homeProjectDir = path.join(
+      homeDir,
+      '.claude',
+      'projects',
+      '-repo-demo',
+    );
     fs.mkdirSync(homeProjectDir, { recursive: true });
     fs.writeFileSync(
       path.join(homeProjectDir, `${uuidOne}.jsonl`),
@@ -556,7 +570,10 @@ describe('reflect.on.token.spend', () => {
           skill: 'reflect.on.token.spend',
           subcommand: null,
           args: {
-            from: [path.join(scene.projectDir, `${uuidOne}.jsonl`), scene.tornPath],
+            from: [
+              path.join(scene.projectDir, `${uuidOne}.jsonl`),
+              scene.tornPath,
+            ],
           },
           cwd: scene.tempDir,
           env: scene.env,
@@ -595,18 +612,21 @@ describe('reflect.on.token.spend', () => {
         expect(res.code).toEqual(2);
       });
 
-      then('stderr counts the records, says why, and names two runnable fixes', () => {
-        expect(res.stderr).toContain('transcript holds no metered calls');
-        expect(res.stderr).toContain(
-          'records = 1 (0 assistant records with message.usage)',
-        );
-        expect(res.stderr).toContain('why:');
-        expect(res.stderr).toContain('fix:');
-        expect(res.stderr).toContain(
-          'rhx reflect.on.token.spend --from <path-to-another.jsonl>',
-        );
-        expect(res.stderr).toContain('or:');
-      });
+      then(
+        'stderr counts the records, says why, and names two runnable fixes',
+        () => {
+          expect(res.stderr).toContain('transcript holds no metered calls');
+          expect(res.stderr).toContain(
+            'records = 1 (0 assistant records with message.usage)',
+          );
+          expect(res.stderr).toContain('why:');
+          expect(res.stderr).toContain('fix:');
+          expect(res.stderr).toContain(
+            'rhx reflect.on.token.spend --from <path-to-another.jsonl>',
+          );
+          expect(res.stderr).toContain('or:');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(asSnap(res.stderr)).toMatchSnapshot();
@@ -807,9 +827,14 @@ describe('reflect.on.token.spend', () => {
         expect(res.stderr).toContain('--from needs a value');
       });
 
-      then('the fix carries a command to paste, as every other halt does', () => {
-        expect(res.stderr).toContain('rhx reflect.on.token.spend --from @current');
-      });
+      then(
+        'the fix carries a command to paste, as every other halt does',
+        () => {
+          expect(res.stderr).toContain(
+            'rhx reflect.on.token.spend --from @current',
+          );
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(asSnap(res.stderr)).toMatchSnapshot();
@@ -905,46 +930,54 @@ describe('reflect.on.token.spend', () => {
         }),
       );
 
-      then('exit code is 0, and the caveat says where the boot share sits', () => {
-        expect(res.code).toEqual(0);
-        expect(res.stdout).toContain(
-          'caveat = no boot.instructions block was seen; the boot share sits inside unattributed',
-        );
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(asSnap(res.stdout)).toMatchSnapshot();
-      });
-    });
-  });
-
-  given('[case20] @current in a live session, its last line half-flushed', () => {
-    when('[t0] the skill runs', () => {
-      const res = useThen('it succeeds', async () =>
-        invokeReflectSkill({
-          skill: 'reflect.on.token.spend',
-          subcommand: null,
-          args: {},
-          cwd: scene.tempDir,
-          env: { ...scene.env, CLAUDE_CODE_SESSION_ID: uuidLive },
-        }),
+      then(
+        'exit code is 0, and the caveat says where the boot share sits',
+        () => {
+          expect(res.code).toEqual(0);
+          expect(res.stdout).toContain(
+            'caveat = no boot.instructions block was seen; the boot share sits inside unattributed',
+          );
+        },
       );
 
-      then('exit code is 0, and the session is chosen by its id', () => {
-        expect(res.code).toEqual(0);
-        expect(res.stdout).toContain('chosen by = session-id');
-        expect(res.stdout).toContain('calls = 3');
-      });
-
-      then('the half-flushed tail is named, never read as a fault', () => {
-        expect(res.stdout).toContain('partial lines skipped = 1 (a live tail)');
-      });
-
       then('stdout matches snapshot', () => {
         expect(asSnap(res.stdout)).toMatchSnapshot();
       });
     });
   });
+
+  given(
+    '[case20] @current in a live session, its last line half-flushed',
+    () => {
+      when('[t0] the skill runs', () => {
+        const res = useThen('it succeeds', async () =>
+          invokeReflectSkill({
+            skill: 'reflect.on.token.spend',
+            subcommand: null,
+            args: {},
+            cwd: scene.tempDir,
+            env: { ...scene.env, CLAUDE_CODE_SESSION_ID: uuidLive },
+          }),
+        );
+
+        then('exit code is 0, and the session is chosen by its id', () => {
+          expect(res.code).toEqual(0);
+          expect(res.stdout).toContain('chosen by = session-id');
+          expect(res.stdout).toContain('calls = 3');
+        });
+
+        then('the half-flushed tail is named, never read as a fault', () => {
+          expect(res.stdout).toContain(
+            'partial lines skipped = 1 (a live tail)',
+          );
+        });
+
+        then('stdout matches snapshot', () => {
+          expect(asSnap(res.stdout)).toMatchSnapshot();
+        });
+      });
+    },
+  );
 
   given('[case21] a corpus of one metered session and one unmetered', () => {
     when('[t0] the skill runs', () => {
@@ -960,9 +993,7 @@ describe('reflect.on.token.spend', () => {
 
       then('exit code is 0, and the counts name the skip', () => {
         expect(res.code).toEqual(0);
-        expect(res.stdout).toContain(
-          'matched = 2 · metered = 1 · skipped = 1',
-        );
+        expect(res.stdout).toContain('matched = 2 · metered = 1 · skipped = 1');
       });
 
       then('the unmetered file sits under its own bucket', () => {
@@ -988,11 +1019,14 @@ describe('reflect.on.token.spend', () => {
         }),
       );
 
-      then('exit code is 0, and the subagent is a peer row of its own spend', () => {
-        expect(res.code).toEqual(0);
-        expect(res.stdout).toContain('subagents (1, their own spend)');
-        expect(res.stdout).toContain('agent-a1.jsonl');
-      });
+      then(
+        'exit code is 0, and the subagent is a peer row of its own spend',
+        () => {
+          expect(res.code).toEqual(0);
+          expect(res.stdout).toContain('subagents (1, their own spend)');
+          expect(res.stdout).toContain('agent-a1.jsonl');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(asSnap(res.stdout)).toMatchSnapshot();
@@ -1029,62 +1063,71 @@ describe('reflect.on.token.spend', () => {
     });
   });
 
-  given('[case24] @current with no session id, in a dir with two sessions', () => {
-    when('[t0] the skill runs', () => {
-      const res = useThen('it succeeds', async () =>
-        invokeReflectSkill({
-          skill: 'reflect.on.token.spend',
-          subcommand: null,
-          args: {},
-          cwd: scene.tempDir,
-          env: {
-            CLAUDE_CONFIG_DIR: scene.mtimeConfigDir,
-            CLAUDE_CODE_SESSION_ID: '',
-            HOME: scene.homeDir,
+  given(
+    '[case24] @current with no session id, in a dir with two sessions',
+    () => {
+      when('[t0] the skill runs', () => {
+        const res = useThen('it succeeds', async () =>
+          invokeReflectSkill({
+            skill: 'reflect.on.token.spend',
+            subcommand: null,
+            args: {},
+            cwd: scene.tempDir,
+            env: {
+              CLAUDE_CONFIG_DIR: scene.mtimeConfigDir,
+              CLAUDE_CODE_SESSION_ID: '',
+              HOME: scene.homeDir,
+            },
+          }),
+        );
+
+        then(
+          'exit code is 0, and the newest session is chosen by mtime',
+          () => {
+            expect(res.code).toEqual(0);
+            expect(res.stdout).toContain('chosen by = mtime');
+            expect(res.stdout).toContain(`${uuidTwo}.jsonl`);
           },
-        }),
-      );
+        );
 
-      then('exit code is 0, and the newest session is chosen by mtime', () => {
-        expect(res.code).toEqual(0);
-        expect(res.stdout).toContain('chosen by = mtime');
-        expect(res.stdout).toContain(`${uuidTwo}.jsonl`);
+        then('stdout matches snapshot', () => {
+          expect(asSnap(res.stdout)).toMatchSnapshot();
+        });
       });
+    },
+  );
 
-      then('stdout matches snapshot', () => {
-        expect(asSnap(res.stdout)).toMatchSnapshot();
+  given(
+    '[case25] two selectors, one that matches and one that matches none',
+    () => {
+      when('[t0] the skill runs', () => {
+        const res = useThen('it fails', async () =>
+          invokeReflectSkill({
+            skill: 'reflect.on.token.spend',
+            subcommand: null,
+            args: {
+              from: [
+                path.join(scene.projectDir, `${uuidOne}.jsonl`),
+                path.join(scene.tempDir, 'nope-*.jsonl'),
+              ],
+            },
+            cwd: scene.tempDir,
+            env: scene.env,
+          }),
+        );
+
+        then('exit code is 2, and the halt names the dead selector', () => {
+          expect(res.code).toEqual(2);
+          expect(res.stderr).toContain('transcript glob matched no file');
+          expect(res.stderr).toContain('nope-*.jsonl');
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(asSnap(res.stderr)).toMatchSnapshot();
+        });
       });
-    });
-  });
-
-  given('[case25] two selectors, one that matches and one that matches none', () => {
-    when('[t0] the skill runs', () => {
-      const res = useThen('it fails', async () =>
-        invokeReflectSkill({
-          skill: 'reflect.on.token.spend',
-          subcommand: null,
-          args: {
-            from: [
-              path.join(scene.projectDir, `${uuidOne}.jsonl`),
-              path.join(scene.tempDir, 'nope-*.jsonl'),
-            ],
-          },
-          cwd: scene.tempDir,
-          env: scene.env,
-        }),
-      );
-
-      then('exit code is 2, and the halt names the dead selector', () => {
-        expect(res.code).toEqual(2);
-        expect(res.stderr).toContain('transcript glob matched no file');
-        expect(res.stderr).toContain('nope-*.jsonl');
-      });
-
-      then('stderr matches snapshot', () => {
-        expect(asSnap(res.stderr)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 
   given('[case26] a transcript on a model no rate card names', () => {
     when('[t0] the skill runs', () => {
@@ -1113,73 +1156,83 @@ describe('reflect.on.token.spend', () => {
     });
   });
 
-  given('[case27] a corpus of one metered, one torn, and one unmetered session', () => {
-    when('[t0] the skill runs', () => {
-      const res = useThen('it succeeds', async () =>
-        invokeReflectSkill({
-          skill: 'reflect.on.token.spend',
-          subcommand: null,
-          args: { from: path.join(scene.mixedReadDir, '*.jsonl') },
-          cwd: scene.tempDir,
-          env: scene.env,
-        }),
-      );
-
-      then('exit code is 0, and the counts name both skips', () => {
-        expect(res.code).toEqual(0);
-        expect(res.stdout).toContain('matched = 3 · metered = 1 · skipped = 2');
-      });
-
-      then('each skip sits under its own bucket', () => {
-        expect(res.stdout).toContain('malformed (1)');
-        expect(res.stdout).toContain('unmetered (1)');
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(asSnap(res.stdout)).toMatchSnapshot();
-      });
-    });
-  });
-
-  given('[case28] a reader that closes stdout before the tree is written', () => {
-    when('[t0] the skill output is piped into `head -c 0`', () => {
-      // pipefail, so the shell reports the skill's own exit, not head's
-      const res = useThen('the pipeline ends', async () => {
-        const skillPath = path.join(
-          scene.tempDir,
-          '.agent/repo=bhrain/role=reflector/skills/reflect.on.token.spend.sh',
+  given(
+    '[case27] a corpus of one metered, one torn, and one unmetered session',
+    () => {
+      when('[t0] the skill runs', () => {
+        const res = useThen('it succeeds', async () =>
+          invokeReflectSkill({
+            skill: 'reflect.on.token.spend',
+            subcommand: null,
+            args: { from: path.join(scene.mixedReadDir, '*.jsonl') },
+            cwd: scene.tempDir,
+            env: scene.env,
+          }),
         );
-        const cmd = `bash -o pipefail -c 'bash "${skillPath}" --from ${uuidOne} | head -c 0'`;
-        const options = {
-          cwd: scene.tempDir,
-          env: { ...process.env, ...scene.env },
-        };
-        return execAsync(cmd, options)
-          .then((result) => ({ ...result, code: 0 }))
-          .catch((error: { stdout?: string; stderr?: string; code?: number }) => ({
-            stdout: error.stdout ?? '',
-            stderr: error.stderr ?? '',
-            code: error.code ?? 1,
-          }));
-      });
 
-      then('exit code is 0 — a closed reader is not a fault', () => {
-        expect(res.code).toEqual(0);
-      });
+        then('exit code is 0, and the counts name both skips', () => {
+          expect(res.code).toEqual(0);
+          expect(res.stdout).toContain(
+            'matched = 3 · metered = 1 · skipped = 2',
+          );
+        });
 
-      then('stderr carries no EPIPE stack and no malfunction header', () => {
-        expect(res.stderr).not.toContain('EPIPE');
-        expect(res.stderr).not.toContain('💥');
-      });
+        then('each skip sits under its own bucket', () => {
+          expect(res.stdout).toContain('malformed (1)');
+          expect(res.stdout).toContain('unmetered (1)');
+        });
 
-      then('stdout and stderr match snapshot', () => {
-        expect({
-          stdout: asSnap(res.stdout),
-          stderr: asSnap(res.stderr),
-        }).toMatchSnapshot();
+        then('stdout matches snapshot', () => {
+          expect(asSnap(res.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
+
+  given(
+    '[case28] a reader that closes stdout before the tree is written',
+    () => {
+      when('[t0] the skill output is piped into `head -c 0`', () => {
+        // pipefail, so the shell reports the skill's own exit, not head's
+        const res = useThen('the pipeline ends', async () => {
+          const skillPath = path.join(
+            scene.tempDir,
+            '.agent/repo=bhrain/role=reflector/skills/reflect.on.token.spend.sh',
+          );
+          const cmd = `bash -o pipefail -c 'bash "${skillPath}" --from ${uuidOne} | head -c 0'`;
+          const options = {
+            cwd: scene.tempDir,
+            env: { ...process.env, ...scene.env },
+          };
+          return execAsync(cmd, options)
+            .then((result) => ({ ...result, code: 0 }))
+            .catch(
+              (error: { stdout?: string; stderr?: string; code?: number }) => ({
+                stdout: error.stdout ?? '',
+                stderr: error.stderr ?? '',
+                code: error.code ?? 1,
+              }),
+            );
+        });
+
+        then('exit code is 0 — a closed reader is not a fault', () => {
+          expect(res.code).toEqual(0);
+        });
+
+        then('stderr carries no EPIPE stack and no malfunction header', () => {
+          expect(res.stderr).not.toContain('EPIPE');
+          expect(res.stderr).not.toContain('💥');
+        });
+
+        then('stdout and stderr match snapshot', () => {
+          expect({
+            stdout: asSnap(res.stdout),
+            stderr: asSnap(res.stderr),
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
 
   given('[case29] @current where the session id names no transcript', () => {
     when('[t0] the skill runs', () => {
@@ -1253,12 +1306,15 @@ describe('reflect.on.token.spend', () => {
         expect(res.code).toEqual(1);
       });
 
-      then('stderr names the torn subagent file and its line, never its parent', () => {
-        expect(res.stderr).toContain(
-          path.join(uuidTornParent, 'subagents', 'agent-b1.jsonl'),
-        );
-        expect(res.stderr).toContain('2 of 3');
-      });
+      then(
+        'stderr names the torn subagent file and its line, never its parent',
+        () => {
+          expect(res.stderr).toContain(
+            path.join(uuidTornParent, 'subagents', 'agent-b1.jsonl'),
+          );
+          expect(res.stderr).toContain('2 of 3');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(asSnap(res.stderr)).toMatchSnapshot();
@@ -1352,9 +1408,12 @@ describe('reflect.on.token.spend', () => {
 
       // 🔴 red before the fix: the sonnet call fell off the main thread, so the context
       //    peak read the last opus call (25,100) and the inventory lost the last turn
-      then('the sonnet call stays on the thread: its context is the peak', () => {
-        expect(res.stdout).toContain('peak   = 25,161');
-      });
+      then(
+        'the sonnet call stays on the thread: its context is the peak',
+        () => {
+          expect(res.stdout).toContain('peak   = 25,161');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(asSnap(res.stdout)).toMatchSnapshot();

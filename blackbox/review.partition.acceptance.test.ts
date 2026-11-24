@@ -1,14 +1,14 @@
 import * as path from 'path';
-
 import { given, then, useBeforeAll, when } from 'test-fns';
 
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+
+import { asRedactedOutput } from './.test/asRedactedOutput';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asRedactedOutput } from './.test/asRedactedOutput';
-import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -62,7 +62,9 @@ describe('review.partition.acceptance', () => {
       });
 
       then('the plan names common and narrow as peer branches', () => {
-        expect(res.stdout).toContain('review --mode plan — split into 2 partitions');
+        expect(res.stdout).toContain(
+          'review --mode plan — split into 2 partitions',
+        );
         expect(res.stdout).toContain('├─ common');
         expect(res.stdout).toContain('├─ narrow');
       });
@@ -105,9 +107,12 @@ describe('review.partition.acceptance', () => {
         });
       });
 
-      then('🔴 it refuses as a constraint, exit 2, before any brain call', () => {
-        expect(res.code).toEqual(2);
-      });
+      then(
+        '🔴 it refuses as a constraint, exit 2, before any brain call',
+        () => {
+          expect(res.code).toEqual(2);
+        },
+      );
 
       then('the refusal names the target and the fix', () => {
         expect(res.stderr).toContain('1 target sits in no partition');
@@ -173,10 +178,13 @@ describe('review.partition.acceptance', () => {
         return execAsync(`bash "${skillPath}" --help`, { cwd: tempDir });
       });
 
-      then('🔴 the flag and the plan mode are named, so the lever can be found', () => {
-        expect(res.stdout).toContain("--partition '<slug>=<globs>'");
-        expect(res.stdout).toContain('--mode plan');
-      });
+      then(
+        '🔴 the flag and the plan mode are named, so the lever can be found',
+        () => {
+          expect(res.stdout).toContain("--partition '<slug>=<globs>'");
+          expect(res.stdout).toContain('--mode plan');
+        },
+      );
 
       // .note = execAsync rejects on a nonzero exit, so a resolved `res` IS exit 0
       then('the help renders whole', () => {
@@ -258,10 +266,13 @@ describe('review.partition.acceptance', () => {
         expect(res.stderr).not.toContain('--brain');
       });
 
-      then('the hint points at the --mode row, which explains every value', () => {
-        expect(res.stderr).toContain('run with --help for --mode');
-        expect(res.stderr).not.toContain('run with --help for --mode plan');
-      });
+      then(
+        'the hint points at the --mode row, which explains every value',
+        () => {
+          expect(res.stderr).toContain('run with --help for --mode');
+          expect(res.stderr).not.toContain('run with --help for --mode plan');
+        },
+      );
 
       then('the refusal renders as the driver reads it', () => {
         expect(asRedactedOutput(res.stderr)).toMatchSnapshot();

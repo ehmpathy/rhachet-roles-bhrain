@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import type { ReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
 import { compareStrings } from '@src/utils/compareStrings';
-
-import type { ReflectScope } from '../scope/getReflectScope';
 
 /**
  * .what = summary of all annotations for a scope

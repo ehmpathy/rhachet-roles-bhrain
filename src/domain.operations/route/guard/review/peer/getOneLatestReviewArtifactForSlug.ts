@@ -1,7 +1,7 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import { asArtifactStreamsFromContent } from '@src/domain.operations/route/guard/tree/asArtifactStreamsFromContent';
 
-import { asArtifactStreamsFromContent } from '../../tree/asArtifactStreamsFromContent';
 import { asPeerReviewVerdictFromContent } from './asPeerReviewVerdictFromContent';
 import { asRouteGuardReviewPeerPathHash } from './asRouteGuardReviewPeerPathHash';
 import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';

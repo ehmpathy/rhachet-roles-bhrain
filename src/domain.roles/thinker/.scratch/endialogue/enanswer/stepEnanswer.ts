@@ -9,12 +9,13 @@ import {
 } from 'rhachet';
 import type { Artifact } from 'rhachet-artifact';
 import type { GitFile } from 'rhachet-artifact-git';
-import { withRetry, withTimeout } from 'wrapper-fns';
 
 import { type ContextOpenAI, sdkOpenAi } from '@src/access/sdk/sdkOpenAi';
 import { getEcologistBriefs } from '@src/domain.roles/ecologist/getEcologistBrief';
 import { getMechanicBriefs } from '@src/domain.roles/mechanic/getMechanicBrief';
 import { stepEnquestion } from '@src/domain.roles/thinker/.scratch/endialogue/enquestion/stepEnquestion';
+import { withRetry } from '@src/domain.roles/thinker/withRetry';
+import { withTimeout } from '@src/domain.roles/thinker/withTimeout';
 
 type StitcherDesired = GStitcher<
   Threads<{

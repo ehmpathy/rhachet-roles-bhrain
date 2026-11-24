@@ -2,9 +2,8 @@ import { asHashShake256 } from 'hash-fns';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { getGitBlobHashes } from '@src/domain.operations/route/guard/artifact/getGitBlobHashes';
 import { getAllStoneArtifacts } from '@src/domain.operations/route/stones/getAllStoneArtifacts';
-
-import { getGitBlobHashes } from '../artifact/getGitBlobHashes';
 
 /**
  * .what = format files and blob hashes as sorted hash entries

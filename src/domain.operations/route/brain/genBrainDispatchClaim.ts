@@ -1,10 +1,11 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { getOneFileMtimeMs } from '../drive/getOneFileMtimeMs';
-import { getOneFileText } from '../drive/getOneFileText';
-import { withDriveStateLock } from '../drive/withDriveStateLock';
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { getOneFileMtimeMs } from '@src/domain.operations/route/drive/getOneFileMtimeMs';
+import { getOneFileText } from '@src/domain.operations/route/drive/getOneFileText';
+import { withDriveStateLock } from '@src/domain.operations/route/drive/withDriveStateLock';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+
 import {
   asBrainDispatchClaim,
   asBrainDispatchClaimPath,

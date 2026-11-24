@@ -4,11 +4,11 @@ import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 import { pathToFileURL } from 'url';
 
-import { answerEveryPeerGiven } from '../../domain.operations/route/__test_assets__/answerEveryPeerGiven';
-import { asStableGuardEmit } from '../../domain.operations/route/__test_assets__/asStableGuardEmit';
-import { asStderrSansPourAnnounce } from '../../domain.operations/route/__test_assets__/asStderrSansPourAnnounce';
-import { concedeEveryPeerConcern } from '../../domain.operations/route/__test_assets__/concedeEveryPeerConcern';
-import { countReviewerRuns } from '../../domain.operations/route/__test_assets__/countReviewerRuns';
+import { answerEveryPeerGiven } from '@src/domain.operations/route/.test.assets/answerEveryPeerGiven';
+import { asStableGuardEmit } from '@src/domain.operations/route/.test.assets/asStableGuardEmit';
+import { asStderrSansPourAnnounce } from '@src/domain.operations/route/.test.assets/asStderrSansPourAnnounce';
+import { concedeEveryPeerConcern } from '@src/domain.operations/route/.test.assets/concedeEveryPeerConcern';
+import { countReviewerRuns } from '@src/domain.operations/route/.test.assets/countReviewerRuns';
 
 /**
  * .what = acceptance tests for the entrance gate, driven through the real

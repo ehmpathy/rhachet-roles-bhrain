@@ -1,11 +1,11 @@
-import { UnexpectedCodePathError } from 'helpful-errors';
 import * as fs from 'fs';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
+
 import {
   genReviewByFixture,
   invokeReviewByRoleViaRhx,
@@ -128,7 +128,8 @@ const assureCliExitedAs = (input: {
       input.cli.stderr.trimEnd() || '  (empty)',
       '',
       'stdout (tail):',
-      input.cli.stdout.trimEnd().split('\n').slice(-20).join('\n') || '  (empty)',
+      input.cli.stdout.trimEnd().split('\n').slice(-20).join('\n') ||
+        '  (empty)',
       '',
       'reviews written:',
       asReviewBodiesFromStdout({ stdout: input.cli.stdout, cwd: input.cwd }),
@@ -169,20 +170,23 @@ describe('review.by.learner.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx resolves the learner-owned review.by wrapper',
       () => {
-        const res = useThen('the wrapper runs and delegates to the base', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-learner-wrapper',
-            clone: ASSETS_DIR,
-            linkRoles: ['learner'],
-          });
-          const cli = await invokeReviewByRoleViaRhx({
-            role: 'learner',
-            paths: PATHS_OF_CLEAN,
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli, cwd };
-        });
+        const res = useThen(
+          'the wrapper runs and delegates to the base',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-learner-wrapper',
+              clone: ASSETS_DIR,
+              linkRoles: ['learner'],
+            });
+            const cli = await invokeReviewByRoleViaRhx({
+              role: 'learner',
+              paths: PATHS_OF_CLEAN,
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli, cwd };
+          },
+        );
 
         then('exit 0 — the wrapper resolved, no "no skill found" error', () => {
           // this is the crux of the wrapper pattern: `rhx review.by --role learner` MUST find the
@@ -258,20 +262,23 @@ describe('review.by.learner.acceptance', () => {
           expect(res.cli.stdout).toContain('r2 term-aggregation ✓');
         });
 
-        then('stdout STREAMS each rubric as an incremental peer-style row — no silent wait', () => {
-          // the cli streams each rubric to stdout as the same incremental peer-style row
-          // route.stone.set renders (formatGuardReviewerTree): a `r{n}: {slug}` header + a
-          // `given:` line per rubric, so a human never sits at a silent terminal
-          // (rule.require.status-feedback). assert both rubrics stream that way, so both the
-          // feedback and its peer-review conformance stay covered.
-          expect(res.cli.stdout).toContain('r1: term-application');
-          expect(res.cli.stdout).toContain('r2: term-aggregation');
-          // the peer-style `given:` line — proof it went through formatGuardReviewerTree, not a
-          // bespoke progress line
-          expect(res.cli.stdout).toContain(
-            'given: .reviews/by=learner/rubric=term-application.md',
-          );
-        });
+        then(
+          'stdout STREAMS each rubric as an incremental peer-style row — no silent wait',
+          () => {
+            // the cli streams each rubric to stdout as the same incremental peer-style row
+            // route.stone.set renders (formatGuardReviewerTree): a `r{n}: {slug}` header + a
+            // `given:` line per rubric, so a human never sits at a silent terminal
+            // (rule.require.status-feedback). assert both rubrics stream that way, so both the
+            // feedback and its peer-review conformance stay covered.
+            expect(res.cli.stdout).toContain('r1: term-application');
+            expect(res.cli.stdout).toContain('r2: term-aggregation');
+            // the peer-style `given:` line — proof it went through formatGuardReviewerTree, not a
+            // bespoke progress line
+            expect(res.cli.stdout).toContain(
+              'given: .reviews/by=learner/rubric=term-application.md',
+            );
+          },
+        );
 
         then('the settled tree matches snapshot', () => {
           // the clean marks lead, for the reason [case-wrapper] states: a rejected
@@ -294,33 +301,39 @@ describe('review.by.learner.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the application rubric runs',
       () => {
-        const res = useThen('the application rubric runs alone and passes', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-learner-app',
-            clone: ASSETS_DIR,
-            linkRoles: ['learner'],
-          });
-          const cli = await invokeReviewBySkill({
-            role: 'learner',
-            for: 'term-application',
-            paths: PATHS_OF_CLEAN,
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli, cwd };
-        });
+        const res = useThen(
+          'the application rubric runs alone and passes',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-learner-app',
+              clone: ASSETS_DIR,
+              linkRoles: ['learner'],
+            });
+            const cli = await invokeReviewBySkill({
+              role: 'learner',
+              for: 'term-application',
+              paths: PATHS_OF_CLEAN,
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli, cwd };
+          },
+        );
 
         then('exit 0', () => {
           assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
         });
 
-        then('disintermediates to the RAW review; only term-application, aggregation isolated out', () => {
-          // `--for` disintermediates to the base review's stdout (no review.by tree), so a route
-          // guard peer slot wraps a normal review. rule.require.review-by-disintermediates.
-          expect(res.cli.stdout).not.toContain('review.by --role'); // no review.by chrome
-          expect(res.cli.stdout).toContain('term-application'); // via the base review's `review:` path
-          expect(res.cli.stdout).not.toContain('term-aggregation'); // the other rubric never ran
-        });
+        then(
+          'disintermediates to the RAW review; only term-application, aggregation isolated out',
+          () => {
+            // `--for` disintermediates to the base review's stdout (no review.by tree), so a route
+            // guard peer slot wraps a normal review. rule.require.review-by-disintermediates.
+            expect(res.cli.stdout).not.toContain('review.by --role'); // no review.by chrome
+            expect(res.cli.stdout).toContain('term-application'); // via the base review's `review:` path
+            expect(res.cli.stdout).not.toContain('term-aggregation'); // the other rubric never ran
+          },
+        );
 
         then('the raw review chrome matches snapshot', () => {
           // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
@@ -340,33 +353,39 @@ describe('review.by.learner.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the aggregation rubric runs',
       () => {
-        const res = useThen('the aggregation rubric runs alone and passes', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-learner-agg',
-            clone: ASSETS_DIR,
-            linkRoles: ['learner'],
-          });
-          const cli = await invokeReviewBySkill({
-            role: 'learner',
-            for: 'term-aggregation',
-            paths: PATHS_OF_CLEAN,
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli, cwd };
-        });
+        const res = useThen(
+          'the aggregation rubric runs alone and passes',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-learner-agg',
+              clone: ASSETS_DIR,
+              linkRoles: ['learner'],
+            });
+            const cli = await invokeReviewBySkill({
+              role: 'learner',
+              for: 'term-aggregation',
+              paths: PATHS_OF_CLEAN,
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli, cwd };
+          },
+        );
 
         then('exit 0', () => {
           assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
         });
 
-        then('disintermediates to the RAW review; only term-aggregation, application isolated out', () => {
-          // `--for` disintermediates to the base review's stdout (no review.by tree), so a route
-          // guard peer slot wraps a normal review. rule.require.review-by-disintermediates.
-          expect(res.cli.stdout).not.toContain('review.by --role'); // no review.by chrome
-          expect(res.cli.stdout).toContain('term-aggregation'); // via the base review's `review:` path
-          expect(res.cli.stdout).not.toContain('term-application'); // the other rubric never ran
-        });
+        then(
+          'disintermediates to the RAW review; only term-aggregation, application isolated out',
+          () => {
+            // `--for` disintermediates to the base review's stdout (no review.by tree), so a route
+            // guard peer slot wraps a normal review. rule.require.review-by-disintermediates.
+            expect(res.cli.stdout).not.toContain('review.by --role'); // no review.by chrome
+            expect(res.cli.stdout).toContain('term-aggregation'); // via the base review's `review:` path
+            expect(res.cli.stdout).not.toContain('term-application'); // the other rubric never ran
+          },
+        );
 
         then('the raw review chrome matches snapshot', () => {
           // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
@@ -394,21 +413,24 @@ describe('review.by.learner.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] the application rubric detects a term violation',
       () => {
-        const res = useThen('it finds a blocker on the dirty terms', async () => {
-          const cwd = await genReviewByFixture({
-            slug: 'review-by-learner-detect',
-            clone: ASSETS_DIR,
-            linkRoles: ['learner'],
-          });
-          const cli = await invokeReviewBySkill({
-            role: 'learner',
-            for: 'term-application',
-            paths: 'src/dirty.terms.ts',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd,
-          });
-          return { cli, cwd };
-        });
+        const res = useThen(
+          'it finds a blocker on the dirty terms',
+          async () => {
+            const cwd = await genReviewByFixture({
+              slug: 'review-by-learner-detect',
+              clone: ASSETS_DIR,
+              linkRoles: ['learner'],
+            });
+            const cli = await invokeReviewBySkill({
+              role: 'learner',
+              for: 'term-application',
+              paths: 'src/dirty.terms.ts',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd,
+            });
+            return { cli, cwd };
+          },
+        );
 
         then('exit 2 — the rubric bites, it does not rubber-stamp', () => {
           // dirty.terms.ts names one concept (reserved lesson slot) with three words and overloads
@@ -417,14 +439,17 @@ describe('review.by.learner.acceptance', () => {
           assureCliExitedAs({ cli: res.cli, cwd: res.cwd, code: 2 });
         });
 
-        then('the header shows the blocker-tier owl vibe + a parseable summary', () => {
-          expect(res.cli.stdout).toContain('needs your talons');
-          expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
-          expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
-          // the snapshot below masks the count, so the floor it owes is stated here: NONZERO,
-          // since `\d+` alone would match `0 blockers`, which is a pass, not a detection
-          expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
-        });
+        then(
+          'the header shows the blocker-tier owl vibe + a parseable summary',
+          () => {
+            expect(res.cli.stdout).toContain('needs your talons');
+            expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
+            expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
+            // the snapshot below masks the count, so the floor it owes is stated here: NONZERO,
+            // since `\d+` alone would match `0 blockers`, which is a pass, not a detection
+            expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
+          },
+        );
 
         then('the blocker-tier raw review is stable (full snapshot)', () => {
           // the exit asserts FIRST, so a `--resnap` cannot pin a rubber-stamp as truth. the

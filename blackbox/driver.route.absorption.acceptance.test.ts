@@ -101,14 +101,19 @@ describe('driver.route.stance.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the caller must name a concern)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must name a concern)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the error names the absent --about, and shows the shape', () => {
         // a stance keyed to a party alone sheds every concern that party raised
         // (rule.forbid.suppression-of-undeclared-concerns), so --about is required
-        expect(result.stderr).toContain('--about is required for --as disputed');
+        expect(result.stderr).toContain(
+          '--about is required for --as disputed',
+        );
         expect(result.stderr).toContain('--about blocker.1');
         expect(result.stdout).not.toContain('--about is required');
       });
@@ -137,9 +142,12 @@ describe('driver.route.stance.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — a dispute owes the council its argument)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — a dispute owes the council its argument)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the error names the absent --why', () => {
         // a dispute is a guarantee to the council, so it cites the argument they read
@@ -171,13 +179,18 @@ describe('driver.route.stance.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — severity is a mandatory invariant)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — severity is a mandatory invariant)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the error names --severity as required for a concede', () => {
         // there is no ungraded concede — every concession is graded by its harm
-        expect(result.stderr).toContain('--severity is required for --as conceded');
+        expect(result.stderr).toContain(
+          '--severity is required for --as conceded',
+        );
         expect(result.stdout).not.toContain('--severity is required');
       });
 
@@ -211,12 +224,15 @@ describe('driver.route.stance.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('the error names --severity as forbidden for a dispute (F028/S14)', () => {
-        expect(result.stderr).toContain(
-          '--severity is not accepted for --as disputed',
-        );
-        expect(result.stdout).not.toContain('--severity is not accepted');
-      });
+      then(
+        'the error names --severity as forbidden for a dispute (F028/S14)',
+        () => {
+          expect(result.stderr).toContain(
+            '--severity is not accepted for --as disputed',
+          );
+          expect(result.stdout).not.toContain('--severity is not accepted');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot(
@@ -243,9 +259,12 @@ describe('driver.route.stance.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the concern address is malformed)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the concern address is malformed)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the error names the expected shape and the bad value', () => {
         expect(result.stderr).toContain('invalid --about: "bogus"');
@@ -278,17 +297,23 @@ describe('driver.route.stance.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the grade is a closed set of two)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the grade is a closed set of two)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
-      then('the error names the bad value and the valid set, on stderr not stdout', () => {
-        // --severity is a closed set — better | urgent (F028/S14). a typo must fail
-        // loud at the boundary, never flow through as-cast to be read as harm.
-        expect(result.stderr).toContain('invalid --severity: "urgentt"');
-        expect(result.stderr).toContain('better, urgent');
-        expect(result.stdout).not.toContain('invalid --severity');
-      });
+      then(
+        'the error names the bad value and the valid set, on stderr not stdout',
+        () => {
+          // --severity is a closed set — better | urgent (F028/S14). a typo must fail
+          // loud at the boundary, never flow through as-cast to be read as harm.
+          expect(result.stderr).toContain('invalid --severity: "urgentt"');
+          expect(result.stderr).toContain('better, urgent');
+          expect(result.stdout).not.toContain('invalid --severity');
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot(

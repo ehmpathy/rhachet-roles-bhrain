@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { isExpectedFsReadFault } from '../isExpectedFsReadFault';
+import { isExpectedFsReadFault } from '@src/domain.operations/route/isExpectedFsReadFault';
 
 /**
  * .what = the raw text of one guard artifact (review or judge), read for a stderr display —

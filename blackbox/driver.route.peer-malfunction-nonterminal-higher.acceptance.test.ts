@@ -43,95 +43,120 @@ const ASSETS_DIR = path.join(
  *   - l1 MALFUNCTIONS (exit 1, terminal) → l3 unlocks same pass → l3 REJECTS (1/5, non-terminal)
  */
 describe('driver.route.peer-malfunction-nonterminal-higher.acceptance', () => {
-  given('[journey] l1 malfunctions (terminal), l3 unlocks + rejects (non-terminal)', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-malfunction-nonterminal-higher',
-        clone: ASSETS_DIR,
-      });
+  given(
+    '[journey] l1 malfunctions (terminal), l3 unlocks + rejects (non-terminal)',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-malfunction-nonterminal-higher',
+          clone: ASSETS_DIR,
+        });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
 
-      // arm l1 to malfunction the moment it runs (terminal on the first pass)
-      await fs.writeFile(
-        path.join(tempDir, '.test', 'l1-should-malfunction'),
-        '',
-      );
-
-      return { tempDir };
-    });
-
-    when('[t0] one pass: l1 malfunctions, l3 unlocks + rejects', () => {
-      const result = useThen('l1 malfunctions, l3 runs and rejects', async () => {
-        await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
+        // arm l1 to malfunction the moment it runs (terminal on the first pass)
         await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v1";',
+          path.join(tempDir, '.test', 'l1-should-malfunction'),
+          '',
         );
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+        return { tempDir };
+      });
+
+      when('[t0] one pass: l1 malfunctions, l3 unlocks + rejects', () => {
+        const result = useThen(
+          'l1 malfunctions, l3 runs and rejects',
+          async () => {
+            await fs.mkdir(path.join(scene.tempDir, 'src'), {
+              recursive: true,
+            });
+            await fs.writeFile(
+              path.join(scene.tempDir, 'src', 'feature.ts'),
+              'export const feature = () => "v1";',
+            );
+
+            return invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.execute', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
+          },
+        );
+
+        then('exit code is non-zero (blocked)', () => {
+          expect(result.code).not.toEqual(0);
+        });
+
+        then(
+          'passage is malfunction (the terminal l1 malfunction drives it)',
+          () => {
+            expect(result.stdout).toContain('passage = malfunction');
+          },
+        );
+
+        then('l1 shows malfunction (terminal)', () => {
+          expect(result.stdout).toContain('l1-reviewer');
+          expect(result.stdout).toMatch(/l1-reviewer[\s\S]*malfunction/);
+        });
+
+        then(
+          'l3 ran and REJECTED with budget remaining (unlocked, non-terminal)',
+          () => {
+            // .why = the whole point — a driver must see l3 actually ran (not awaits), with a real
+            //        rejected verdict and rounds < budget, so it is not left guessing
+            expect(result.stdout).toContain('l3-reviewer');
+            expect(result.stdout).toMatch(/l3-reviewer[\s\S]*rejected/);
+            expect(result.stdout).toContain('l3, 1/5');
+          },
+        );
+
+        then(
+          'CLAMP: the footer stays SILENT (malfunction is not deferrable)',
+          () => {
+            // .why = unlockTransition requires every terminal level be deferrable (approved/exhausted);
+            //        a malfunction terminal flips it false, so the "path continues" hint must not appear —
+            //        its "human only needed once every level is terminal" line would contradict the halt's
+            //        own overrule-now remedy
+            expect(result.stdout).not.toContain('the path continues');
+            expect(result.stdout).not.toContain('has engaged');
+          },
+        );
+
+        then(
+          'CLAMP: the halt names the malfunction + offers overrule, not a false exhaustion',
+          () => {
+            expect(result.stdout).toContain('overrule the malfunction');
+            expect(result.stdout).toContain('--as overruled');
+            // no level was exhausted here, so the halt must NOT claim a budget exhaustion
+            expect(result.stdout).not.toContain('budget exhausted');
+          },
+        );
+
+        then(
+          'CLAMP: the live header agrees with the persisted one when a malfunction spends no round',
+          () => {
+            // .why = the live stream USED to seal each reviewer header at inflight START
+            //        with rounds + 1 — the optimistic read, true for passed/rejected. a
+            //        malfunction spends no round, and a streamed line cannot be un-written,
+            //        so the LIVE tree showed l1 at 1/2 while the PERSISTED guard tree —
+            //        rendered from the FINAL meters — showed the authoritative 0/2.
+            // .note = the concurrent pour closed that gap. a slotted lane seals NO header at
+            //         inflight; its whole block is buffered and released at FINISH, so the
+            //         header is built from the settled round rather than a guess at it.
+            //         this clamps the agreement, so a later emit change cannot re-open it
+            expect(result.stdout).not.toContain('r1: l1-reviewer (l1, 1/2)');
+            expect(result.stdout).toContain('r1: l1-reviewer (l1, 0/2)');
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });
-
-      then('exit code is non-zero (blocked)', () => {
-        expect(result.code).not.toEqual(0);
-      });
-
-      then('passage is malfunction (the terminal l1 malfunction drives it)', () => {
-        expect(result.stdout).toContain('passage = malfunction');
-      });
-
-      then('l1 shows malfunction (terminal)', () => {
-        expect(result.stdout).toContain('l1-reviewer');
-        expect(result.stdout).toMatch(/l1-reviewer[\s\S]*malfunction/);
-      });
-
-      then('l3 ran and REJECTED with budget remaining (unlocked, non-terminal)', () => {
-        // .why = the whole point — a driver must see l3 actually ran (not awaits), with a real
-        //        rejected verdict and rounds < budget, so it is not left guessing
-        expect(result.stdout).toContain('l3-reviewer');
-        expect(result.stdout).toMatch(/l3-reviewer[\s\S]*rejected/);
-        expect(result.stdout).toContain('l3, 1/5');
-      });
-
-      then('CLAMP: the footer stays SILENT (malfunction is not deferrable)', () => {
-        // .why = unlockTransition requires every terminal level be deferrable (approved/exhausted);
-        //        a malfunction terminal flips it false, so the "path continues" hint must not appear —
-        //        its "human only needed once every level is terminal" line would contradict the halt's
-        //        own overrule-now remedy
-        expect(result.stdout).not.toContain('the path continues');
-        expect(result.stdout).not.toContain('has engaged');
-      });
-
-      then('CLAMP: the halt names the malfunction + offers overrule, not a false exhaustion', () => {
-        expect(result.stdout).toContain('overrule the malfunction');
-        expect(result.stdout).toContain('--as overruled');
-        // no level was exhausted here, so the halt must NOT claim a budget exhaustion
-        expect(result.stdout).not.toContain('budget exhausted');
-      });
-
-      then('CLAMP: the live header agrees with the persisted one when a malfunction spends no round', () => {
-        // .why = the live stream USED to seal each reviewer header at inflight START
-        //        with rounds + 1 — the optimistic read, true for passed/rejected. a
-        //        malfunction spends no round, and a streamed line cannot be un-written,
-        //        so the LIVE tree showed l1 at 1/2 while the PERSISTED guard tree —
-        //        rendered from the FINAL meters — showed the authoritative 0/2.
-        // .note = the concurrent pour closed that gap. a slotted lane seals NO header at
-        //         inflight; its whole block is buffered and released at FINISH, so the
-        //         header is built from the settled round rather than a guess at it.
-        //         this clamps the agreement, so a later emit change cannot re-open it
-        expect(result.stdout).not.toContain('r1: l1-reviewer (l1, 1/2)');
-        expect(result.stdout).toContain('r1: l1-reviewer (l1, 0/2)');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

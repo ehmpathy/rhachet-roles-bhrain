@@ -31,7 +31,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case1', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case1', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -75,7 +77,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case2', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case2', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -138,7 +142,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case3', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case3', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -210,11 +216,7 @@ describe('driver.route.failsafe.acceptance', () => {
         // timestamps, so the entry is stable across runs. serialize as canonical
         // JSON (2-space, keys sorted) so the snapshot is valid, clean JSON — jest's
         // default object serializer appends a comma after the last key (invalid JSON).
-        const canonical = JSON.stringify(
-          parsed,
-          Object.keys(parsed).sort(),
-          2,
-        );
+        const canonical = JSON.stringify(parsed, Object.keys(parsed).sort(), 2);
         expect(canonical).toMatchSnapshot();
       });
     });
@@ -263,7 +265,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case4', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case4', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -307,7 +311,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case5', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case5', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -365,7 +371,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case6', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case6', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -497,7 +505,9 @@ describe('driver.route.failsafe.acceptance', () => {
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/*.sh', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-failsafe-case7', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-failsafe-case7', {
+        cwd: tempDir,
+      });
       await invokeRouteSkill({
         skill: 'route.bind.set',
         args: { route: '.' },
@@ -538,12 +548,15 @@ describe('driver.route.failsafe.acceptance', () => {
       });
 
       then('stderr shows both blocked by malfunction', () => {
-        const malfunctionCount = (result.stderr.match(/blocked by malfunction/g) || []).length;
+        const malfunctionCount = (
+          result.stderr.match(/blocked by malfunction/g) || []
+        ).length;
         expect(malfunctionCount).toEqual(2);
       });
 
       then('stderr shows both exit code 1 with explosion emoji', () => {
-        const explosionCount = (result.stderr.match(/exit code: 1 💥/g) || []).length;
+        const explosionCount = (result.stderr.match(/exit code: 1 💥/g) || [])
+          .length;
         expect(explosionCount).toEqual(2);
       });
 

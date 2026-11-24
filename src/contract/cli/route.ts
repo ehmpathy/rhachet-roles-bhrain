@@ -737,9 +737,10 @@ export const routeDrive = async (): Promise<void> =>
  *         re-runs the driver init, which rewrites the command to the subpath
  */
 export const routeStatusLine = async (): Promise<void> => {
-  const { routeStatusLine: routeStatusLineViaSubpath } = await import(
-    '@src/contract/cli/route.status.line'
-  );
+  // a typed `require`, not `import()`: under node16 a dynamic `import()` demands a file extension
+  const {
+    routeStatusLine: routeStatusLineViaSubpath,
+  }: typeof import('@src/contract/cli/route.status.line') = require('@src/contract/cli/route.status.line');
   return routeStatusLineViaSubpath();
 };
 

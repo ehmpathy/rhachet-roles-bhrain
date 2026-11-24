@@ -1,14 +1,15 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -62,138 +63,176 @@ const REPEATABLE_CONFIG = {
 
 describe('review.conversation.acceptance', () => {
   given('[case1] a prior conversation threaded via --conversation', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review runs with --conversation', () => {
-      const res = useThen('invoke review with a conversation glob', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-conversation-labeled',
-          clone: ASSETS_DIR,
+    when.repeatably(REPEATABLE_CONFIG)(
+      '[t0] review runs with --conversation',
+      () => {
+        const res = useThen(
+          'invoke review with a conversation glob',
+          async () => {
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-conversation-labeled',
+              clone: ASSETS_DIR,
+            });
+            await execAsync('npx rhachet roles link --role reviewer', {
+              cwd: tempDir,
+            });
+            await seedConversation(tempDir);
+
+            const cli = await invokeReviewSkill({
+              rules: 'rules/rule.require.arrow-only.md',
+              paths: 'src/clean.ts',
+              conversation: 'conversation/*.by_*.md',
+              output: path.join(tempDir, 'review.md'),
+              focus: 'push',
+              goal: 'representative',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd: tempDir,
+            });
+            const prompt = await readLoggedPrompt(tempDir);
+            return { cli, prompt };
+          },
+        );
+
+        then(
+          'the compiled prompt has its own labeled conversation section',
+          () => {
+            expect(res.prompt).toContain('## prior conversation');
+            expect(res.prompt).toContain('<conversation>');
+          },
+        );
+
+        then(
+          'the metrics.expected block matches its snapshot (computed before the brain)',
+          () => {
+            // the scope tree and estimate are deterministic; the verdict summary is the brain's
+            expect(
+              asReviewMetricsExpectedBlock({ stdout: res.cli.stdout }),
+            ).toMatchSnapshot();
+          },
+        );
+
+        then(
+          'the section carries BOTH the given critique and the taken reply',
+          () => {
+            expect(res.prompt).toContain('GIVEN_MARKER');
+            expect(res.prompt).toContain('TAKEN_MARKER');
+          },
+        );
+
+        then('the conversation section is distinct from the refs block', () => {
+          // --refs was not supplied, so no refs block appears; the conversation
+          // rides in its own section, not folded into refs
+          expect(res.prompt).not.toContain('## refs');
         });
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
-        await seedConversation(tempDir);
-
-        const cli = await invokeReviewSkill({
-          rules: 'rules/rule.require.arrow-only.md',
-          paths: 'src/clean.ts',
-          conversation: 'conversation/*.by_*.md',
-          output: path.join(tempDir, 'review.md'),
-          focus: 'push',
-          goal: 'representative',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd: tempDir,
-        });
-        const prompt = await readLoggedPrompt(tempDir);
-        return { cli, prompt };
-      });
-
-      then('the compiled prompt has its own labeled conversation section', () => {
-        expect(res.prompt).toContain('## prior conversation');
-        expect(res.prompt).toContain('<conversation>');
-      });
-
-      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
-        // the scope tree and estimate are deterministic; the verdict summary is the brain's
-        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
-      });
-
-      then('the section carries BOTH the given critique and the taken reply', () => {
-        expect(res.prompt).toContain('GIVEN_MARKER');
-        expect(res.prompt).toContain('TAKEN_MARKER');
-      });
-
-      then('the conversation section is distinct from the refs block', () => {
-        // --refs was not supplied, so no refs block appears; the conversation
-        // rides in its own section, not folded into refs
-        expect(res.prompt).not.toContain('## refs');
-      });
-    });
+      },
+    );
   });
 
   given('[case2] --conversation and --refs supplied together', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review runs with both flags', () => {
-      const res = useThen('invoke review with conversation + refs', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-conversation-and-refs',
-          clone: ASSETS_DIR,
+    when.repeatably(REPEATABLE_CONFIG)(
+      '[t0] review runs with both flags',
+      () => {
+        const res = useThen(
+          'invoke review with conversation + refs',
+          async () => {
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-conversation-and-refs',
+              clone: ASSETS_DIR,
+            });
+            await execAsync('npx rhachet roles link --role reviewer', {
+              cwd: tempDir,
+            });
+            await seedConversation(tempDir);
+
+            const cli = await invokeReviewSkill({
+              rules: 'rules/rule.require.arrow-only.md',
+              paths: 'src/clean.ts',
+              refs: 'behavior/getWeather/criteria.blackbox.md',
+              conversation: 'conversation/*.by_*.md',
+              output: path.join(tempDir, 'review.md'),
+              focus: 'push',
+              goal: 'representative',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd: tempDir,
+            });
+            const prompt = await readLoggedPrompt(tempDir);
+            return { cli, prompt };
+          },
+        );
+
+        then('the conversation section renders', () => {
+          expect(res.prompt).toContain('## prior conversation');
+          expect(res.prompt).toContain('GIVEN_MARKER');
         });
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
+
+        then(
+          'the metrics.expected block matches its snapshot (computed before the brain)',
+          () => {
+            // the scope tree and estimate are deterministic; the verdict summary is the brain's
+            expect(
+              asReviewMetricsExpectedBlock({ stdout: res.cli.stdout }),
+            ).toMatchSnapshot();
+          },
+        );
+
+        then('the refs section renders separately (no merge/collision)', () => {
+          // the referenced criteria file rides in the refs block, the conversation
+          // in its own — two distinct sections, each intact
+          expect(res.prompt).toContain('## refs');
         });
-        await seedConversation(tempDir);
-
-        const cli = await invokeReviewSkill({
-          rules: 'rules/rule.require.arrow-only.md',
-          paths: 'src/clean.ts',
-          refs: 'behavior/getWeather/criteria.blackbox.md',
-          conversation: 'conversation/*.by_*.md',
-          output: path.join(tempDir, 'review.md'),
-          focus: 'push',
-          goal: 'representative',
-          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-          cwd: tempDir,
-        });
-        const prompt = await readLoggedPrompt(tempDir);
-        return { cli, prompt };
-      });
-
-      then('the conversation section renders', () => {
-        expect(res.prompt).toContain('## prior conversation');
-        expect(res.prompt).toContain('GIVEN_MARKER');
-      });
-
-      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
-        // the scope tree and estimate are deterministic; the verdict summary is the brain's
-        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
-      });
-
-      then('the refs section renders separately (no merge/collision)', () => {
-        // the referenced criteria file rides in the refs block, the conversation
-        // in its own — two distinct sections, each intact
-        expect(res.prompt).toContain('## refs');
-      });
-    });
+      },
+    );
   });
 
-  given('[case3] a bespoke non-review executable consumes $conversation', () => {
-    when('[t0] a plain executable reads the raw glob of filepaths', () => {
-      const res = useThen('run a non-review consumer of $conversation', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'review-conversation-any-skill',
-          clone: ASSETS_DIR,
+  given(
+    '[case3] a bespoke non-review executable consumes $conversation',
+    () => {
+      when('[t0] a plain executable reads the raw glob of filepaths', () => {
+        const res = useThen(
+          'run a non-review consumer of $conversation',
+          async () => {
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-conversation-any-skill',
+              clone: ASSETS_DIR,
+            });
+            const convoDir = await seedConversation(tempDir);
+
+            // a bespoke reviewer that is NOT the review skill — a plain executable
+            // that reads the comma-joined $conversation glob and reports what it
+            // saw. proves the wish's claim that $conversation is a plain glob any
+            // executable can leverage, not just the built-in review flag.
+            const consumerPath = path.join(
+              __dirname,
+              '.test/assets/consume-conversation.sh',
+            );
+
+            const givenPath = path.join(
+              convoDir,
+              'r001._.given.by_peer.architect.md',
+            );
+            const takenPath = path.join(
+              convoDir,
+              'r001._.taken.by_self.architect.md',
+            );
+            // the guard would substitute $conversation with this comma-joined glob
+            const conversation = `${givenPath},${takenPath}`;
+            return execAsync(
+              `bash "${consumerPath}" --conversation "${conversation}"`,
+              { cwd: tempDir },
+            );
+          },
+        );
+
+        then('the bespoke consumer read both conversation files', () => {
+          expect(res.stdout).toContain('saw 2 files');
+          expect(res.stdout).toContain(
+            'read: r001._.given.by_peer.architect.md',
+          );
+          expect(res.stdout).toContain(
+            'read: r001._.taken.by_self.architect.md',
+          );
         });
-        const convoDir = await seedConversation(tempDir);
-
-        // a bespoke reviewer that is NOT the review skill — a plain executable
-        // that reads the comma-joined $conversation glob and reports what it
-        // saw. proves the wish's claim that $conversation is a plain glob any
-        // executable can leverage, not just the built-in review flag.
-        const consumerPath = path.join(
-          __dirname,
-          '.test/assets/consume-conversation.sh',
-        );
-
-        const givenPath = path.join(
-          convoDir,
-          'r001._.given.by_peer.architect.md',
-        );
-        const takenPath = path.join(
-          convoDir,
-          'r001._.taken.by_self.architect.md',
-        );
-        // the guard would substitute $conversation with this comma-joined glob
-        const conversation = `${givenPath},${takenPath}`;
-        return execAsync(
-          `bash "${consumerPath}" --conversation "${conversation}"`,
-          { cwd: tempDir },
-        );
       });
-
-      then('the bespoke consumer read both conversation files', () => {
-        expect(res.stdout).toContain('saw 2 files');
-        expect(res.stdout).toContain('read: r001._.given.by_peer.architect.md');
-        expect(res.stdout).toContain('read: r001._.taken.by_self.architect.md');
-      });
-    });
-  });
+    },
+  );
 });

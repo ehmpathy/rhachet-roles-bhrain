@@ -10,7 +10,9 @@ import { stepRouteStatusLineCached } from '@src/domain.operations/route/statusLi
  *        (rule.require.isolated-cli-subpath-exports)
  *
  * .note = the render, the fault guidance, and the help text are each imported lazily, only
- *         on the path that needs them — a cache miss, a fault, or `--help`
+ *         on the path that needs them — a cache miss, a fault, or `--help`. each lazy load is a
+ *         typed `require`: under node16 a dynamic `import()` in a commonjs file demands a file
+ *         extension the jest `@src` mappers cannot follow
  *
  * .note = the harness runs this with cwd = project root, so the cache and the bound-route
  *         lookup both anchor at cwd (no chdir, no stdin payload needed)
@@ -31,9 +33,9 @@ import { stepRouteStatusLineCached } from '@src/domain.operations/route/statusLi
 export const routeStatusLine = async (): Promise<void> => {
   // --help: print usage, no render
   if (getInvocationArgs(process.argv).includes('--help')) {
-    const { asStatusLineHelp } = await import(
-      '@src/domain.operations/route/statusLine/asStatusLineHelp'
-    );
+    const {
+      asStatusLineHelp,
+    }: typeof import('@src/domain.operations/route/statusLine/asStatusLineHelp') = require('@src/domain.operations/route/statusLine/asStatusLineHelp');
     console.log(asStatusLineHelp());
     return;
   }
@@ -46,23 +48,23 @@ export const routeStatusLine = async (): Promise<void> => {
     const result = await stepRouteStatusLineCached();
     if (result.degradeRow) console.error(result.degradeRow);
     if (result.cacheReadFault) {
-      const { asStatusLineCacheReadFaultRow } = await import(
-        '@src/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow'
-      );
+      const {
+        asStatusLineCacheReadFaultRow,
+      }: typeof import('@src/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow') = require('@src/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow');
       console.error(asStatusLineCacheReadFaultRow(result.cacheReadFault));
     }
     if (result.cacheWriteFault) {
-      const { asStatusLineCacheWriteFaultRow } = await import(
-        '@src/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow'
-      );
+      const {
+        asStatusLineCacheWriteFaultRow,
+      }: typeof import('@src/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow') = require('@src/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow');
       console.error(asStatusLineCacheWriteFaultRow(result.cacheWriteFault));
     }
     console.log(result.line);
   } catch (error) {
     // fail loud, not hidden: the shared fault frame logs, then exits 2 or rethrows
-    const { emitStatusLineFault } = await import(
-      '@src/contract/cli/emitStatusLineFault'
-    );
+    const {
+      emitStatusLineFault,
+    }: typeof import('@src/contract/cli/emitStatusLineFault') = require('@src/contract/cli/emitStatusLineFault');
     emitStatusLineFault({ error });
   } finally {
     // the repaint is done, so a programmatic caller keeps no grace handler

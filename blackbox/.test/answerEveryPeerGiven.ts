@@ -33,7 +33,7 @@ import { invokeRouteSkill } from './invokeRouteSkill';
  *         it does not reach for this advance-the-round helper.
  *
  * .note = 🔴 this is the blackbox twin of
- *         `src/domain.operations/route/__test_assets__/answerEveryPeerGiven.ts`.
+ *         `src/domain.operations/route/.test.assets/answerEveryPeerGiven.ts`.
  *         they are deliberately NOT shared: that one writes files in-process
  *         against absolute paths from the production enumerator, while this one
  *         drives the real cli in a temp dir and must therefore go through

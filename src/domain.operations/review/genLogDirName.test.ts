@@ -1,6 +1,6 @@
 import { given, then, when } from 'test-fns';
 
-import { asLogDirNameParts } from './__test_assets__/asLogDirNameParts';
+import { asLogDirNameParts } from './.test.assets/asLogDirNameParts';
 import { asLogDirMintedAt } from './asLogDirMintedAt';
 import { genLogDirName } from './genLogDirName';
 

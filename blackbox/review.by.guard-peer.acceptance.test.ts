@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
 
@@ -126,7 +126,10 @@ const sanitizeCapturedPeerForSnapshot = (input: {
       kept.push(line);
       // the marker inherits the rail prefix of the header, so it sits inside the body
       kept.push(
-        line.replace(/💥 MalfunctionError: rubric malfunctioned:.*$/, '[STDERR]'),
+        line.replace(
+          /💥 MalfunctionError: rubric malfunctioned:.*$/,
+          '[STDERR]',
+        ),
       );
       skipStderr = true;
       continue;
@@ -399,307 +402,385 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = PASS — term-aggregation on clean generic code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
-    when(
-      '[t0] the stone is passed → the guard approves off a raw base review',
-      () => {
-        const res = useThen('the guard runs the term-aggregation peer and approves', async () =>
-          driveGuardUntilVerdict({
-            slug: 'route-guard-review-by-pass-aggregation',
-            rubric: 'term-aggregation',
-            brain: BRAIN,
-            srcContent: SRC_CLEAN_GENERIC,
-            passage: 'allowed',
-            attempts: VERDICT_ATTEMPTS,
-          }),
-        );
+  given(
+    '[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean',
+    () => {
+      when(
+        '[t0] the stone is passed → the guard approves off a raw base review',
+        () => {
+          const res = useThen(
+            'the guard runs the term-aggregation peer and approves',
+            async () =>
+              driveGuardUntilVerdict({
+                slug: 'route-guard-review-by-pass-aggregation',
+                rubric: 'term-aggregation',
+                brain: BRAIN,
+                srcContent: SRC_CLEAN_GENERIC,
+                passage: 'allowed',
+                attempts: VERDICT_ATTEMPTS,
+              }),
+          );
 
-        then('the guard APPROVED — the verdict class this case declares', () => {
-          // .why = the ONLY assertion here that read the verdict used to be the snapshot below, so
-          //        a brain flip surfaced as a "snapshot drift" rather than as what it is. this
-          //        states the case's premise directly, and it is the predicate the re-drive uses.
-          expect(res.cli.stdout).toContain('passage = allowed');
-          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
-        });
+          then(
+            'the guard APPROVED — the verdict class this case declares',
+            () => {
+              // .why = the ONLY assertion here that read the verdict used to be the snapshot below, so
+              //        a brain flip surfaced as a "snapshot drift" rather than as what it is. this
+              //        states the case's premise directly, and it is the predicate the re-drive uses.
+              expect(res.cli.stdout).toContain('passage = allowed');
+              expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+            },
+          );
 
-        then('the guard ran the term-aggregation peer (its reviewer row shows the slug)', () => {
-          expect(res.cli.stdout).toContain('term-aggregation');
-        });
+          then(
+            'the guard ran the term-aggregation peer (its reviewer row shows the slug)',
+            () => {
+              expect(res.cli.stdout).toContain('term-aggregation');
+            },
+          );
 
-        then('🔴 the guard APPROVED — the pass this case claims, stated rather than snapped', () => {
-          // the snapshot below is not proof of a pass on its own: a `--resnap` taken while the
-          // live model misjudged the clean fixture mints a REJECTION under this pass-case name,
-          // and every later run then reads that rejection as the stable truth. an explicit
-          // assertion fails that resnap loud instead
-          expect(res.cli.stdout).toContain('passage = allowed');
-          expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
-        });
+          then(
+            '🔴 the guard APPROVED — the pass this case claims, stated rather than snapped',
+            () => {
+              // the snapshot below is not proof of a pass on its own: a `--resnap` taken while the
+              // live model misjudged the clean fixture mints a REJECTION under this pass-case name,
+              // and every later run then reads that rejection as the stable truth. an explicit
+              // assertion fails that resnap loud instead
+              expect(res.cli.stdout).toContain('passage = allowed');
+              expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
+            },
+          );
 
-        then('the captured peer artifact IS a raw base review, NOT a review.by tree', () => {
-          expect(res.artifact).not.toBeNull();
-          const artifact = res.artifact ?? '';
-          expect(artifact).toContain('summary');
-          expect(artifact).not.toContain('review.by --role');
-          expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
-        });
+          then(
+            'the captured peer artifact IS a raw base review, NOT a review.by tree',
+            () => {
+              expect(res.artifact).not.toBeNull();
+              const artifact = res.artifact ?? '';
+              expect(artifact).toContain('summary');
+              expect(artifact).not.toContain('review.by --role');
+              expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
+            },
+          );
 
-        then('the guard-tree stdout is stable (full snapshot)', () => {
-          // maskCounts false — a pass case. `0 blockers` is what this case claims, and
-          // the snapshot is its only proof; masked, it could not part a pass from a reject
-          expect(
-            sanitizeGuardTreeForSnapshot({
-              stdout: res.cli.stdout,
-              maskCounts: false,
-            }),
-          ).toMatchSnapshot();
-        });
+          then('the guard-tree stdout is stable (full snapshot)', () => {
+            // maskCounts false — a pass case. `0 blockers` is what this case claims, and
+            // the snapshot is its only proof; masked, it could not part a pass from a reject
+            expect(
+              sanitizeGuardTreeForSnapshot({
+                stdout: res.cli.stdout,
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
 
-        then('the captured peer artifact is stable (full snapshot)', () => {
-          expect(res.artifact).not.toBeNull();
-          expect(
-            sanitizeCapturedPeerForSnapshot({
-              artifact: res.artifact ?? '',
-              maskCounts: false,
-            }),
-          ).toMatchSnapshot();
-        });
-      },
-    );
-  });
+          then('the captured peer artifact is stable (full snapshot)', () => {
+            expect(res.artifact).not.toBeNull();
+            expect(
+              sanitizeCapturedPeerForSnapshot({
+                artifact: res.artifact ?? '',
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   // ───────────────────────────────────────────────────────────────────────────
   // verdict = PASS — term-application on clean term code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
-    when(
-      '[t0] the stone is passed → the guard approves off a raw base review',
-      () => {
-        const res = useThen('the guard runs the term-application peer and approves', async () =>
-          driveGuardUntilVerdict({
-            slug: 'route-guard-review-by-pass-application',
-            rubric: 'term-application',
-            brain: BRAIN,
-            srcContent: SRC_CLEAN_TERMS,
-            passage: 'allowed',
-            attempts: VERDICT_ATTEMPTS,
-          }),
-        );
+  given(
+    '[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean',
+    () => {
+      when(
+        '[t0] the stone is passed → the guard approves off a raw base review',
+        () => {
+          const res = useThen(
+            'the guard runs the term-application peer and approves',
+            async () =>
+              driveGuardUntilVerdict({
+                slug: 'route-guard-review-by-pass-application',
+                rubric: 'term-application',
+                brain: BRAIN,
+                srcContent: SRC_CLEAN_TERMS,
+                passage: 'allowed',
+                attempts: VERDICT_ATTEMPTS,
+              }),
+          );
 
-        then('the guard APPROVED — the verdict class this case declares', () => {
-          expect(res.cli.stdout).toContain('passage = allowed');
-          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
-        });
+          then(
+            'the guard APPROVED — the verdict class this case declares',
+            () => {
+              expect(res.cli.stdout).toContain('passage = allowed');
+              expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+            },
+          );
 
-        then('the guard ran the term-application peer (its reviewer row shows the slug)', () => {
-          expect(res.cli.stdout).toContain('term-application');
-        });
+          then(
+            'the guard ran the term-application peer (its reviewer row shows the slug)',
+            () => {
+              expect(res.cli.stdout).toContain('term-application');
+            },
+          );
 
-        then('the guard tallied a parseable count off the peer stdout', () => {
-          // the guard parses the disintermediated stdout via getOneReviewCounts — the SAME path it
-          // uses for a direct `$rhx review` peer — so the reviewer row carries a blockers count
-          expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
-        });
+          then(
+            'the guard tallied a parseable count off the peer stdout',
+            () => {
+              // the guard parses the disintermediated stdout via getOneReviewCounts — the SAME path it
+              // uses for a direct `$rhx review` peer — so the reviewer row carries a blockers count
+              expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
+            },
+          );
 
-        then('🔴 the guard APPROVED — the pass this case claims, stated rather than snapped', () => {
-          // same reason as [case-seam-pass-aggregation]: a resnap amid a live misjudgment
-          // must fail here, never mint a rejection as this case's stable truth
-          expect(res.cli.stdout).toContain('passage = allowed');
-          expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
-        });
+          then(
+            '🔴 the guard APPROVED — the pass this case claims, stated rather than snapped',
+            () => {
+              // same reason as [case-seam-pass-aggregation]: a resnap amid a live misjudgment
+              // must fail here, never mint a rejection as this case's stable truth
+              expect(res.cli.stdout).toContain('passage = allowed');
+              expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
+            },
+          );
 
-        then('the captured peer artifact IS a raw base review, NOT a review.by tree', () => {
-          expect(res.artifact).not.toBeNull();
-          const artifact = res.artifact ?? '';
-          expect(artifact).toContain('summary');
-          expect(artifact).not.toContain('review.by --role');
-          expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
-        });
+          then(
+            'the captured peer artifact IS a raw base review, NOT a review.by tree',
+            () => {
+              expect(res.artifact).not.toBeNull();
+              const artifact = res.artifact ?? '';
+              expect(artifact).toContain('summary');
+              expect(artifact).not.toContain('review.by --role');
+              expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
+            },
+          );
 
-        then('the guard-tree stdout is stable (full snapshot)', () => {
-          // maskCounts false — a pass case. `0 blockers` is what this case claims; the
-          // explicit approval check above guards the claim, the snapshot guards the shape
-          expect(
-            sanitizeGuardTreeForSnapshot({
-              stdout: res.cli.stdout,
-              maskCounts: false,
-            }),
-          ).toMatchSnapshot();
-        });
+          then('the guard-tree stdout is stable (full snapshot)', () => {
+            // maskCounts false — a pass case. `0 blockers` is what this case claims; the
+            // explicit approval check above guards the claim, the snapshot guards the shape
+            expect(
+              sanitizeGuardTreeForSnapshot({
+                stdout: res.cli.stdout,
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
 
-        then('the captured peer artifact is stable (full snapshot)', () => {
-          expect(res.artifact).not.toBeNull();
-          expect(
-            sanitizeCapturedPeerForSnapshot({
-              artifact: res.artifact ?? '',
-              maskCounts: false,
-            }),
-          ).toMatchSnapshot();
-        });
-      },
-    );
-  });
+          then('the captured peer artifact is stable (full snapshot)', () => {
+            expect(res.artifact).not.toBeNull();
+            expect(
+              sanitizeCapturedPeerForSnapshot({
+                artifact: res.artifact ?? '',
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   // ───────────────────────────────────────────────────────────────────────────
   // verdict = FINDINGS — term-application on dirty terms → guard REJECTS
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
-    when(
-      '[t0] the stone is passed → the peer bites, the guard rejects off a raw base review',
-      () => {
-        const res = useThen('the guard runs the peer, it finds blockers, the guard rejects', async () =>
-          driveGuardUntilVerdict({
-            slug: 'route-guard-review-by-findings',
-            rubric: 'term-application',
-            brain: BRAIN,
-            srcContent: SRC_DIRTY_TERMS,
-            passage: 'blocked',
-            attempts: VERDICT_ATTEMPTS,
-          }),
-        );
+  given(
+    '[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty',
+    () => {
+      when(
+        '[t0] the stone is passed → the peer bites, the guard rejects off a raw base review',
+        () => {
+          const res = useThen(
+            'the guard runs the peer, it finds blockers, the guard rejects',
+            async () =>
+              driveGuardUntilVerdict({
+                slug: 'route-guard-review-by-findings',
+                rubric: 'term-application',
+                brain: BRAIN,
+                srcContent: SRC_DIRTY_TERMS,
+                passage: 'blocked',
+                attempts: VERDICT_ATTEMPTS,
+              }),
+          );
 
-        then('the guard BLOCKED — the verdict class this case declares', () => {
-          expect(res.cli.stdout).toContain('passage = blocked');
-          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
-        });
+          then(
+            'the guard BLOCKED — the verdict class this case declares',
+            () => {
+              expect(res.cli.stdout).toContain('passage = blocked');
+              expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+            },
+          );
 
-        then('the guard rejected — its reviewer row carries a blocker count', () => {
-          // the dirty fixture names one concept three ways + overloads a word, so term-application
-          // finds at least one blocker; the guard folds that into the tree and the reviewed? judge
-          // blocks (allow-blockers 0). proof the FINDINGS path flows through the seam.
-          expect(res.cli.stdout).toContain('term-application');
-          // a NONZERO count: `\d+` alone would match `0 blockers`, which is a pass, not a reject
-          expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
-          expect(res.cli.stdout).toContain('passage = blocked');
-        });
+          then(
+            'the guard rejected — its reviewer row carries a blocker count',
+            () => {
+              // the dirty fixture names one concept three ways + overloads a word, so term-application
+              // finds at least one blocker; the guard folds that into the tree and the reviewed? judge
+              // blocks (allow-blockers 0). proof the FINDINGS path flows through the seam.
+              expect(res.cli.stdout).toContain('term-application');
+              // a NONZERO count: `\d+` alone would match `0 blockers`, which is a pass, not a reject
+              expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
+              expect(res.cli.stdout).toContain('passage = blocked');
+            },
+          );
 
-        then('the captured peer artifact IS a raw base review with findings, NOT a review.by tree', () => {
-          // the crux at the findings boundary: even with blockers, the captured peer is the base
-          // review's own stdout (a `summary` block), never a review.by tree.
-          expect(res.artifact).not.toBeNull();
-          const artifact = res.artifact ?? '';
-          expect(artifact).toContain('summary');
-          expect(artifact).not.toContain('review.by --role');
-          expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
-        });
+          then(
+            'the captured peer artifact IS a raw base review with findings, NOT a review.by tree',
+            () => {
+              // the crux at the findings boundary: even with blockers, the captured peer is the base
+              // review's own stdout (a `summary` block), never a review.by tree.
+              expect(res.artifact).not.toBeNull();
+              const artifact = res.artifact ?? '';
+              expect(artifact).toContain('summary');
+              expect(artifact).not.toContain('review.by --role');
+              expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
+            },
+          );
 
-        then('every surface reports ONE tally — the base summary, the guard footer, the reviewer row', () => {
-          // .why = the snapshots below mask the counts, since the brain decides them. what the
-          //        brain does NOT decide is that the guard carries its count faithfully: the base
-          //        review's `summary`, the guard's `└─ tallied` footer, and the tree's reviewer row
-          //        must all name the same number. the old exact pin held that as a side effect; this
-          //        holds it on purpose, so a mis-tally still goes red under the mask
-          const asCounts = (text: string, noun: 'blocker' | 'nitpick'): number[] =>
-            [...text.matchAll(new RegExp(`\\b(\\d+) ${noun}s?\\b`, 'g'))].map((match) =>
-              Number(match[1]),
-            );
-          const surfaces = `${res.artifact ?? ''}\n${res.cli.stdout}`;
-          const blockers = asCounts(surfaces, 'blocker');
-          const nitpicks = asCounts(surfaces, 'nitpick');
-          expect(blockers.length).toBeGreaterThanOrEqual(3);
-          expect(new Set(blockers).size).toEqual(1);
-          expect(new Set(nitpicks).size).toEqual(1);
-        });
+          then(
+            'every surface reports ONE tally — the base summary, the guard footer, the reviewer row',
+            () => {
+              // .why = the snapshots below mask the counts, since the brain decides them. what the
+              //        brain does NOT decide is that the guard carries its count faithfully: the base
+              //        review's `summary`, the guard's `└─ tallied` footer, and the tree's reviewer row
+              //        must all name the same number. the old exact pin held that as a side effect; this
+              //        holds it on purpose, so a mis-tally still goes red under the mask
+              const asCounts = (
+                text: string,
+                noun: 'blocker' | 'nitpick',
+              ): number[] =>
+                [
+                  ...text.matchAll(new RegExp(`\\b(\\d+) ${noun}s?\\b`, 'g')),
+                ].map((match) => Number(match[1]));
+              const surfaces = `${res.artifact ?? ''}\n${res.cli.stdout}`;
+              const blockers = asCounts(surfaces, 'blocker');
+              const nitpicks = asCounts(surfaces, 'nitpick');
+              expect(blockers.length).toBeGreaterThanOrEqual(3);
+              expect(new Set(blockers).size).toEqual(1);
+              expect(new Set(nitpicks).size).toEqual(1);
+            },
+          );
 
-        then('the guard-tree stdout is stable (full snapshot)', () => {
-          // maskCounts = true. this case's contract is "≥1 blocker ⇒ the guard blocks" —
-          // the tally itself is the live brain's, so a shifted modal verdict (1 → 2 blockers)
-          // is a fixture drift, never a defect. what the snapshot still proves: the verdict
-          // word, `blockers exceed threshold ([N] > 0)`, `passage = blocked`, `exit code: 2`.
-          // the count-agnostic floor is asserted above: a nonzero count + `passage = blocked`.
-          expect(
-            sanitizeGuardTreeForSnapshot({
-              stdout: res.cli.stdout,
-              maskCounts: true,
-            }),
-          ).toMatchSnapshot();
-        });
+          then('the guard-tree stdout is stable (full snapshot)', () => {
+            // maskCounts = true. this case's contract is "≥1 blocker ⇒ the guard blocks" —
+            // the tally itself is the live brain's, so a shifted modal verdict (1 → 2 blockers)
+            // is a fixture drift, never a defect. what the snapshot still proves: the verdict
+            // word, `blockers exceed threshold ([N] > 0)`, `passage = blocked`, `exit code: 2`.
+            // the count-agnostic floor is asserted above: a nonzero count + `passage = blocked`.
+            expect(
+              sanitizeGuardTreeForSnapshot({
+                stdout: res.cli.stdout,
+                maskCounts: true,
+              }),
+            ).toMatchSnapshot();
+          });
 
-        then('the captured peer artifact is stable (full snapshot)', () => {
-          expect(res.artifact).not.toBeNull();
-          expect(
-            sanitizeCapturedPeerForSnapshot({
-              artifact: res.artifact ?? '',
-              maskCounts: true,
-            }),
-          ).toMatchSnapshot();
-        });
-      },
-    );
-  });
+          then('the captured peer artifact is stable (full snapshot)', () => {
+            expect(res.artifact).not.toBeNull();
+            expect(
+              sanitizeCapturedPeerForSnapshot({
+                artifact: res.artifact ?? '',
+                maskCounts: true,
+              }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   // ───────────────────────────────────────────────────────────────────────────
   // verdict = MALFUNCTION — an unknown brain → the peer review faults → guard BLOCKS
   // (deterministic: the brain never loads, so no LLM call is made — a fast, stable case)
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-malfunction] guard peer runs review.by --for with an unknown brain', () => {
-    when('[t0] the stone is passed → the peer review faults, the guard blocks on a malfunction', () => {
-      const res = useThen('the guard runs the peer, its review subprocess faults', async () =>
-        driveGuardWithReviewByPeer({
-          slug: 'route-guard-review-by-malfunction',
-          rubric: 'term-aggregation',
-          // an unknown brain: the base review cannot start, so it emits no numeric verdict —
-          // runOneReview promotes the no-verdict exit to a malfunction (never a fake 0/0), and the
-          // guard blocks. deterministic (the brain is not found before any LLM call).
-          brain: 'nonexistent/broken/brain',
-          srcContent: SRC_CLEAN_GENERIC,
-        }),
+  given(
+    '[case-seam-malfunction] guard peer runs review.by --for with an unknown brain',
+    () => {
+      when(
+        '[t0] the stone is passed → the peer review faults, the guard blocks on a malfunction',
+        () => {
+          const res = useThen(
+            'the guard runs the peer, its review subprocess faults',
+            async () =>
+              driveGuardWithReviewByPeer({
+                slug: 'route-guard-review-by-malfunction',
+                rubric: 'term-aggregation',
+                // an unknown brain: the base review cannot start, so it emits no numeric verdict —
+                // runOneReview promotes the no-verdict exit to a malfunction (never a fake 0/0), and the
+                // guard blocks. deterministic (the brain is not found before any LLM call).
+                brain: 'nonexistent/broken/brain',
+                srcContent: SRC_CLEAN_GENERIC,
+              }),
+          );
+
+          then(
+            'the guard did NOT pass the stone (a malfunction blocks)',
+            () => {
+              expect(res.cli.stdout).toContain('term-aggregation');
+              // the guard surfaces the peer as a malfunction, not a clean pass
+              expect(res.cli.stdout).toMatch(/malfunction|💥/i);
+            },
+          );
+
+          then(
+            'the captured peer artifact records the fault, NOT a review.by tree',
+            () => {
+              // even a faulted peer is captured as a plain-review artifact (its stdout/stderr), never a
+              // review.by tree — disintermediation holds on the malfunction boundary too.
+              expect(res.artifact).not.toBeNull();
+              const artifact = res.artifact ?? '';
+              expect(artifact).not.toContain('review.by --role');
+              expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
+            },
+          );
+
+          then('the captured artifact names WHY the peer faulted', () => {
+            // the clamp on the failhide repair: review.by echoes the faulted rubric AND the child
+            // review's own stderr, so a guard that captures this run sees the cause rather than a bare
+            // `💥 failed with an error` (rule.forbid.failhide, rule.require.errors-name-the-fix).
+            // asserted here rather than in the snapshot — the dump carries volatile absolute paths.
+            const artifact = res.artifact ?? '';
+            expect(artifact).toContain(
+              '💥 MalfunctionError: rubric malfunctioned: term-aggregation',
+            );
+            expect(artifact).toContain(
+              "brain 'nonexistent/broken/brain' is not registered",
+            );
+          });
+
+          then(
+            'the captured artifact lists the available brains, so the caller can fix the choice',
+            () => {
+              // the F-1 invariant on the path a guard drives: the refusal names the slugs that exist,
+              // the same list the raw `rhx review` path clamps in review.brain-stale
+              const artifact = res.artifact ?? '';
+              expect(artifact).toContain(BRAIN_DEFAULT_OF_REVIEW);
+            },
+          );
+
+          then('the guard-tree stdout is stable (full snapshot)', () => {
+            // maskCounts = false. no LLM call is made here (the brain is not found first), so
+            // every figure in this tree is deterministic — a mask would hide real drift.
+            expect(
+              sanitizeGuardTreeForSnapshot({
+                stdout: res.cli.stdout,
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
+
+          then('the captured peer artifact is stable (full snapshot)', () => {
+            expect(res.artifact).not.toBeNull();
+            expect(
+              sanitizeCapturedPeerForSnapshot({
+                artifact: res.artifact ?? '',
+                maskCounts: false,
+              }),
+            ).toMatchSnapshot();
+          });
+        },
       );
-
-      then('the guard did NOT pass the stone (a malfunction blocks)', () => {
-        expect(res.cli.stdout).toContain('term-aggregation');
-        // the guard surfaces the peer as a malfunction, not a clean pass
-        expect(res.cli.stdout).toMatch(/malfunction|💥/i);
-      });
-
-      then('the captured peer artifact records the fault, NOT a review.by tree', () => {
-        // even a faulted peer is captured as a plain-review artifact (its stdout/stderr), never a
-        // review.by tree — disintermediation holds on the malfunction boundary too.
-        expect(res.artifact).not.toBeNull();
-        const artifact = res.artifact ?? '';
-        expect(artifact).not.toContain('review.by --role');
-        expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
-      });
-
-      then('the captured artifact names WHY the peer faulted', () => {
-        // the clamp on the failhide repair: review.by echoes the faulted rubric AND the child
-        // review's own stderr, so a guard that captures this run sees the cause rather than a bare
-        // `💥 failed with an error` (rule.forbid.failhide, rule.require.errors-name-the-fix).
-        // asserted here rather than in the snapshot — the dump carries volatile absolute paths.
-        const artifact = res.artifact ?? '';
-        expect(artifact).toContain('💥 MalfunctionError: rubric malfunctioned: term-aggregation');
-        expect(artifact).toContain("brain 'nonexistent/broken/brain' is not registered");
-      });
-
-      then('the captured artifact lists the available brains, so the caller can fix the choice', () => {
-        // the F-1 invariant on the path a guard drives: the refusal names the slugs that exist,
-        // the same list the raw `rhx review` path clamps in review.brain-stale
-        const artifact = res.artifact ?? '';
-        expect(artifact).toContain(BRAIN_DEFAULT_OF_REVIEW);
-      });
-
-      then('the guard-tree stdout is stable (full snapshot)', () => {
-        // maskCounts = false. no LLM call is made here (the brain is not found first), so
-        // every figure in this tree is deterministic — a mask would hide real drift.
-        expect(
-          sanitizeGuardTreeForSnapshot({
-            stdout: res.cli.stdout,
-            maskCounts: false,
-          }),
-        ).toMatchSnapshot();
-      });
-
-      then('the captured peer artifact is stable (full snapshot)', () => {
-        expect(res.artifact).not.toBeNull();
-        expect(
-          sanitizeCapturedPeerForSnapshot({
-            artifact: res.artifact ?? '',
-            maskCounts: false,
-          }),
-        ).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

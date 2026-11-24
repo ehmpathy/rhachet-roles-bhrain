@@ -102,37 +102,43 @@ describe('driver.route.peer-fallback-timeout-refusal.acceptance', () => {
   //     shape. these are the two malformed variants a shell profile typo produces:
   //     a stray string, and an assignment with no value.
 
-  given('[case1] RHACHET_FALLBACK_BRAIN_TIMEOUT_MS is set to a non-integer', () => {
-    const result = useThen('the tally refuses at the env read', async () =>
-      invokeArriveWithEnv({
-        cwd: scene.tempDir,
-        env: { RHACHET_FALLBACK_BRAIN_TIMEOUT_MS: 'abc' },
-      }),
-    );
+  given(
+    '[case1] RHACHET_FALLBACK_BRAIN_TIMEOUT_MS is set to a non-integer',
+    () => {
+      const result = useThen('the tally refuses at the env read', async () =>
+        invokeArriveWithEnv({
+          cwd: scene.tempDir,
+          env: { RHACHET_FALLBACK_BRAIN_TIMEOUT_MS: 'abc' },
+        }),
+      );
 
-    when('[t0] the stone arrives with RHACHET_FALLBACK_BRAIN_TIMEOUT_MS=abc', () => {
-      then('CLAMP: the message names THIS env var, never a sibling', () => {
-        // 🔴 .why = the whole reason the carve-out failed. the three readers share a
-        //    message template and differ ONLY in the `at:` field, so this assertion is
-        //    what would catch a copy-paste that left a sibling's name behind
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('positive integer');
-        expect(output).toContain('RHACHET_FALLBACK_BRAIN_TIMEOUT_MS');
-        expect(output).not.toContain('RHACHET_REVIEW_TIMEOUT_MS');
-      });
+      when(
+        '[t0] the stone arrives with RHACHET_FALLBACK_BRAIN_TIMEOUT_MS=abc',
+        () => {
+          then('CLAMP: the message names THIS env var, never a sibling', () => {
+            // 🔴 .why = the whole reason the carve-out failed. the three readers share a
+            //    message template and differ ONLY in the `at:` field, so this assertion is
+            //    what would catch a copy-paste that left a sibling's name behind
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('positive integer');
+            expect(output).toContain('RHACHET_FALLBACK_BRAIN_TIMEOUT_MS');
+            expect(output).not.toContain('RHACHET_REVIEW_TIMEOUT_MS');
+          });
 
-      then('CLAMP: the declared value is quoted back verbatim', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('declares "abc"');
-      });
+          then('CLAMP: the declared value is quoted back verbatim', () => {
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('declares "abc"');
+          });
 
-      then('the refusal renders as an error, never a stack trace', () => {
-        expect(
-          sanitizeTimeForSnapshot(result.stdout + result.stderr),
-        ).toMatchSnapshot();
-      });
-    });
-  });
+          then('the refusal renders as an error, never a stack trace', () => {
+            expect(
+              sanitizeTimeForSnapshot(result.stdout + result.stderr),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   given('[case2] RHACHET_FALLBACK_BRAIN_TIMEOUT_MS is set to empty', () => {
     const result = useThen('the tally refuses at the env read', async () =>
@@ -142,24 +148,33 @@ describe('driver.route.peer-fallback-timeout-refusal.acceptance', () => {
       }),
     );
 
-    when('[t0] the stone arrives with RHACHET_FALLBACK_BRAIN_TIMEOUT_MS= (empty)', () => {
-      then('CLAMP: an empty string is refused, never absorbed as the default', () => {
-        // ⚠️ .why = this reader's guard was the LOOSEST of the three — `if (override)`,
-        //    a truthiness test, so an empty string fell through to the default and a
-        //    `'0'` armed a timer that fires at once. the `!== undefined` read plus
-        //    `asGuardPositiveInt` closes both; this pins the empty half
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('positive integer');
-        expect(output).toContain('RHACHET_FALLBACK_BRAIN_TIMEOUT_MS');
-      });
+    when(
+      '[t0] the stone arrives with RHACHET_FALLBACK_BRAIN_TIMEOUT_MS= (empty)',
+      () => {
+        then(
+          'CLAMP: an empty string is refused, never absorbed as the default',
+          () => {
+            // ⚠️ .why = this reader's guard was the LOOSEST of the three — `if (override)`,
+            //    a truthiness test, so an empty string fell through to the default and a
+            //    `'0'` armed a timer that fires at once. the `!== undefined` read plus
+            //    `asGuardPositiveInt` closes both; this pins the empty half
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('positive integer');
+            expect(output).toContain('RHACHET_FALLBACK_BRAIN_TIMEOUT_MS');
+          },
+        );
 
-      then('the refusal renders `declares ""` — distinct from the abc variant', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('declares ""');
-        expect(
-          sanitizeTimeForSnapshot(result.stdout + result.stderr),
-        ).toMatchSnapshot();
-      });
-    });
+        then(
+          'the refusal renders `declares ""` — distinct from the abc variant',
+          () => {
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('declares ""');
+            expect(
+              sanitizeTimeForSnapshot(result.stdout + result.stderr),
+            ).toMatchSnapshot();
+          },
+        );
+      },
+    );
   });
 });

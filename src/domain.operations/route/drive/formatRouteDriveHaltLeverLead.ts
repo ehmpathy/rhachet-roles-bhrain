@@ -1,7 +1,7 @@
 import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
-} from '../guard/tree/formatGuardTree';
+} from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = the block a route.drive halt renders between its reason and its remedies — the

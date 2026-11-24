@@ -1,0 +1,19 @@
+{
+  "key": "e9244e6d4e2da5b3",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-anthropic"
+  },
+  "exid": null,
+  "title": "feat(exports): publish the atom config as a public subpath",
+  "description": "## .what\npublish a stable subpath export for the atom config (`CONFIG_BY_ATOM_SLUG`), e.g. `rhachet-brains-anthropic/atoms/config`.\n\n## .why\nrhachet-roles-bhrain prices transcripts per exact versioned model slug (`claude/opus/v4.5`). discovery via `rhachet/brains` lists only the version-less aliases, so bhrain reads the versioned specs from `rhachet-brains-anthropic/dist/domain.operations/atoms/BrainAtom.config`, an internal dist path.\n\nthat path is not a contract. an internal move, or an `exports` field added to package.json, breaks bhrain silently: it then renders every model `unpriced`.\n\n## .ask\n- add the config (or a read such as `getAllAtomSpecsVersioned()`) to the public exports\n- bhrain then swaps its deep import for the export\n\n## .seen\nrhachet-roles-bhrain, branch `beav/feat-declapract-upgrade`, `src/domain.operations/reflect/tokens/getAllTokenRatesByModel.ts`",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 47,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

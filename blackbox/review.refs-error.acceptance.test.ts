@@ -1,14 +1,14 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+
+import { asRedactedOutput } from './.test/asRedactedOutput';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asRedactedOutput } from './.test/asRedactedOutput';
-import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -81,63 +81,66 @@ describe('review.refs-error.acceptance', () => {
    * usecase.6: glob matches zero files
    */
   given('[case2] glob pattern matches no files', () => {
-    when('[t0] review skill invoked with glob that resolves to zero matches', () => {
-      const res = useThen(
-        'invoke review skill with empty glob result',
-        async () => {
-          // clone fixture to temp dir
-          const tempDir = genTempDirForRhachet({
-            slug: 'review-refs-error-glob',
-            clone: ASSETS_DIR,
-          });
-          const outputPath = path.join(tempDir, 'review-refs-error-glob.md');
+    when(
+      '[t0] review skill invoked with glob that resolves to zero matches',
+      () => {
+        const res = useThen(
+          'invoke review skill with empty glob result',
+          async () => {
+            // clone fixture to temp dir
+            const tempDir = genTempDirForRhachet({
+              slug: 'review-refs-error-glob',
+              clone: ASSETS_DIR,
+            });
+            const outputPath = path.join(tempDir, 'review-refs-error-glob.md');
 
-          // link the reviewer role via rhachet
-          await execAsync('npx rhachet roles link --role reviewer', {
-            cwd: tempDir,
-          });
+            // link the reviewer role via rhachet
+            await execAsync('npx rhachet roles link --role reviewer', {
+              cwd: tempDir,
+            });
 
-          // invoke skill with glob that resolves to zero files
-          const cli = await invokeReviewSkill({
-            rules: 'rules/rule.verify-refs-included.md',
-            paths: 'src/clean.ts',
-            refs: 'behavior/nonexistent/*.md',
-            output: outputPath,
-            focus: 'push',
-            goal: 'representative',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd: tempDir,
-          });
+            // invoke skill with glob that resolves to zero files
+            const cli = await invokeReviewSkill({
+              rules: 'rules/rule.verify-refs-included.md',
+              paths: 'src/clean.ts',
+              refs: 'behavior/nonexistent/*.md',
+              output: outputPath,
+              focus: 'push',
+              goal: 'representative',
+              brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+              cwd: tempDir,
+            });
 
-          // log cli output for debug
-          console.log('\n--- cli.stdout ---');
-          console.log(cli.stdout);
-          console.log('\n--- cli.stderr ---');
-          console.log(cli.stderr);
-          console.log('--- end cli ---\n');
+            // log cli output for debug
+            console.log('\n--- cli.stdout ---');
+            console.log(cli.stdout);
+            console.log('\n--- cli.stderr ---');
+            console.log(cli.stderr);
+            console.log('--- end cli ---\n');
 
-          return { cli };
-        },
-      );
+            return { cli };
+          },
+        );
 
-      then('cli exits 2, a constraint the caller must fix', () => {
-        expect(res.cli.code).toEqual(2);
-      });
+        then('cli exits 2, a constraint the caller must fix', () => {
+          expect(res.cli.code).toEqual(2);
+        });
 
-      then('the refusal matches its snapshot', () => {
-        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
-      });
+        then('the refusal matches its snapshot', () => {
+          expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+        });
 
-      then('cli fails with clear error message', async () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        // should contain error about no refs matched
-        expect(output.toLowerCase()).toContain('no refs matched');
-      });
+        then('cli fails with clear error message', async () => {
+          const output = res.cli.stdout + res.cli.stderr;
+          // should contain error about no refs matched
+          expect(output.toLowerCase()).toContain('no refs matched');
+        });
 
-      then('error message includes the glob pattern', async () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        expect(output).toContain('nonexistent');
-      });
-    });
+        then('error message includes the glob pattern', async () => {
+          const output = res.cli.stdout + res.cli.stderr;
+          expect(output).toContain('nonexistent');
+        });
+      },
+    );
   });
 });

@@ -1,8 +1,7 @@
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStoneDisposition } from '@src/domain.objects/Driver/RouteStoneDisposition';
 import type { RouteStoneGuardBlockerType } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
-
-import { isRouteGuardConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import { isRouteGuardConcessionExhaustion } from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
 
 /**
  * .what = derives a stone's disposition (push | halt) from its latest passage state

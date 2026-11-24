@@ -39,7 +39,10 @@ const ASSETS_DIR = path.join(
  */
 describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
   const genScene = async (input: { slug: string }) => {
-    const tempDir = genTempDirForRhachet({ slug: input.slug, clone: ASSETS_DIR });
+    const tempDir = genTempDirForRhachet({
+      slug: input.slug,
+      clone: ASSETS_DIR,
+    });
     await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
@@ -66,111 +69,147 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
       cwd: input.tempDir,
     });
 
-  given('[case1] l1 preemptively overruled, l3 blockers within judge budget → the contemplation gate holds passage', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genScene({ slug: 'overrule-contemplation-discriminate' });
-      // preemptive overrule: no review has run, so the active level is l1 — this
-      // waves l1 (and never runs it), so no l1 contemplation is ever owed
-      await setStone({ tempDir, as: 'overruled' });
-      return { tempDir };
-    });
+  given(
+    '[case1] l1 preemptively overruled, l3 blockers within judge budget → the contemplation gate holds passage',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genScene({
+          slug: 'overrule-contemplation-discriminate',
+        });
+        // preemptive overrule: no review has run, so the active level is l1 — this
+        // waves l1 (and never runs it), so no l1 contemplation is ever owed
+        await setStone({ tempDir, as: 'overruled' });
+        return { tempDir };
+      });
 
-    when('[t0] driver passes with l1 pre-overruled (l3 runs, rejects)', () => {
-      const result = useThen('the contemplation gate holds passage', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
+      when(
+        '[t0] driver passes with l1 pre-overruled (l3 runs, rejects)',
+        () => {
+          const result = useThen(
+            'the contemplation gate holds passage',
+            async () => setStone({ tempDir: scene.tempDir, as: 'passed' }),
+          );
+
+          then(
+            'CLAMP: passage is BLOCKED (exit 2, constraint — not a malfunction)',
+            () => {
+              expect(result.code).toEqual(2);
+              expect(result.stdout).not.toContain('passage = allowed');
+              expect(result.stdout).not.toContain('passage = overruled');
+            },
+          );
+
+          then(
+            'DISCRIMINATION: the reviewed? judge ALLOWED, yet the stone is held',
+            () => {
+              // .why = the reviewed? judge tolerated l3's blockers (budget 9), so the
+              //        judge is NOT the hold-point. an allowed judge + a still-blocked
+              //        stone can only mean the contemplation gate is what holds — the
+              //        exact seam overrule-skip A2 (judge budget 0, judge-blocked) could
+              //        not reach.
+              expect(result.stdout).toContain('judge.1 - allowed');
+            },
+          );
+
+          then(
+            'the hold is the CONTEMPLATION gate, scoped to l3 (premium-checker)',
+            () => {
+              expect(result.stdout).toContain('the reviewers await your reply');
+              expect(result.stdout).toContain('premium-checker');
+            },
+          );
+
+          then(
+            'R6: the l1 overrule forgave l1 but NOT l3 — l1 is never the awaited reviewer',
+            () => {
+              // .why = l1 (basic-checker) was overruled before it ran, so it owes no
+              //        .taken and is never in the await list; only l3 (premium-checker,
+              //        un-overruled) is held. a lower overrule is a key for one gate,
+              //        never a skeleton key for the corridor.
+              expect(result.stdout).not.toContain('slug = basic-checker');
+            },
+          );
+
+          then('stdout has good vibes', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
       );
 
-      then('CLAMP: passage is BLOCKED (exit 2, constraint — not a malfunction)', () => {
-        expect(result.code).toEqual(2);
-        expect(result.stdout).not.toContain('passage = allowed');
-        expect(result.stdout).not.toContain('passage = overruled');
-      });
-
-      then('DISCRIMINATION: the reviewed? judge ALLOWED, yet the stone is held', () => {
-        // .why = the reviewed? judge tolerated l3's blockers (budget 9), so the
-        //        judge is NOT the hold-point. an allowed judge + a still-blocked
-        //        stone can only mean the contemplation gate is what holds — the
-        //        exact seam overrule-skip A2 (judge budget 0, judge-blocked) could
-        //        not reach.
-        expect(result.stdout).toContain('judge.1 - allowed');
-      });
-
-      then('the hold is the CONTEMPLATION gate, scoped to l3 (premium-checker)', () => {
-        expect(result.stdout).toContain('the reviewers await your reply');
-        expect(result.stdout).toContain('premium-checker');
-      });
-
-      then('R6: the l1 overrule forgave l1 but NOT l3 — l1 is never the awaited reviewer', () => {
-        // .why = l1 (basic-checker) was overruled before it ran, so it owes no
-        //        .taken and is never in the await list; only l3 (premium-checker,
-        //        un-overruled) is held. a lower overrule is a key for one gate,
-        //        never a skeleton key for the corridor.
-        expect(result.stdout).not.toContain('slug = basic-checker');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] driver writes l3\'s .taken then signals --as absorbed', () => {
-      const result = useThen('the contemplation is acknowledged', async () => {
-        // find premium-checker's current given, derive + write its paired taken
-        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
-        const files = await fs.readdir(reviewsDir);
-        const givenName = files.find(
-          (f) =>
-            f.includes('_.given.by_peer.premium-checker.md') &&
-            !f.endsWith('.report.md'),
-        )!;
-        const takenName = givenName.replace(
-          '._.given.by_peer.',
-          '._.taken.by_self.',
+      when("[t1] driver writes l3's .taken then signals --as absorbed", () => {
+        const result = useThen(
+          'the contemplation is acknowledged',
+          async () => {
+            // find premium-checker's current given, derive + write its paired taken
+            const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
+            const files = await fs.readdir(reviewsDir);
+            const givenName = files.find(
+              (f) =>
+                f.includes('_.given.by_peer.premium-checker.md') &&
+                !f.endsWith('.report.md'),
+            )!;
+            const takenName = givenName.replace(
+              '._.given.by_peer.',
+              '._.taken.by_self.',
+            );
+            await fs.writeFile(
+              path.join(reviewsDir, takenName),
+              '# taken\n\nheld my ground: the l3 blockers are false positives, evidence cited.\n',
+            );
+            return setStone({
+              tempDir: scene.tempDir,
+              as: 'absorbed',
+              that: 'premium-checker',
+            });
+          },
         );
-        await fs.writeFile(
-          path.join(reviewsDir, takenName),
-          '# taken\n\nheld my ground: the l3 blockers are false positives, evidence cited.\n',
-        );
-        return setStone({
-          tempDir: scene.tempDir,
-          as: 'absorbed',
-          that: 'premium-checker',
+
+        then('is acknowledged (exit 0)', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then("confirms l3's contemplation was recorded", () => {
+          expect(result.stdout).toContain('absorbed: premium-checker');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });
 
-      then('is acknowledged (exit 0)', () => {
-        expect(result.code).toEqual(0);
-      });
+      when(
+        '[t2] driver passes with l3 answered (judge tolerates the blockers)',
+        () => {
+          const result = useThen(
+            'the stone passes once l3 is absorbed',
+            async () => setStone({ tempDir: scene.tempDir, as: 'passed' }),
+          );
 
-      then('confirms l3\'s contemplation was recorded', () => {
-        expect(result.stdout).toContain('absorbed: premium-checker');
-      });
+          then('exit code is 0 — passage now granted', () => {
+            expect(result.code).toEqual(0);
+          });
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+          then(
+            'passage = overruled (l1 waved, l3 answered within budget)',
+            () => {
+              expect(result.stdout).toContain('passage = overruled');
+            },
+          );
 
-    when('[t2] driver passes with l3 answered (judge tolerates the blockers)', () => {
-      const result = useThen('the stone passes once l3 is absorbed', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
+          then(
+            'the reply-prompt no longer fires (l3 contemplation satisfied)',
+            () => {
+              expect(result.stdout).not.toContain(
+                'the reviewers await your reply',
+              );
+            },
+          );
+
+          then('stdout has good vibes', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
       );
-
-      then('exit code is 0 — passage now granted', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('passage = overruled (l1 waved, l3 answered within budget)', () => {
-        expect(result.stdout).toContain('passage = overruled');
-      });
-
-      then('the reply-prompt no longer fires (l3 contemplation satisfied)', () => {
-        expect(result.stdout).not.toContain('the reviewers await your reply');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
+    },
+  );
 });

@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import type { ReviewPeerLadderStatus } from '../review/peer/meter/getReviewPeerLadderStatus';
+import type { ReviewPeerLadderStatus } from '@src/domain.operations/route/guard/review/peer/meter/getReviewPeerLadderStatus';
+
 import { formatGuardReviewLadderFooter } from './formatGuardReviewLadderFooter';
 
 describe('formatGuardReviewLadderFooter', () => {

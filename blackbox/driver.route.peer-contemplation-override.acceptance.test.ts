@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-contemplation',
+);
 
 /**
  * .what = acceptance test that admin overrides bypass the contemplation gate (usecase 7)
@@ -25,7 +28,9 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         clone: ASSETS_DIR,
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blocker.sh', {
+        cwd: tempDir,
+      });
       await execAsync('chmod +x .test/mock-review-clean.sh', { cwd: tempDir });
       await fs.writeFile(
         path.join(tempDir, '1.execute.md'),
@@ -49,19 +54,25 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         }),
       );
 
-      then('the contemplation gate does not block the override (exit 0)', () => {
-        expect(result.code).toEqual(0);
-      });
+      then(
+        'the contemplation gate does not block the override (exit 0)',
+        () => {
+          expect(result.code).toEqual(0);
+        },
+      );
 
       then('no contemplation reply-prompt is shown', () => {
         expect(result.stdout).not.toContain('the reviewers await your reply');
       });
 
-      then('the overrule indicator is shown (explicit, not snapshot-only)', () => {
-        // .why = pin the overrule-confirmation indicator with a hard assertion so
-        //        the coverage cannot silently drift out of the snapshot alone
-        expect(result.stdout).toContain('level 1, overruled');
-      });
+      then(
+        'the overrule indicator is shown (explicit, not snapshot-only)',
+        () => {
+          // .why = pin the overrule-confirmation indicator with a hard assertion so
+          //        the coverage cannot silently drift out of the snapshot alone
+          expect(result.stdout).toContain('level 1, overruled');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
@@ -77,9 +88,12 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         }),
       );
 
-      then('the contemplation gate does not block the override (exit 0)', () => {
-        expect(result.code).toEqual(0);
-      });
+      then(
+        'the contemplation gate does not block the override (exit 0)',
+        () => {
+          expect(result.code).toEqual(0);
+        },
+      );
 
       then('no contemplation reply-prompt is shown', () => {
         expect(result.stdout).not.toContain('the reviewers await your reply');
@@ -94,12 +108,15 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         expect(result.stdout).toContain('approved  = ✓');
       });
 
-      then('the force does NOT mint a false overrule on the judge-clear level', () => {
-        // .why = l1 is merit-clear at the judge (1 blocker ≤ budget 1); a force must
-        //        not persist a bogus "forgiven by human" marker on a level that was
-        //        never judge-blocked — the same guarantee force.multilevel case2 clamps
-        expect(result.stdout).not.toContain('overruled = ✓ (level 1)');
-      });
+      then(
+        'the force does NOT mint a false overrule on the judge-clear level',
+        () => {
+          // .why = l1 is merit-clear at the judge (1 blocker ≤ budget 1); a force must
+          //        not persist a bogus "forgiven by human" marker on a level that was
+          //        never judge-blocked — the same guarantee force.multilevel case2 clamps
+          expect(result.stdout).not.toContain('overruled = ✓ (level 1)');
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();

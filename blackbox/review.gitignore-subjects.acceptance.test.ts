@@ -1,16 +1,16 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
+
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -52,107 +52,131 @@ describe('review.gitignore-subjects.acceptance', () => {
       await fs.chmod(restrictedDir, 0o755).catch(() => undefined);
   });
 
-  given('[case1] a gitignored restricted directory inside the scan scope', () => {
-    when.repeatably(REPEATABLE_CONFIG)('[t0] review scans src/**/* with a mode-000 gitignored subdir', () => {
-      const res = useThen(
-        'invoke review over a scope that contains the restricted dir',
-        async () => {
-          // clone fixture into a real git repo with node_modules symlinks
-          const tempDir = genTempDirForRhachet({
-            slug: 'review-gitignore-restricted',
-            clone: ASSETS_DIR,
-          });
+  given(
+    '[case1] a gitignored restricted directory inside the scan scope',
+    () => {
+      when.repeatably(REPEATABLE_CONFIG)(
+        '[t0] review scans src/**/* with a mode-000 gitignored subdir',
+        () => {
+          const res = useThen(
+            'invoke review over a scope that contains the restricted dir',
+            async () => {
+              // clone fixture into a real git repo with node_modules symlinks
+              const tempDir = genTempDirForRhachet({
+                slug: 'review-gitignore-restricted',
+                clone: ASSETS_DIR,
+              });
 
-          // link the reviewer role (creates the gitignored .agent/repo=* supplies)
-          await execAsync('npx rhachet roles link --role reviewer', {
-            cwd: tempDir,
-          });
+              // link the reviewer role (creates the gitignored .agent/repo=* supplies)
+              await execAsync('npx rhachet roles link --role reviewer', {
+                cwd: tempDir,
+              });
 
-          // gitignore a junk dir that lives inside the subject scope
-          await fs.writeFile(path.join(tempDir, '.gitignore'), 'junk/\n');
+              // gitignore a junk dir that lives inside the subject scope
+              await fs.writeFile(path.join(tempDir, '.gitignore'), 'junk/\n');
 
-          // a restricted (mode 000) gitignored dir = the exact crash vector
-          const junkDir = path.join(tempDir, 'src', 'junk');
-          await fs.mkdir(junkDir, { recursive: true });
-          await fs.writeFile(
-            path.join(junkDir, 'secret.ts'),
-            'export const secret = 1;\n',
-            'utf-8',
+              // a restricted (mode 000) gitignored dir = the exact crash vector
+              const junkDir = path.join(tempDir, 'src', 'junk');
+              await fs.mkdir(junkDir, { recursive: true });
+              await fs.writeFile(
+                path.join(junkDir, 'secret.ts'),
+                'export const secret = 1;\n',
+                'utf-8',
+              );
+
+              // a readable, non-ignored subject for the brain to actually review
+              await fs.writeFile(
+                path.join(tempDir, 'src', 'newchange.ts'),
+                'export const x = function () { return 1; }; // arrow-only violation\n',
+                'utf-8',
+              );
+              execSync('git add src/newchange.ts', {
+                cwd: tempDir,
+                stdio: 'pipe',
+              });
+
+              // drop all permissions on the junk dir to reproduce EACCES on scandir
+              restrictedDir = junkDir;
+              await fs.chmod(junkDir, 0o000);
+
+              // invoke the real skill over a scope that WOULD traverse the junk dir
+              const cli = await invokeReviewSkill({
+                rules: 'rules/rule.require.arrow-only.md',
+                paths: 'src/**/*.ts',
+                focus: 'push',
+                goal: 'representative',
+                brain: DEFAULT_TEST_BRAIN_VIA_CLI,
+                cwd: tempDir,
+              });
+
+              // log cli output for debug
+              console.log('\n--- cli.stdout ---');
+              console.log(cli.stdout);
+              console.log('\n--- cli.stderr ---');
+              console.log(cli.stderr);
+              console.log('--- end cli ---\n');
+
+              // read the resolved scope the skill wrote (deterministic source of truth)
+              // .note = stdout prints "scope: <logDir>/input.scope.json"
+              const scopeMatch = cli.stdout.match(
+                /scope:\s*(\S+input\.scope\.json)/,
+              );
+              const scopeRelative = scopeMatch?.[1] ?? null;
+              const targetFiles = await (async () => {
+                if (!scopeRelative) return null;
+                const raw = await fs
+                  .readFile(path.join(tempDir, scopeRelative), 'utf-8')
+                  .catch(() => null);
+                if (!raw) return null;
+                return JSON.parse(raw).targetFiles as string[];
+              })();
+
+              return { cli, targetFiles };
+            },
           );
 
-          // a readable, non-ignored subject for the brain to actually review
-          await fs.writeFile(
-            path.join(tempDir, 'src', 'newchange.ts'),
-            'export const x = function () { return 1; }; // arrow-only violation\n',
-            'utf-8',
+          then(
+            'the review does not crash with a permission error',
+            async () => {
+              const output = res.cli.stdout + res.cli.stderr;
+              expect(output).not.toContain('EACCES');
+              expect(output).not.toContain('permission denied');
+              expect(output).not.toContain('scandir');
+            },
           );
-          execSync('git add src/newchange.ts', { cwd: tempDir, stdio: 'pipe' });
 
-          // drop all permissions on the junk dir to reproduce EACCES on scandir
-          restrictedDir = junkDir;
-          await fs.chmod(junkDir, 0o000);
-
-          // invoke the real skill over a scope that WOULD traverse the junk dir
-          const cli = await invokeReviewSkill({
-            rules: 'rules/rule.require.arrow-only.md',
-            paths: 'src/**/*.ts',
-            focus: 'push',
-            goal: 'representative',
-            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
-            cwd: tempDir,
+          then('the review completes successfully', async () => {
+            expect(res.cli.code).toBe(0);
           });
 
-          // log cli output for debug
-          console.log('\n--- cli.stdout ---');
-          console.log(cli.stdout);
-          console.log('\n--- cli.stderr ---');
-          console.log(cli.stderr);
-          console.log('--- end cli ---\n');
+          then(
+            'the metrics.expected block matches its snapshot (computed before the brain)',
+            () => {
+              // the scope tree and estimate are deterministic; the verdict summary is the brain's
+              expect(
+                asReviewMetricsExpectedBlock({ stdout: res.cli.stdout }),
+              ).toMatchSnapshot();
+            },
+          );
 
-          // read the resolved scope the skill wrote (deterministic source of truth)
-          // .note = stdout prints "scope: <logDir>/input.scope.json"
-          const scopeMatch = cli.stdout.match(/scope:\s*(\S+input\.scope\.json)/);
-          const scopeRelative = scopeMatch?.[1] ?? null;
-          const targetFiles = await (async () => {
-            if (!scopeRelative) return null;
-            const raw = await fs
-              .readFile(path.join(tempDir, scopeRelative), 'utf-8')
-              .catch(() => null);
-            if (!raw) return null;
-            return JSON.parse(raw).targetFiles as string[];
-          })();
+          then(
+            'the resolved scope excludes the gitignored junk dir',
+            async () => {
+              expect(res.targetFiles).not.toBeNull();
+              expect(res.targetFiles!.some((f) => f.includes('junk'))).toBe(
+                false,
+              );
+              expect(
+                res.targetFiles!.some((f) => f.includes('secret.ts')),
+              ).toBe(false);
+            },
+          );
 
-          return { cli, targetFiles };
+          then('the resolved scope includes the readable subject', async () => {
+            expect(res.targetFiles!).toContain('src/newchange.ts');
+          });
         },
       );
-
-      then('the review does not crash with a permission error', async () => {
-        const output = res.cli.stdout + res.cli.stderr;
-        expect(output).not.toContain('EACCES');
-        expect(output).not.toContain('permission denied');
-        expect(output).not.toContain('scandir');
-      });
-
-      then('the review completes successfully', async () => {
-        expect(res.cli.code).toBe(0);
-      });
-
-      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
-        // the scope tree and estimate are deterministic; the verdict summary is the brain's
-        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
-      });
-
-      then('the resolved scope excludes the gitignored junk dir', async () => {
-        expect(res.targetFiles).not.toBeNull();
-        expect(res.targetFiles!.some((f) => f.includes('junk'))).toBe(false);
-        expect(res.targetFiles!.some((f) => f.includes('secret.ts'))).toBe(
-          false,
-        );
-      });
-
-      then('the resolved scope includes the readable subject', async () => {
-        expect(res.targetFiles!).toContain('src/newchange.ts');
-      });
-    });
-  });
+    },
+  );
 });

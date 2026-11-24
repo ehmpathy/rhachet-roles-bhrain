@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-malfunction');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-malfunction',
+);
 
 /**
  * .what = acceptance test for peer review budget on malfunction
@@ -32,7 +35,9 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
       });
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-malfunction.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-malfunction.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -44,7 +49,10 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
     when('[t0] artifact created, review malfunctions (exit 1)', () => {
       const result = useThen('review malfunctions', async () => {
         // set up malfunction
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-malfunction'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+          '',
+        );
 
         // create artifact
         await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
@@ -56,7 +64,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -70,7 +82,8 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
       });
 
       then('output indicates malfunction (not exhaustion)', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         // should NOT mention exhaustion
         expect(output).not.toContain('exhaust');
         // should mention malfunction or error
@@ -97,7 +110,9 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
     when('[t1] malfunction cleared, review succeeds with blockers', () => {
       const result = useThen('review runs, blocked by blockers', async () => {
         // remove malfunction flag
-        await fs.rm(path.join(scene.tempDir, '.test', 'review-should-malfunction'));
+        await fs.rm(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+        );
 
         // update artifact to trigger fresh review
         await fs.writeFile(
@@ -108,7 +123,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -142,7 +161,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -183,7 +206,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -217,12 +244,21 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // extend budget first
         await invokeRouteSkill({
           skill: 'route.guard.budget',
-          args: { for: 'review', add: '1', route: '.', peer: 'flaky-reviewer', stone: '1.execute' },
+          args: {
+            for: 'review',
+            add: '1',
+            route: '.',
+            peer: 'flaky-reviewer',
+            stone: '1.execute',
+          },
           cwd: scene.tempDir,
         });
 
         // set malfunction
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-malfunction'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+          '',
+        );
 
         // update artifact
         await fs.writeFile(
@@ -233,7 +269,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -264,8 +304,13 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
     when('[t5] recover from malfunction, review passes', () => {
       const result = useThen('pass succeeds', async () => {
         // remove malfunction, enable pass
-        await fs.rm(path.join(scene.tempDir, '.test', 'review-should-malfunction'));
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        await fs.rm(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+        );
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
 
         // update artifact
         await fs.writeFile(
@@ -276,7 +321,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

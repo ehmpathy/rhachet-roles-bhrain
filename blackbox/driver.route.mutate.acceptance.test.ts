@@ -73,10 +73,9 @@ describe('driver.route.mutate.acceptance', () => {
       await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
 
       // bind the route
-      await execAsync(
-        'npx rhx route.bind.set --route .behavior/example',
-        { cwd: tempDir },
-      );
+      await execAsync('npx rhx route.bind.set --route .behavior/example', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -232,10 +231,9 @@ describe('driver.route.mutate.acceptance', () => {
       await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
 
       // bind the route
-      await execAsync(
-        'npx rhx route.bind.set --route .behavior/example',
-        { cwd: tempDir },
-      );
+      await execAsync('npx rhx route.bind.set --route .behavior/example', {
+        cwd: tempDir,
+      });
 
       // the privilege is a PRECONDITION here, never the subject — a human granted it
       await setPrivilegeFlagAsHuman({ cwd: tempDir });
@@ -309,10 +307,9 @@ describe('driver.route.mutate.acceptance', () => {
       await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
 
       // bind the route
-      await execAsync(
-        'npx rhx route.bind.set --route .behavior/example',
-        { cwd: tempDir },
-      );
+      await execAsync('npx rhx route.bind.set --route .behavior/example', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -511,10 +508,9 @@ describe('driver.route.mutate.acceptance', () => {
       await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
 
       // bind the route
-      await execAsync(
-        'npx rhx route.bind.set --route .behavior/example',
-        { cwd: tempDir },
-      );
+      await execAsync('npx rhx route.bind.set --route .behavior/example', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -557,121 +553,133 @@ describe('driver.route.mutate.acceptance', () => {
     });
   });
 
-  given('[case6] journey: blocked -> grant -> allowed -> revoke -> blocked', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'mutate-journey',
-        clone: ASSETS_DIR,
+  given(
+    '[case6] journey: blocked -> grant -> allowed -> revoke -> blocked',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'mutate-journey',
+          clone: ASSETS_DIR,
+        });
+
+        // link the driver role
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+
+        // create feature branch
+        await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
+
+        // bind the route
+        await execAsync('npx rhx route.bind.set --route .behavior/example', {
+          cwd: tempDir,
+        });
+
+        return { tempDir };
       });
 
-      // link the driver role
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      when('[t0] journey executes sequentially', () => {
+        then('completes full privilege cycle with snapshots', async () => {
+          // phase 1a: check initial status - blocked
+          const statusInitial = await invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'get' },
+            cwd: scene.tempDir,
+          });
+          expect(statusInitial.code).toEqual(0);
+          expect(statusInitial.stdout).toMatchSnapshot(
+            'phase 1a: grant get (blocked)',
+          );
 
-      // create feature branch
-      await execAsync('git checkout -b vlad/test-mutate', { cwd: tempDir });
-
-      // bind the route
-      await execAsync(
-        'npx rhx route.bind.set --route .behavior/example',
-        { cwd: tempDir },
-      );
-
-      return { tempDir };
-    });
-
-    when('[t0] journey executes sequentially', () => {
-      then('completes full privilege cycle with snapshots', async () => {
-        // phase 1a: check initial status - blocked
-        const statusInitial = await invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'get' },
-          cwd: scene.tempDir,
-        });
-        expect(statusInitial.code).toEqual(0);
-        expect(statusInitial.stdout).toMatchSnapshot('phase 1a: grant get (blocked)');
-
-        // phase 1b: blocked - capture full block experience
-        const blocked = await invokeRouteMutateGuard({
-          cwd: scene.tempDir,
-          stdin: {
-            tool_name: 'Read',
-            tool_input: {
-              file_path: '.behavior/example/2.criteria.stone',
+          // phase 1b: blocked - capture full block experience
+          const blocked = await invokeRouteMutateGuard({
+            cwd: scene.tempDir,
+            stdin: {
+              tool_name: 'Read',
+              tool_input: {
+                file_path: '.behavior/example/2.criteria.stone',
+              },
             },
-          },
-        });
-        expect(blocked.code).toEqual(2);
-        expect(blocked.stderr).toMatchSnapshot('phase 1b: guard blocked');
+          });
+          expect(blocked.code).toEqual(2);
+          expect(blocked.stderr).toMatchSnapshot('phase 1b: guard blocked');
 
-        // phase 2a: the driver reaches for the grant, and is REFUSED — human only
-        const grantRefused = await invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'allow' },
-          cwd: scene.tempDir,
-        });
-        expect(grantRefused.code).toEqual(2);
-        expect(grantRefused.stderr).toMatchSnapshot(
-          'phase 2a: grant allow refused',
-        );
+          // phase 2a: the driver reaches for the grant, and is REFUSED — human only
+          const grantRefused = await invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'allow' },
+            cwd: scene.tempDir,
+          });
+          expect(grantRefused.code).toEqual(2);
+          expect(grantRefused.stderr).toMatchSnapshot(
+            'phase 2a: grant allow refused',
+          );
 
-        // phase 2b: a human grants it, and the journey resumes from there
-        await setPrivilegeFlagAsHuman({ cwd: scene.tempDir });
+          // phase 2b: a human grants it, and the journey resumes from there
+          await setPrivilegeFlagAsHuman({ cwd: scene.tempDir });
 
-        // phase 3a: check status - allowed
-        const statusAllowed = await invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'get' },
-          cwd: scene.tempDir,
-        });
-        expect(statusAllowed.code).toEqual(0);
-        expect(statusAllowed.stdout).toMatchSnapshot('phase 3a: grant get (allowed)');
+          // phase 3a: check status - allowed
+          const statusAllowed = await invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'get' },
+            cwd: scene.tempDir,
+          });
+          expect(statusAllowed.code).toEqual(0);
+          expect(statusAllowed.stdout).toMatchSnapshot(
+            'phase 3a: grant get (allowed)',
+          );
 
-        // phase 3b: allowed - capture allowed experience
-        const allowed = await invokeRouteMutateGuard({
-          cwd: scene.tempDir,
-          stdin: {
-            tool_name: 'Read',
-            tool_input: {
-              file_path: '.behavior/example/2.criteria.stone',
+          // phase 3b: allowed - capture allowed experience
+          const allowed = await invokeRouteMutateGuard({
+            cwd: scene.tempDir,
+            stdin: {
+              tool_name: 'Read',
+              tool_input: {
+                file_path: '.behavior/example/2.criteria.stone',
+              },
             },
-          },
-        });
-        expect(allowed.code).toEqual(0);
-        expect(allowed.stdout).toMatchSnapshot('phase 3b: guard allowed');
+          });
+          expect(allowed.code).toEqual(0);
+          expect(allowed.stdout).toMatchSnapshot('phase 3b: guard allowed');
 
-        // phase 4: revoke privilege - capture revoke experience
-        const revoke = await invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'block' },
-          cwd: scene.tempDir,
-        });
-        expect(revoke.code).toEqual(0);
-        expect(revoke.stdout).toMatchSnapshot('phase 4: grant block');
+          // phase 4: revoke privilege - capture revoke experience
+          const revoke = await invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'block' },
+            cwd: scene.tempDir,
+          });
+          expect(revoke.code).toEqual(0);
+          expect(revoke.stdout).toMatchSnapshot('phase 4: grant block');
 
-        // phase 5a: check status - blocked again
-        const statusBlocked = await invokeRouteSkill({
-          skill: 'route.mutate',
-          args: { grant: 'get' },
-          cwd: scene.tempDir,
-        });
-        expect(statusBlocked.code).toEqual(0);
-        expect(statusBlocked.stdout).toMatchSnapshot('phase 5a: grant get (blocked again)');
+          // phase 5a: check status - blocked again
+          const statusBlocked = await invokeRouteSkill({
+            skill: 'route.mutate',
+            args: { grant: 'get' },
+            cwd: scene.tempDir,
+          });
+          expect(statusBlocked.code).toEqual(0);
+          expect(statusBlocked.stdout).toMatchSnapshot(
+            'phase 5a: grant get (blocked again)',
+          );
 
-        // phase 5b: blocked again - capture block experience
-        const blockedAgain = await invokeRouteMutateGuard({
-          cwd: scene.tempDir,
-          stdin: {
-            tool_name: 'Read',
-            tool_input: {
-              file_path: '.behavior/example/2.criteria.stone',
+          // phase 5b: blocked again - capture block experience
+          const blockedAgain = await invokeRouteMutateGuard({
+            cwd: scene.tempDir,
+            stdin: {
+              tool_name: 'Read',
+              tool_input: {
+                file_path: '.behavior/example/2.criteria.stone',
+              },
             },
-          },
+          });
+          expect(blockedAgain.code).toEqual(2);
+          expect(blockedAgain.stderr).toMatchSnapshot(
+            'phase 5b: guard blocked again',
+          );
         });
-        expect(blockedAgain.code).toEqual(2);
-        expect(blockedAgain.stderr).toMatchSnapshot('phase 5b: guard blocked again');
       });
-    });
-  });
+    },
+  );
 
   given('[case7] bound route at .route/xyz/ (not .behavior/)', () => {
     const scene = useBeforeAll(async () => {
@@ -717,7 +725,8 @@ describe('driver.route.mutate.acceptance', () => {
           stdin: {
             tool_name: 'Write',
             tool_input: {
-              file_path: '.route/v2026_03_19.declapract.upgrade/1.upgrade.invoke.md',
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/1.upgrade.invoke.md',
             },
           },
         }),
@@ -728,7 +737,9 @@ describe('driver.route.mutate.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(result.stdout).toMatchSnapshot('guard allows artifact in .route/xyz/');
+        expect(result.stdout).toMatchSnapshot(
+          'guard allows artifact in .route/xyz/',
+        );
       });
     });
 
@@ -751,7 +762,9 @@ describe('driver.route.mutate.acceptance', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('guard blocks metadata in .route/xyz/');
+        expect(result.stderr).toMatchSnapshot(
+          'guard blocks metadata in .route/xyz/',
+        );
       });
     });
 
@@ -774,7 +787,9 @@ describe('driver.route.mutate.acceptance', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('guard blocks *.stone in .route/xyz/');
+        expect(result.stderr).toMatchSnapshot(
+          'guard blocks *.stone in .route/xyz/',
+        );
       });
     });
   });

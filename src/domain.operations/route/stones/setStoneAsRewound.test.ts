@@ -4,9 +4,9 @@ import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import { setSelfReviewTriggeredReport } from '@src/domain.operations/route/guard/review/self/setSelfReviewTriggeredReport';
+import { isPathFound } from '@src/domain.operations/route/isPathFound';
 
-import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
-import { isPathFound } from '../isPathFound';
 import { setStoneAsRewound } from './setStoneAsRewound';
 
 const mockContext: ContextCliEmit = {

@@ -1,3 +1,4 @@
+import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 import { getOneReviewCounts } from '@src/domain.operations/review.tally/getOneReviewCounts';
 import {
   ReviewTallyError,
@@ -7,7 +8,6 @@ import type { ReviewCountsResolved } from '@src/domain.operations/review.tally/g
 import { getAllErrorCauses } from '@src/utils/getAllErrorCauses';
 import { getAllErrorClassNames } from '@src/utils/getAllErrorClassNames';
 
-import type { ContextReviewBrainSupply } from '../brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 import { REVIEWER_OUTPUT_CONTRACT_BRIEF } from './REVIEWER_OUTPUT_CONTRACT_BRIEF';
 
 /**

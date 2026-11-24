@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
+
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,

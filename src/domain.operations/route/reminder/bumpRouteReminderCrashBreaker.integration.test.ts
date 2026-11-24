@@ -1,6 +1,7 @@
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
+
 import { bumpRouteReminderCrashBreaker } from './bumpRouteReminderCrashBreaker';
 import { delRouteReminderCrashBreaker } from './delRouteReminderCrashBreaker';
 import { getRouteReminderCrashBreaker } from './getRouteReminderCrashBreaker';

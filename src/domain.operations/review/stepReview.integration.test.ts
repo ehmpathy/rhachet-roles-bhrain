@@ -20,6 +20,8 @@ import {
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { getAllFileDiffsFromRange } from '@src/domain.operations/git/getAllFileDiffsFromRange';
+import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 
 import { stepReview } from './stepReview';
 
@@ -389,9 +391,6 @@ describe('stepReview', () => {
     when('[t0] stepReview is called', () => {
       then('enumerates correct rule files', async () => {
         const rulesGlob = '.agent/**/briefs/rules/*.md';
-        const { enumFilesFromGlob } = await import(
-          '@src/domain.operations/review/enumFilesFromGlob'
-        );
         const ruleFiles = await enumFilesFromGlob({
           glob: rulesGlob,
           cwd: ASSETS_TYPESCRIPT,
@@ -414,9 +413,6 @@ describe('stepReview', () => {
       when('[t0] stepReview is called', () => {
         then('enumerates correct target files', async () => {
           const pathsGlob = 'src/*.ts';
-          const { enumFilesFromGlob } = await import(
-            '@src/domain.operations/review/enumFilesFromGlob'
-          );
           const targetFiles = await enumFilesFromGlob({
             glob: pathsGlob,
             cwd: ASSETS_TYPESCRIPT,
@@ -433,10 +429,6 @@ describe('stepReview', () => {
   given('[case6] multiple paths patterns', () => {
     when('[t0] multiple path patterns are provided', () => {
       then('paths are unioned correctly', async () => {
-        const { enumFilesFromGlob } = await import(
-          '@src/domain.operations/review/enumFilesFromGlob'
-        );
-
         const srcFiles = await enumFilesFromGlob({
           glob: 'src/*.ts',
           cwd: ASSETS_TYPESCRIPT,
@@ -476,13 +468,6 @@ describe('stepReview', () => {
 
     when('[t0] diffs and paths are combined', () => {
       then('targets are unioned from both sources', async () => {
-        const { enumFilesFromGlob } = await import(
-          '@src/domain.operations/review/enumFilesFromGlob'
-        );
-        const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/git/getAllFileDiffsFromRange'
-        );
-
         const pathFiles = await enumFilesFromGlob({
           glob: 'src/valid.ts',
           cwd: scene.repoDir,
@@ -527,10 +512,6 @@ describe('stepReview', () => {
 
     when('[t0] negation pattern excludes file from diffs', () => {
       then('excluded file is not in target files', async () => {
-        const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/git/getAllFileDiffsFromRange'
-        );
-
         // get all diff files first
         const allDiffFiles = (
           await getAllFileDiffsFromRange({
@@ -556,10 +537,6 @@ describe('stepReview', () => {
 
     when('[t1] glob negation pattern excludes files', () => {
       then('excluded glob pattern filters matching files', async () => {
-        const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/git/getAllFileDiffsFromRange'
-        );
-
         const allDiffFiles = (
           await getAllFileDiffsFromRange({
             range: 'since-staged',
@@ -590,9 +567,6 @@ describe('stepReview', () => {
   given('[case9] prose-author example repo', () => {
     when('[t0] before any changes', () => {
       then('rules glob matches 2 prose style rules', async () => {
-        const { enumFilesFromGlob } = await import(
-          '@src/domain.operations/review/enumFilesFromGlob'
-        );
         const ruleFiles = await enumFilesFromGlob({
           glob: '.agent/**/briefs/rules/*.md',
           cwd: ASSETS_PROSE,
@@ -608,9 +582,6 @@ describe('stepReview', () => {
       });
 
       then('chapters glob matches 3 chapters', async () => {
-        const { enumFilesFromGlob } = await import(
-          '@src/domain.operations/review/enumFilesFromGlob'
-        );
         const chapterFiles = await enumFilesFromGlob({
           glob: 'chapters/*.md',
           cwd: ASSETS_PROSE,

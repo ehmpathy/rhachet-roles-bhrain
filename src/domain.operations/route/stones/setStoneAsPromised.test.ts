@@ -4,8 +4,8 @@ import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { isPathFound } from '@src/domain.operations/route/isPathFound';
 
-import { isPathFound } from '../isPathFound';
 import { setStoneAsPromised } from './setStoneAsPromised';
 
 describe('setStoneAsPromised', () => {

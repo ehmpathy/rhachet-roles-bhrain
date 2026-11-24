@@ -14,18 +14,18 @@ import {
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
+import { asGuardPositiveInt } from '@src/domain.operations/asGuardPositiveInt';
 import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
+import { findsertReviewPeerGitignore } from '@src/domain.operations/route/gitignore/findsertReviewPeerGitignore';
+import { getAllStoneGuardArtifactsByHash } from '@src/domain.operations/route/guard/artifact/getAllStoneGuardArtifactsByHash';
+import { asGuardDisplayPath } from '@src/domain.operations/route/guard/asGuardDisplayPath';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+import { isCmdOfRuntimeVar } from '@src/domain.operations/route/guard/isCmdOfRuntimeVar';
+import { setStoneGuardRoundOutput } from '@src/domain.operations/route/guard/round/setStoneGuardRoundOutput';
+import { getStoneGuardLevelsPoured } from '@src/domain.operations/route/judges/getStoneGuardLevelsPoured';
+import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { asGuardPositiveInt } from '../../../asGuardPositiveInt';
-import { findsertReviewPeerGitignore } from '../../gitignore/findsertReviewPeerGitignore';
-import { getStoneGuardLevelsPoured } from '../../judges/getStoneGuardLevelsPoured';
-import { getStoneGuardOverruledLevels } from '../../judges/getStoneGuardOverruledLevels';
-import { setPassageReport } from '../../passage/setPassageReport';
-import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
-import { asGuardDisplayPath } from '../asGuardDisplayPath';
-import { getRepoRootWithFallback } from '../getRepoRootWithFallback';
-import { isCmdOfRuntimeVar } from '../isCmdOfRuntimeVar';
-import { setStoneGuardRoundOutput } from '../round/setStoneGuardRoundOutput';
 import { asConcurrencyGroupLeakAdvisory } from './asConcurrencyGroupLeakAdvisory';
 import { asLevelSlotByIndex } from './asLevelSlotByIndex';
 import { asMeterBySlug } from './asMeterBySlug';

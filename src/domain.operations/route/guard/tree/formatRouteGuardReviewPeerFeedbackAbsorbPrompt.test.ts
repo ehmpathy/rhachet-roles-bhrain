@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
+import { asGuardBindNarrowLever } from '@src/domain.operations/route/guard/asGuardBindNarrowLever';
+
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from './formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
 
 /**

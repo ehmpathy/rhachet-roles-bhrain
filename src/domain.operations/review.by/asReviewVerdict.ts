@@ -1,5 +1,6 @@
 // a sanctioned exposure, declared in src/domain.operations/review/.readme.md
-import type { ReviewRun } from '../review/runOneReview';
+import type { ReviewRun } from '@src/domain.operations/review/runOneReview';
+
 import type { ReviewVerdict } from './ReviewByResult';
 
 /**

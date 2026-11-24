@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-all-terminal-halt');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-all-terminal-halt',
+);
 
 /**
  * .what = verifies route waits for ALL reviewers to be terminal before halt
@@ -60,8 +63,12 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
       });
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-quick-fail.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-thorough.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-quick-fail.sh', {
+        cwd: tempDir,
+      });
+      await execAsync('chmod +x .test/mock-review-thorough.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -102,13 +109,16 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
         expect(output).toMatch(/quick-fail.*1\/1.*reject/s);
       });
 
-      then('thorough AWAITS (level 1 NOT terminal - rejected is not terminal)', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toContain('thorough');
-        // .note = thorough awaits because 'rejected' is NOT terminal
-        //         level 2 only unlocks when level 1 is terminal (approved or exhausted)
-        expect(output).toMatch(/thorough.*await/s);
-      });
+      then(
+        'thorough AWAITS (level 1 NOT terminal - rejected is not terminal)',
+        () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toContain('thorough');
+          // .note = thorough awaits because 'rejected' is NOT terminal
+          //         level 2 only unlocks when level 1 is terminal (approved or exhausted)
+          expect(output).toMatch(/thorough.*await/s);
+        },
+      );
 
       then('route does NOT halt (level 1 not even terminal yet)', () => {
         const output = result.stdout.toLowerCase();
@@ -129,32 +139,35 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
     });
 
     when('[t1] second attempt, level 1 exhausts, level 2 unlocks', () => {
-      const result = useThen('quick-fail exhausted, thorough unlocks and runs', async () => {
-        // change artifact to force re-review
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v2";',
-        );
+      const result = useThen(
+        'quick-fail exhausted, thorough unlocks and runs',
+        async () => {
+          // change artifact to force re-review
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v2";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered, and
-        // declare a stance on each concern the stance gate now demands. this journey tests
-        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
-        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
-        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
-        // rather than a second standalone concede — a second concede lands first at the
-        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
-        await answerEveryPeerGiven({
-          cwd: scene.tempDir,
-          stone: '1.vision',
-          severity: 'urgent',
-        });
+          // answer whatever the prior round left owed, before this one is entered, and
+          // declare a stance on each concern the stance gate now demands. this journey tests
+          // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+          // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+          // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+          // rather than a second standalone concede — a second concede lands first at the
+          // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.vision',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('quick-fail is exhausted (review SKIPPED at 2/1)', () => {
         // .note = quick-fail had budget 1, ran at 1/1 (rejected)
@@ -233,66 +246,69 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
       });
     });
 
-    when('[t2.5] fourth attempt, thorough now exhausted (review SKIPPED)', () => {
-      const result = useThen('both exhausted, route halts', async () => {
-        // .note = change artifact to trigger re-check
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v4";',
-        );
+    when(
+      '[t2.5] fourth attempt, thorough now exhausted (review SKIPPED)',
+      () => {
+        const result = useThen('both exhausted, route halts', async () => {
+          // .note = change artifact to trigger re-check
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v4";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered, and
-        // declare a stance on each concern the stance gate now demands. this journey tests
-        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
-        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
-        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
-        // rather than a second standalone concede — a second concede lands first at the
-        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
-        await answerEveryPeerGiven({
-          cwd: scene.tempDir,
-          stone: '1.vision',
-          severity: 'urgent',
+          // answer whatever the prior round left owed, before this one is entered, and
+          // declare a stance on each concern the stance gate now demands. this journey tests
+          // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+          // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+          // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+          // rather than a second standalone concede — a second concede lands first at the
+          // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.vision',
+            severity: 'urgent',
+          });
+
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
         });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+        then('quick-fail remains exhausted', () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toMatch(/quick-fail.*exhausted/s);
         });
-      });
 
-      then('quick-fail remains exhausted', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/quick-fail.*exhausted/s);
-      });
+        then('thorough now exhausted (review was SKIPPED at 3/2)', () => {
+          // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+          //         verdict is 'exhausted' not 'rejected'
+          const output = result.stdout.toLowerCase();
+          expect(output).toMatch(/thorough.*exhausted/s);
+        });
 
-      then('thorough now exhausted (review was SKIPPED at 3/2)', () => {
-        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
-        //         verdict is 'exhausted' not 'rejected'
-        const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/thorough.*exhausted/s);
-      });
+        then('NOW route halts (ALL reviewers terminal)', () => {
+          const output = result.stdout.toLowerCase();
+          // NOW should show the exhaustion halt message - all reviewers exhausted
+          expect(output).toContain('peer reviewer budget exhausted');
+        });
 
-      then('NOW route halts (ALL reviewers terminal)', () => {
-        const output = result.stdout.toLowerCase();
-        // NOW should show the exhaustion halt message - all reviewers exhausted
-        expect(output).toContain('peer reviewer budget exhausted');
-      });
+        then('lists exhausted reviewers', () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toContain('quick-fail');
+          expect(output).toContain('thorough');
+        });
 
-      then('lists exhausted reviewers', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toContain('quick-fail');
-        expect(output).toContain('thorough');
-      });
+        then('offers options to increase budget or approve', () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toMatch(/increase budget|approve/);
+        });
 
-      then('offers options to increase budget or approve', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/increase budget|approve/);
-      });
-
-      then('snapshot [t2.5]: both exhausted, route halted', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then('snapshot [t2.5]: both exhausted, route halted', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
   });
 });

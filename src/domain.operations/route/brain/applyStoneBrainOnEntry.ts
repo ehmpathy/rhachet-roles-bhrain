@@ -1,8 +1,8 @@
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import type { DriveBlockerState } from '@src/domain.operations/route/drive/DriveBlocker';
+import { getDriveBlockerState } from '@src/domain.operations/route/drive/getDriveBlockerState';
+import { setDriveEntryStone } from '@src/domain.operations/route/drive/setDriveEntryStone';
 
-import type { DriveBlockerState } from '../drive/DriveBlocker';
-import { getDriveBlockerState } from '../drive/getDriveBlockerState';
-import { setDriveEntryStone } from '../drive/setDriveEntryStone';
 import { delBrainDispatchClaim } from './delBrainDispatchClaim';
 import { genBrainDispatchClaim } from './genBrainDispatchClaim';
 import { getOneBrainInheritance } from './getOneBrainInheritance';

@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-multilevel');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-multilevel',
+);
 
 /**
  * .what = acceptance tests for bulk budget extension, the F022 fork-E level scope, and error paths
@@ -33,8 +36,12 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/mock-review-linter.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-spellcheck.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-architect.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-spellcheck.sh', {
+        cwd: tempDir,
+      });
+      await execAsync('chmod +x .test/mock-review-architect.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -45,7 +52,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
 
         // exhaust linter budget (2 rounds)
         await fs.writeFile(path.join(scene.tempDir, 'src', 'feature.ts'), 'v1');
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -53,7 +64,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         });
 
         await fs.writeFile(path.join(scene.tempDir, 'src', 'feature.ts'), 'v2');
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -62,7 +77,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
 
         // exhaust spellcheck budget (3 rounds)
         await fs.writeFile(path.join(scene.tempDir, 'src', 'feature.ts'), 'v3');
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -70,7 +89,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         });
 
         await fs.writeFile(path.join(scene.tempDir, 'src', 'feature.ts'), 'v4');
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -81,7 +104,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -95,9 +122,12 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         expect(output).toContain('exhaust');
       });
 
-      then('the pre-extension tree is pinned — both l1 reviewers exhausted at their own budgets', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the pre-extension tree is pinned — both l1 reviewers exhausted at their own budgets',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] bulk budget extension (bare — no --peer, no --level)', () => {
@@ -118,62 +148,86 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         expect(result.stdout).toContain('architect');
       });
 
-      then('the exhausted l1 linter is NOT extended — it stays exhausted (fork E)', () => {
-        // 🔴 red under the overturned blanket behavior — a bare add used to heal every level,
-        //    silently resurrecting the l1 budget the route author bounded on purpose
-        const updates = result.stdout.split('updates')[1] ?? '';
-        expect(updates).not.toContain('linter');
-      });
-
-      then('the exhausted l1 spellcheck is NOT extended — it stays exhausted (fork E)', () => {
-        const updates = result.stdout.split('updates')[1] ?? '';
-        expect(updates).not.toContain('spellcheck');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1b] an explicit --level 1 reaches the lower level on purpose', () => {
-      const result = useThen('the named lower level is extended', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', route: '.', stone: '1.vision', level: '1' },
-          cwd: scene.tempDir,
-        }),
+      then(
+        'the exhausted l1 linter is NOT extended — it stays exhausted (fork E)',
+        () => {
+          // 🔴 red under the overturned blanket behavior — a bare add used to heal every level,
+          //    silently resurrecting the l1 budget the route author bounded on purpose
+          const updates = result.stdout.split('updates')[1] ?? '';
+          expect(updates).not.toContain('linter');
+        },
       );
 
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('linter (l1) is extended — the driver named the level', () => {
-        // 🔴 red without the --level branch — a driver could not reach a lower level at all
-        const updates = result.stdout.split('updates')[1] ?? '';
-        expect(updates).toContain('linter');
-      });
-
-      then('spellcheck (l1) is extended', () => {
-        const updates = result.stdout.split('updates')[1] ?? '';
-        expect(updates).toContain('spellcheck');
-      });
-
-      then('architect (l2) is NOT extended — it sits outside the named level', () => {
-        const updates = result.stdout.split('updates')[1] ?? '';
-        expect(updates).not.toContain('architect');
-      });
+      then(
+        'the exhausted l1 spellcheck is NOT extended — it stays exhausted (fork E)',
+        () => {
+          const updates = result.stdout.split('updates')[1] ?? '';
+          expect(updates).not.toContain('spellcheck');
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
+
+    when(
+      '[t1b] an explicit --level 1 reaches the lower level on purpose',
+      () => {
+        const result = useThen('the named lower level is extended', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.budget',
+            args: {
+              for: 'review',
+              add: '2',
+              route: '.',
+              stone: '1.vision',
+              level: '1',
+            },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('linter (l1) is extended — the driver named the level', () => {
+          // 🔴 red without the --level branch — a driver could not reach a lower level at all
+          const updates = result.stdout.split('updates')[1] ?? '';
+          expect(updates).toContain('linter');
+        });
+
+        then('spellcheck (l1) is extended', () => {
+          const updates = result.stdout.split('updates')[1] ?? '';
+          expect(updates).toContain('spellcheck');
+        });
+
+        then(
+          'architect (l2) is NOT extended — it sits outside the named level',
+          () => {
+            const updates = result.stdout.split('updates')[1] ?? '';
+            expect(updates).not.toContain('architect');
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t1c] an explicit --level names a level no lane sits at', () => {
       const result = useThen('the error names the levels in play', async () =>
         invokeRouteSkill({
           skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', route: '.', stone: '1.vision', level: '9' },
+          args: {
+            for: 'review',
+            add: '2',
+            route: '.',
+            stone: '1.vision',
+            level: '9',
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -188,7 +242,9 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
       });
 
       then('the full error body is pinned', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout + result.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeTimeForSnapshot(result.stdout + result.stderr),
+        ).toMatchSnapshot();
       });
     });
 
@@ -198,7 +254,11 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -249,7 +309,13 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
       const result = useThen('error is returned', async () =>
         invokeRouteSkill({
           skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', route: '.', peer: 'nonexistent-peer', stone: '1.vision' },
+          args: {
+            for: 'review',
+            add: '2',
+            route: '.',
+            peer: 'nonexistent-peer',
+            stone: '1.vision',
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -260,7 +326,9 @@ describe('driver.route.peer-budget-bulk.acceptance', () => {
 
       then('error message mentions peer not found', () => {
         const combined = result.stdout + result.stderr;
-        expect(combined.toLowerCase()).toMatch(/peer.*not found|not found.*peer/);
+        expect(combined.toLowerCase()).toMatch(
+          /peer.*not found|not found.*peer/,
+        );
       });
 
       then('error message includes the invalid slug', () => {

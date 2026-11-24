@@ -20,9 +20,9 @@
 
 import { BadRequestError } from 'helpful-errors';
 
-import { getInvocationArgs } from '../../domain.operations/cli/getInvocationArgs';
-import { getLastHumanUtterance } from '../../domain.operations/telepath/getLastHumanUtterance';
-import { isReaderMemoryWarm } from '../../domain.operations/telepath/isReaderMemoryWarm';
+import { getInvocationArgs } from '@src/domain.operations/cli/getInvocationArgs';
+import { getLastHumanUtterance } from '@src/domain.operations/telepath/getLastHumanUtterance';
+import { isReaderMemoryWarm } from '@src/domain.operations/telepath/isReaderMemoryWarm';
 
 /**
  * .what = the --when value from argv, in either the `--when x` or `--when=x` form

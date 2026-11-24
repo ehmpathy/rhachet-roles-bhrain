@@ -1,4 +1,5 @@
-import { getDriveBlockerState } from '../drive/getDriveBlockerState';
+import { getDriveBlockerState } from '@src/domain.operations/route/drive/getDriveBlockerState';
+
 import type { StoneBrainOutcome } from './setStoneBrain';
 
 /**

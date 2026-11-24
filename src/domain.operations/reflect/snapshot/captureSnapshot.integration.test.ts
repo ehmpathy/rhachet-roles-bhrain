@@ -3,9 +3,10 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { setAnnotation } from '../annotation/setAnnotation';
-import { setSavepoint } from '../savepoint/setSavepoint';
-import { getReflectScope } from '../scope/getReflectScope';
+import { setAnnotation } from '@src/domain.operations/reflect/annotation/setAnnotation';
+import { setSavepoint } from '@src/domain.operations/reflect/savepoint/setSavepoint';
+import { getReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+
 import { captureSnapshot } from './captureSnapshot';
 
 /**

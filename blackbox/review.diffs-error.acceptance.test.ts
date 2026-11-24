@@ -1,14 +1,14 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+
+import { asRedactedOutput } from './.test/asRedactedOutput';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
-import { asRedactedOutput } from './.test/asRedactedOutput';
-import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -43,15 +43,18 @@ describe('review.diffs-error.acceptance', () => {
         expect(res.cli.code).toEqual(2);
       });
 
-      then('the refusal names the range it received and the ones it knows', () => {
-        expect(res.cli.stderr).toContain(
-          '✋ ConstraintError: --diffs range not recognized',
-        );
-        expect(res.cli.stderr).toContain('received: since-yesterday');
-        expect(res.cli.stderr).toContain(
-          'since-main | since-commit | since-staged',
-        );
-      });
+      then(
+        'the refusal names the range it received and the ones it knows',
+        () => {
+          expect(res.cli.stderr).toContain(
+            '✋ ConstraintError: --diffs range not recognized',
+          );
+          expect(res.cli.stderr).toContain('received: since-yesterday');
+          expect(res.cli.stderr).toContain(
+            'since-main | since-commit | since-staged',
+          );
+        },
+      );
 
       then('the refusal matches its snapshot', () => {
         expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();

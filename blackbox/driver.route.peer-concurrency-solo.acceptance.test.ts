@@ -10,7 +10,10 @@ import {
   invokeRouteSkill,
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
-import { clearReviewWindows, readReviewWindows } from './.test/readReviewWindows';
+import {
+  clearReviewWindows,
+  readReviewWindows,
+} from './.test/readReviewWindows';
 
 const ASSETS_DIR = path.join(
   __dirname,

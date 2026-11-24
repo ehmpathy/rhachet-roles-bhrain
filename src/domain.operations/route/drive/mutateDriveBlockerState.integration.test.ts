@@ -4,9 +4,9 @@ import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+import { WHOAMI_TIMEOUT_MS } from '@src/domain.operations/route/brain/getCloneAddress';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 
-import { WHOAMI_TIMEOUT_MS } from '../brain/getCloneAddress';
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { DriveBlockerState } from './DriveBlocker';
 import { getDriveBlockerState } from './getDriveBlockerState';
 import { mutateDriveBlockerState } from './mutateDriveBlockerState';

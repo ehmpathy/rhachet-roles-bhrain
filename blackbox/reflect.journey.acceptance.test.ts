@@ -1,6 +1,5 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
@@ -66,14 +65,17 @@ describe('reflect.journey.acceptance', () => {
     });
 
     when('[t0] before any changes', () => {
-      then('tempDir is a git repo with staged and unstaged changes', async () => {
-        const { tempDir } = scene;
-        const statusResult = await execAsync('git status --porcelain', {
-          cwd: tempDir,
-        });
-        expect(statusResult.stdout).toContain('A  src/staged.ts');
-        expect(statusResult.stdout).toContain('?? src/unstaged.ts');
-      });
+      then(
+        'tempDir is a git repo with staged and unstaged changes',
+        async () => {
+          const { tempDir } = scene;
+          const statusResult = await execAsync('git status --porcelain', {
+            cwd: tempDir,
+          });
+          expect(statusResult.stdout).toContain('A  src/staged.ts');
+          expect(statusResult.stdout).toContain('?? src/unstaged.ts');
+        },
+      );
     });
 
     when('[t1] first savepoint is created', () => {

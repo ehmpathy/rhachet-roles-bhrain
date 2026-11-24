@@ -1,7 +1,8 @@
 import { MalfunctionError } from 'helpful-errors';
 import { getError, given, then, useThen, when } from 'test-fns';
 
-import type { ReviewRun } from '../review/runOneReview';
+import type { ReviewRun } from '@src/domain.operations/review/runOneReview';
+
 import { asReviewVerdict } from './asReviewVerdict';
 import { getOneReviewRunSettled } from './getOneReviewRunSettled';
 

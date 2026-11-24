@@ -1,12 +1,11 @@
 import * as path from 'path';
 
+import { asGuardArtifactIteration } from '@src/domain.operations/route/guard/artifact/asGuardArtifactIteration';
+import { asGuardJudgeIndex } from '@src/domain.operations/route/guard/artifact/asGuardJudgeIndex';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
+import { asGuardJudgeVerdictMarks } from '@src/domain.operations/route/judges/asGuardJudgeVerdictMarks';
+import { getOneJudgeArtifactContent } from '@src/domain.operations/route/judges/getOneJudgeArtifactContent';
 import { compareStrings } from '@src/utils/compareStrings';
-
-import { asGuardJudgeVerdictMarks } from '../../judges/asGuardJudgeVerdictMarks';
-import { getOneJudgeArtifactContent } from '../../judges/getOneJudgeArtifactContent';
-import { asGuardArtifactIteration } from '../artifact/asGuardArtifactIteration';
-import { asGuardJudgeIndex } from '../artifact/asGuardJudgeIndex';
-import { enumRouteFiles } from '../artifact/enumRouteFiles';
 
 /**
  * .what = the judge verdicts a stone recorded for one review iteration — one per judge index,

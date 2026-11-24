@@ -127,12 +127,15 @@ describe('driver.route.peer-concurrency-default.acceptance', () => {
         expect(observed.peak).toBeLessThanOrEqual(10);
       });
 
-      then('CLAMP: the level still fans out — the cap is not a serial walk', () => {
-        // .why = the limit above is satisfied by a peak of 1, so it cannot tell
-        //        "bounded at ten" from "not concurrent at all". this is the other
-        //        half, and the pair is only meaningful together
-        expect(observed.peak).toBeGreaterThan(1);
-      });
+      then(
+        'CLAMP: the level still fans out — the cap is not a serial walk',
+        () => {
+          // .why = the limit above is satisfied by a peak of 1, so it cannot tell
+          //        "bounded at ten" from "not concurrent at all". this is the other
+          //        half, and the pair is only meaningful together
+          expect(observed.peak).toBeGreaterThan(1);
+        },
+      );
 
       then('the pour announce reads as declared', () => {
         // .why = `toContain` proves the text is PRESENT; it cannot prove the

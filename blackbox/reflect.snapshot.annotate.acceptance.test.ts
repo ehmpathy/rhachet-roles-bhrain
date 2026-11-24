@@ -1,6 +1,4 @@
-import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import {
@@ -48,7 +46,9 @@ describe('reflect.snapshot.annotate', () => {
       });
 
       then('output matches snapshot', () => {
-        expect(sanitizeReflectOutputForSnapshot(result.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(result.stdout),
+        ).toMatchSnapshot();
       });
     });
 
@@ -73,7 +73,9 @@ describe('reflect.snapshot.annotate', () => {
       });
 
       then('output matches snapshot', () => {
-        expect(sanitizeReflectOutputForSnapshot(result.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(result.stdout),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -121,7 +123,9 @@ describe('reflect.snapshot.annotate', () => {
       });
 
       then('the refusal renders whole', () => {
-        expect(sanitizeReflectOutputForSnapshot(result.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(result.stderr),
+        ).toMatchSnapshot();
       });
     });
   });

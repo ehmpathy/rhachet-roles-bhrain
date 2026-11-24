@@ -2,8 +2,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { answerEveryPeerGiven } from './__test_assets__/answerEveryPeerGiven';
-import { genContextReviewBrainSupplyDemo } from './__test_assets__/genContextReviewBrainSupplyDemo';
+import { answerEveryPeerGiven } from './.test.assets/answerEveryPeerGiven';
+import { genContextReviewBrainSupplyDemo } from './.test.assets/genContextReviewBrainSupplyDemo';
 import { asRouteStoneSetExitCode } from './asRouteStoneSetExitCode';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 

@@ -1,6 +1,6 @@
 import type { RouteStoneGuardReviewPeer } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { asSanitizedPeerReviewSlug } from '@src/domain.operations/route/guard/review/peer/asSanitizedPeerReviewSlug';
 
-import { asSanitizedPeerReviewSlug } from '../asSanitizedPeerReviewSlug';
 import { isLevelOverruled } from './isLevelOverruled';
 
 /**

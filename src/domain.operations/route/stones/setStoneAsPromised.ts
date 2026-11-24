@@ -4,9 +4,8 @@ import * as path from 'path';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewSelfArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewSelfArtifact';
-
-import { getStonePromisePaths } from '../guard/review/self/getStonePromisePaths';
-import { setPassageReport } from '../passage/setPassageReport';
+import { getStonePromisePaths } from '@src/domain.operations/route/guard/review/self/getStonePromisePaths';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
 /**
  * .what = records a promise artifact for a self-review + a passage entry

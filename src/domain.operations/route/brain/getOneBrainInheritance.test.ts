@@ -1,6 +1,7 @@
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import type { getDriveBlockerState } from '../drive/getDriveBlockerState';
+import type { getDriveBlockerState } from '@src/domain.operations/route/drive/getDriveBlockerState';
+
 import { getOneBrainInheritance } from './getOneBrainInheritance';
 
 /**

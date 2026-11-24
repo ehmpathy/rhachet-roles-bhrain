@@ -2,9 +2,8 @@ import { HelpfulError } from 'helpful-errors';
 
 // a sanctioned exposure, declared in src/domain.operations/review/.readme.md
 import { asErrorMessage } from '@src/domain.operations/review/asErrorMessage';
-
 // a sanctioned exposure, declared in src/domain.operations/review/.readme.md
-import type { ReviewRun } from '../review/runOneReview';
+import type { ReviewRun } from '@src/domain.operations/review/runOneReview';
 
 /**
  * .what = checks whether a thrown value is a fault a rubric review is known to surface

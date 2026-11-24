@@ -1,4 +1,4 @@
-import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
+import { TALLIED_FOOTER_PREFIX } from '@src/domain.operations/route/guard/review/TALLIED_FOOTER_PREFIX';
 
 /**
  * .what = formats the passage + tally footers of one artifact, with correct peer markers

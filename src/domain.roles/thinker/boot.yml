@@ -25,3 +25,5 @@ always:
     not:
       - skills/*/.temp/**/*
       - skills/*/.temp/**/.rhachet/**/*
+      # a retired suite (`rhx retire.suites`) is a record, never a skill
+      - skills/**/*.retired

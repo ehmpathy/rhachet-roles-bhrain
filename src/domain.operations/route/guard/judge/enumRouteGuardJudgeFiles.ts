@@ -1,4 +1,4 @@
-import { enumRouteFiles } from '../artifact/enumRouteFiles';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
 
 /**
  * .what = enumerates judge guard files by semantic criteria

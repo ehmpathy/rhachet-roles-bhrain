@@ -3,8 +3,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { getError, given, then, useThen, when } from 'test-fns';
 
-import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
-import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { answerEveryPeerGiven } from '@src/domain.operations/route/.test.assets/answerEveryPeerGiven';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';
 import { setStoneAsPassed } from './setStoneAsPassed';
 

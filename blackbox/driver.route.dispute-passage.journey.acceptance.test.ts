@@ -148,9 +148,12 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         }),
       );
 
-      then('it is accepted — every concern within the given is absorbed', () => {
-        expect(result.code).toEqual(0);
-      });
+      then(
+        'it is accepted — every concern within the given is absorbed',
+        () => {
+          expect(result.code).toEqual(0);
+        },
+      );
 
       then('the absorbed ack is pinned', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(

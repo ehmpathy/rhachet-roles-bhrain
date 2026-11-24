@@ -1,6 +1,7 @@
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
+
 import { REMINDER_NUDGE_PROSE } from './REMINDER_NUDGE_PROSE';
 import { stepRouteReminderTick } from './stepRouteReminderTick';
 

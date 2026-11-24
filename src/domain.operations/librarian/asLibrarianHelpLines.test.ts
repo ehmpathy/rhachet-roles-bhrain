@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { getStdoutFormDefects } from '../cli/stdout/getStdoutFormDefects';
+import { getStdoutFormDefects } from '@src/domain.operations/cli/stdout/getStdoutFormDefects';
+
 import { asLibrarianHelpLines } from './asLibrarianHelpLines';
 import {
   LIBRARIAN_COMMANDS,

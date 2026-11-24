@@ -88,93 +88,105 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
     home: genTempDir({ slug: 'keyrack-firewall-home-empty' }),
   }));
 
-  given('[case1] this repo keyrack manifest, and actions secrets that lack every key', () => {
-    when('[t0] the CI credential step runs', () => {
-      const result = useThen('the firewall reports', async () =>
-        invokeFirewall({ home: scene.home, secrets: {} }),
-      );
-
-      then('CLAMP: the report names OPENROUTER_API_KEY as absent', () => {
-        const row = asOpenrouterRow({ stdout: result.stdout });
-        expect(row.status).toEqual('absent');
-      });
-
-      then('CLAMP: the report names the command that sets the key', () => {
-        const row = asOpenrouterRow({ stdout: result.stdout });
-        // the fix hint is rendered by rhachet's keyrack, which names `--vault <vault>` as of the
-        // rhachet 1.49.2 → 1.50.1 bump (package.json); the vault is a required choice to set a key
-        expect(row.fix).toEqual(
-          'rhx keyrack set --key OPENROUTER_API_KEY --env test --vault <vault>',
+  given(
+    '[case1] this repo keyrack manifest, and actions secrets that lack every key',
+    () => {
+      when('[t0] the CI credential step runs', () => {
+        const result = useThen('the firewall reports', async () =>
+          invokeFirewall({ home: scene.home, secrets: {} }),
         );
-      });
 
-      then('the firewall exits 0 on an absent key — upstream rhachet behavior', () => {
-        // .why = pins the measured fact case 4 depends on: the step does NOT halt, so each
-        //        suite then fails on its own with the case 3 refusal. when rhachet's firewall
-        //        halts on a declared-but-absent key (dream: firewall-halts-on-absent-key),
-        //        this goes red — flip it to 2, and case 4 gains its single early failure
-        expect(result.code).toEqual(0);
-      });
-
-      then('the openrouter row is pinned', () => {
-        // .why = status, slug, and fix are the absent row's whole contract (case2 snaps the
-        //        granted row, its secret masked)
-        const row = asOpenrouterRow({ stdout: result.stdout });
-        expect({
-          status: row.status,
-          slug: row.slug,
-          fix: row.fix,
-        }).toMatchSnapshot();
-      });
-    });
-  });
-
-  given('[case2] this repo keyrack manifest, and actions secrets that carry the real key', () => {
-    // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): the
-    //        real OPENROUTER_API_KEY, as the test run's keyrack unlock supplies it, goes through
-    //        the same CI step. an absent key fails loud, never skips.
-    // .note = the firewall grants on presence; it never calls openrouter, so this case proves
-    //        the keyrack contract (key present → granted row), not that the key is live. the live
-    //        provider call is proven by the brain-backed review acceptance suites, which send
-    //        this same granted key to openrouter and parse its reply
-    const secrets = useBeforeAll(async () => {
-      const key = process.env.OPENROUTER_API_KEY;
-      if (!key)
-        throw new ConstraintError('OPENROUTER_API_KEY is required for this case', {
-          hint: 'run: rhx keyrack unlock --owner ehmpath --env test',
+        then('CLAMP: the report names OPENROUTER_API_KEY as absent', () => {
+          const row = asOpenrouterRow({ stdout: result.stdout });
+          expect(row.status).toEqual('absent');
         });
-      return { OPENROUTER_API_KEY: key };
-    });
 
-    when('[t0] the CI credential step runs', () => {
-      const result = useThen('the firewall reports', async () =>
-        invokeFirewall({
-          home: scene.home,
-          secrets: { OPENROUTER_API_KEY: secrets.OPENROUTER_API_KEY },
-        }),
-      );
+        then('CLAMP: the report names the command that sets the key', () => {
+          const row = asOpenrouterRow({ stdout: result.stdout });
+          // the fix hint is rendered by rhachet's keyrack, which names `--vault <vault>` as of the
+          // rhachet 1.49.2 → 1.50.1 bump (package.json); the vault is a required choice to set a key
+          expect(row.fix).toEqual(
+            'rhx keyrack set --key OPENROUTER_API_KEY --env test --vault <vault>',
+          );
+        });
 
-      then('CLAMP: the report grants OPENROUTER_API_KEY', () => {
-        const row = asOpenrouterRow({ stdout: result.stdout });
-        expect(row.status).toEqual('granted');
-        expect(row.grant?.slug).toEqual('ehmpathy.test.OPENROUTER_API_KEY');
+        then(
+          'the firewall exits 0 on an absent key — upstream rhachet behavior',
+          () => {
+            // .why = pins the measured fact case 4 depends on: the step does NOT halt, so each
+            //        suite then fails on its own with the case 3 refusal. when rhachet's firewall
+            //        halts on a declared-but-absent key (dream: firewall-halts-on-absent-key),
+            //        this goes red — flip it to 2, and case 4 gains its single early failure
+            expect(result.code).toEqual(0);
+          },
+        );
+
+        then('the openrouter row is pinned', () => {
+          // .why = status, slug, and fix are the absent row's whole contract (case2 snaps the
+          //        granted row, its secret masked)
+          const row = asOpenrouterRow({ stdout: result.stdout });
+          expect({
+            status: row.status,
+            slug: row.slug,
+            fix: row.fix,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case2] this repo keyrack manifest, and actions secrets that carry the real key',
+    () => {
+      // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): the
+      //        real OPENROUTER_API_KEY, as the test run's keyrack unlock supplies it, goes through
+      //        the same CI step. an absent key fails loud, never skips.
+      // .note = the firewall grants on presence; it never calls openrouter, so this case proves
+      //        the keyrack contract (key present → granted row), not that the key is live. the live
+      //        provider call is proven by the brain-backed review acceptance suites, which send
+      //        this same granted key to openrouter and parse its reply
+      const secrets = useBeforeAll(async () => {
+        const key = process.env.OPENROUTER_API_KEY;
+        if (!key)
+          throw new ConstraintError(
+            'OPENROUTER_API_KEY is required for this case',
+            {
+              hint: 'run: rhx keyrack unlock --owner ehmpath --env test',
+            },
+          );
+        return { OPENROUTER_API_KEY: key };
       });
 
-      then('the firewall exits 0', () => {
-        expect(result.code).toEqual(0);
-      });
+      when('[t0] the CI credential step runs', () => {
+        const result = useThen('the firewall reports', async () =>
+          invokeFirewall({
+            home: scene.home,
+            secrets: { OPENROUTER_API_KEY: secrets.OPENROUTER_API_KEY },
+          }),
+        );
 
-      then('the granted row is pinned, its secret masked', () => {
-        // .why = the granted variant is snapped whole, never carved out
-        //        (rule.require.contract-snapshot-exhaustiveness): the secret's bytes are replaced
-        //        with `<secret>` before the parse, wherever the row carries them
-        const stdoutParts = result.stdout.split(secrets.OPENROUTER_API_KEY);
-        // the raw row carries the secret exactly once — the mask replaced a real value, in one place
-        expect(stdoutParts.length - 1).toEqual(1);
-        const stdoutMasked = stdoutParts.join('<secret>');
-        const row = asOpenrouterRow({ stdout: stdoutMasked });
-        expect(row).toMatchSnapshot();
+        then('CLAMP: the report grants OPENROUTER_API_KEY', () => {
+          const row = asOpenrouterRow({ stdout: result.stdout });
+          expect(row.status).toEqual('granted');
+          expect(row.grant?.slug).toEqual('ehmpathy.test.OPENROUTER_API_KEY');
+        });
+
+        then('the firewall exits 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('the granted row is pinned, its secret masked', () => {
+          // .why = the granted variant is snapped whole, never carved out
+          //        (rule.require.contract-snapshot-exhaustiveness): the secret's bytes are replaced
+          //        with `<secret>` before the parse, wherever the row carries them
+          const stdoutParts = result.stdout.split(secrets.OPENROUTER_API_KEY);
+          // the raw row carries the secret exactly once — the mask replaced a real value, in one place
+          expect(stdoutParts.length - 1).toEqual(1);
+          const stdoutMasked = stdoutParts.join('<secret>');
+          const row = asOpenrouterRow({ stdout: stdoutMasked });
+          expect(row).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

@@ -4,7 +4,8 @@ import * as path from 'path';
 import { genTempDir, given, then, useThen, when } from 'test-fns';
 import { promisify } from 'util';
 
-import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+
 import { dispatchBrainSwitch } from './dispatchBrainSwitch';
 import { formatStoneBrainOutcome } from './formatStoneBrainOutcome';
 import type { StoneBrainOutcome } from './setStoneBrain';

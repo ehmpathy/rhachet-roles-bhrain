@@ -1,0 +1,19 @@
+{
+  "key": "7960fde3905c4b13",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "declapract-typescript-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(cicd): the slow-test report reads a fully skipped shard as schema drift",
+  "description": "## .what\n`cicd-common/best-practice/.github/workflows/report-slow-tests.sh` exits 1 as schema drift on a shard whose every test skipped. zero durations is the drift signal, and a fully skipped shard also has zero durations, so the report cannot tell the two apart. in rhachet-roles-bhrain the claude-sonnet shard skips all 72 of its tests and the check went red.\n\n## .the fix this repo carries\ncount test files where any test passed or failed; zero means the shard ran no test, so report it and exit 0. the schema alarm still guards a shard that ran:\n\n```sh\nran=$(jq '[.testResults[] | select(any(.assertionResults[]?; .status == \"passed\" or .status == \"failed\"))] | length' \"$results\")\nif [[ \"$ran\" -eq 0 ]]; then echo \"slow-test report: $total test files in $results, every test skipped\" >> \"$summary\"; exit 0; fi\n```\n\n## .ask\nadopt the branch in the practice file, with a clamp case for a fully skipped shard. at origin/main the file holds no `skip` branch today.\n\nfirst seen in rhachet-roles-bhrain `.route/v2026_11_19.declapract.upgrade`, stone 3.1 (D11), classified a practice bug in stone 3.2.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": "findsert",
+  "heldSeq": 54,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

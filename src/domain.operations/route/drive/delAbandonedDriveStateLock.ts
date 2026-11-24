@@ -1,8 +1,8 @@
 import * as fs from 'fs/promises';
 
+import { isEEXIST } from '@src/domain.operations/route/guard/isEEXIST';
 import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
-import { isEEXIST } from '../guard/isEEXIST';
 import { delOneFile } from './delOneFile';
 import { getOneFileText } from './getOneFileText';
 import { isDriveStateLockHolderAlive } from './isDriveStateLockHolderAlive';

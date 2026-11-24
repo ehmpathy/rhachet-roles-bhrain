@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
-import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
+import { TALLIED_FOOTER_PREFIX } from '@src/domain.operations/route/guard/review/TALLIED_FOOTER_PREFIX';
+
 import {
   formatGuardReviewerTree,
   type ReviewerTreeState,

@@ -1,7 +1,7 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { genTempDirForRhachet } from './.test/genTempDirForRhachet';
 import { asChildEnv, invokeShellCommand } from './.test/invokeRouteSkill';
 
@@ -53,7 +53,9 @@ const getBrainDirSettings = (input: { tempDir: string }) => {
   const claudeDir = path.join(input.tempDir, '.claude');
   const repoLayer = path.join(claudeDir, 'settings.of.repo.json');
   return {
-    isSettingsLink: fs.lstatSync(path.join(claudeDir, 'settings.json')).isSymbolicLink(),
+    isSettingsLink: fs
+      .lstatSync(path.join(claudeDir, 'settings.json'))
+      .isSymbolicLink(),
     repoLayer: JSON.parse(fs.readFileSync(repoLayer, 'utf8')) as {
       statusLine?: { type: string; command: string };
     },
@@ -95,7 +97,9 @@ describe('driver.init.status-line-survives-enroll.acceptance', () => {
       });
 
       then('the init reports the bind', () => {
-        expect(`${result.stdout}${result.stderr}`).toContain('status = configured');
+        expect(`${result.stdout}${result.stderr}`).toContain(
+          'status = configured',
+        );
       });
 
       then('the framed init block matches the snapshot', () => {
@@ -115,84 +119,90 @@ describe('driver.init.status-line-survives-enroll.acceptance', () => {
       });
     });
 
-    when('[t1] the actor is enrolled again — rhx init --hooks re-runs the layout', () => {
-      const result = useThen('re-init runs', async () =>
-        runRhx({
-          cmd: 'npx rhx init --hooks',
-          cwd: scene.tempDir,
-          home: scene.home,
-        }),
-      );
-
-      then('it exits 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('the framed re-init block matches the snapshot', () => {
-        expect(asFramedInitBlock({ result, scene })).toMatchSnapshot(
-          'rhx init --hooks - layout re-run, hooks need no change',
+    when(
+      '[t1] the actor is enrolled again — rhx init --hooks re-runs the layout',
+      () => {
+        const result = useThen('re-init runs', async () =>
+          runRhx({
+            cmd: 'npx rhx init --hooks',
+            cwd: scene.tempDir,
+            home: scene.home,
+          }),
         );
-      });
 
-      then('settings.json is still a link', () => {
-        expect(getBrainDirSettings(scene).isSettingsLink).toEqual(true);
-      });
+        then('it exits 0', () => {
+          expect(result.code).toEqual(0);
+        });
 
-      then('the status line survives in settings.of.repo.json', () => {
-        expect(
-          getBrainDirSettings(scene).repoLayer.statusLine?.command,
-        ).toContain('routeStatusLine');
-      });
-    });
+        then('the framed re-init block matches the snapshot', () => {
+          expect(asFramedInitBlock({ result, scene })).toMatchSnapshot(
+            'rhx init --hooks - layout re-run, hooks need no change',
+          );
+        });
+
+        then('settings.json is still a link', () => {
+          expect(getBrainDirSettings(scene).isSettingsLink).toEqual(true);
+        });
+
+        then('the status line survives in settings.of.repo.json', () => {
+          expect(
+            getBrainDirSettings(scene).repoLayer.statusLine?.command,
+          ).toContain('routeStatusLine');
+        });
+      },
+    );
   });
 
-  given('[case2] a repo whose human already set a status line in the grove', () => {
-    const sceneForeign = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'driver-init-status-line-foreign-grove',
-        clone: ASSETS_DIR,
-      });
-      const home = path.join(tempDir, '.home');
-      fs.mkdirSync(path.join(home, '.claude'), { recursive: true });
-      fs.writeFileSync(
-        path.join(home, '.claude', 'settings.json'),
-        JSON.stringify({
-          statusLine: { type: 'command', command: 'my-own-line' },
-        }),
-      );
-      return { tempDir, home };
-    });
-
-    when('[t0] rhx init --roles driver runs', () => {
-      const result = useThen('init runs', async () =>
-        runRhx({
-          cmd: 'npx rhx init --roles driver',
-          cwd: sceneForeign.tempDir,
-          home: sceneForeign.home,
-        }),
-      );
-
-      then('it exits 0, so rhx init and rhx upgrade carry on', () => {
-        expect(result.code).toEqual(0);
+  given(
+    '[case2] a repo whose human already set a status line in the grove',
+    () => {
+      const sceneForeign = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-init-status-line-foreign-grove',
+          clone: ASSETS_DIR,
+        });
+        const home = path.join(tempDir, '.home');
+        fs.mkdirSync(path.join(home, '.claude'), { recursive: true });
+        fs.writeFileSync(
+          path.join(home, '.claude', 'settings.json'),
+          JSON.stringify({
+            statusLine: { type: 'command', command: 'my-own-line' },
+          }),
+        );
+        return { tempDir, home };
       });
 
-      then('the init skips, and names the human line it left intact', () => {
-        const framed = asFramedInitBlock({ result, scene: sceneForeign });
-        expect(framed).toContain('status = skipped');
-        expect(framed).toContain('yours = my-own-line');
-      });
+      when('[t0] rhx init --roles driver runs', () => {
+        const result = useThen('init runs', async () =>
+          runRhx({
+            cmd: 'npx rhx init --roles driver',
+            cwd: sceneForeign.tempDir,
+            home: sceneForeign.home,
+          }),
+        );
 
-      then('the framed init block matches the snapshot', () => {
-        expect(
-          asFramedInitBlock({ result, scene: sceneForeign }),
-        ).toMatchSnapshot('rhx init --roles driver - human grove line kept');
-      });
+        then('it exits 0, so rhx init and rhx upgrade carry on', () => {
+          expect(result.code).toEqual(0);
+        });
 
-      then('the repo layer holds no status line of ours', () => {
-        expect(
-          getBrainDirSettings(sceneForeign).repoLayer.statusLine,
-        ).toBeUndefined();
+        then('the init skips, and names the human line it left intact', () => {
+          const framed = asFramedInitBlock({ result, scene: sceneForeign });
+          expect(framed).toContain('status = skipped');
+          expect(framed).toContain('yours = my-own-line');
+        });
+
+        then('the framed init block matches the snapshot', () => {
+          expect(
+            asFramedInitBlock({ result, scene: sceneForeign }),
+          ).toMatchSnapshot('rhx init --roles driver - human grove line kept');
+        });
+
+        then('the repo layer holds no status line of ours', () => {
+          expect(
+            getBrainDirSettings(sceneForeign).repoLayer.statusLine,
+          ).toBeUndefined();
+        });
       });
-    });
-  });
+    },
+  );
 });

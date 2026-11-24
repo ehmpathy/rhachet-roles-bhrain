@@ -1138,11 +1138,6 @@ describe('formatReviewsMeterLines', () => {
         then(
           'each reviewer shows its own blockers/path via slug lookup',
           async () => {
-            // dynamically import to access the exported function
-            const { formatReviewsMeterLines } = await import(
-              './formatGuardTree'
-            );
-
             // slugs are standardized at parse time: $rhx.1, $rhx.2, $rhx.3
             // .note = standardizePeerReviewSlugs adds .N suffix for collisions
             const lines = formatReviewsMeterLines({

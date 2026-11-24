@@ -1,6 +1,6 @@
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import type { RouteDriveFrontier } from '@src/domain.operations/route/stones/getRouteDriveFrontier';
 
-import type { RouteDriveFrontier } from '../stones/getRouteDriveFrontier';
 import { bumpRouteReminderCrashBreaker } from './bumpRouteReminderCrashBreaker';
 import { delRouteReminder } from './delRouteReminder';
 import { delRouteReminderCrashBreaker } from './delRouteReminderCrashBreaker';

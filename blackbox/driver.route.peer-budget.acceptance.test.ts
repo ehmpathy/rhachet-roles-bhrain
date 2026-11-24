@@ -45,32 +45,40 @@ describe('driver.route.peer-budget.acceptance', () => {
     // =========================================================================
 
     when('[t0] artifact created and pass attempted with failed reviews', () => {
-      const result = useThen('pass blocked by peer review blockers', async () => {
-        // create artifact
-        await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v1";',
-        );
+      const result = useThen(
+        'pass blocked by peer review blockers',
+        async () => {
+          // create artifact
+          await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v1";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
       });
 
       then('output shows review blockers', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/block|fail/);
       });
 
@@ -90,7 +98,11 @@ describe('driver.route.peer-budget.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -131,7 +143,11 @@ describe('driver.route.peer-budget.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -164,7 +180,13 @@ describe('driver.route.peer-budget.acceptance', () => {
       const result = useThen('budget extension succeeds', async () =>
         invokeRouteSkill({
           skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', route: '.', peer: 'mock-reviewer', stone: '1.execute' },
+          args: {
+            for: 'review',
+            add: '2',
+            route: '.',
+            peer: 'mock-reviewer',
+            stone: '1.execute',
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -186,41 +208,51 @@ describe('driver.route.peer-budget.acceptance', () => {
     // PHASE 4: pass after budget extension
     // =========================================================================
 
-    when('[t4] pass attempted after budget extension with passed reviews', () => {
-      const result = useThen('pass succeeds', async () => {
-        // make reviews pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+    when(
+      '[t4] pass attempted after budget extension with passed reviews',
+      () => {
+        const result = useThen('pass succeeds', async () => {
+          // make reviews pass
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'review-should-pass'),
+            '',
+          );
 
-        // update artifact to trigger fresh review
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v4-fixed";',
-        );
+          // update artifact to trigger fresh review
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v4-fixed";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
         });
-      });
 
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
 
-      then('stdout confirms passage', () => {
-        expect(result.stdout).toContain('passage = allowed');
-      });
+        then('stdout confirms passage', () => {
+          expect(result.stdout).toContain('passage = allowed');
+        });
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
 
     // =========================================================================
     // PHASE 5: verify cached review does not consume budget

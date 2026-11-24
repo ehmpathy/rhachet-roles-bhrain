@@ -1,7 +1,6 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
-import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
-import { getAllPassageReports } from '../passage/getAllPassageReports';
+import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/meter/JUDGE_LEVEL';
+import { getAllPassageReports } from '@src/domain.operations/route/passage/getAllPassageReports';
 
 /**
  * .what = retrieves the set of review levels a human has overruled for a stone

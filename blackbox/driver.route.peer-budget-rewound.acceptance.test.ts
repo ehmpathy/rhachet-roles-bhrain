@@ -51,7 +51,11 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -68,9 +72,12 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         expect(result.stdout).toContain('1/2');
       });
 
-      then('the pre-rewind tree is pinned — the reviewer rejected at 1 of 2, budget partly spent', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the pre-rewind tree is pinned — the reviewer rejected at 1 of 2, budget partly spent',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] second attempt exhausts budget', () => {
@@ -83,7 +90,11 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -120,7 +131,11 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -181,7 +196,11 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -217,7 +236,10 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
     when('[t4] pass after rewind with review that passes', () => {
       const result = useThen('stone passes', async () => {
         // make review pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
 
         // change artifact to trigger review
         await fs.writeFile(
@@ -228,7 +250,11 @@ describe('driver.route.peer-budget-rewound.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

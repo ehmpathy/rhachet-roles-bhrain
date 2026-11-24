@@ -1,8 +1,8 @@
-import type { ReviewPeerVerdict } from '../review/peer/meter/computeReviewPeerVerdict';
+import type { ReviewPeerVerdict } from '@src/domain.operations/route/guard/review/peer/meter/computeReviewPeerVerdict';
 import type {
   ReviewPeerLadderLevelTerminal,
   ReviewPeerLadderStatus,
-} from '../review/peer/meter/getReviewPeerLadderStatus';
+} from '@src/domain.operations/route/guard/review/peer/meter/getReviewPeerLadderStatus';
 
 /**
  * the verdict glyphs the footer can show. only DEFERRABLE terminal verdicts ever reach the

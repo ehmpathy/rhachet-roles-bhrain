@@ -1,9 +1,10 @@
 import { BadRequestError } from 'helpful-errors';
 
-import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
-import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
+import { formatRouteStoneEmit } from '@src/domain.operations/route/formatRouteStoneEmit';
+import { getDecisionIsCallerHuman } from '@src/domain.operations/route/getDecisionIsCallerHuman';
+import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
+import { setStoneGuardApproval } from '@src/domain.operations/route/judges/setStoneGuardApproval';
+
 import { findOneStoneByPattern } from './asStoneGlob';
 import { formatGuidanceForAlreadyApproved } from './formatGuidanceForAlreadyApproved';
 import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';

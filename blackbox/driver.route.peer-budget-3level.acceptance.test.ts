@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-3level');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-3level',
+);
 
 /**
  * .what = acceptance test for 3-level peer review hierarchy
@@ -31,8 +34,12 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/mock-review-basic.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-advanced.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-premium.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-advanced.sh', {
+        cwd: tempDir,
+      });
+      await execAsync('chmod +x .test/mock-review-premium.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -83,29 +90,35 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
     // =========================================================================
 
     when('[t1] l1 passes, l2 unlocks, l3 still awaits', () => {
-      const result = useThen('advanced-checker runs, premium awaits', async () => {
-        // make basic-checker pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'basic-should-pass'), '');
+      const result = useThen(
+        'advanced-checker runs, premium awaits',
+        async () => {
+          // make basic-checker pass
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'basic-should-pass'),
+            '',
+          );
 
-        // change artifact to trigger re-review
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v2";',
-        );
+          // change artifact to trigger re-review
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v2";',
+          );
 
-        // 🔴 answer [t0]'s blocker before the second round is entered.
-        //    basic-checker rejected at [t0] with 1 blocker, so an articulation is
-        //    owed — and the entrance gate now refuses a new round while one is.
-        //    without this the arrival halts at the door with `the reviewers await
-        //    your reply`, which is CORRECT: an edit alone no longer buys re-entry.
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+          // 🔴 answer [t0]'s blocker before the second round is entered.
+          //    basic-checker rejected at [t0] with 1 blocker, so an articulation is
+          //    owed — and the entrance gate now refuses a new round while one is.
+          //    without this the arrival halts at the door with `the reviewers await
+          //    your reply`, which is CORRECT: an edit alone no longer buys re-entry.
+          await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero (blocked by l2)', () => {
         expect(result.code).not.toEqual(0);
@@ -136,7 +149,10 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
     when('[t2] l2 passes, l3 unlocks and runs', () => {
       const result = useThen('premium-checker runs', async () => {
         // make advanced-checker pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'advanced-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'advanced-should-pass'),
+          '',
+        );
 
         // change artifact to trigger re-review
         await fs.writeFile(
@@ -180,7 +196,10 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
     when('[t3] l3 passes, stone passes', () => {
       const result = useThen('all levels pass', async () => {
         // make premium-checker pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'premium-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'premium-should-pass'),
+          '',
+        );
 
         // change artifact to trigger re-review
         await fs.writeFile(

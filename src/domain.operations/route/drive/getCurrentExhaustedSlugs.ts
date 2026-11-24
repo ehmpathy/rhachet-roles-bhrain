@@ -1,8 +1,7 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
-import { getCurrentPeerMeters } from '../guard/review/peer/meter/getCurrentPeerMeters';
-import { getExhaustedReviewerSlugs } from '../guard/review/peer/meter/getExhaustedReviewerSlugs';
-import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+import { getCurrentPeerMeters } from '@src/domain.operations/route/guard/review/peer/meter/getCurrentPeerMeters';
+import { getExhaustedReviewerSlugs } from '@src/domain.operations/route/guard/review/peer/meter/getExhaustedReviewerSlugs';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
 /**
  * .what = gets the currently exhausted reviewer slugs + their meters for a stone

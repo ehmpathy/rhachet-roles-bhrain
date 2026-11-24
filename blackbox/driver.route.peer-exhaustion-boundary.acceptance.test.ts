@@ -50,203 +50,245 @@ const ASSETS_DIR = path.join(
  *    misread self-corrects on the same line. raised i022/r011 nitpick.1
  */
 describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
-  given('[journey] multi-reviewer exhaustion unlocks only on last-terminal', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-exhaustion-boundary',
-        clone: ASSETS_DIR,
+  given(
+    '[journey] multi-reviewer exhaustion unlocks only on last-terminal',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-exhaustion-boundary',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-l1-alpha.sh', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-l1-beta.sh', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
+
+        return { tempDir };
       });
 
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-l1-alpha.sh', {
-        cwd: tempDir,
-      });
-      await execAsync('chmod +x .test/mock-review-l1-beta.sh', {
-        cwd: tempDir,
-      });
-      await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
-
-      return { tempDir };
-    });
-
-    // helper: write a fresh artifact, answer what the prior round left owed, then arrive
-    //
-    // the answer belongs in the helper rather than at each call site: every arrival in
-    // this journey routes through here, so one insertion covers all four and no later
-    // phase can be added that skips it. a no-op on the first arrival; on every later one
-    // it is what the entrance gate now requires — an edit alone no longer buys re-entry
-    const arriveWith = async (input: { version: string }) => {
-      await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
-      await fs.writeFile(
-        path.join(scene.tempDir, 'src', 'feature.ts'),
-        `export const feature = () => "${input.version}";`,
-      );
-      await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
-      return invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: { stone: '1.execute', route: '.', as: 'passed' },
-        cwd: scene.tempDir,
-      });
-    };
-
-    // =========================================================================
-    // PHASE 1: both l1 reviewers run + reject; l3 awaits (l1 level not terminal)
-    // =========================================================================
-
-    when('[t0] both l1 reviewers reject, l3 awaits', () => {
-      const result = useThen('l1 pair runs, l3 awaits', async () =>
-        arriveWith({ version: 'v1' }),
-      );
-
-      then('both l1 reviewers ran and rejected', () => {
-        expect(result.stdout).toContain('l1-alpha');
-        expect(result.stdout).toContain('l1-beta');
-        expect(result.stdout).toMatch(/l1-alpha.*rejected/s);
-        expect(result.stdout).toMatch(/l1-beta.*rejected/s);
-      });
-
-      then('l3 awaits (l1 level not terminal)', () => {
-        expect(result.stdout).toMatch(/l3-reviewer.*awaits/s);
-      });
-
-      then('CLAMP: no halt while the ladder still has work', () => {
-        expect(result.stdout).not.toContain('budget exhausted');
-        expect(result.stdout).not.toContain('halted');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    // =========================================================================
-    // PHASE 2: alpha exhausts (terminal), beta still rejects — l3 STILL awaits
-    //          because the l1 LEVEL is not yet fully terminal
-    // =========================================================================
-
-    when('[t1] alpha exhausted but beta not — l3 still awaits', () => {
-      const result = useThen('alpha terminal, beta not, l3 awaits', async () =>
-        arriveWith({ version: 'v2' }),
-      );
-
-      then('alpha is exhausted (budget 1 spent, skipped this pass)', () => {
-        expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
-      });
-
-      then('beta ran again and rejected (budget 2, still has a round)', () => {
-        expect(result.stdout).toContain('l1-beta');
-        expect(result.stdout).toContain('l1, 2/2');
-        expect(result.stdout).toMatch(/l1-beta.*rejected/s);
-      });
-
-      then('CLAMP: one l1 terminal is NOT enough — l3 awaits until the LAST turns terminal', () => {
-        // .why = the level unlocks only when EVERY reviewer at it is terminal. alpha is
-        //        exhausted but beta still rejects, so l3 must still await. this is the
-        //        multi-reviewer boundary the single-reviewer happy path cannot cover.
-        expect(result.stdout).toMatch(/l3-reviewer.*awaits/s);
-      });
-
-      then('CLAMP: no false halt — alpha exhausted alone must not read as halted', () => {
-        // .why = a lower reviewer exhausted while the level is not yet terminal must never
-        //        produce a "budget exhausted"/halt. the halt is for all-terminal only.
-        expect(result.stdout).not.toContain('budget exhausted');
-        expect(result.stdout).not.toContain('halted');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    // =========================================================================
-    // PHASE 3: beta exhausts — the LAST l1 turns terminal — l3 unlocks + runs
-    //          THIS SAME PASS. l3 was declared first, yet runs last (order independence).
-    // =========================================================================
-
-    when('[t2] beta exhausts, l1 level all terminal, l3 unlocks + runs same pass', () => {
-      const result = useThen('last l1 terminal, l3 runs now', async () =>
-        arriveWith({ version: 'v3' }),
-      );
-
-      then('both l1 reviewers are terminal (exhausted)', () => {
-        expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
-        expect(result.stdout).toMatch(/l1-beta.*exhausted/s);
-      });
-
-      then('CLAMP: last l1 terminal unlocks l3 — it runs THIS pass, not the next', () => {
-        // .why = the instant the final l1 reviewer turns terminal, l3 runs in the same
-        //        pass. l3 shows a real round (1/1) and a verdict, never `awaits`.
-        expect(result.stdout).toContain('l3-reviewer');
-        expect(result.stdout).toContain('l3, 1/1');
-        expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
-        expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
-      });
-
-      then('CLAMP: order independence — l3 declared first, yet ran only after l1 terminal', () => {
-        // .why = the guard sorts reviewers low-level-first before it runs them, so a
-        //        higher level declared earlier still waits for the lower level. l3 ran
-        //        (has a verdict) only now that l1 is terminal — proof the sort holds.
-        expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
-      });
-
-      then('CLAMP: no false halt — l3 non-terminal means the ladder is not done', () => {
-        expect(result.stdout).not.toContain('budget exhausted');
-        expect(result.stdout).not.toContain('halted');
-      });
-
-      then('CLAMP: exhaustion narrative present on the terminal l1 reviewers', () => {
-        expect(result.stdout).toContain('exhausted 🌙');
-        expect(result.stdout).toContain('terminal — does not block higher levels');
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    // =========================================================================
-    // PHASE 4: l3 exhausts — EVERY level terminal, none approved — the FIRST and
-    //          ONLY halt appears. because `arriveWith` concedes each round, every
-    //          exhausted lane carries a LIVE concession, so the halt names the
-    //          concessions and leads with the driver's own budget lever (S12).
-    //          🔴 these concessions are graded `urgent`, so the halt ALSO warns that
-    //          a human must grant the round (S16) — an urgent concession ships harm
-    //          if unfixed. a `better`-only exhaustion is instead SHED and PASSES,
-    //          with no halt and no human at all.
-    // =========================================================================
-
-    when('[t3] l3 exhausts, all levels terminal, the driver concession halt is the only halt', () => {
-      const result = useThen('all terminal, halt for driver', async () =>
-        arriveWith({ version: 'v4' }),
-      );
-
-      then('every reviewer is terminal (all exhausted)', () => {
-        expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
-        expect(result.stdout).toMatch(/l1-beta.*exhausted/s);
-        expect(result.stdout).toMatch(/l3-reviewer.*exhausted/s);
-      });
-
-      then('CLAMP: the halt appears now — and only now, at the true end (S16 urgent concession halt)', () => {
-        // .why = the halt is the single touch point, reached ONLY when every level is
-        //        terminal and none approved. phases t0-t2 asserted its absence; here it
-        //        must be present. every lane was conceded `urgent` and every concession is
-        //        LIVE at exhaustion, so the halt names the concessions and offers the
-        //        driver's own budget lever — AND, because an urgent concession ships harm
-        //        if unfixed, warns that a human must grant the round (S16,
-        //        define.invariant.review.peer.budget.urgent-earns-budget). a `better`-only
-        //        exhaustion would instead be SHED and PASS, with no halt at all.
-        expect(result.stdout).toContain('budget exhausted');
-        expect(result.stdout).toContain(
-          'you conceded — the round to confirm your fix needs more budget',
+      // helper: write a fresh artifact, answer what the prior round left owed, then arrive
+      //
+      // the answer belongs in the helper rather than at each call site: every arrival in
+      // this journey routes through here, so one insertion covers all four and no later
+      // phase can be added that skips it. a no-op on the first arrival; on every later one
+      // it is what the entrance gate now requires — an edit alone no longer buys re-entry
+      const arriveWith = async (input: { version: string }) => {
+        await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
+        await fs.writeFile(
+          path.join(scene.tempDir, 'src', 'feature.ts'),
+          `export const feature = () => "${input.version}";`,
         );
-        expect(result.stdout).toContain('an urgent concession stands');
-        expect(result.stdout).toContain('increase budget');
-        expect(result.stdout).toMatch(/approve as-is|a human must grant/);
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.execute', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      };
+
+      // =========================================================================
+      // PHASE 1: both l1 reviewers run + reject; l3 awaits (l1 level not terminal)
+      // =========================================================================
+
+      when('[t0] both l1 reviewers reject, l3 awaits', () => {
+        const result = useThen('l1 pair runs, l3 awaits', async () =>
+          arriveWith({ version: 'v1' }),
+        );
+
+        then('both l1 reviewers ran and rejected', () => {
+          expect(result.stdout).toContain('l1-alpha');
+          expect(result.stdout).toContain('l1-beta');
+          expect(result.stdout).toMatch(/l1-alpha.*rejected/s);
+          expect(result.stdout).toMatch(/l1-beta.*rejected/s);
+        });
+
+        then('l3 awaits (l1 level not terminal)', () => {
+          expect(result.stdout).toMatch(/l3-reviewer.*awaits/s);
+        });
+
+        then('CLAMP: no halt while the ladder still has work', () => {
+          expect(result.stdout).not.toContain('budget exhausted');
+          expect(result.stdout).not.toContain('halted');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      // =========================================================================
+      // PHASE 2: alpha exhausts (terminal), beta still rejects — l3 STILL awaits
+      //          because the l1 LEVEL is not yet fully terminal
+      // =========================================================================
+
+      when('[t1] alpha exhausted but beta not — l3 still awaits', () => {
+        const result = useThen(
+          'alpha terminal, beta not, l3 awaits',
+          async () => arriveWith({ version: 'v2' }),
+        );
+
+        then('alpha is exhausted (budget 1 spent, skipped this pass)', () => {
+          expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
+        });
+
+        then(
+          'beta ran again and rejected (budget 2, still has a round)',
+          () => {
+            expect(result.stdout).toContain('l1-beta');
+            expect(result.stdout).toContain('l1, 2/2');
+            expect(result.stdout).toMatch(/l1-beta.*rejected/s);
+          },
+        );
+
+        then(
+          'CLAMP: one l1 terminal is NOT enough — l3 awaits until the LAST turns terminal',
+          () => {
+            // .why = the level unlocks only when EVERY reviewer at it is terminal. alpha is
+            //        exhausted but beta still rejects, so l3 must still await. this is the
+            //        multi-reviewer boundary the single-reviewer happy path cannot cover.
+            expect(result.stdout).toMatch(/l3-reviewer.*awaits/s);
+          },
+        );
+
+        then(
+          'CLAMP: no false halt — alpha exhausted alone must not read as halted',
+          () => {
+            // .why = a lower reviewer exhausted while the level is not yet terminal must never
+            //        produce a "budget exhausted"/halt. the halt is for all-terminal only.
+            expect(result.stdout).not.toContain('budget exhausted');
+            expect(result.stdout).not.toContain('halted');
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+
+      // =========================================================================
+      // PHASE 3: beta exhausts — the LAST l1 turns terminal — l3 unlocks + runs
+      //          THIS SAME PASS. l3 was declared first, yet runs last (order independence).
+      // =========================================================================
+
+      when(
+        '[t2] beta exhausts, l1 level all terminal, l3 unlocks + runs same pass',
+        () => {
+          const result = useThen('last l1 terminal, l3 runs now', async () =>
+            arriveWith({ version: 'v3' }),
+          );
+
+          then('both l1 reviewers are terminal (exhausted)', () => {
+            expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
+            expect(result.stdout).toMatch(/l1-beta.*exhausted/s);
+          });
+
+          then(
+            'CLAMP: last l1 terminal unlocks l3 — it runs THIS pass, not the next',
+            () => {
+              // .why = the instant the final l1 reviewer turns terminal, l3 runs in the same
+              //        pass. l3 shows a real round (1/1) and a verdict, never `awaits`.
+              expect(result.stdout).toContain('l3-reviewer');
+              expect(result.stdout).toContain('l3, 1/1');
+              expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
+              expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
+            },
+          );
+
+          then(
+            'CLAMP: order independence — l3 declared first, yet ran only after l1 terminal',
+            () => {
+              // .why = the guard sorts reviewers low-level-first before it runs them, so a
+              //        higher level declared earlier still waits for the lower level. l3 ran
+              //        (has a verdict) only now that l1 is terminal — proof the sort holds.
+              expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
+            },
+          );
+
+          then(
+            'CLAMP: no false halt — l3 non-terminal means the ladder is not done',
+            () => {
+              expect(result.stdout).not.toContain('budget exhausted');
+              expect(result.stdout).not.toContain('halted');
+            },
+          );
+
+          then(
+            'CLAMP: exhaustion narrative present on the terminal l1 reviewers',
+            () => {
+              expect(result.stdout).toContain('exhausted 🌙');
+              expect(result.stdout).toContain(
+                'terminal — does not block higher levels',
+              );
+            },
+          );
+
+          then('stdout has good vibes', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
+      );
+
+      // =========================================================================
+      // PHASE 4: l3 exhausts — EVERY level terminal, none approved — the FIRST and
+      //          ONLY halt appears. because `arriveWith` concedes each round, every
+      //          exhausted lane carries a LIVE concession, so the halt names the
+      //          concessions and leads with the driver's own budget lever (S12).
+      //          🔴 these concessions are graded `urgent`, so the halt ALSO warns that
+      //          a human must grant the round (S16) — an urgent concession ships harm
+      //          if unfixed. a `better`-only exhaustion is instead SHED and PASSES,
+      //          with no halt and no human at all.
+      // =========================================================================
+
+      when(
+        '[t3] l3 exhausts, all levels terminal, the driver concession halt is the only halt',
+        () => {
+          const result = useThen('all terminal, halt for driver', async () =>
+            arriveWith({ version: 'v4' }),
+          );
+
+          then('every reviewer is terminal (all exhausted)', () => {
+            expect(result.stdout).toMatch(/l1-alpha.*exhausted/s);
+            expect(result.stdout).toMatch(/l1-beta.*exhausted/s);
+            expect(result.stdout).toMatch(/l3-reviewer.*exhausted/s);
+          });
+
+          then(
+            'CLAMP: the halt appears now — and only now, at the true end (S16 urgent concession halt)',
+            () => {
+              // .why = the halt is the single touch point, reached ONLY when every level is
+              //        terminal and none approved. phases t0-t2 asserted its absence; here it
+              //        must be present. every lane was conceded `urgent` and every concession is
+              //        LIVE at exhaustion, so the halt names the concessions and offers the
+              //        driver's own budget lever — AND, because an urgent concession ships harm
+              //        if unfixed, warns that a human must grant the round (S16,
+              //        define.invariant.review.peer.budget.urgent-earns-budget). a `better`-only
+              //        exhaustion would instead be SHED and PASS, with no halt at all.
+              expect(result.stdout).toContain('budget exhausted');
+              expect(result.stdout).toContain(
+                'you conceded — the round to confirm your fix needs more budget',
+              );
+              expect(result.stdout).toContain('an urgent concession stands');
+              expect(result.stdout).toContain('increase budget');
+              expect(result.stdout).toMatch(/approve as-is|a human must grant/);
+            },
+          );
+
+          then('stdout has good vibes', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 });

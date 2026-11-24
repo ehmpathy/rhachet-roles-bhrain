@@ -43,7 +43,7 @@ interface RouteStatusLineCacheFault {
  *         are returned as data, and the cli entry is the one writer of stderr
  * .note = an unreadable cache file is a miss, never a fault: the line renders afresh, the
  *         write replaces the file, and the read fault is returned for a loud row
- * .note = the render ops load by dynamic import, only on a miss: their module graph is the
+ * .note = the render ops load by a lazy typed `require`, only on a miss: their module graph is the
  *         cost a hit must not pay (the module-graph clamp, acceptance `[case16]`)
  * .note = it takes no cwd, by design: the bind lookup reads `process.cwd()`, so the cache,
  *         the fingerprint, and the lookup all anchor at the one cwd read here. a cwd input
@@ -192,15 +192,18 @@ const getOneCachedRouteReusable = (input: {
  * .why = the glob faults loud on a multi-bind. it loads lazily: its module graph is the
  *        cost a hit must not pay
  *
+ * .note = each lazy load in this file is a typed `require`: under node16 a dynamic `import()`
+ *         in a commonjs file demands a file extension the jest `@src` mappers cannot follow
+ *
  * .note = the branch is passed in, the one the cache is keyed by, so the lookup spawns no
  *         second `git rev-parse` and cannot read another branch than the cache names
  */
 const getOneBoundRoute = async (input: {
   branch: string;
 }): Promise<string | null> => {
-  const { getRouteBindByBranch } = await import(
-    '@src/domain.operations/route/bind/getRouteBindByBranch'
-  );
+  const {
+    getRouteBindByBranch,
+  }: typeof import('@src/domain.operations/route/bind/getRouteBindByBranch') = require('@src/domain.operations/route/bind/getRouteBindByBranch');
   return (await getRouteBindByBranch({ branch: input.branch }))?.route ?? null;
 };
 
@@ -216,9 +219,9 @@ type RenderRoute = (input: {
  * .why = the render ops' module graph is the cost a hit must not pay
  */
 const renderRouteReal: RenderRoute = async (input) => {
-  const { stepRouteStatusLine } = await import(
-    '@src/domain.operations/route/stepRouteStatusLine'
-  );
+  const {
+    stepRouteStatusLine,
+  }: typeof import('@src/domain.operations/route/stepRouteStatusLine') = require('@src/domain.operations/route/stepRouteStatusLine');
   return stepRouteStatusLine(input);
 };
 
@@ -232,7 +235,9 @@ const getOneRenderedLine = async (
 ): Promise<{ line: string; degradeRow: string | null }> => {
   // an unbound seat: the blank line
   if (input.route === null) {
-    const { asStatusLine } = await import('./asStatusLine');
+    const {
+      asStatusLine,
+    }: typeof import('./asStatusLine') = require('./asStatusLine');
     return { line: asStatusLine({ kind: 'blank' }), degradeRow: null };
   }
 

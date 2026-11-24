@@ -1,14 +1,13 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { execAsync } from './.test/invokeRouteSkill';
 import {
   genTempDirForGoals,
   invokeGoalSkill,
   sanitizeGoalOutputForSnapshot,
 } from './.test/invokeGoalSkill';
+import { execAsync } from './.test/invokeRouteSkill';
 
 /**
  * .what = journey test for onTalk hook accumulation and triage display
@@ -67,7 +66,8 @@ describe('achiever.goal.onTalk.journey', () => {
           'update the readme with new setup steps',
         ];
 
-        const results: Array<{ stdout: string; stderr: string; code: number }> = [];
+        const results: Array<{ stdout: string; stderr: string; code: number }> =
+          [];
 
         for (const ask of asks) {
           const result = await invokeGoalSkill({

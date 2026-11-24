@@ -1,11 +1,11 @@
 import { asDurationMsFromContent } from '@src/domain.operations/asDurationMsFromContent';
 // review.tally/ is a declared shared exposure (see its .readme.md), never review's internals
 import { getOneReviewCountsViaRegex } from '@src/domain.operations/review.tally/getOneReviewCountsViaRegex';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
+import { asExitCodeFromArtifactContent } from '@src/domain.operations/route/guard/asExitCodeFromArtifactContent';
+import { getOneReviewTacticFromContent } from '@src/domain.operations/route/guard/review/getOneReviewTacticFromContent';
+import { getOneTalliedBrainFromContent } from '@src/domain.operations/route/guard/review/getOneTalliedBrainFromContent';
 
-import { asExitCodeClass } from '../../asExitCodeClass';
-import { asExitCodeFromArtifactContent } from '../../asExitCodeFromArtifactContent';
-import { getOneReviewTacticFromContent } from '../getOneReviewTacticFromContent';
-import { getOneTalliedBrainFromContent } from '../getOneTalliedBrainFromContent';
 import { asPeerGivenVerdict } from './asPeerGivenVerdict';
 
 /**

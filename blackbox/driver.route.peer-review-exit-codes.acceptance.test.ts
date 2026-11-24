@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-review-exit-codes');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-review-exit-codes',
+);
 
 /**
  * .what = acceptance test for peer review exit code scenarios
@@ -34,7 +37,9 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
       });
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-exit-codes.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-exit-codes.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -92,7 +97,10 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
     when('[t1] exit 2 genuine constraint (no blockers)', () => {
       const result = useThen('constraint error shown', async () => {
         // set constraint flag
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-constraint'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-constraint'),
+          '',
+        );
 
         // update artifact to trigger fresh review
         await fs.writeFile(
@@ -112,7 +120,9 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
         });
 
         // clean up flag
-        await fs.rm(path.join(scene.tempDir, '.test', 'review-should-constraint'));
+        await fs.rm(
+          path.join(scene.tempDir, '.test', 'review-should-constraint'),
+        );
 
         return r;
       });
@@ -147,7 +157,10 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
     when('[t2] exit 1 malfunction', () => {
       const result = useThen('malfunction shown', async () => {
         // set malfunction flag
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-malfunction'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+          '',
+        );
 
         // update artifact to trigger fresh review
         await fs.writeFile(
@@ -167,7 +180,9 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
         });
 
         // clean up flag
-        await fs.rm(path.join(scene.tempDir, '.test', 'review-should-malfunction'));
+        await fs.rm(
+          path.join(scene.tempDir, '.test', 'review-should-malfunction'),
+        );
 
         return r;
       });
@@ -177,7 +192,8 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
       });
 
       then('output shows malfunction', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toContain('malfunction');
       });
 
@@ -199,7 +215,10 @@ describe('driver.route.peer-review-exit-codes.acceptance', () => {
     when('[t3] exit 0 pass (approved)', () => {
       const result = useThen('approved, passage allowed', async () => {
         // set pass flag
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
 
         // update artifact to trigger fresh review
         await fs.writeFile(

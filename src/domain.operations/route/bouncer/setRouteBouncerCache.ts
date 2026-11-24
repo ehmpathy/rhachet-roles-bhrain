@@ -2,8 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { RouteBouncerCache } from '@src/domain.objects/Driver';
-
-import { getAllBindFlagsByBranch } from '../bind/getAllBindFlagsByBranch';
+import { getAllBindFlagsByBranch } from '@src/domain.operations/route/bind/getAllBindFlagsByBranch';
 
 /**
  * .what = writes bouncer cache to each route's .route/.bouncer.cache.json

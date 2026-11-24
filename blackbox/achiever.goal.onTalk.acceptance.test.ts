@@ -1,14 +1,13 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { execAsync } from './.test/invokeRouteSkill';
 import {
   genTempDirForGoals,
   invokeGoalSkill,
   sanitizeGoalOutputForSnapshot,
 } from './.test/invokeGoalSkill';
+import { execAsync } from './.test/invokeRouteSkill';
 
 /**
  * .what = integration tests for hook.onTalk ask accumulation
@@ -51,18 +50,21 @@ describe('achiever.goal.onTalk.integration', () => {
     });
 
     when('[t0] hook.onTalk is invoked with prompt', () => {
-      const result = useThen('invoke goal.triage.infer --when hook.onTalk', async () => {
-        const stdinJson = JSON.stringify({
-          prompt: 'help me refactor the auth module',
-        });
+      const result = useThen(
+        'invoke goal.triage.infer --when hook.onTalk',
+        async () => {
+          const stdinJson = JSON.stringify({
+            prompt: 'help me refactor the auth module',
+          });
 
-        return invokeGoalSkill({
-          skill: 'goal.triage.infer',
-          args: { when: 'hook.onTalk' },
-          cwd: scene.tempDir,
-          stdin: stdinJson,
-        });
-      });
+          return invokeGoalSkill({
+            skill: 'goal.triage.infer',
+            args: { when: 'hook.onTalk' },
+            cwd: scene.tempDir,
+            stdin: stdinJson,
+          });
+        },
+      );
 
       then('exits 0', () => {
         expect(result.code).toEqual(0);
@@ -84,7 +86,9 @@ describe('achiever.goal.onTalk.integration', () => {
       then('reminder emitted to stderr', () => {
         expect(result.stderr).toContain('goal.triage.infer');
         expect(result.stderr).toContain('help me refactor the auth module');
-        expect(result.stderr).toContain('consider: does this impact your goals?');
+        expect(result.stderr).toContain(
+          'consider: does this impact your goals?',
+        );
       });
 
       then('stderr matches snapshot', () => {
@@ -105,7 +109,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-empty', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-empty', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -160,18 +166,16 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-multi', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-multi', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
 
     when('[t0] three messages are sent in sequence', () => {
       const results = useThen('invoke three times', async () => {
-        const messages = [
-          'first message',
-          'second message',
-          'third message',
-        ];
+        const messages = ['first message', 'second message', 'third message'];
 
         const resultsList = [];
         for (const msg of messages) {
@@ -208,27 +212,39 @@ describe('achiever.goal.onTalk.integration', () => {
       });
 
       then('stderr of message 1 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[0]?.stderr ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[0]?.stderr ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stderr of message 2 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[1]?.stderr ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[1]?.stderr ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stderr of message 3 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[2]?.stderr ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[2]?.stderr ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stdout of message 1 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[0]?.stdout ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[0]?.stdout ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stdout of message 2 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[1]?.stdout ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[1]?.stdout ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stdout of message 3 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[2]?.stdout ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[2]?.stdout ?? ''),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -277,19 +293,27 @@ describe('achiever.goal.onTalk.integration', () => {
       });
 
       then('stderr of invocation 1 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[0]?.stderr ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[0]?.stderr ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stderr of invocation 2 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[1]?.stderr ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[1]?.stderr ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stdout of invocation 1 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[0]?.stdout ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[0]?.stdout ?? ''),
+        ).toMatchSnapshot();
       });
 
       then('stdout of invocation 2 matches snapshot', () => {
-        expect(sanitizeGoalOutputForSnapshot(results[1]?.stdout ?? '')).toMatchSnapshot();
+        expect(
+          sanitizeGoalOutputForSnapshot(results[1]?.stdout ?? ''),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -302,7 +326,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-malform', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-malform', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -355,7 +381,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-format', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-format', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -382,7 +410,9 @@ describe('achiever.goal.onTalk.integration', () => {
       });
 
       then('consider prompt present', () => {
-        expect(result.stderr).toContain('consider: does this impact your goals?');
+        expect(result.stderr).toContain(
+          'consider: does this impact your goals?',
+        );
       });
 
       then('triage command shown', () => {
@@ -407,7 +437,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-emoji', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-emoji', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -418,7 +450,9 @@ describe('achiever.goal.onTalk.integration', () => {
           skill: 'goal.triage.infer',
           args: { when: 'hook.onTalk' },
           cwd: scene.tempDir,
-          stdin: JSON.stringify({ prompt: 'fix the test 🐢🌊 with special chars: <>&"\'' }),
+          stdin: JSON.stringify({
+            prompt: 'fix the test 🐢🌊 with special chars: <>&"\'',
+          }),
         });
       });
 
@@ -459,7 +493,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-multiline', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-multiline', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -512,7 +548,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-badscope', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-badscope', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -553,7 +591,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-help', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-help', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -595,7 +635,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-nullprompt', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-nullprompt', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -644,7 +686,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-numprompt', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-numprompt', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -693,7 +737,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-noprompt', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-noprompt', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -742,7 +788,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-nostdin', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-nostdin', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -791,7 +839,9 @@ describe('achiever.goal.onTalk.integration', () => {
         cwd: tempDir,
       });
 
-      await execAsync('git checkout -b feat/test-ontalk-badwhen', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-ontalk-badwhen', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });

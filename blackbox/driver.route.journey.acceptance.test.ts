@@ -125,7 +125,8 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('output mentions approval needed', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|wait|blocked|failed/);
       });
 
@@ -247,7 +248,8 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('error mentions artifact not found', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/artifact|not found/);
       });
 
@@ -327,7 +329,11 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('bouncer cache is created', async () => {
-        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cachePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.bouncer.cache.json',
+        );
         const cacheContent = await fs.readFile(cachePath, 'utf-8');
         const cache = JSON.parse(cacheContent);
         expect(cache.protections).toBeDefined();
@@ -335,7 +341,11 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('cache contains src/**/*.ts protection', async () => {
-        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cachePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.bouncer.cache.json',
+        );
         const cacheContent = await fs.readFile(cachePath, 'utf-8');
         const cache = JSON.parse(cacheContent);
         const srcProtection = cache.protections.find(
@@ -398,7 +408,10 @@ describe('driver.route.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '3.blueprint',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -433,7 +446,10 @@ describe('driver.route.journey.acceptance', () => {
           slug: 'design-complete',
         });
         await fs.mkdir(path.dirname(articulationPath), { recursive: true });
-        await fs.writeFile(articulationPath, '# design review\n\napi design looks complete.');
+        await fs.writeFile(
+          articulationPath,
+          '# design review\n\napi design looks complete.',
+        );
 
         // backdate triggered report to bypass time enforcement
         await backdateTriggeredReport({
@@ -472,25 +488,32 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t9] 3.blueprint pass reattempted after promise', () => {
-      const result = useThen('blocked by peer review (review.self satisfied)', async () => {
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+      const result = useThen(
+        'blocked by peer review (review.self satisfied)',
+        async () => {
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '3.blueprint',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.blueprint', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
       });
 
       then('error mentions blockers', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/block|fail/);
       });
 
@@ -500,71 +523,84 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t9.5] 3.blueprint review set to pass and pass reattempted', () => {
-      const result = useThen('review passes but approval still needed', async () => {
-        // make review pass via marker
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+      const result = useThen(
+        'review passes but approval still needed',
+        async () => {
+          // make review pass via marker
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'review-should-pass'),
+            '',
+          );
 
-        // update artifact to change hash (triggers re-review with new marker)
-        await fs.writeFile(
-          path.join(scene.tempDir, '3.blueprint.md'),
-          '# Blueprint\n\nFixed API design.',
-        );
+          // update artifact to change hash (triggers re-review with new marker)
+          await fs.writeFile(
+            path.join(scene.tempDir, '3.blueprint.md'),
+            '# Blueprint\n\nFixed API design.',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
-
-        // trigger review.self for new hash (artifact changed)
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-
-        // backdate triggered report to bypass 30-second time enforcement
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
-          stone: '3.blueprint',
-          slug: 'design-complete',
-        });
-
-        // re-promise review.self for new hash
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
             stone: '3.blueprint',
-            route: '.',
-            as: 'promised',
-            that: 'design-complete',
-            into: getSelfReviewArticulationPath({
-              route: '.',
+          });
+
+          // trigger review.self for new hash (artifact changed)
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.blueprint', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+
+          // backdate triggered report to bypass 30-second time enforcement
+          await backdateTriggeredReport({
+            tempDir: scene.tempDir,
+            stone: '3.blueprint',
+            slug: 'design-complete',
+          });
+
+          // re-promise review.self for new hash
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
               stone: '3.blueprint',
-              slug: 'design-complete',
-            }),
-          },
-          cwd: scene.tempDir,
-        });
+              route: '.',
+              as: 'promised',
+              that: 'design-complete',
+              into: getSelfReviewArticulationPath({
+                route: '.',
+                stone: '3.blueprint',
+                slug: 'design-complete',
+              }),
+            },
+            cwd: scene.tempDir,
+          });
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '3.blueprint',
+          });
 
-        // try to pass (will fail on approval)
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          // try to pass (will fail on approval)
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.blueprint', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
       });
 
       then('error mentions approval needed', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|wait/);
       });
 
@@ -574,79 +610,85 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t10] 3.blueprint approved and self-review completed', () => {
-      const result = useThen('pass succeeds after approval and self-review', async () => {
-        // grant approval
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'approved' },
-          cwd: scene.tempDir,
-        });
+      const result = useThen(
+        'pass succeeds after approval and self-review',
+        async () => {
+          // grant approval
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.blueprint', route: '.', as: 'approved' },
+            cwd: scene.tempDir,
+          });
 
-        // start self-review promise (triggers challenge:first)
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '3.blueprint',
-            route: '.',
-            as: 'promised',
-            that: 'design-complete',
-            into: getSelfReviewArticulationPath({
-              route: '.',
+          // start self-review promise (triggers challenge:first)
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
               stone: '3.blueprint',
-              slug: 'design-complete',
-            }),
-          },
-          cwd: scene.tempDir,
-        });
-
-        // backdate triggered files to bypass 90s time enforcement
-        await backdateTriggeredReport({
-          tempDir: scene.tempDir,
-          stone: '3.blueprint',
-          slug: 'design-complete',
-        });
-
-        // create articulation file
-        const articulationPath = getSelfReviewArticulationPath({
-          route: scene.tempDir,
-          stone: '3.blueprint',
-          slug: 'design-complete',
-        });
-        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
-        await fs.writeFile(
-          articulationPath,
-          '# design review\n\napi design is complete with all endpoints documented.',
-        );
-
-        // fulfill promise (articulation file now exists)
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '3.blueprint',
-            route: '.',
-            as: 'promised',
-            that: 'design-complete',
-            into: getSelfReviewArticulationPath({
               route: '.',
+              as: 'promised',
+              that: 'design-complete',
+              into: getSelfReviewArticulationPath({
+                route: '.',
+                stone: '3.blueprint',
+                slug: 'design-complete',
+              }),
+            },
+            cwd: scene.tempDir,
+          });
+
+          // backdate triggered files to bypass 90s time enforcement
+          await backdateTriggeredReport({
+            tempDir: scene.tempDir,
+            stone: '3.blueprint',
+            slug: 'design-complete',
+          });
+
+          // create articulation file
+          const articulationPath = getSelfReviewArticulationPath({
+            route: scene.tempDir,
+            stone: '3.blueprint',
+            slug: 'design-complete',
+          });
+          await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+          await fs.writeFile(
+            articulationPath,
+            '# design review\n\napi design is complete with all endpoints documented.',
+          );
+
+          // fulfill promise (articulation file now exists)
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
               stone: '3.blueprint',
-              slug: 'design-complete',
-            }),
-          },
-          cwd: scene.tempDir,
-        });
+              route: '.',
+              as: 'promised',
+              that: 'design-complete',
+              into: getSelfReviewArticulationPath({
+                route: '.',
+                stone: '3.blueprint',
+                slug: 'design-complete',
+              }),
+            },
+            cwd: scene.tempDir,
+          });
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '3.blueprint',
+          });
 
-        // now pass the stone (all guards satisfied)
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          // now pass the stone (all guards satisfied)
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '3.blueprint', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -680,7 +722,11 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('cache shows protection passed', async () => {
-        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cachePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.bouncer.cache.json',
+        );
         const cacheContent = await fs.readFile(cachePath, 'utf-8');
         const cache = JSON.parse(cacheContent);
         const srcProtection = cache.protections.find(
@@ -702,13 +748,19 @@ describe('driver.route.journey.acceptance', () => {
       //    that moved the allow-path chatter onto stderr would keep this step green and
       //    the journey would still read silent from the snapshots
       //    (rule.require.contract-snapshot-exhaustiveness names "stdout/stderr for cli").
-      then('an allowed bounce is silent on stdout — snapshot pins the silence', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'an allowed bounce is silent on stdout — snapshot pins the silence',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
 
-      then('an allowed bounce is silent on stderr — snapshot pins the silence', () => {
-        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
-      });
+      then(
+        'an allowed bounce is silent on stderr — snapshot pins the silence',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+        },
+      );
     });
 
     // =========================================================================
@@ -738,23 +790,29 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t12] 5.execute artifact created and pass attempted', () => {
-      const result = useThen('pass succeeds (review passes, no approval needed)', async () => {
-        await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'weather.ts'),
-          'export const getWeather = () => ({ emoji: "☀️", temp: 22 });',
-        );
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '5.execute' });
+      const result = useThen(
+        'pass succeeds (review passes, no approval needed)',
+        async () => {
+          await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'weather.ts'),
+            'export const getWeather = () => ({ emoji: "☀️", temp: 22 });',
+          );
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '5.execute',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '5.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '5.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);

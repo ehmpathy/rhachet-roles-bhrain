@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useBeforeAll, when } from 'test-fns';
 
-import { getReflectScope } from '../scope/getReflectScope';
+import { getReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+
 import { setAnnotation } from './setAnnotation';
 
 describe('setAnnotation', () => {

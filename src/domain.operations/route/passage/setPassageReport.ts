@@ -2,8 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
-
-import { findsertRouteGitignore } from '../gitignore/findsertRouteGitignore';
+import { findsertRouteGitignore } from '@src/domain.operations/route/gitignore/findsertRouteGitignore';
 
 /**
  * .what = appends a passage report to passage.jsonl

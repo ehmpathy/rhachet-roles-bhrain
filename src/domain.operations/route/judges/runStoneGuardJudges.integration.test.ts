@@ -4,9 +4,9 @@ import { genTempDir, given, then, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { asArtifactStreamContent } from '@src/domain.operations/route/guard/tree/asArtifactStreamContent';
+import { formatArtifactFooters } from '@src/domain.operations/route/guard/tree/formatArtifactFooters';
 
-import { asArtifactStreamContent } from '../guard/tree/asArtifactStreamContent';
-import { formatArtifactFooters } from '../guard/tree/formatArtifactFooters';
 import { runStoneGuardJudges } from './runStoneGuardJudges';
 
 // a fresh route was never rewound, so its guard round sits at generation 0

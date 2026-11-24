@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { withEnoentAsNull } from '../withEnoentAsNull';
+import { withEnoentAsNull } from '@src/domain.operations/route/withEnoentAsNull';
+
 import { claimExclusiveWrite } from './claimExclusiveWrite';
 import { getRouteReminderCrashLogPath } from './getRouteReminderCrashLogPath';
 

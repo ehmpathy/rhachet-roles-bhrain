@@ -13,8 +13,8 @@ on:
         type: string
         default: "us-east-1"
 
+# .why = least privilege: only the jobs that assume the aws role grant id-token, at job scope
 permissions:
-  id-token: write # required for oidc
   contents: read
 
 jobs:
@@ -82,9 +82,6 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: set terraform version
-        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
-
       - name: get node-modules from cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
@@ -111,6 +108,10 @@ jobs:
         with:
           path: ./node_modules
           key: ${{ needs.install.outputs.node-modules-cache-key }}
+
+      # .why = lint the same linked .agent/repo=* role tree a laptop holds
+      - name: prepare:rhachet
+        run: npm run prepare:rhachet --if-present
 
       - name: test:lint
         run: npm run test:lint
@@ -182,6 +183,9 @@ jobs:
   test-shards-integration:
     runs-on: ubuntu-24.04
     needs: [install, enshard]
+    permissions:
+      contents: read
+      id-token: write # required for oidc
     strategy:
       fail-fast: false
       matrix:
@@ -226,8 +230,8 @@ jobs:
       - name: start:testdb
         run: npm run start:testdb --if-present
 
-      - name: start:livedb:dev
-        run: npm run start:livedb:dev --if-present
+      - name: start:livedb:prep
+        run: npm run start:livedb:prep --if-present
 
       - name: build
         run: npm run build
@@ -250,74 +254,16 @@ jobs:
             THOROUGH=true npm run test:integration -- --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
           fi
 
-      # .what = rank every test file by wall clock, into annotations AND the job summary
-      # .why  = this report read `.perfStats.runtime`, which jest 30 does NOT emit —
-      #         its --json testResults carry only assertionResults, endTime, message,
-      #         name, startTime, status, summary. so the `select(...!= null)` matched
-      #         zero rows and the step emitted no output at all, silently, on every run.
-      #         a dead instrument reads exactly like a fast suite, which is why the
-      #         longest pole here (one 5m32s file) went unseen for so long.
-      #
-      #         endTime-startTime is the only per-file duration jest 30 offers. the
-      #         summary table is added because annotations alone cannot be ranked — a
-      #         diagnosis needs the order, not a scatter of notices.
       - name: report slow tests
         if: always() && hashFiles('jest-results.json') != ''
-        run: |
-          set -eu
-
-          # annotations: per-file, for inline visibility on the PR
-          jq -r '.testResults[] | "\(.name):\((.endTime // 0) - (.startTime // 0))"' jest-results.json \
-          | while IFS=: read -r name ms; do
-              seconds=$((ms / 1000))
-              if [[ $seconds -ge 30 ]]; then
-                echo "::warning file=${name}::slow test: ${seconds}s"
-              elif [[ $seconds -ge 10 ]]; then
-                echo "::notice file=${name}::test duration: ${seconds}s"
-              fi
-            done
-
-          # job summary: the ranked table, which is what a diagnosis actually reads
-          #
-          # .note = a shard CAN legitimately hold zero testResults (a --testPathPatterns
-          #         shard that matched no file, under --passWithNoTests). `add` returns
-          #         null on an empty array, and `null / 1000` is a jq FAULT — which under
-          #         `set -eu` fails the step and takes the whole job with it. guard it
-          #         with `add // 0`, and say the empty case out loud rather than render
-          #         an empty table that reads like a fast shard.
-          COUNT=$(jq -r '.testResults | length' jest-results.json)
-          {
-            echo "### 🐢 slow tests — ${{ github.job }}"
-            echo ""
-            if [[ "$COUNT" -eq 0 ]]; then
-              echo "_no test files ran in this shard — the duration report has no rows to show._"
-              echo ""
-              echo "> this is an explicit EMPTY state, never a silent one. a report that"
-              echo "> prints an empty table reads exactly like a fast suite."
-            else
-              echo "| wall | file |"
-              echo "|---:|---|"
-              jq -r '
-                [ .testResults[] | { name, ms: ((.endTime // 0) - (.startTime // 0)) } ]
-                | sort_by(-.ms) | .[:25][]
-                | "| \((.ms/1000) | floor)s | \(.name | sub("^.*/"; "")) |"
-              ' jest-results.json
-              echo ""
-              jq -r '
-                [ .testResults[] | ((.endTime // 0) - (.startTime // 0)) ]
-                | (add // 0) / 1000 | floor
-                | "**summed file time:** \(.)s across all files in this shard"
-              ' jest-results.json
-              echo ""
-              echo "> the wall clock can never fall below the LONGEST SINGLE FILE — jest"
-              echo "> parallelizes across files, never within one. if the top row here"
-              echo "> exceeds the target, split that file; no worker count will fix it."
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: bash .github/workflows/report-slow-tests.sh jest-results.json
 
   test-shards-acceptance:
     runs-on: ubuntu-24.04
     needs: [install, enshard]
+    permissions:
+      contents: read
+      id-token: write # required for oidc
     strategy:
       fail-fast: false
       matrix:
@@ -362,18 +308,24 @@ jobs:
       - name: start:testdb
         run: npm run start:testdb --if-present
 
-      - name: start:livedb:dev
-        run: npm run start:livedb:dev --if-present
+      - name: start:livedb:prep
+        run: npm run start:livedb:prep --if-present
 
       - name: build
         run: npm run build
 
+      # .why = the PR acceptance gate runs IN-PROCESS (LOCALLY=true), not against a deployed fleet.
+      #        a PR has no deployed lambda to invoke, and a service that publishes only dev/prep (no
+      #        `test` fleet) would target `svc-<name>-test-*` — a slug that does not exist — and 404
+      #        on every call. in-process runs the handler directly, so a fleetless service inherits a
+      #        green PR gate out of the box rather than hand-patching LOCALLY=true into this shard.
+      #        the deployed-fleet acceptance run is a separate post-deploy grain (.deploy-sls.yml).
       - name: test:acceptance (explicit ${{ matrix.shard.index }})
         if: matrix.shard.type == 'explicit'
         run: |
           set -eu
           patterns='${{ join(matrix.shard.patterns, '|') }}'
-          THOROUGH=true npm run test:acceptance -- --testPathPatterns="$patterns" --json --outputFile=jest-results.json
+          LOCALLY=true THOROUGH=true npm run test:acceptance -- --testPathPatterns="$patterns" --json --outputFile=jest-results.json
 
       - name: test:acceptance (dynamic ${{ matrix.shard.shard }}/${{ matrix.shard.total }})
         if: matrix.shard.type == 'dynamic'
@@ -381,75 +333,73 @@ jobs:
           set -eu
           exclude='${{ needs.enshard.outputs.acceptance-patterns }}'
           if [[ -n "$exclude" ]]; then
-            THOROUGH=true npm run test:acceptance -- --testPathIgnorePatterns="$exclude" --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
+            LOCALLY=true THOROUGH=true npm run test:acceptance -- --testPathIgnorePatterns="$exclude" --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
           else
-            THOROUGH=true npm run test:acceptance -- --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
+            LOCALLY=true THOROUGH=true npm run test:acceptance -- --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
           fi
 
-      # .what = rank every test file by wall clock, into annotations AND the job summary
-      # .why  = this report read `.perfStats.runtime`, which jest 30 does NOT emit —
-      #         its --json testResults carry only assertionResults, endTime, message,
-      #         name, startTime, status, summary. so the `select(...!= null)` matched
-      #         zero rows and the step emitted no output at all, silently, on every run.
-      #         a dead instrument reads exactly like a fast suite, which is why the
-      #         longest pole here (one 5m32s file) went unseen for so long.
-      #
-      #         endTime-startTime is the only per-file duration jest 30 offers. the
-      #         summary table is added because annotations alone cannot be ranked — a
-      #         diagnosis needs the order, not a scatter of notices.
       - name: report slow tests
         if: always() && hashFiles('jest-results.json') != ''
-        run: |
-          set -eu
+        run: bash .github/workflows/report-slow-tests.sh jest-results.json
 
-          # annotations: per-file, for inline visibility on the PR
-          jq -r '.testResults[] | "\(.name):\((.endTime // 0) - (.startTime // 0))"' jest-results.json \
-          | while IFS=: read -r name ms; do
-              seconds=$((ms / 1000))
-              if [[ $seconds -ge 30 ]]; then
-                echo "::warning file=${name}::slow test: ${seconds}s"
-              elif [[ $seconds -ge 10 ]]; then
-                echo "::notice file=${name}::test duration: ${seconds}s"
-              fi
-            done
+  # .why = evaluation tests grade a brain's output and sit outside the unit, integration, and
+  #        acceptance globs, so no other job runs them. in a repo with no `test:evaluation`
+  #        command, every step after the presence check is skipped, so the job costs one checkout
+  test-evaluation:
+    runs-on: ubuntu-24.04
+    needs: [install]
+    permissions:
+      contents: read
+      id-token: write # required for oidc
+    steps:
+      - name: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-          # job summary: the ranked table, which is what a diagnosis actually reads
-          #
-          # .note = a shard CAN legitimately hold zero testResults (a --testPathPatterns
-          #         shard that matched no file, under --passWithNoTests). `add` returns
-          #         null on an empty array, and `null / 1000` is a jq FAULT — which under
-          #         `set -eu` fails the step and takes the whole job with it. guard it
-          #         with `add // 0`, and say the empty case out loud rather than render
-          #         an empty table that reads like a fast shard.
-          COUNT=$(jq -r '.testResults | length' jest-results.json)
-          {
-            echo "### 🐢 slow tests — ${{ github.job }}"
-            echo ""
-            if [[ "$COUNT" -eq 0 ]]; then
-              echo "_no test files ran in this shard — the duration report has no rows to show._"
-              echo ""
-              echo "> this is an explicit EMPTY state, never a silent one. a report that"
-              echo "> prints an empty table reads exactly like a fast suite."
-            else
-              echo "| wall | file |"
-              echo "|---:|---|"
-              jq -r '
-                [ .testResults[] | { name, ms: ((.endTime // 0) - (.startTime // 0)) } ]
-                | sort_by(-.ms) | .[:25][]
-                | "| \((.ms/1000) | floor)s | \(.name | sub("^.*/"; "")) |"
-              ' jest-results.json
-              echo ""
-              jq -r '
-                [ .testResults[] | ((.endTime // 0) - (.startTime // 0)) ]
-                | (add // 0) / 1000 | floor
-                | "**summed file time:** \(.)s across all files in this shard"
-              ' jest-results.json
-              echo ""
-              echo "> the wall clock can never fall below the LONGEST SINGLE FILE — jest"
-              echo "> parallelizes across files, never within one. if the top row here"
-              echo "> exceeds the target, split that file; no worker count will fix it."
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: has test:evaluation?
+        id: presence
+        run: echo "declared=$(jq -r '.scripts["test:evaluation"] != null' package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: set node-version
+        if: steps.presence.outputs.declared == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: get node-modules from cache
+        if: steps.presence.outputs.declared == 'true'
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ./node_modules
+          key: ${{ needs.install.outputs.node-modules-cache-key }}
+
+      - name: prepare:rhachet
+        if: steps.presence.outputs.declared == 'true'
+        run: npm run prepare:rhachet --if-present
+
+      - name: keyrack firewall
+        if: steps.presence.outputs.declared == 'true'
+        run: npx rhachet keyrack firewall --env test --from 'json(env://SECRETS_JSON)' --into github.actions
+        env:
+          SECRETS_JSON: ${{ toJSON(secrets) }}
+
+      - name: get aws auth, if creds supplied
+        if: ${{ steps.presence.outputs.declared == 'true' && inputs.creds-aws-role-arn }}
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ inputs.creds-aws-role-arn }}
+          aws-region: ${{ inputs.creds-aws-region }}
+
+      - name: start:testdb
+        if: steps.presence.outputs.declared == 'true'
+        run: npm run start:testdb --if-present
+
+      - name: build
+        if: steps.presence.outputs.declared == 'true'
+        run: npm run build
+
+      - name: test:evaluation
+        if: steps.presence.outputs.declared == 'true'
+        run: npm run test:evaluation --if-present
 
   # union job: aggregates shard results into single status for pr merge constraints
   test-integration:
@@ -459,6 +409,7 @@ jobs:
     steps:
       - name: report shard results
         run: |
+          set -eu
           if [[ "${{ needs.test-shards-integration.result }}" == "success" ]]; then
             echo "👌 all integration test shards passed"
           else
@@ -474,6 +425,7 @@ jobs:
     steps:
       - name: report shard results
         run: |
+          set -eu
           if [[ "${{ needs.test-shards-acceptance.result }}" == "success" ]]; then
             echo "👌 all acceptance test shards passed"
           else

@@ -1,6 +1,7 @@
 import * as path from 'path';
 
-import { asGuardArtifactIteration } from '../../artifact/asGuardArtifactIteration';
+import { asGuardArtifactIteration } from '@src/domain.operations/route/guard/artifact/asGuardArtifactIteration';
+
 import { asReviewIndexFromPath } from './asReviewIndexFromPath';
 import { isLaterByIterationThenPath } from './isLaterByIterationThenPath';
 

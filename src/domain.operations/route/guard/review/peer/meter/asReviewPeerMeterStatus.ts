@@ -1,9 +1,9 @@
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import { asGuardDisplayPath } from '@src/domain.operations/route/guard/asGuardDisplayPath';
+import { computeDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeDisputedConcernCounts';
+import { isLaneSkippedByDispute } from '@src/domain.operations/route/guard/review/peer/isLaneSkippedByDispute';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 
-import { asGuardDisplayPath } from '../../../asGuardDisplayPath';
-import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
-import { computeDisputedConcernCounts } from '../computeDisputedConcernCounts';
-import { isLaneSkippedByDispute } from '../isLaneSkippedByDispute';
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getOneReviewerAwaits } from './getOneReviewerAwaits';
 

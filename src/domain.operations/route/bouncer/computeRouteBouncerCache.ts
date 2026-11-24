@@ -4,10 +4,9 @@ import {
   RouteBouncerCache,
   RouteBouncerProtection,
 } from '@src/domain.objects/Driver';
-
-import { getAllBindFlagsByBranch } from '../bind/getAllBindFlagsByBranch';
-import { getOnePassageReport } from '../passage/getOnePassageReport';
-import { getAllStones } from '../stones/getAllStones';
+import { getAllBindFlagsByBranch } from '@src/domain.operations/route/bind/getAllBindFlagsByBranch';
+import { getOnePassageReport } from '@src/domain.operations/route/passage/getOnePassageReport';
+import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 
 /**
  * .what = computes bouncer cache from bound routes or explicit route

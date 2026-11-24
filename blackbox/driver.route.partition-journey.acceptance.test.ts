@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import { UnexpectedCodePathError } from 'helpful-errors';
+import * as path from 'path';
 import { given, then, useBeforeAll, useThen, useWhen, when } from 'test-fns';
 
 import {
@@ -134,7 +134,8 @@ const getAllPeerFileNames = (input: { tempDir: string }): string[] => {
 const getOneLatestGiven = (input: { tempDir: string }): string => {
   const dir = path.join(input.tempDir, ROUTE, '.reviews', 'peer');
   const names = getAllPeerFileNames(input).filter(
-    (name) => name.includes(`_.given.by_peer.${SLUG}`) && !name.endsWith('.report.md'),
+    (name) =>
+      name.includes(`_.given.by_peer.${SLUG}`) && !name.endsWith('.report.md'),
   );
   const latest = names[names.length - 1];
   if (!latest)
@@ -151,7 +152,8 @@ const getOneLatestGiven = (input: { tempDir: string }): string => {
 const getOneLatestReport = (input: { tempDir: string }): string => {
   const dir = path.join(input.tempDir, ROUTE, '.reviews', 'peer');
   const names = getAllPeerFileNames(input).filter(
-    (name) => name.includes(`_.given.by_peer.${SLUG}`) && name.endsWith('.report.md'),
+    (name) =>
+      name.includes(`_.given.by_peer.${SLUG}`) && name.endsWith('.report.md'),
   );
   const latest = names[names.length - 1];
   if (!latest)
@@ -172,7 +174,10 @@ const getOneLatestReport = (input: { tempDir: string }): string => {
 const getAllLogArtifacts = (input: { tempDir: string }): string[] => {
   const root = path.join(input.tempDir, '.log');
   if (!fs.existsSync(root)) return [];
-  const entries = fs.readdirSync(root, { recursive: true, withFileTypes: true });
+  const entries = fs.readdirSync(root, {
+    recursive: true,
+    withFileTypes: true,
+  });
   return entries
     .filter((entry) => entry.isFile())
     .map((entry) =>
@@ -231,19 +236,26 @@ const asRepairCommandFromStdout = (input: { stdout: string }): string => {
         hint: 'the entrance refusal must print its repair command; check the partition gap render',
       },
     );
-  const collected = lines.slice(start).reduce<{ parts: string[]; open: boolean }>(
-    (acc, line) => {
-      if (!acc.open) return acc;
-      const text = line.replace(/^[\s│]*/, '').replace(/\s+$/, '');
-      const isContinued = text.endsWith('\\');
-      return {
-        parts: [...acc.parts, isContinued ? text.slice(0, -1).trimEnd() : text],
-        open: isContinued,
-      };
-    },
-    { parts: [], open: true },
-  );
-  return collected.parts.join(' ').replace(/^.*?(rhx route\.guard\.partition)/, '$1');
+  const collected = lines
+    .slice(start)
+    .reduce<{ parts: string[]; open: boolean }>(
+      (acc, line) => {
+        if (!acc.open) return acc;
+        const text = line.replace(/^[\s│]*/, '').replace(/\s+$/, '');
+        const isContinued = text.endsWith('\\');
+        return {
+          parts: [
+            ...acc.parts,
+            isContinued ? text.slice(0, -1).trimEnd() : text,
+          ],
+          open: isContinued,
+        };
+      },
+      { parts: [], open: true },
+    );
+  return collected.parts
+    .join(' ')
+    .replace(/^.*?(rhx route\.guard\.partition)/, '$1');
 };
 
 /**
@@ -267,7 +279,9 @@ const asRepairCommandFromStdout = (input: { stdout: string }): string => {
 describe('driver.route.partition-journey.acceptance', () => {
   given('[case1] a guarded stone whose lane overflows (arc A)', () => {
     const scene = useBeforeAll(async () => {
-      const tempDir = await genRepoOnBranch({ slug: 'route-partition-journey' });
+      const tempDir = await genRepoOnBranch({
+        slug: 'route-partition-journey',
+      });
       return { tempDir };
     });
 
@@ -275,9 +289,12 @@ describe('driver.route.partition-journey.acceptance', () => {
       const result = useThen('the mass is written', async () => {
         setDomainMass({ tempDir: scene.tempDir, domain: 'alpha' });
         setDomainMass({ tempDir: scene.tempDir, domain: 'beta' });
-        const status = await execAsync('git status --porcelain --untracked-files=all', {
-          cwd: scene.tempDir,
-        });
+        const status = await execAsync(
+          'git status --porcelain --untracked-files=all',
+          {
+            cwd: scene.tempDir,
+          },
+        );
         return { status: status.stdout };
       });
 
@@ -288,7 +305,9 @@ describe('driver.route.partition-journey.acceptance', () => {
 
       then('no partition set is declared yet', () => {
         expect(
-          fs.existsSync(path.join(scene.tempDir, ROUTE, '.route', 'partitions.json')),
+          fs.existsSync(
+            path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
+          ),
         ).toEqual(false);
       });
 
@@ -298,11 +317,14 @@ describe('driver.route.partition-journey.acceptance', () => {
     });
 
     when('[t1] the driver arrives; the lane overflows', () => {
-      const result = useThen('the guard runs the lane, which refuses', async () => {
-        const invoked = await setStoneArrived({ tempDir: scene.tempDir });
-        const given = getOneLatestGiven({ tempDir: scene.tempDir });
-        return { invoked, given };
-      });
+      const result = useThen(
+        'the guard runs the lane, which refuses',
+        async () => {
+          const invoked = await setStoneArrived({ tempDir: scene.tempDir });
+          const given = getOneLatestGiven({ tempDir: scene.tempDir });
+          return { invoked, given };
+        },
+      );
 
       then('the stone does not pass (exit 2)', () => {
         expect(result.invoked.code).toEqual(2);
@@ -315,35 +337,54 @@ describe('driver.route.partition-journey.acceptance', () => {
         expect(result.invoked.stdout).toContain('reason = reviewer constraint');
       });
 
-      then('the halt points the driver at the given that names the lever', () => {
-        expect(result.invoked.stdout).toMatch(
-          new RegExp(`given: ${ROUTE.replace(/\./g, '\\.')}/\\.reviews/peer/\\S+\\.given\\.by_peer\\.${SLUG}\\.md`),
-        );
-      });
+      then(
+        'the halt points the driver at the given that names the lever',
+        () => {
+          expect(result.invoked.stdout).toMatch(
+            new RegExp(
+              `given: ${ROUTE.replace(/\./g, '\\.')}/\\.reviews/peer/\\S+\\.given\\.by_peer\\.${SLUG}\\.md`,
+            ),
+          );
+        },
+      );
 
       then('the lane names the overflow', () => {
         expect(result.given).toContain('prompt exceeds 75% of context window');
       });
 
-      then('the lane names the partition lever, since the mass is added', () => {
-        expect(result.given).toContain('partition what the rubric grades');
-        // 🔴 the overlap is expected, and cheap — graded once, read from cache
-        expect(result.given).toContain(
-          'list the shared context in every partition that reads it too — route yields, briefs, shared types',
-        );
-        expect(result.given).toContain('the overlap is graded once');
-        expect(result.given).toContain('every partition reads it from cache');
-        expect(result.given).toContain(`--partition 'alpha=src/alpha/**,${ROUTE}/**'`);
-        expect(result.given).toContain(`--partition 'beta=src/beta/**,${ROUTE}/**'`);
-        expect(result.given).toContain('rhx route.guard.partition --for review --peer @all');
-      });
+      then(
+        'the lane names the partition lever, since the mass is added',
+        () => {
+          expect(result.given).toContain('partition what the rubric grades');
+          // 🔴 the overlap is expected, and cheap — graded once, read from cache
+          expect(result.given).toContain(
+            'list the shared context in every partition that reads it too — route yields, briefs, shared types',
+          );
+          expect(result.given).toContain('the overlap is graded once');
+          expect(result.given).toContain('every partition reads it from cache');
+          expect(result.given).toContain(
+            `--partition 'alpha=src/alpha/**,${ROUTE}/**'`,
+          );
+          expect(result.given).toContain(
+            `--partition 'beta=src/beta/**,${ROUTE}/**'`,
+          );
+          expect(result.given).toContain(
+            'rhx route.guard.partition --for review --peer @all',
+          );
+        },
+      );
 
-      then('the lane names the bind lever too, for mass the rubric does not grade', () => {
-        // the two levers answer one question — does the rubric grade this mass? — so both are
-        // named, whatever kind of mass leads
-        expect(result.given).toContain("--paths-wout '<subtree>/**'");
-        expect(result.given).toContain('or cut a subtree the rubric does not grade');
-      });
+      then(
+        'the lane names the bind lever too, for mass the rubric does not grade',
+        () => {
+          // the two levers answer one question — does the rubric grade this mass? — so both are
+          // named, whatever kind of mass leads
+          expect(result.given).toContain("--paths-wout '<subtree>/**'");
+          expect(result.given).toContain(
+            'or cut a subtree the rubric does not grade',
+          );
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(asNormalized(result.invoked.stdout)).toMatchSnapshot('stdout');
@@ -379,12 +420,15 @@ describe('driver.route.partition-journey.acceptance', () => {
         });
       });
 
-      then('the set claims every changed file — the review logs of t1 are not owed a partition', () => {
-        expect(result.stdout).toContain('🦉 partitions declared');
-        expect(result.stdout).toContain('unclaimed: 0');
-        expect(result.stdout).toContain('alpha: 4 narrow targets');
-        expect(result.stdout).toContain('beta: 4 narrow targets');
-      });
+      then(
+        'the set claims every changed file — the review logs of t1 are not owed a partition',
+        () => {
+          expect(result.stdout).toContain('🦉 partitions declared');
+          expect(result.stdout).toContain('unclaimed: 0');
+          expect(result.stdout).toContain('alpha: 4 narrow targets');
+          expect(result.stdout).toContain('beta: 4 narrow targets');
+        },
+      );
 
       then('the declaration holds the set under @all', () => {
         const json = JSON.parse(
@@ -394,7 +438,10 @@ describe('driver.route.partition-journey.acceptance', () => {
           ),
         );
         expect(json).toEqual({
-          all: [`alpha={src/alpha/**,${ROUTE}/**}`, `beta={src/beta/**,${ROUTE}/**}`],
+          all: [
+            `alpha={src/alpha/**,${ROUTE}/**}`,
+            `beta={src/beta/**,${ROUTE}/**}`,
+          ],
           byPeer: {},
         });
       });
@@ -445,7 +492,9 @@ describe('driver.route.partition-journey.acceptance', () => {
 
       then('the ack matches snapshot', () => {
         // every journey step is pinned (rule.require.snapshot-every-journey-step)
-        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot('absorbed');
+        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot(
+          'absorbed',
+        );
       });
 
       then('the .taken sits beside the given', () => {
@@ -457,12 +506,20 @@ describe('driver.route.partition-journey.acceptance', () => {
 
     when('[t3] the driver adds a file in a dir the set does not list', () => {
       const result = useThen('the file is written', async () => {
-        const absolute = path.join(scene.tempDir, 'src', 'gamma', 'getGamma.ts');
+        const absolute = path.join(
+          scene.tempDir,
+          'src',
+          'gamma',
+          'getGamma.ts',
+        );
         fs.mkdirSync(path.dirname(absolute), { recursive: true });
         fs.writeFileSync(absolute, 'export const getGamma = () => 3;\n');
-        const status = await execAsync('git status --porcelain --untracked-files=all', {
-          cwd: scene.tempDir,
-        });
+        const status = await execAsync(
+          'git status --porcelain --untracked-files=all',
+          {
+            cwd: scene.tempDir,
+          },
+        );
         return { status: status.stdout };
       });
 
@@ -476,64 +533,82 @@ describe('driver.route.partition-journey.acceptance', () => {
       });
     });
 
-    const refusal = useWhen('[t4] the driver arrives; the entrance refuses the set', () => {
-      const result = useThen('the stone refuses before any lane', async () => {
-        const peerBefore = getAllPeerFileNames({ tempDir: scene.tempDir });
-        const invoked = await setStoneArrived({ tempDir: scene.tempDir });
-        const peerAfter = getAllPeerFileNames({ tempDir: scene.tempDir });
-        const passage = fs.readFileSync(
-          path.join(scene.tempDir, ROUTE, '.route', 'passage.jsonl'),
-          'utf-8',
+    const refusal = useWhen(
+      '[t4] the driver arrives; the entrance refuses the set',
+      () => {
+        const result = useThen(
+          'the stone refuses before any lane',
+          async () => {
+            const peerBefore = getAllPeerFileNames({ tempDir: scene.tempDir });
+            const invoked = await setStoneArrived({ tempDir: scene.tempDir });
+            const peerAfter = getAllPeerFileNames({ tempDir: scene.tempDir });
+            const passage = fs.readFileSync(
+              path.join(scene.tempDir, ROUTE, '.route', 'passage.jsonl'),
+              'utf-8',
+            );
+            return { invoked, peerBefore, peerAfter, passage };
+          },
         );
-        return { invoked, peerBefore, peerAfter, passage };
-      });
 
-      then('the stone does not pass (exit 2)', () => {
-        expect(result.invoked.code).toEqual(2);
-      });
+        then('the stone does not pass (exit 2)', () => {
+          expect(result.invoked.code).toEqual(2);
+        });
 
-      then('the refusal says no lane runs until the partitions cover', () => {
-        expect(result.invoked.stdout).toContain(
-          '🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them',
+        then('the refusal says no lane runs until the partitions cover', () => {
+          expect(result.invoked.stdout).toContain(
+            '🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them',
+          );
+          expect(result.invoked.stdout).toContain(
+            `🗿 route.guard.partition, on stone ${STONE}`,
+          );
+        });
+
+        then(
+          'the refusal names the unclaimed file and where the repair puts it',
+          () => {
+            expect(result.invoked.stdout).toContain(
+              '1 changed file sits in no partition',
+            );
+            expect(result.invoked.stdout).toMatch(
+              /src\/gamma\/getGamma\.ts → \S+ \(\+ src\/gamma\/\*\*\)/,
+            );
+          },
         );
-        expect(result.invoked.stdout).toContain(
-          `🗿 route.guard.partition, on stone ${STONE}`,
-        );
-      });
 
-      then('the refusal names the unclaimed file and where the repair puts it', () => {
-        expect(result.invoked.stdout).toContain('1 changed file sits in no partition');
-        expect(result.invoked.stdout).toMatch(/src\/gamma\/getGamma\.ts → \S+ \(\+ src\/gamma\/\*\*\)/);
-      });
+        then('the refusal prints the repair command', () => {
+          expect(result.invoked.stdout).toContain(
+            'repair — run this, then re-arrive',
+          );
+          expect(result.invoked.stdout).toContain(
+            `rhx route.guard.partition --route ${ROUTE} --for review --peer @all`,
+          );
+          expect(result.invoked.stdout).toContain('--mode apply');
+        });
 
-      then('the refusal prints the repair command', () => {
-        expect(result.invoked.stdout).toContain('repair — run this, then re-arrive');
-        expect(result.invoked.stdout).toContain(
-          `rhx route.guard.partition --route ${ROUTE} --for review --peer @all`,
-        );
-        expect(result.invoked.stdout).toContain('--mode apply');
-      });
+        then('the blocker recorded is review.peer.malpartitioned', () => {
+          const rows = result.passage
+            .trim()
+            .split('\n')
+            .map(
+              (line) =>
+                JSON.parse(line) as { status: string; blocker?: string },
+            );
+          const latest = rows[rows.length - 1];
+          expect(latest?.status).toEqual('blocked');
+          expect(latest?.blocker).toEqual('review.peer.malpartitioned');
+        });
 
-      then('the blocker recorded is review.peer.malpartitioned', () => {
-        const rows = result.passage
-          .trim()
-          .split('\n')
-          .map((line) => JSON.parse(line) as { status: string; blocker?: string });
-        const latest = rows[rows.length - 1];
-        expect(latest?.status).toEqual('blocked');
-        expect(latest?.blocker).toEqual('review.peer.malpartitioned');
-      });
+        then('no lane ran — the peer dir is unchanged', () => {
+          expect(result.peerAfter).toEqual(result.peerBefore);
+        });
 
-      then('no lane ran — the peer dir is unchanged', () => {
-        expect(result.peerAfter).toEqual(result.peerBefore);
-      });
+        then('stdout matches snapshot', () => {
+          expect(asNormalized(result.invoked.stdout)).toMatchSnapshot();
+        });
 
-      then('stdout matches snapshot', () => {
-        expect(asNormalized(result.invoked.stdout)).toMatchSnapshot();
-      });
-
-      return result;
-    });
+        return result;
+      },
+    );
 
     when('[t5] the driver runs the printed command verbatim', () => {
       const result = useThen('the repair is written', async () => {
@@ -556,20 +631,28 @@ describe('driver.route.partition-journey.acceptance', () => {
         return { command, ran, json };
       });
 
-      then('the command lifted from stdout is the one route.guard.partition apply', () => {
-        expect(result.command.startsWith('rhx route.guard.partition')).toEqual(true);
-        expect(result.command).toContain('--mode apply');
-        expect(result.command).not.toContain('\\');
-      });
+      then(
+        'the command lifted from stdout is the one route.guard.partition apply',
+        () => {
+          expect(
+            result.command.startsWith('rhx route.guard.partition'),
+          ).toEqual(true);
+          expect(result.command).toContain('--mode apply');
+          expect(result.command).not.toContain('\\');
+        },
+      );
 
-      then('the declaration now claims the new dir, beside the two prior', () => {
-        expect(result.json.all).toContain(`alpha=src/alpha/**,${ROUTE}/**`);
-        expect(result.json.all).toContain(`beta=src/beta/**,${ROUTE}/**`);
-        expect(result.json.all).toContain(`gamma=src/gamma/**,${ROUTE}/**`);
-        expect(
-          result.json.all?.every((value) => value.includes(`${ROUTE}/**`)),
-        ).toEqual(true);
-      });
+      then(
+        'the declaration now claims the new dir, beside the two prior',
+        () => {
+          expect(result.json.all).toContain(`alpha=src/alpha/**,${ROUTE}/**`);
+          expect(result.json.all).toContain(`beta=src/beta/**,${ROUTE}/**`);
+          expect(result.json.all).toContain(`gamma=src/gamma/**,${ROUTE}/**`);
+          expect(
+            result.json.all?.every((value) => value.includes(`${ROUTE}/**`)),
+          ).toEqual(true);
+        },
+      );
 
       then('the command and its stdout match snapshot', () => {
         expect({
@@ -597,29 +680,43 @@ describe('driver.route.partition-journey.acceptance', () => {
         });
 
         then('the lane is not a malfunction', () => {
-          expect(result.invoked.stdout.toLowerCase()).not.toContain('malfunction');
-          expect(result.given).not.toContain('prompt exceeds 75% of context window');
+          expect(result.invoked.stdout.toLowerCase()).not.toContain(
+            'malfunction',
+          );
+          expect(result.given).not.toContain(
+            'prompt exceeds 75% of context window',
+          );
         });
 
-        then('the lane split into the declared partitions — the two prior and the repair', () => {
-          expect(result.report).toContain('## partition: alpha');
-          expect(result.report).toContain('## partition: beta');
-          expect(result.report).toContain('## partition: gamma');
-        });
+        then(
+          'the lane split into the declared partitions — the two prior and the repair',
+          () => {
+            expect(result.report).toContain('## partition: alpha');
+            expect(result.report).toContain('## partition: beta');
+            expect(result.report).toContain('## partition: gamma');
+          },
+        );
 
         then('every partition returned a verdict — none failed', () => {
           expect(result.report).not.toContain('this partition did not review');
         });
 
-        then('every given is under the lane slug — no partition minted its own', () => {
-          const givens = result.peer.filter(
-            (name) => name.includes('_.given.by_peer.') && !name.endsWith('.report.md'),
-          );
-          expect(givens.length).toBeGreaterThan(0);
-          expect(
-            givens.every((name) => name.endsWith(`_.given.by_peer.${SLUG}.md`)),
-          ).toEqual(true);
-        });
+        then(
+          'every given is under the lane slug — no partition minted its own',
+          () => {
+            const givens = result.peer.filter(
+              (name) =>
+                name.includes('_.given.by_peer.') &&
+                !name.endsWith('.report.md'),
+            );
+            expect(givens.length).toBeGreaterThan(0);
+            expect(
+              givens.every((name) =>
+                name.endsWith(`_.given.by_peer.${SLUG}.md`),
+              ),
+            ).toEqual(true);
+          },
+        );
 
         then('the merged tally carries both numeric counts', () => {
           expect(result.given).toMatch(/\d+ blockers?/);
@@ -631,7 +728,11 @@ describe('driver.route.partition-journey.acceptance', () => {
           // snapshot holds each partition's header and its target line, never the verdict
           const skeleton = result.report
             .split('\n')
-            .filter((line) => line.startsWith('## partition:') || line.startsWith('- targets:'))
+            .filter(
+              (line) =>
+                line.startsWith('## partition:') ||
+                line.startsWith('- targets:'),
+            )
             .join('\n');
           expect(skeleton).toMatchSnapshot();
         });
@@ -666,7 +767,11 @@ describe('driver.route.partition-journey.acceptance', () => {
                 })
               : null;
             const invoked = await setStoneArrived({ tempDir });
-            if (!getAllPeerFileNames({ tempDir }).some((name) => name.endsWith('.report.md')))
+            if (
+              !getAllPeerFileNames({ tempDir }).some((name) =>
+                name.endsWith('.report.md'),
+              )
+            )
               throw new UnexpectedCodePathError(
                 `the ${input.slug} run wrote no report`,
                 {
@@ -682,7 +787,10 @@ describe('driver.route.partition-journey.acceptance', () => {
               logs: getAllLogArtifacts({ tempDir }),
             };
           };
-          const bare = await runOnce({ slug: 'route-partition-fit-bare', declare: false });
+          const bare = await runOnce({
+            slug: 'route-partition-fit-bare',
+            declare: false,
+          });
           const declared = await runOnce({
             slug: 'route-partition-fit-declared',
             declare: true,
@@ -695,26 +803,37 @@ describe('driver.route.partition-journey.acceptance', () => {
         });
 
         then('both runs exit alike', () => {
-          expect(result.declared.invoked.code).toEqual(result.bare.invoked.code);
+          expect(result.declared.invoked.code).toEqual(
+            result.bare.invoked.code,
+          );
         });
 
         then('the declared run never split', () => {
-          expect(result.declared.report).not.toMatch(/split into \d+ partitions/);
+          expect(result.declared.report).not.toMatch(
+            /split into \d+ partitions/,
+          );
         });
 
         then('guard stdout is identical, verdict counts aside', () => {
-          expect(asVerdictMasked(asNormalized(result.declared.invoked.stdout))).toEqual(
-            asVerdictMasked(asNormalized(result.bare.invoked.stdout)),
-          );
+          expect(
+            asVerdictMasked(asNormalized(result.declared.invoked.stdout)),
+          ).toEqual(asVerdictMasked(asNormalized(result.bare.invoked.stdout)));
         });
 
-        then('the review report head is identical, verdict counts aside', () => {
-          // the body under the head is brain prose, which varies run to run whether or not
-          // a set is declared; the head is what the tool composes
-          expect(asVerdictMasked(asNormalized(asReportHead(result.declared.report)))).toEqual(
-            asVerdictMasked(asNormalized(asReportHead(result.bare.report))),
-          );
-        });
+        then(
+          'the review report head is identical, verdict counts aside',
+          () => {
+            // the body under the head is brain prose, which varies run to run whether or not
+            // a set is declared; the head is what the tool composes
+            expect(
+              asVerdictMasked(
+                asNormalized(asReportHead(result.declared.report)),
+              ),
+            ).toEqual(
+              asVerdictMasked(asNormalized(asReportHead(result.bare.report))),
+            );
+          },
+        );
 
         then('neither report carries a partition section', () => {
           expect(result.bare.report).not.toContain('## partition:');
@@ -752,18 +871,32 @@ describe('driver.route.partition-journey.acceptance', () => {
     });
 
     when('[t0] the driver edits the two heavy domains and arrives', () => {
-      const result = useThen('the guard runs the lane, which refuses', async () => {
-        // a rewrite of every line of each settled file reads as a modification, never an
-        // addition, and its hunks carry the whole body
-        setDomainMass({ tempDir: scene.tempDir, domain: 'alpha', word: 'fresh' });
-        setDomainMass({ tempDir: scene.tempDir, domain: 'beta', word: 'fresh' });
-        const status = await execAsync('git status --porcelain --untracked-files=all', {
-          cwd: scene.tempDir,
-        });
-        const invoked = await setStoneArrived({ tempDir: scene.tempDir });
-        const given = getOneLatestGiven({ tempDir: scene.tempDir });
-        return { status: status.stdout, invoked, given };
-      });
+      const result = useThen(
+        'the guard runs the lane, which refuses',
+        async () => {
+          // a rewrite of every line of each settled file reads as a modification, never an
+          // addition, and its hunks carry the whole body
+          setDomainMass({
+            tempDir: scene.tempDir,
+            domain: 'alpha',
+            word: 'fresh',
+          });
+          setDomainMass({
+            tempDir: scene.tempDir,
+            domain: 'beta',
+            word: 'fresh',
+          });
+          const status = await execAsync(
+            'git status --porcelain --untracked-files=all',
+            {
+              cwd: scene.tempDir,
+            },
+          );
+          const invoked = await setStoneArrived({ tempDir: scene.tempDir });
+          const given = getOneLatestGiven({ tempDir: scene.tempDir });
+          return { status: status.stdout, invoked, given };
+        },
+      );
 
       then('the heavy files read as modified, never added', () => {
         expect(result.status).toContain(' M src/alpha/alphaPart0.ts');
@@ -779,15 +912,23 @@ describe('driver.route.partition-journey.acceptance', () => {
         expect(result.given).toMatch(/src\/alpha\s+\S+ bodies · \S+ edits/);
       });
 
-      then('🔴 the lane names the partition lever, so graded mass stays graded', () => {
-        expect(result.given).toContain('partition what the rubric grades');
-        expect(result.given).toContain('rhx route.guard.partition --for review --peer @all');
-      });
+      then(
+        '🔴 the lane names the partition lever, so graded mass stays graded',
+        () => {
+          expect(result.given).toContain('partition what the rubric grades');
+          expect(result.given).toContain(
+            'rhx route.guard.partition --for review --peer @all',
+          );
+        },
+      );
 
-      then('the lane names the bind lever as the alternative, and names no heavy subtree', () => {
-        expect(result.given).toContain("--paths-wout '<subtree>/**'");
-        expect(result.given).not.toContain("--paths-wout 'src/alpha/**'");
-      });
+      then(
+        'the lane names the bind lever as the alternative, and names no heavy subtree',
+        () => {
+          expect(result.given).toContain("--paths-wout '<subtree>/**'");
+          expect(result.given).not.toContain("--paths-wout 'src/alpha/**'");
+        },
+      );
 
       then('the given matches snapshot', () => {
         expect(asNormalized(result.given)).toMatchSnapshot('given');
@@ -800,66 +941,92 @@ describe('driver.route.partition-journey.acceptance', () => {
    * .why = the tool never splits a partition again, so the driver must be told at the
    *        cheapest moment — before any brain is paid — which partition to narrow
    */
-  given('[case4] a guarded stone whose declared partition still overflows alone', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genRepoOnBranch({ slug: 'route-partition-heavy' });
-      return { tempDir };
-    });
-
-    when('[t0] the driver declares a partition that holds both heavy domains, and arrives', () => {
-      const result = useThen('the lane refuses before any brain call', async () => {
-        setDomainMass({ tempDir: scene.tempDir, domain: 'alpha' });
-        setDomainMass({ tempDir: scene.tempDir, domain: 'beta' });
-        const absolute = path.join(scene.tempDir, 'src', 'gamma', 'getGamma.ts');
-        fs.mkdirSync(path.dirname(absolute), { recursive: true });
-        fs.writeFileSync(absolute, 'export const getGamma = () => 3;\n');
-        const declared = await invokeRouteSkill({
-          skill: 'route.guard.partition',
-          args: {
-            route: ROUTE,
-            for: 'review',
-            peer: '@all',
-            partition: [
-              `heavy={src/alpha/**,src/beta/**,${ROUTE}/**}`,
-              `gamma={src/gamma/**,${ROUTE}/**}`,
-            ],
-            mode: 'apply',
-          },
-          cwd: scene.tempDir,
+  given(
+    '[case4] a guarded stone whose declared partition still overflows alone',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genRepoOnBranch({
+          slug: 'route-partition-heavy',
         });
-        const invoked = await setStoneArrived({ tempDir: scene.tempDir });
-        const given = getOneLatestGiven({ tempDir: scene.tempDir });
-        return { declared, invoked, given };
+        return { tempDir };
       });
 
-      then('the set was declared', () => {
-        expect(result.declared.code).toEqual(0);
-      });
+      when(
+        '[t0] the driver declares a partition that holds both heavy domains, and arrives',
+        () => {
+          const result = useThen(
+            'the lane refuses before any brain call',
+            async () => {
+              setDomainMass({ tempDir: scene.tempDir, domain: 'alpha' });
+              setDomainMass({ tempDir: scene.tempDir, domain: 'beta' });
+              const absolute = path.join(
+                scene.tempDir,
+                'src',
+                'gamma',
+                'getGamma.ts',
+              );
+              fs.mkdirSync(path.dirname(absolute), { recursive: true });
+              fs.writeFileSync(absolute, 'export const getGamma = () => 3;\n');
+              const declared = await invokeRouteSkill({
+                skill: 'route.guard.partition',
+                args: {
+                  route: ROUTE,
+                  for: 'review',
+                  peer: '@all',
+                  partition: [
+                    `heavy={src/alpha/**,src/beta/**,${ROUTE}/**}`,
+                    `gamma={src/gamma/**,${ROUTE}/**}`,
+                  ],
+                  mode: 'apply',
+                },
+                cwd: scene.tempDir,
+              });
+              const invoked = await setStoneArrived({ tempDir: scene.tempDir });
+              const given = getOneLatestGiven({ tempDir: scene.tempDir });
+              return { declared, invoked, given };
+            },
+          );
 
-      then('the stone does not pass (exit 2)', () => {
-        expect(result.invoked.code).toEqual(2);
-      });
+          then('the set was declared', () => {
+            expect(result.declared.code).toEqual(0);
+          });
 
-      then('the lane names the partition that still overflows alone', () => {
-        expect(result.given).toContain('1 partition still overflows alone');
-        expect(result.given).toMatch(/heavy: ~\S+ tokens, 8 files/);
-      });
+          then('the stone does not pass (exit 2)', () => {
+            expect(result.invoked.code).toEqual(2);
+          });
 
-      then('the lane names the fix — narrow it, or split it in two', () => {
-        expect(result.given).toContain(
-          'fix: narrow that partition, or split it in two — the tool never splits a partition again',
-        );
-      });
+          then(
+            'the lane names the partition that still overflows alone',
+            () => {
+              expect(result.given).toContain(
+                '1 partition still overflows alone',
+              );
+              expect(result.given).toMatch(/heavy: ~\S+ tokens, 8 files/);
+            },
+          );
 
-      then('the lane names the guard command that redeclares the set', () => {
-        expect(result.given).toContain('rhx route.guard.partition --for review --peer @all');
-      });
+          then('the lane names the fix — narrow it, or split it in two', () => {
+            expect(result.given).toContain(
+              'fix: narrow that partition, or split it in two — the tool never splits a partition again',
+            );
+          });
 
-      then('the given matches snapshot', () => {
-        expect(asNormalized(result.given)).toMatchSnapshot('given');
-      });
-    });
-  });
+          then(
+            'the lane names the guard command that redeclares the set',
+            () => {
+              expect(result.given).toContain(
+                'rhx route.guard.partition --for review --peer @all',
+              );
+            },
+          );
+
+          then('the given matches snapshot', () => {
+            expect(asNormalized(result.given)).toMatchSnapshot('given');
+          });
+        },
+      );
+    },
+  );
 
   /**
    * .what = 🔴 CLAMP. a written set that holds a stale glob, cured by the one paste it prints
@@ -867,138 +1034,151 @@ describe('driver.route.partition-journey.acceptance', () => {
    *        a re-declaration of every partition. the applied tree now closes the flag on an
    *        `--prune` command, and that command must run verbatim. brain-free: no stone arrives
    */
-  given('[case5] a declared set that holds a glob no changed file matches', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genRepoOnBranch({ slug: 'route-partition-prune' });
-      const absolute = path.join(tempDir, 'src', 'alpha', 'getAlpha.ts');
-      fs.mkdirSync(path.dirname(absolute), { recursive: true });
-      fs.writeFileSync(absolute, 'export const getAlpha = () => 1;\n');
-      return { tempDir };
-    });
+  given(
+    '[case5] a declared set that holds a glob no changed file matches',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genRepoOnBranch({
+          slug: 'route-partition-prune',
+        });
+        const absolute = path.join(tempDir, 'src', 'alpha', 'getAlpha.ts');
+        fs.mkdirSync(path.dirname(absolute), { recursive: true });
+        fs.writeFileSync(absolute, 'export const getAlpha = () => 1;\n');
+        return { tempDir };
+      });
 
-    const declared = useWhen('[t0] the driver declares a set with a stale glob', () => {
-      const result = useThen('the write succeeds', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.partition',
-          args: {
-            route: ROUTE,
-            for: 'review',
-            peer: '@all',
-            partition: [`alpha=src/alpha/**,src/gone/**,${ROUTE}/**`],
-            mode: 'apply',
-          },
-          cwd: scene.tempDir,
-        }),
+      const declared = useWhen(
+        '[t0] the driver declares a set with a stale glob',
+        () => {
+          const result = useThen('the write succeeds', async () =>
+            invokeRouteSkill({
+              skill: 'route.guard.partition',
+              args: {
+                route: ROUTE,
+                for: 'review',
+                peer: '@all',
+                partition: [`alpha=src/alpha/**,src/gone/**,${ROUTE}/**`],
+                mode: 'apply',
+              },
+              cwd: scene.tempDir,
+            }),
+          );
+
+          then('exit code is 0', () => {
+            expect(result.code).toEqual(0);
+          });
+
+          then(
+            'the stale glob is flagged, and the flag closes on its prune',
+            () => {
+              expect(result.stdout).toContain('alpha: src/gone/**');
+              expect(result.stdout).toContain(
+                `stale? drop them: rhx route.guard.partition --route ${ROUTE} --for review --peer @all --prune 'src/gone/**' --mode apply`,
+              );
+            },
+          );
+
+          then('stdout matches snapshot', () => {
+            expect(asNormalized(result.stdout)).toMatchSnapshot();
+          });
+
+          return result;
+        },
       );
 
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('the stale glob is flagged, and the flag closes on its prune', () => {
-        expect(result.stdout).toContain('alpha: src/gone/**');
-        expect(result.stdout).toContain(
-          `stale? drop them: rhx route.guard.partition --route ${ROUTE} --for review --peer @all --prune 'src/gone/**' --mode apply`,
-        );
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(asNormalized(result.stdout)).toMatchSnapshot();
-      });
-
-      return result;
-    });
-
-    when('[t1] the driver runs the printed prune verbatim', () => {
-      const result = useThen('the prune is written', async () => {
-        const line = declared.stdout
-          .split('\n')
-          .find((one) => one.includes('stale? drop them: '));
-        if (!line)
-          throw new UnexpectedCodePathError('no prune command in stdout', {
-            stdout: declared.stdout,
-            hint: 'the applied tree must close a stale-glob flag on its --prune command',
+      when('[t1] the driver runs the printed prune verbatim', () => {
+        const result = useThen('the prune is written', async () => {
+          const line = declared.stdout
+            .split('\n')
+            .find((one) => one.includes('stale? drop them: '));
+          if (!line)
+            throw new UnexpectedCodePathError('no prune command in stdout', {
+              stdout: declared.stdout,
+              hint: 'the applied tree must close a stale-glob flag on its --prune command',
+            });
+          const command = line.slice(
+            line.indexOf('stale? drop them: ') + 'stale? drop them: '.length,
+          );
+          const ran = await execAsync(command, {
+            cwd: scene.tempDir,
+            env: {
+              ...process.env,
+              PATH: `${path.join(scene.tempDir, 'node_modules', '.bin')}${path.delimiter}${process.env.PATH ?? ''}`,
+            },
           });
-        const command = line.slice(
-          line.indexOf('stale? drop them: ') + 'stale? drop them: '.length,
-        );
-        const ran = await execAsync(command, {
-          cwd: scene.tempDir,
-          env: {
-            ...process.env,
-            PATH: `${path.join(scene.tempDir, 'node_modules', '.bin')}${path.delimiter}${process.env.PATH ?? ''}`,
-          },
+          const json = JSON.parse(
+            fs.readFileSync(
+              path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
+              'utf-8',
+            ),
+          ) as { all: string[] | null; byPeer: Record<string, string[]> };
+          return { command, ran, json };
         });
-        const json = JSON.parse(
-          fs.readFileSync(
+
+        then('the stale glob is gone, and the rest of the set stands', () => {
+          expect(result.json.all).toEqual([`alpha=src/alpha/**,${ROUTE}/**`]);
+        });
+
+        then('the tree names the prune, and flags no stale glob', () => {
+          expect(result.ran.stdout).toContain(
+            'prunes: 1 glob, every other partition kept as held',
+          );
+          expect(result.ran.stdout).toContain('src/gone/** ← wherever held');
+          expect(result.ran.stdout).not.toContain('matched no changed file');
+        });
+
+        then('the command and its stdout match snapshot', () => {
+          expect({
+            command: result.command,
+            stdout: asNormalized(result.ran.stdout),
+          }).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] the driver prunes a glob the set does not hold', () => {
+        const result = useThen('the prune refuses', async () => {
+          const before = fs.readFileSync(
             path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
             'utf-8',
-          ),
-        ) as { all: string[] | null; byPeer: Record<string, string[]> };
-        return { command, ran, json };
-      });
-
-      then('the stale glob is gone, and the rest of the set stands', () => {
-        expect(result.json.all).toEqual([`alpha=src/alpha/**,${ROUTE}/**`]);
-      });
-
-      then('the tree names the prune, and flags no stale glob', () => {
-        expect(result.ran.stdout).toContain('prunes: 1 glob, every other partition kept as held');
-        expect(result.ran.stdout).toContain('src/gone/** ← wherever held');
-        expect(result.ran.stdout).not.toContain('matched no changed file');
-      });
-
-      then('the command and its stdout match snapshot', () => {
-        expect({
-          command: result.command,
-          stdout: asNormalized(result.ran.stdout),
-        }).toMatchSnapshot();
-      });
-    });
-
-    when('[t2] the driver prunes a glob the set does not hold', () => {
-      const result = useThen('the prune refuses', async () => {
-        const before = fs.readFileSync(
-          path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
-          'utf-8',
-        );
-        const invoked = await invokeRouteSkill({
-          skill: 'route.guard.partition',
-          args: {
-            route: ROUTE,
-            for: 'review',
-            peer: '@all',
-            prune: 'src/alpa/**',
-            mode: 'apply',
-          },
-          cwd: scene.tempDir,
+          );
+          const invoked = await invokeRouteSkill({
+            skill: 'route.guard.partition',
+            args: {
+              route: ROUTE,
+              for: 'review',
+              peer: '@all',
+              prune: 'src/alpa/**',
+              mode: 'apply',
+            },
+            cwd: scene.tempDir,
+          });
+          const after = fs.readFileSync(
+            path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
+            'utf-8',
+          );
+          return { invoked, before, after };
         });
-        const after = fs.readFileSync(
-          path.join(scene.tempDir, ROUTE, '.route', 'partitions.json'),
-          'utf-8',
-        );
-        return { invoked, before, after };
-      });
 
-      then('exit code is 2', () => {
-        expect(result.invoked.code).toEqual(2);
-      });
+        then('exit code is 2', () => {
+          expect(result.invoked.code).toEqual(2);
+        });
 
-      then('it names the glob, and lists what each partition holds', () => {
-        const output = result.invoked.stdout + result.invoked.stderr;
-        expect(output).toContain('--prune src/alpa/**');
-        expect(output).toContain('src/alpha/**');
-      });
+        then('it names the glob, and lists what each partition holds', () => {
+          const output = result.invoked.stdout + result.invoked.stderr;
+          expect(output).toContain('--prune src/alpa/**');
+          expect(output).toContain('src/alpha/**');
+        });
 
-      then('a refusal writes naught', () => {
-        expect(result.after).toEqual(result.before);
-      });
+        then('a refusal writes naught', () => {
+          expect(result.after).toEqual(result.before);
+        });
 
-      then('the refusal matches snapshot', () => {
-        expect(
-          asNormalized(result.invoked.stdout + result.invoked.stderr),
-        ).toMatchSnapshot();
+        then('the refusal matches snapshot', () => {
+          expect(
+            asNormalized(result.invoked.stdout + result.invoked.stderr),
+          ).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

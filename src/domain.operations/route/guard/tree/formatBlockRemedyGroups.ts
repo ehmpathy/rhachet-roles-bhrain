@@ -1,13 +1,13 @@
-import { asReviewPartitionDeclarationText } from '../../../review/partition/asReviewPartitionDeclarationText';
-import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
-import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartitionCommand';
-import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
-import { formatReviewBudgetTopupCommand } from '../review/peer/formatReviewBudgetTopupCommand';
+import { asReviewPartitionDeclarationText } from '@src/domain.operations/review/partition/asReviewPartitionDeclarationText';
+import { asGuardBindNarrowLever } from '@src/domain.operations/route/guard/asGuardBindNarrowLever';
+import { asRouteGuardPartitionCommand } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionCommand';
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
+import { formatReviewBudgetTopupCommand } from '@src/domain.operations/route/guard/review/peer/formatReviewBudgetTopupCommand';
 import {
   asUrgentConcessionSlugs,
   isRouteGuardConcessionExhaustion,
   isRouteGuardUrgentConcessionExhaustion,
-} from '../review/peer/genRouteGuardExhaustedReason';
+} from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
 
 /**
  * .what = one remedy offered by a halt: the label a human reads, and the command that acts on it

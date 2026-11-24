@@ -1,6 +1,5 @@
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { execAsync } from './.test/invokeRouteSkill';
 import {
   createGoalYaml,
   genTempDirForGoals,
@@ -8,6 +7,7 @@ import {
   invokeGoalTriageNext,
   sanitizeGoalOutputForSnapshot,
 } from './.test/invokeGoalSkill';
+import { execAsync } from './.test/invokeRouteSkill';
 
 /**
  * .what = acceptance tests for goal.triage.next hook

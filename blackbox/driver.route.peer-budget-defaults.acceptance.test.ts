@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-defaults');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-defaults',
+);
 
 /**
  * .what = acceptance test for backwards compatibility - peer reviews without budget/level use defaults
@@ -99,7 +102,10 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
             path.join(scene.tempDir, 'src', 'feature.ts'),
             `export const feature = () => "v${i}";`,
           );
-          await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.execute',
+          });
           await invokeRouteSkill({
             skill: 'route.stone.set',
             args: { stone: '1.execute', route: '.', as: 'passed' },
@@ -143,7 +149,10 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
     when('[t2] review passes, stone can proceed', () => {
       const result = useThen('stone passes', async () => {
         // make review pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
 
         // change artifact to trigger review
         await fs.writeFile(

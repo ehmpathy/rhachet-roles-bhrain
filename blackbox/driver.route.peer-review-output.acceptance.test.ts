@@ -9,7 +9,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-review-output');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-review-output',
+);
 
 /**
  * .what = acceptance test that proves --output $output variable substitution works

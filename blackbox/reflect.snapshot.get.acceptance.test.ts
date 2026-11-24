@@ -1,5 +1,4 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import {
@@ -46,7 +45,9 @@ describe('reflect.snapshot.get', () => {
       });
 
       then('output matches snapshot', () => {
-        expect(sanitizeReflectOutputForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(res.cli.stdout),
+        ).toMatchSnapshot();
       });
     });
 
@@ -92,7 +93,9 @@ describe('reflect.snapshot.get', () => {
       then('the refusal renders whole', () => {
         // the fix line names the command that lists valid --at values; a snapshot
         // shows a reword or a dropped fix line in the pr diff
-        expect(sanitizeReflectOutputForSnapshot(res.cli.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeReflectOutputForSnapshot(res.cli.stderr),
+        ).toMatchSnapshot();
       });
     });
   });

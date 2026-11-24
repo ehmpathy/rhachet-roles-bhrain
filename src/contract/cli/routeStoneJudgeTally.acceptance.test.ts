@@ -4,8 +4,8 @@ import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 import { pathToFileURL } from 'url';
 
-import { answerEveryPeerGiven } from '@src/domain.operations/route/__test_assets__/answerEveryPeerGiven';
-import { concedeEveryPeerConcern } from '@src/domain.operations/route/__test_assets__/concedeEveryPeerConcern';
+import { answerEveryPeerGiven } from '@src/domain.operations/route/.test.assets/answerEveryPeerGiven';
+import { concedeEveryPeerConcern } from '@src/domain.operations/route/.test.assets/concedeEveryPeerConcern';
 import { setStoneAsConcernAbsorbed } from '@src/domain.operations/route/stones/setStoneAsConcernAbsorbed';
 
 /**

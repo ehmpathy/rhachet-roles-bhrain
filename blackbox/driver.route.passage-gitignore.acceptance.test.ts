@@ -60,62 +60,74 @@ describe('driver.route.passage-gitignore.acceptance', () => {
         expect(res.gitignoreExists).toBe(true);
       });
 
-      then('.gitignore contains rules to ignore all except passage.jsonl and .bind.*', () => {
-        expect(res.gitignoreContent).toContain('*');
-        expect(res.gitignoreContent).toContain('!.gitignore');
-        expect(res.gitignoreContent).toContain('!passage.jsonl');
-        expect(res.gitignoreContent).toContain('!.bind.*');
-      });
+      then(
+        '.gitignore contains rules to ignore all except passage.jsonl and .bind.*',
+        () => {
+          expect(res.gitignoreContent).toContain('*');
+          expect(res.gitignoreContent).toContain('!.gitignore');
+          expect(res.gitignoreContent).toContain('!passage.jsonl');
+          expect(res.gitignoreContent).toContain('!.bind.*');
+        },
+      );
     });
 
     when('[t1] route driven again (gitignore idempotent)', () => {
-      const res = useThen('invoke set twice and verify gitignore unchanged', async () => {
-        const tempDir = genTempDirForRhachet({
-          slug: 'passage-gitignore-idem',
-          clone: ASSETS_GUARDED_DIR,
-        });
+      const res = useThen(
+        'invoke set twice and verify gitignore unchanged',
+        async () => {
+          const tempDir = genTempDirForRhachet({
+            slug: 'passage-gitignore-idem',
+            clone: ASSETS_GUARDED_DIR,
+          });
 
-        await execAsync('npx rhachet roles link --role driver', {
-          cwd: tempDir,
-        });
+          await execAsync('npx rhachet roles link --role driver', {
+            cwd: tempDir,
+          });
 
-        // create artifact
-        await fs.writeFile(
-          path.join(tempDir, '1.test.md'),
-          '# Test artifact\n\ncontent',
-        );
+          // create artifact
+          await fs.writeFile(
+            path.join(tempDir, '1.test.md'),
+            '# Test artifact\n\ncontent',
+          );
 
-        // first invoke
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.test', route: '.', as: 'passed' },
-          cwd: tempDir,
-        });
+          // first invoke
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.test', route: '.', as: 'passed' },
+            cwd: tempDir,
+          });
 
-        // read gitignore after first invoke
-        const gitignorePath = path.join(tempDir, '.route', '.gitignore');
-        const gitignoreAfterFirst = await fs.readFile(gitignorePath, 'utf-8');
+          // read gitignore after first invoke
+          const gitignorePath = path.join(tempDir, '.route', '.gitignore');
+          const gitignoreAfterFirst = await fs.readFile(gitignorePath, 'utf-8');
 
-        // clear passage.jsonl to allow second pass
-        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
-        await fs.writeFile(passagePath, '');
+          // clear passage.jsonl to allow second pass
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          await fs.writeFile(passagePath, '');
 
-        // second invoke (should not duplicate gitignore)
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.test', route: '.', as: 'passed' },
-          cwd: tempDir,
-        });
+          // second invoke (should not duplicate gitignore)
+          await invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.test', route: '.', as: 'passed' },
+            cwd: tempDir,
+          });
 
-        // read gitignore after second invoke
-        const gitignoreAfterSecond = await fs.readFile(gitignorePath, 'utf-8');
+          // read gitignore after second invoke
+          const gitignoreAfterSecond = await fs.readFile(
+            gitignorePath,
+            'utf-8',
+          );
 
-        return { tempDir, gitignoreAfterFirst, gitignoreAfterSecond };
-      });
+          return { tempDir, gitignoreAfterFirst, gitignoreAfterSecond };
+        },
+      );
 
-      then('.gitignore content is identical after both invokes (idempotent)', () => {
-        expect(res.gitignoreAfterSecond).toEqual(res.gitignoreAfterFirst);
-      });
+      then(
+        '.gitignore content is identical after both invokes (idempotent)',
+        () => {
+          expect(res.gitignoreAfterSecond).toEqual(res.gitignoreAfterFirst);
+        },
+      );
 
       then('.gitignore is not duplicated (only one set of rules)', () => {
         // count negation rules (lines starting with !)
@@ -159,9 +171,12 @@ describe('driver.route.passage-gitignore.acceptance', () => {
         );
 
         // run git status
-        const { stdout: gitStatus } = await execAsync('git status --porcelain', {
-          cwd: tempDir,
-        });
+        const { stdout: gitStatus } = await execAsync(
+          'git status --porcelain',
+          {
+            cwd: tempDir,
+          },
+        );
 
         // list all files in .route/
         const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
@@ -172,7 +187,10 @@ describe('driver.route.passage-gitignore.acceptance', () => {
       then('guard artifacts exist on disk', () => {
         // should have review and judge artifacts created
         const hasGuardArtifact = res.routeFiles.some(
-          (f) => f.includes('.guard.') || f.includes('.review.') || f.includes('.judge.'),
+          (f) =>
+            f.includes('.guard.') ||
+            f.includes('.review.') ||
+            f.includes('.judge.'),
         );
         expect(hasGuardArtifact).toBe(true);
       });

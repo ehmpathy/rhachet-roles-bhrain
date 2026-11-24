@@ -241,56 +241,59 @@ judges:
     });
   });
 
-  given('[case5] the bound is written on the REVIEWER, not on the group', () => {
-    when('[t0] the stone arrives', () => {
-      const result = useThen('the guard refuses it', async () =>
-        arriveWithGuard({
-          slug: 'concurrency-misplaced',
-          guard: `${REVIEWERS}      concurrency: 2
+  given(
+    '[case5] the bound is written on the REVIEWER, not on the group',
+    () => {
+      when('[t0] the stone arrives', () => {
+        const result = useThen('the guard refuses it', async () =>
+          arriveWithGuard({
+            slug: 'concurrency-misplaced',
+            guard: `${REVIEWERS}      concurrency: 2
 
 judges:
   - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
 `,
-        }),
-      );
+          }),
+        );
 
-      then('CLAMP: [case7][t3] a bound at a key the parser reads not', () => {
-        // .why = the ONE refusal that protects the wish's second outcome. the other
-        //        four guard against an author who declares too much; this guards
-        //        against a valve that is SILENTLY ABSENT. with no refusal the line
-        //        parses clean, the cap never binds, and the level fans out while the
-        //        author believes it is capped — a valve that fails open
-        expect(result.code).toEqual(2); // constraint (2), never malfunction (1) — a bad guard is caller-must-fix
-      });
+        then('CLAMP: [case7][t3] a bound at a key the parser reads not', () => {
+          // .why = the ONE refusal that protects the wish's second outcome. the other
+          //        four guard against an author who declares too much; this guards
+          //        against a valve that is SILENTLY ABSENT. with no refusal the line
+          //        parses clean, the cap never binds, and the level fans out while the
+          //        author believes it is capped — a valve that fails open
+          expect(result.code).toEqual(2); // constraint (2), never malfunction (1) — a bad guard is caller-must-fix
+        });
 
-      then('CLAMP: [case7][t3] the message names the key and the fix', () => {
-        // 🔴 .note = BOTH assertions are load-bearing, and each catches what the
-        //            other misses. neither alone is a clamp.
-        //
-        //            the vision (`case=7`) argued for the exit code: *"a clamp on
-        //            the message alone would be toothless — a run that parses clean
-        //            and WARNS to stderr would satisfy it"*. true.
-        //
-        //            measured 2026-09-09, the converse: with the refusal disabled
-        //            the suite went 2 passed / 1 failed, and the failure was HERE.
-        //            `code !== 0` passed under the defect — a silently dropped
-        //            bound leaves the reviewer to run and REJECT, so the stone
-        //            fails anyway, for a reason unrelated to the defect.
-        //
-        //            ⇒ exit-code-only reads green under a silent drop; message-only
-        //              reads green under a mere warn. keep both.
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('concurrency: 2');
-        expect(output).toContain('reviews.groups');
-      });
+        then('CLAMP: [case7][t3] the message names the key and the fix', () => {
+          // 🔴 .note = BOTH assertions are load-bearing, and each catches what the
+          //            other misses. neither alone is a clamp.
+          //
+          //            the vision (`case=7`) argued for the exit code: *"a clamp on
+          //            the message alone would be toothless — a run that parses clean
+          //            and WARNS to stderr would satisfy it"*. true.
+          //
+          //            measured 2026-09-09, the converse: with the refusal disabled
+          //            the suite went 2 passed / 1 failed, and the failure was HERE.
+          //            `code !== 0` passed under the defect — a silently dropped
+          //            bound leaves the reviewer to run and REJECT, so the stone
+          //            fails anyway, for a reason unrelated to the defect.
+          //
+          //            ⇒ exit-code-only reads green under a silent drop; message-only
+          //              reads green under a mere warn. keep both.
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('concurrency: 2');
+          expect(output).toContain('reviews.groups');
+        });
 
-      then('the refusal reads as an error, never a stack trace', () => {
-        expect(
-          sanitizeTimeForSnapshot(result.stdout + result.stderr),
-        ).toMatchSnapshot();
+        then('the refusal reads as an error, never a stack trace', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.stdout + result.stderr),
+          ).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   // 🔴 .why cases 6-8 exist = the five above cover the CONCURRENCY keys only.
   //     `budget:`, `level:`, and a stray `concurrency:` read through the SAME
@@ -381,12 +384,14 @@ judges:
     });
   });
 
-  given('[case8] a concurrency bound sits under groups with no group name', () => {
-    when('[t0] the stone arrives with a stray concurrency', () => {
-      const result = useThen('the guard refuses it', async () =>
-        arriveWithGuard({
-          slug: 'concurrency-stray',
-          guard: `${REVIEWERS}      group: anthropic
+  given(
+    '[case8] a concurrency bound sits under groups with no group name',
+    () => {
+      when('[t0] the stone arrives with a stray concurrency', () => {
+        const result = useThen('the guard refuses it', async () =>
+          arriveWithGuard({
+            slug: 'concurrency-stray',
+            guard: `${REVIEWERS}      group: anthropic
 
   groups:
     concurrency: 2
@@ -394,26 +399,30 @@ judges:
 judges:
   - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
 `,
-        }),
-      );
+          }),
+        );
 
-      then('CLAMP: the stone does not pass', () => {
-        // .why = a bound with no group name above it names no group, so it caps
-        //        naught — the same fail-open shape [case5] guards, one indent up
-        expect(result.code).toEqual(2); // constraint (2) — a bad guard is caller-must-fix
-      });
+        then('CLAMP: the stone does not pass', () => {
+          // .why = a bound with no group name above it names no group, so it caps
+          //        naught — the same fail-open shape [case5] guards, one indent up
+          expect(result.code).toEqual(2); // constraint (2) — a bad guard is caller-must-fix
+        });
 
-      then('CLAMP: the message names the fix — declare the group first', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('group name');
-        expect(output).toContain('reviews.groups');
-      });
+        then(
+          'CLAMP: the message names the fix — declare the group first',
+          () => {
+            const output = result.stdout + result.stderr;
+            expect(output).toContain('group name');
+            expect(output).toContain('reviews.groups');
+          },
+        );
 
-      then('the refusal reads as an error, never a stack trace', () => {
-        expect(
-          sanitizeTimeForSnapshot(result.stdout + result.stderr),
-        ).toMatchSnapshot();
+        then('the refusal reads as an error, never a stack trace', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.stdout + result.stderr),
+          ).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

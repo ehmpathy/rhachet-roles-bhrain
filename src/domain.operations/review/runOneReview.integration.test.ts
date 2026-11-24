@@ -1,6 +1,7 @@
 import { given, then, useThen, when } from 'test-fns';
 
-import { genContextReviewBrainSupplyDemo } from '../route/__test_assets__/genContextReviewBrainSupplyDemo';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+
 import { ENV_OF_REVIEW_PRIME_MEET } from './prime/asReviewPrimeMeetFromEnv';
 import { runOneReview } from './runOneReview';
 

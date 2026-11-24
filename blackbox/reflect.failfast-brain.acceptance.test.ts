@@ -1,10 +1,9 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import { asExecResultOrThrow } from './.test/asExecResultOrThrow';
-import { sanitizeTimeForSnapshot } from './.test/invokeRouteSkill';
 import { execAsync, genTempDirForRhachet } from './.test/invokeReviewSkill';
+import { sanitizeTimeForSnapshot } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -64,11 +63,14 @@ describe('reflect.failfast-brain.acceptance', () => {
       });
 
       // the refusal wears reflect's own `🌕` frame, as every other reflect refusal does
-      then('stderr opens on the reflect frame, under the constraint header', async () => {
-        expect(res.cli.stderr).toContain(
-          "🌕 reflect\n   ├─ ✋ ConstraintError: brain 'nowhere/glm/flash/v0' is not registered",
-        );
-      });
+      then(
+        'stderr opens on the reflect frame, under the constraint header',
+        async () => {
+          expect(res.cli.stderr).toContain(
+            "🌕 reflect\n   ├─ ✋ ConstraintError: brain 'nowhere/glm/flash/v0' is not registered",
+          );
+        },
+      );
 
       // the hint rides as its own fix row; the raw metadata json never reaches the human
       then('stderr names the fix, never the raw metadata', async () => {

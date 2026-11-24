@@ -1,9 +1,9 @@
 import * as path from 'path';
 
 import { RouteStoneDriveArtifacts } from '@src/domain.objects/Driver/RouteStoneDriveArtifacts';
+import { getOnePassageReport } from '@src/domain.operations/route/passage/getOnePassageReport';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
-import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { getAllStones } from './getAllStones';
 import {
   getStoneYieldGlob,

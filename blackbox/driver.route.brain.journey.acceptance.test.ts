@@ -278,161 +278,181 @@ describe('driver.route.brain.journey.acceptance', () => {
 
   const HALT = '✋ halted, brain switch could not land';
 
-  given('[case1] a route whose stones each prescribe a different switch', () => {
-    const scene = useBeforeAll(() =>
-      genBrainRoute({
-        slug: 'brain-journey-shapes',
-        stonesExtra: ['4.polish', '5.ship'],
-        guards: {
-          '1.vision': ['brain: claude-opus-5[1m]'],
-          '2.criteria': ['brain:', '  effort: high'],
-          '3.plan': ['brain:', '  choice: claude-sonnet-5[1m]', '  effort: low'],
-          '5.ship': ['brain:', '  choice: claude-haiku-4-5', '  effort: medium'],
-        },
-      }),
-    );
+  given(
+    '[case1] a route whose stones each prescribe a different switch',
+    () => {
+      const scene = useBeforeAll(() =>
+        genBrainRoute({
+          slug: 'brain-journey-shapes',
+          stonesExtra: ['4.polish', '5.ship'],
+          guards: {
+            '1.vision': ['brain: claude-opus-5[1m]'],
+            '2.criteria': ['brain:', '  effort: high'],
+            '3.plan': [
+              'brain:',
+              '  choice: claude-sonnet-5[1m]',
+              '  effort: low',
+            ],
+            '5.ship': [
+              'brain:',
+              '  choice: claude-haiku-4-5',
+              '  effort: medium',
+            ],
+          },
+        }),
+      );
 
-    when('[t0] 1.vision declares a CHOICE alone', () => {
-      const res = useThen('the drive answers', async () => {
-        await setPassage({ scene, passed: [] });
-        const cli = await drive({ scene });
-        return { cli, says: await getSays({ scene, count: 1 }) };
-      });
-
-      then('the clone receives `/model`, and no `/effort`', () => {
-        expect(res.says).toEqual(['@:driver-shim /model claude-opus-5[1m]']);
-      });
-
-      then('the bucket names the brain, with no effort beneath it', () => {
-        expect(res.cli.stdout).toContain(
-          '└─ brain = claude-opus-5[1m]\n   │\n',
-        );
-        expect(res.cli.stdout).not.toContain('effort =');
-      });
-
-      then('the stone body rides beneath — the switch was requested', () => {
-        expect(res.cli.stdout).toContain('--as passed');
-        expect(res.cli.stdout).not.toContain(HALT);
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] 2.criteria declares an EFFORT alone', () => {
-      const res = useThen('the drive answers', async () => {
-        await setPassage({ scene, passed: ['1.vision'] });
-        const cli = await drive({ scene });
-        return { cli, says: await getSays({ scene, count: 2 }) };
-      });
-
-      then('the clone receives `/effort`, and no second `/model`', () => {
-        // 🔴 .why = an effort-only guard must never re-send the prior choice — that would
-        //    re-price the stone with a model its guard never named
-        expect(res.says.slice(1)).toEqual(['@:driver-shim /effort high']);
-      });
-
-      then('the bucket shows a bare `brain` node, the effort beneath it', () => {
-        expect(res.cli.stdout).toContain(
-          '└─ brain\n   │     └─ effort = high',
-        );
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t2] 3.plan declares a choice AND an effort', () => {
-      const res = useThen('the drive answers', async () => {
-        await setPassage({ scene, passed: ['1.vision', '2.criteria'] });
-        const cli = await drive({ scene });
-        return { cli, says: await getSays({ scene, count: 4 }) };
-      });
-
-      then('the clone receives both says', () => {
-        // .note = sorted: `F29` records that delivery order between the two is unguaranteed
-        expect(res.says.slice(2).sort()).toEqual([
-          '@:driver-shim /effort low',
-          '@:driver-shim /model claude-sonnet-5[1m]',
-        ]);
-      });
-
-      then('the bucket shows `choice =` and `effort =` as peers beneath a bare `brain`', () => {
-        expect(res.cli.stdout).toContain(
-          asBucketRows({ brain: 'claude-sonnet-5[1m]', effort: 'low' }),
-        );
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t3] the brainless 4.polish is current', () => {
-      const res = useThen('the drive answers', async () => {
-        await setPassage({ scene, passed: ['1.vision', '2.criteria', '3.plan'] });
-        const cli = await drive({ scene });
-        return { cli, says: await getSays({ scene, count: 4 }) };
-      });
-
-      then('NO say is sent — a carry is never a fresh switch', () => {
-        expect(res.says).toHaveLength(4);
-      });
-
-      then('the bucket names the INHERITED brain and effort', () => {
-        // 🔴 .why = case=7: "why is this stone expensive?" is answered here, by the brain and
-        //    the effort 3.plan dispatched — a real record, never a seeded one
-        expect(res.cli.stdout).toContain(
-          asBucketRows({ brain: 'claude-sonnet-5[1m]', effort: 'low' }),
-        );
-      });
-
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
-      });
-    });
-
-    when('[t4] 5.ship declares both, and the driver is UNENROLLED', () => {
-      const res = useThen('the drive answers, on two surfaces', async () => {
-        await setPassage({
-          scene,
-          passed: ['1.vision', '2.criteria', '3.plan', '4.polish'],
+      when('[t0] 1.vision declares a CHOICE alone', () => {
+        const res = useThen('the drive answers', async () => {
+          await setPassage({ scene, passed: [] });
+          const cli = await drive({ scene });
+          return { cli, says: await getSays({ scene, count: 1 }) };
         });
-        await setMode({ scene, mode: 'unenrolled' });
-        const direct = await drive({ scene });
-        const onBoot = await drive({ scene, when: 'hook.onBoot' });
-        return { direct, onBoot, says: await getSays({ scene, count: 4 }) };
+
+        then('the clone receives `/model`, and no `/effort`', () => {
+          expect(res.says).toEqual(['@:driver-shim /model claude-opus-5[1m]']);
+        });
+
+        then('the bucket names the brain, with no effort beneath it', () => {
+          expect(res.cli.stdout).toContain(
+            '└─ brain = claude-opus-5[1m]\n   │\n',
+          );
+          expect(res.cli.stdout).not.toContain('effort =');
+        });
+
+        then('the stone body rides beneath — the switch was requested', () => {
+          expect(res.cli.stdout).toContain('--as passed');
+          expect(res.cli.stdout).not.toContain(HALT);
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('NO say is sent — no address was confirmed', () => {
-        expect(res.says).toHaveLength(4);
-      });
+      when('[t1] 2.criteria declares an EFFORT alone', () => {
+        const res = useThen('the drive answers', async () => {
+          await setPassage({ scene, passed: ['1.vision'] });
+          const cli = await drive({ scene });
+          return { cli, says: await getSays({ scene, count: 2 }) };
+        });
 
-      then('the halt still shows the effort it could not apply', () => {
-        // 🔴 .why = a halt that dropped the effort would under-report what the guard asked for
-        expect(res.direct.stdout).toContain(
-          asBucketRows({ brain: 'claude-haiku-4-5', effort: 'medium' }),
+        then('the clone receives `/effort`, and no second `/model`', () => {
+          // 🔴 .why = an effort-only guard must never re-send the prior choice — that would
+          //    re-price the stone with a model its guard never named
+          expect(res.says.slice(1)).toEqual(['@:driver-shim /effort high']);
+        });
+
+        then(
+          'the bucket shows a bare `brain` node, the effort beneath it',
+          () => {
+            expect(res.cli.stdout).toContain(
+              '└─ brain\n   │     └─ effort = high',
+            );
+          },
         );
-        expect(res.direct.stdout).toContain(HALT);
-        expect(res.direct.stdout).toContain('rhx enroll');
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('the halt reads the same on the onBoot surface', () => {
-        expect(res.onBoot.stdout).toContain('effort = medium');
-        expect(res.onBoot.stdout).toContain(HALT);
+      when('[t2] 3.plan declares a choice AND an effort', () => {
+        const res = useThen('the drive answers', async () => {
+          await setPassage({ scene, passed: ['1.vision', '2.criteria'] });
+          const cli = await drive({ scene });
+          return { cli, says: await getSays({ scene, count: 4 }) };
+        });
+
+        then('the clone receives both says', () => {
+          // .note = sorted: `F29` records that delivery order between the two is unguaranteed
+          expect(res.says.slice(2).sort()).toEqual([
+            '@:driver-shim /effort low',
+            '@:driver-shim /model claude-sonnet-5[1m]',
+          ]);
+        });
+
+        then(
+          'the bucket shows `choice =` and `effort =` as peers beneath a bare `brain`',
+          () => {
+            expect(res.cli.stdout).toContain(
+              asBucketRows({ brain: 'claude-sonnet-5[1m]', effort: 'low' }),
+            );
+          },
+        );
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('stdout has good vibes, on the direct surface', () => {
-        expect(sanitizeTimeForSnapshot(res.direct.stdout)).toMatchSnapshot();
+      when('[t3] the brainless 4.polish is current', () => {
+        const res = useThen('the drive answers', async () => {
+          await setPassage({
+            scene,
+            passed: ['1.vision', '2.criteria', '3.plan'],
+          });
+          const cli = await drive({ scene });
+          return { cli, says: await getSays({ scene, count: 4 }) };
+        });
+
+        then('NO say is sent — a carry is never a fresh switch', () => {
+          expect(res.says).toHaveLength(4);
+        });
+
+        then('the bucket names the INHERITED brain and effort', () => {
+          // 🔴 .why = case=7: "why is this stone expensive?" is answered here, by the brain and
+          //    the effort 3.plan dispatched — a real record, never a seeded one
+          expect(res.cli.stdout).toContain(
+            asBucketRows({ brain: 'claude-sonnet-5[1m]', effort: 'low' }),
+          );
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('stdout has good vibes, on the onBoot surface', () => {
-        expect(sanitizeTimeForSnapshot(res.onBoot.stdout)).toMatchSnapshot();
+      when('[t4] 5.ship declares both, and the driver is UNENROLLED', () => {
+        const res = useThen('the drive answers, on two surfaces', async () => {
+          await setPassage({
+            scene,
+            passed: ['1.vision', '2.criteria', '3.plan', '4.polish'],
+          });
+          await setMode({ scene, mode: 'unenrolled' });
+          const direct = await drive({ scene });
+          const onBoot = await drive({ scene, when: 'hook.onBoot' });
+          return { direct, onBoot, says: await getSays({ scene, count: 4 }) };
+        });
+
+        then('NO say is sent — no address was confirmed', () => {
+          expect(res.says).toHaveLength(4);
+        });
+
+        then('the halt still shows the effort it could not apply', () => {
+          // 🔴 .why = a halt that dropped the effort would under-report what the guard asked for
+          expect(res.direct.stdout).toContain(
+            asBucketRows({ brain: 'claude-haiku-4-5', effort: 'medium' }),
+          );
+          expect(res.direct.stdout).toContain(HALT);
+          expect(res.direct.stdout).toContain('rhx enroll');
+        });
+
+        then('the halt reads the same on the onBoot surface', () => {
+          expect(res.onBoot.stdout).toContain('effort = medium');
+          expect(res.onBoot.stdout).toContain(HALT);
+        });
+
+        then('stdout has good vibes, on the direct surface', () => {
+          expect(sanitizeTimeForSnapshot(res.direct.stdout)).toMatchSnapshot();
+        });
+
+        then('stdout has good vibes, on the onBoot surface', () => {
+          expect(sanitizeTimeForSnapshot(res.onBoot.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 
   given('[case2] the carry rules across the two axes', () => {
     /**
@@ -456,7 +476,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-carry',
         stonesExtra: ['4.polish', '5.ship', '6.close'],
         guards: {
-          '1.vision': ['brain:', '  choice: claude-opus-5[1m]', '  effort: high'],
+          '1.vision': [
+            'brain:',
+            '  choice: claude-opus-5[1m]',
+            '  effort: high',
+          ],
           '3.plan': ['brain: claude-sonnet-5[1m]'],
           '5.ship': ['brain:', '  effort: low'],
         },
@@ -645,56 +669,51 @@ describe('driver.route.brain.journey.acceptance', () => {
     });
   });
 
-  given(
-    '[case4] a route whose EVERY `brain:` declaration is malformed',
-    () => {
-      /**
-       * .what = the same route twice — once with malformed brain keys, once with no guard at all
-       * .why = case=10's guarantee has the largest blast radius here: a route that never
-       *        DECLARED a readable brain must drive byte-identically to one that never tried
-       */
-      const scenes = useBeforeAll(async () => ({
-        malformed: await genBrainRoute({
-          slug: 'brain-journey-malformed',
-          stonesExtra: [],
-          guards: {
-            '1.vision': ['model: claude-opus-5[1m]'],
-            '2.criteria': ['brian: claude-opus-5[1m]'],
-            '3.plan': ['brain:'],
-          },
-        }),
-        bare: await genBrainRoute({
-          slug: 'brain-journey-bare',
-          stonesExtra: [],
-          guards: {},
-        }),
+  given('[case4] a route whose EVERY `brain:` declaration is malformed', () => {
+    /**
+     * .what = the same route twice — once with malformed brain keys, once with no guard at all
+     * .why = case=10's guarantee has the largest blast radius here: a route that never
+     *        DECLARED a readable brain must drive byte-identically to one that never tried
+     */
+    const scenes = useBeforeAll(async () => ({
+      malformed: await genBrainRoute({
+        slug: 'brain-journey-malformed',
+        stonesExtra: [],
+        guards: {
+          '1.vision': ['model: claude-opus-5[1m]'],
+          '2.criteria': ['brian: claude-opus-5[1m]'],
+          '3.plan': ['brain:'],
+        },
+      }),
+      bare: await genBrainRoute({
+        slug: 'brain-journey-bare',
+        stonesExtra: [],
+        guards: {},
+      }),
+    }));
+
+    when('[t0] both routes are driven at 1.vision', () => {
+      const res = useThen('the drives answer', async () => ({
+        malformed: await drive({ scene: scenes.malformed }),
+        bare: await drive({ scene: scenes.bare }),
+        says: await getSays({ scene: scenes.malformed, count: 0 }),
       }));
 
-      when('[t0] both routes are driven at 1.vision', () => {
-        const res = useThen('the drives answer', async () => ({
-          malformed: await drive({ scene: scenes.malformed }),
-          bare: await drive({ scene: scenes.bare }),
-          says: await getSays({ scene: scenes.malformed, count: 0 }),
-        }));
-
-        then('the two stdouts are byte-identical', () => {
-          expect(res.malformed.stdout).toEqual(res.bare.stdout);
-        });
-
-        then('no brain row, no halt, and no say', () => {
-          expect(res.malformed.stdout).not.toContain('brain');
-          expect(res.malformed.stdout).not.toContain(HALT);
-          expect(res.says).toEqual([]);
-        });
-
-        then('stdout has good vibes', () => {
-          expect(
-            sanitizeTimeForSnapshot(res.malformed.stdout),
-          ).toMatchSnapshot();
-        });
+      then('the two stdouts are byte-identical', () => {
+        expect(res.malformed.stdout).toEqual(res.bare.stdout);
       });
-    },
-  );
+
+      then('no brain row, no halt, and no say', () => {
+        expect(res.malformed.stdout).not.toContain('brain');
+        expect(res.malformed.stdout).not.toContain(HALT);
+        expect(res.says).toEqual([]);
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(res.malformed.stdout)).toMatchSnapshot();
+      });
+    });
+  });
 
   given('[case5] every answer the clone can give', () => {
     /**
@@ -710,7 +729,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-clone',
         stonesExtra: [],
         guards: {
-          '1.vision': ['brain:', '  choice: claude-haiku-4-5', '  effort: medium'],
+          '1.vision': [
+            'brain:',
+            '  choice: claude-haiku-4-5',
+            '  effort: medium',
+          ],
         },
       }),
     );
@@ -822,12 +845,15 @@ describe('driver.route.brain.journey.acceptance', () => {
         ]);
       });
 
-      then('the drive reads it as REQUESTED — a refusal is unseen (case=3)', () => {
-        // 🔴 .why = the dispatch is fire-and-forget; the wisher deferred a read of the reply
-        //    until `clone whoami` reports the live brain (S6). this pins the accepted residual
-        expect(res.cli.stdout).not.toContain(HALT);
-        expect(res.cli.stdout).toContain('--as passed');
-      });
+      then(
+        'the drive reads it as REQUESTED — a refusal is unseen (case=3)',
+        () => {
+          // 🔴 .why = the dispatch is fire-and-forget; the wisher deferred a read of the reply
+          //    until `clone whoami` reports the live brain (S6). this pins the accepted residual
+          expect(res.cli.stdout).not.toContain(HALT);
+          expect(res.cli.stdout).toContain('--as passed');
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
@@ -882,7 +908,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-cadence',
         stonesExtra: [],
         guards: {
-          '1.vision': ['brain:', '  choice: claude-opus-5[1m]', '  effort: high'],
+          '1.vision': [
+            'brain:',
+            '  choice: claude-opus-5[1m]',
+            '  effort: high',
+          ],
         },
       }),
     );
@@ -894,13 +924,48 @@ describe('driver.route.brain.journey.acceptance', () => {
       expire: boolean;
       says: number;
     }> = [
-      { label: '[t0] onStop, the entry tick', when: 'hook.onStop', expire: false, says: 2 },
-      { label: '[t1] onStop, a second tick', when: 'hook.onStop', expire: false, says: 2 },
-      { label: '[t2] direct, inside the window', when: undefined, expire: false, says: 2 },
-      { label: '[t3] onBoot, inside the window', when: 'hook.onBoot', expire: false, says: 2 },
-      { label: '[t4] onBoot, past the window', when: 'hook.onBoot', expire: true, says: 4 },
-      { label: '[t5] direct, past the window', when: undefined, expire: true, says: 6 },
-      { label: '[t6] onStop, past the window', when: 'hook.onStop', expire: true, says: 6 },
+      {
+        label: '[t0] onStop, the entry tick',
+        when: 'hook.onStop',
+        expire: false,
+        says: 2,
+      },
+      {
+        label: '[t1] onStop, a second tick',
+        when: 'hook.onStop',
+        expire: false,
+        says: 2,
+      },
+      {
+        label: '[t2] direct, inside the window',
+        when: undefined,
+        expire: false,
+        says: 2,
+      },
+      {
+        label: '[t3] onBoot, inside the window',
+        when: 'hook.onBoot',
+        expire: false,
+        says: 2,
+      },
+      {
+        label: '[t4] onBoot, past the window',
+        when: 'hook.onBoot',
+        expire: true,
+        says: 4,
+      },
+      {
+        label: '[t5] direct, past the window',
+        when: undefined,
+        expire: true,
+        says: 6,
+      },
+      {
+        label: '[t6] onStop, past the window',
+        when: 'hook.onStop',
+        expire: true,
+        says: 6,
+      },
     ];
 
     STEPS.forEach((step, index) => {
@@ -954,7 +1019,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-heal',
         stonesExtra: [],
         guards: {
-          '1.vision': ['brain:', '  choice: claude-opus-5[1m]', '  effort: high'],
+          '1.vision': [
+            'brain:',
+            '  choice: claude-opus-5[1m]',
+            '  effort: high',
+          ],
         },
       }),
     );
@@ -1018,7 +1087,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-naught',
         stonesExtra: [],
         guards: {
-          '2.criteria': ['brain:', '  choice: claude-opus-5[1m]', '  effort: high'],
+          '2.criteria': [
+            'brain:',
+            '  choice: claude-opus-5[1m]',
+            '  effort: high',
+          ],
         },
       }),
     );
@@ -1081,7 +1154,11 @@ describe('driver.route.brain.journey.acceptance', () => {
         slug: 'brain-journey-stack',
         stonesExtra: [],
         guards: {
-          '1.vision': ['brain:', '  choice: claude-opus-5[1m]', '  effort: high'],
+          '1.vision': [
+            'brain:',
+            '  choice: claude-opus-5[1m]',
+            '  effort: high',
+          ],
         },
       }),
     );

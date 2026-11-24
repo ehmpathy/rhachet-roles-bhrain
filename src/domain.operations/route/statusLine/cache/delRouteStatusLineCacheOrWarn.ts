@@ -1,6 +1,6 @@
+import { asStatusLineCacheDropFaultRow } from '@src/domain.operations/route/statusLine/asStatusLineCacheDropFaultRow';
 import { getFsErrorCode } from '@src/utils/fs/getFsErrorCode';
 
-import { asStatusLineCacheDropFaultRow } from '../asStatusLineCacheDropFaultRow';
 import { delRouteStatusLineCache } from './delRouteStatusLineCache';
 
 /**

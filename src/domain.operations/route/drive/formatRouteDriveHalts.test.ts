@@ -3,8 +3,9 @@ import { given, then, when } from 'test-fns';
 import {
   genRouteGuardExhaustedReason,
   WARN_TEXT_CONCESSION_URGENT,
-} from '../guard/review/peer/genRouteGuardExhaustedReason';
-import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+} from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
+
 import { formatRouteDriveBudgetExhausted } from './formatRouteDriveBudgetExhausted';
 import { formatRouteDriveMixedHalt } from './formatRouteDriveMixedHalt';
 

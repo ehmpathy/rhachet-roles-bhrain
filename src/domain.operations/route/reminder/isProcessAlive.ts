@@ -1,4 +1,4 @@
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
 
 /**
  * .what = probes whether a pid names a live process — the `kill -0` liveness check

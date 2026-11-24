@@ -1,4 +1,4 @@
-import { getSelfReviewArticulationPath } from '../review/self/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from '@src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
 
 /**
  * .what = formats "walk the way" section with articulation path and drum blocks

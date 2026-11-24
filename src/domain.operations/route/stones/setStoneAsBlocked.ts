@@ -1,8 +1,8 @@
 import { BadRequestError } from 'helpful-errors';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { setPassageReport } from '@src/domain.operations/route/passage/setPassageReport';
 
-import { setPassageReport } from '../passage/setPassageReport';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getBlockedChallengeDecision } from './blocked/getBlockedChallengeDecision';
 import { setBlockedTriggeredReport } from './blocked/setBlockedTriggeredReport';

@@ -78,9 +78,12 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', {
         cwd: tempDir,
       });
-      await execAsync('git checkout -b vlad/test-concession-exhaustion-better', {
-        cwd: tempDir,
-      });
+      await execAsync(
+        'git checkout -b vlad/test-concession-exhaustion-better',
+        {
+          cwd: tempDir,
+        },
+      );
       return { tempDir };
     });
 
@@ -182,9 +185,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             .split('\n')
             .map((line) => JSON.parse(line) as Record<string, unknown>);
           expect(rows[rows.length - 1]!.status).toEqual('passed');
-          expect(rows.some((row) => row.status === 'exhausted')).toEqual(
-            false,
-          );
+          expect(rows.some((row) => row.status === 'exhausted')).toEqual(false);
         });
 
         then('the final emit is pinned', () => {
@@ -205,9 +206,12 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', {
         cwd: tempDir,
       });
-      await execAsync('git checkout -b vlad/test-concession-exhaustion-urgent', {
-        cwd: tempDir,
-      });
+      await execAsync(
+        'git checkout -b vlad/test-concession-exhaustion-urgent',
+        {
+          cwd: tempDir,
+        },
+      );
       return { tempDir };
     });
 

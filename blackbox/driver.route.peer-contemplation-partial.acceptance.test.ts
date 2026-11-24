@@ -30,7 +30,9 @@ describe('driver.route.peer-contemplation-partial.acceptance', () => {
         clone: ASSETS_DIR,
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-blocker.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blocker.sh', {
+        cwd: tempDir,
+      });
       await fs.writeFile(
         path.join(tempDir, '1.execute.md'),
         '# execute\n\nthe work under review.\n',
@@ -79,43 +81,49 @@ describe('driver.route.peer-contemplation-partial.acceptance', () => {
       });
     });
 
-    when('[t1] driver answers architect only, then attempts --as passed', () => {
-      const result = useThen('guard blocks on the absent builder', async () => {
-        await answerReviewer(scene.tempDir, 'architect');
-        await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '1.execute',
-            route: '.',
-            as: 'absorbed',
-            that: 'architect',
+    when(
+      '[t1] driver answers architect only, then attempts --as passed',
+      () => {
+        const result = useThen(
+          'guard blocks on the absent builder',
+          async () => {
+            await answerReviewer(scene.tempDir, 'architect');
+            await invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: {
+                stone: '1.execute',
+                route: '.',
+                as: 'absorbed',
+                that: 'architect',
+              },
+              cwd: scene.tempDir,
+            });
+            return invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.execute', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
           },
-          cwd: scene.tempDir,
+        );
+
+        then('is still blocked (exit 2)', () => {
+          expect(result.code).toEqual(2);
         });
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+
+        then('the reply-prompt names the still-absent builder', () => {
+          expect(result.stdout).toContain('builder');
         });
-      });
 
-      then('is still blocked (exit 2)', () => {
-        expect(result.code).toEqual(2);
-      });
+        then('the answered architect is no longer in the reply-prompt', () => {
+          // only reviewers that still lack a .taken are listed
+          expect(result.stdout).not.toContain('slug = architect');
+        });
 
-      then('the reply-prompt names the still-absent builder', () => {
-        expect(result.stdout).toContain('builder');
-      });
-
-      then('the answered architect is no longer in the reply-prompt', () => {
-        // only reviewers that still lack a .taken are listed
-        expect(result.stdout).not.toContain('slug = architect');
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t2] driver answers builder too, then attempts --as passed', () => {
       const result = useThen('the stone progresses', async () => {

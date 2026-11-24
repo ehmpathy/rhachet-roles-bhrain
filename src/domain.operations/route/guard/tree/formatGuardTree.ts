@@ -1,14 +1,14 @@
 import type { RouteStoneGuardReviewPeerArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
-
-import { asGuardReasonHead } from '../asGuardReasonHead';
-import { formatGuardMalfunctionClearLines } from '../formatGuardMalfunctionClearLines';
-import { asConcessionReasonDisplay } from '../review/peer/asConcessionReasonDisplay';
-import { asJudgeReasonBranches } from '../review/peer/asJudgeReasonBranches';
+import { asGuardReasonHead } from '@src/domain.operations/route/guard/asGuardReasonHead';
+import { formatGuardMalfunctionClearLines } from '@src/domain.operations/route/guard/formatGuardMalfunctionClearLines';
+import { asConcessionReasonDisplay } from '@src/domain.operations/route/guard/review/peer/asConcessionReasonDisplay';
+import { asJudgeReasonBranches } from '@src/domain.operations/route/guard/review/peer/asJudgeReasonBranches';
 import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,
-} from '../review/peer/meter/computeReviewPeerVerdict';
-import { LEVEL_OF_UNMAPPED_REVIEW } from '../review/peer/meter/getOneReviewLevelByIndex';
+} from '@src/domain.operations/route/guard/review/peer/meter/computeReviewPeerVerdict';
+import { LEVEL_OF_UNMAPPED_REVIEW } from '@src/domain.operations/route/guard/review/peer/meter/getOneReviewLevelByIndex';
+
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,

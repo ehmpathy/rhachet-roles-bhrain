@@ -1,5 +1,5 @@
-import { asBriefLinesByCue } from '../learn/asBriefLinesByCue';
-import { asLinesWithFenceState } from '../learn/asLinesWithFenceState';
+import { asBriefLinesByCue } from '@src/domain.operations/learn/asBriefLinesByCue';
+import { asLinesWithFenceState } from '@src/domain.operations/learn/asLinesWithFenceState';
 
 /**
  * .what = whether a line opens a `.why` section: a level-2 header that names `.why`, or the

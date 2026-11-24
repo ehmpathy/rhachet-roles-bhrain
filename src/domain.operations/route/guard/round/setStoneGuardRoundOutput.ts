@@ -1,6 +1,7 @@
 import { ConstraintError } from 'helpful-errors';
 
-import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
+
 import { getOneStoneRewindGeneration } from './getOneStoneRewindGeneration';
 import { withStoneGenerationHold } from './withStoneGenerationHold';
 

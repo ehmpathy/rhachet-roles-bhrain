@@ -1,6 +1,7 @@
 import { ConstraintError } from 'helpful-errors';
 
-import { asCliOptionsOfArgs } from '../cli/asCliOptionsOfArgs';
+import { asCliOptionsOfArgs } from '@src/domain.operations/cli/asCliOptionsOfArgs';
+
 import {
   LIBRARIAN_COMMANDS,
   type LibrarianCommand,

@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import { getRouteDriverCloneAddr } from './getRouteDriverCloneAddr';
 import { getRouteReminderLogPath } from './getRouteReminderLogPath';
 import { TOLERATED_IO_WRITE_ERRNOS } from './TOLERATED_IO_WRITE_ERRNOS';

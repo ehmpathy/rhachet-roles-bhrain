@@ -1,4 +1,4 @@
-import { asExitCodeClass } from '../asExitCodeClass';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
 
 /**
  * .what = the passage footer of one guard artifact, read off its exit code alone

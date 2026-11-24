@@ -91,7 +91,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-drive-case1', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case1', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -146,7 +148,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-drive-case2', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case2', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -168,8 +172,14 @@ describe('driver.route.drive.acceptance', () => {
       // mark both stones as passed (via passage.jsonl)
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
       const passageContent =
-        ['{"stone":"1","status":"passed"}', '{"stone":"2","status":"passed"}'].join('\n') + '\n';
-      await fs.writeFile(path.join(tempDir, '.route', 'passage.jsonl'), passageContent);
+        [
+          '{"stone":"1","status":"passed"}',
+          '{"stone":"2","status":"passed"}',
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        passageContent,
+      );
 
       return { tempDir };
     });
@@ -204,7 +214,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-drive-case3', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case3', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -226,8 +238,14 @@ describe('driver.route.drive.acceptance', () => {
       // mark both stones as passed (via passage.jsonl)
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
       const passageContent =
-        ['{"stone":"1","status":"passed"}', '{"stone":"2","status":"passed"}'].join('\n') + '\n';
-      await fs.writeFile(path.join(tempDir, '.route', 'passage.jsonl'), passageContent);
+        [
+          '{"stone":"1","status":"passed"}',
+          '{"stone":"2","status":"passed"}',
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        passageContent,
+      );
 
       return { tempDir };
     });
@@ -266,7 +284,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-drive-case4', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case4', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -363,7 +383,9 @@ describe('driver.route.drive.acceptance', () => {
         //    are byte-identical by design. the claim was corrected rather than the snapshot
         //    deleted — the pin is real, and it was the CLAIM that overreached. the count now
         //    has the assertion above, which reads the state the emit does not carry
-        expect(sanitizeTimeForSnapshot(observed.result.stderr)).toMatchSnapshot();
+        expect(
+          sanitizeTimeForSnapshot(observed.result.stderr),
+        ).toMatchSnapshot();
       });
 
       then('the escalated stdout matches snapshot', () => {
@@ -433,10 +455,13 @@ describe('driver.route.drive.acceptance', () => {
           expect(run.result.code).toEqual(0);
         });
 
-        then('both streams are empty — no stone is re-shown to the clone', () => {
-          expect(run.result.stdout).toEqual('');
-          expect(run.result.stderr).toEqual('');
-        });
+        then(
+          'both streams are empty — no stone is re-shown to the clone',
+          () => {
+            expect(run.result.stdout).toEqual('');
+            expect(run.result.stderr).toEqual('');
+          },
+        );
 
         then("🔴 the driver's blocker counter is not bumped", () => {
           expect(run.after).toEqual(run.before);
@@ -464,7 +489,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-drive-case5', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case5', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -542,7 +569,11 @@ describe('driver.route.drive.acceptance', () => {
         args: { stone: '1', as: 'passed' },
         cwd: tempDir,
       });
-      await backdateTriggeredReport({ tempDir, stone: '1', slug: 'tests-pass' });
+      await backdateTriggeredReport({
+        tempDir,
+        stone: '1',
+        slug: 'tests-pass',
+      });
 
       // create articulation file for second review.self (required by file presence check)
       const articulationPath2 = getSelfReviewArticulationPath({
@@ -569,10 +600,7 @@ describe('driver.route.drive.acceptance', () => {
       });
 
       // create marker so mock review passes
-      await fs.writeFile(
-        path.join(tempDir, '.test', 'review-should-pass'),
-        '',
-      );
+      await fs.writeFile(path.join(tempDir, '.test', 'review-should-pass'), '');
 
       return { tempDir, blockerCountBeforeAs };
     });
@@ -664,7 +692,10 @@ describe('driver.route.drive.acceptance', () => {
   });
 
   given('[case6] hook mode allows stop when blocked on approval', () => {
-    const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
+    const JOURNEY_ASSETS_DIR = path.join(
+      __dirname,
+      '.test/assets/route-journey',
+    );
 
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
@@ -676,7 +707,9 @@ describe('driver.route.drive.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-drive-case6', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case6', {
+        cwd: tempDir,
+      });
 
       // bind the route
       await invokeRouteSkill({
@@ -927,118 +960,130 @@ describe('driver.route.drive.acceptance', () => {
     });
   });
 
-  given('[case9] a driver marks repairs in flight, then the stop hook fires', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'drive-case9-inflight',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('git checkout -b vlad/test-drive-case9', { cwd: tempDir });
-      await invokeRouteSkill({
-        skill: 'route.bind.set',
-        args: { route: '.' },
-        cwd: tempDir,
-      });
-      return { tempDir };
-    });
-
-    when('[t0] route.stone.set --as inflight without --what', () => {
-      const result = useThen('it is refused', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', as: 'inflight' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 2 (constraint)', () => {
-        expect(result.code).toEqual(2);
+  given(
+    '[case9] a driver marks repairs in flight, then the stop hook fires',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'drive-case9-inflight',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('git checkout -b vlad/test-drive-case9', {
+          cwd: tempDir,
+        });
+        await invokeRouteSkill({
+          skill: 'route.bind.set',
+          args: { route: '.' },
+          cwd: tempDir,
+        });
+        return { tempDir };
       });
 
-      then('stderr names the --what flag', () => {
-        expect(result.stderr).toContain('--what is required for --as inflight');
-      });
-
-      // 🔴 clamp. the caller typed --stone 1; a `stone: 1` line beneath the example only
-      // echoes their own argv back and reads as an address it is not
-      then('stderr echoes no argv as a context line', () => {
-        expect(result.stderr).not.toMatch(/^stone: /m);
-      });
-
-      then('stderr matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
-      });
-    });
-
-    when('[t1] route.stone.set --as inflight --what', () => {
-      const result = useThen('the watermark is written', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: {
-            stone: '1',
-            as: 'inflight',
-            what: 'three delegates repair blockers 1-4',
-          },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('stdout names the wait', () => {
-        expect(result.stdout).toContain('as = inflight');
-        expect(result.stdout).toContain(
-          '— three delegates repair blockers 1-4',
-        );
-      });
-
-      // every caller-visible render is pinned whole (i017 r011 b2)
-      then('stdout matches snapshot', () => {
-        expect(
-          asInflightStableRender({
-            output: sanitizeTimeForSnapshot(result.stdout),
+      when('[t0] route.stone.set --as inflight without --what', () => {
+        const result = useThen('it is refused', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1', as: 'inflight' },
+            cwd: scene.tempDir,
           }),
-        ).toMatchSnapshot();
-      });
-    });
-
-    when('[t2] route.drive --when hook.onStop fires while the wait stands', () => {
-      const result = useThen('the hook is quiet', async () =>
-        invokeRouteSkill({
-          skill: 'route.drive',
-          args: { when: 'hook.onStop' },
-          cwd: scene.tempDir,
-          env: {
-            RHACHET_GUARD_CONTEXT: undefined,
-            RHACHET_REVIEW_SUBPROCESS: undefined,
-          },
-        }),
-      );
-
-      then('exit code is 0 (the stop is allowed)', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('stdout is the one quiet inflight line', () => {
-        expect(result.stdout).toMatch(
-          /⏳ repairs in flight for 1 since \d\d:\d\d — three delegates repair blockers 1-4/,
         );
-        expect(result.stdout).not.toContain('--as arrived');
+
+        then('exit code is 2 (constraint)', () => {
+          expect(result.code).toEqual(2);
+        });
+
+        then('stderr names the --what flag', () => {
+          expect(result.stderr).toContain(
+            '--what is required for --as inflight',
+          );
+        });
+
+        // 🔴 clamp. the caller typed --stone 1; a `stone: 1` line beneath the example only
+        // echoes their own argv back and reads as an address it is not
+        then('stderr echoes no argv as a context line', () => {
+          expect(result.stderr).not.toMatch(/^stone: /m);
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+        });
       });
 
-      // every caller-visible render is pinned whole (i017 r011 b2)
-      then('stdout matches snapshot', () => {
-        expect(
-          asInflightStableRender({
-            output: sanitizeTimeForSnapshot(result.stdout),
+      when('[t1] route.stone.set --as inflight --what', () => {
+        const result = useThen('the watermark is written', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: {
+              stone: '1',
+              as: 'inflight',
+              what: 'three delegates repair blockers 1-4',
+            },
+            cwd: scene.tempDir,
           }),
-        ).toMatchSnapshot();
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('stdout names the wait', () => {
+          expect(result.stdout).toContain('as = inflight');
+          expect(result.stdout).toContain(
+            '— three delegates repair blockers 1-4',
+          );
+        });
+
+        // every caller-visible render is pinned whole (i017 r011 b2)
+        then('stdout matches snapshot', () => {
+          expect(
+            asInflightStableRender({
+              output: sanitizeTimeForSnapshot(result.stdout),
+            }),
+          ).toMatchSnapshot();
+        });
       });
-    });
-  });
+
+      when(
+        '[t2] route.drive --when hook.onStop fires while the wait stands',
+        () => {
+          const result = useThen('the hook is quiet', async () =>
+            invokeRouteSkill({
+              skill: 'route.drive',
+              args: { when: 'hook.onStop' },
+              cwd: scene.tempDir,
+              env: {
+                RHACHET_GUARD_CONTEXT: undefined,
+                RHACHET_REVIEW_SUBPROCESS: undefined,
+              },
+            }),
+          );
+
+          then('exit code is 0 (the stop is allowed)', () => {
+            expect(result.code).toEqual(0);
+          });
+
+          then('stdout is the one quiet inflight line', () => {
+            expect(result.stdout).toMatch(
+              /⏳ repairs in flight for 1 since \d\d:\d\d — three delegates repair blockers 1-4/,
+            );
+            expect(result.stdout).not.toContain('--as arrived');
+          });
+
+          // every caller-visible render is pinned whole (i017 r011 b2)
+          then('stdout matches snapshot', () => {
+            expect(
+              asInflightStableRender({
+                output: sanitizeTimeForSnapshot(result.stdout),
+              }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
 
   given('[case10] a guard round rejected, then route.drive re-read', () => {
     // the guard prints its round tree once, on the stdout of the arrival. this case drops
@@ -1128,7 +1173,9 @@ describe('driver.route.drive.acceptance', () => {
 
       then('stdout names the rejected lane, its counts, and its given', () => {
         expect(result.stdout).toMatch(/r1: .+ — rejected, 1 blocker 🔴/);
-        expect(result.stdout).toContain('given: .reviews/peer/1._.review.i001.');
+        expect(result.stdout).toContain(
+          'given: .reviews/peer/1._.review.i001.',
+        );
       });
 
       then('stdout names the judge verdict of that round', () => {

@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-isolation');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-isolation',
+);
 
 /**
  * .what = acceptance test for per-stone budget isolation
@@ -51,7 +54,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.alpha',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -68,9 +75,12 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         expect(result.stdout).toContain('1/2');
       });
 
-      then('the alpha tree is pinned — the shared reviewer rejected at 1 of 2 on alpha', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the alpha tree is pinned — the shared reviewer rejected at 1 of 2 on alpha',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] second alpha attempt exhausts budget', () => {
@@ -83,7 +93,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.alpha',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -124,7 +138,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.alpha',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -164,7 +182,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.alpha',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -181,9 +203,12 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         expect(result.stdout).toContain('passage = allowed');
       });
 
-      then('the alpha-passage tree is pinned — the shared reviewer exhausted at 2 of 2, judge allowed', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the alpha-passage tree is pinned — the shared reviewer exhausted at 2 of 2, judge allowed',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     // =========================================================================
@@ -201,7 +226,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.beta', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '2.beta',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -238,7 +267,10 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
     when('[t4] beta passes within budget', () => {
       const result = useThen('beta passes', async () => {
         // make beta review pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'beta-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'beta-should-pass'),
+          '',
+        );
 
         // change artifact to trigger fresh review
         await fs.writeFile(
@@ -249,7 +281,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.beta', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '2.beta',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

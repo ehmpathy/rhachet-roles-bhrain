@@ -9,21 +9,14 @@
     "includes": [
       "**/src/**/*.ts",
       "**/provision/**/*.ts",
+      "**/blackbox/**/*.ts",
       "!**/dist",
       "!**/coverage",
       "!**/node_modules",
+      "!**/.agent/.cache",
       "!**/.artifact",
       "!**/.generated",
-      "!**/.test*",
-      // a route's archive holds code it ruled out; a record, never a source
-      "!**/.behavior",
-      // a CACHE is never lint scope. `rmsafe` parks deleted files under
-      // `.agent/.cache/**/trash/` and keeps their original path, so a file removed from
-      // `src/` retains a `/src/` segment and `**/src/**/*.ts` above matches it. the nested
-      // `.agent/.cache/.gitignore` does not save it: `vcs.useIgnoreFile` reads the ROOT
-      // ignore file alone. ⇒ deleted code lints as live code, and the gate fails LOCALLY
-      // while CI (a fresh clone, no trash) stays green — the worst shape a gate can take
-      "!**/.agent/.cache"
+      "!**/.test*"
     ]
   },
   "formatter": {
@@ -84,7 +77,15 @@
           "fix": "none"
         },
         "useImportType": "error",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "simple-lambda-testing-methods": "use runLambdaEndpoint from sdk-aws-lambda — .onReferenced in integration tests, .onSerialized in acceptance tests"
+            }
+          }
+        }
       },
       "suspicious": {
         "noExplicitAny": "warn",
@@ -93,7 +94,8 @@
         "noUnsafeDeclarationMerging": "off",
         "useIterableCallbackReturn": "warn",
         "noDuplicateTestHooks": "off",
-        "noThenProperty": "warn"
+        "noThenProperty": "warn",
+        "noFocusedTests": "error"
       },
       "nursery": {
         "noFloatingPromises": "error",

@@ -571,17 +571,19 @@ describe('driver.route.bounce.acceptance', () => {
         }),
       );
 
-      const testsResult = useThen('tests/feature.test.ts is allowed', async () =>
-        invokeRouteSkill({
-          skill: 'route.bounce',
-          args: { mode: 'hook' },
-          cwd: scene.tempDir,
-          stdin: createHookStdin({
-            toolName: 'Write',
-            filePath: 'tests/feature.test.ts',
+      const testsResult = useThen(
+        'tests/feature.test.ts is allowed',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.bounce',
+            args: { mode: 'hook' },
             cwd: scene.tempDir,
+            stdin: createHookStdin({
+              toolName: 'Write',
+              filePath: 'tests/feature.test.ts',
+              cwd: scene.tempDir,
+            }),
           }),
-        }),
       );
 
       then('src is blocked (route-a bound, protects src)', () => {
@@ -884,17 +886,19 @@ describe('driver.route.bounce.acceptance', () => {
     });
 
     when('[t0] absolute path outside repo', () => {
-      const result = useThen('allowed (cannot match relative globs)', async () =>
-        invokeRouteSkill({
-          skill: 'route.bounce',
-          args: { mode: 'hook' },
-          cwd: scene.tempDir,
-          stdin: JSON.stringify({
-            hook_event_name: 'PreToolUse',
-            tool_name: 'Write',
-            tool_input: { file_path: '/etc/passwd' },
+      const result = useThen(
+        'allowed (cannot match relative globs)',
+        async () =>
+          invokeRouteSkill({
+            skill: 'route.bounce',
+            args: { mode: 'hook' },
+            cwd: scene.tempDir,
+            stdin: JSON.stringify({
+              hook_event_name: 'PreToolUse',
+              tool_name: 'Write',
+              tool_input: { file_path: '/etc/passwd' },
+            }),
           }),
-        }),
       );
 
       then('exit 0 (path outside repo)', () => {

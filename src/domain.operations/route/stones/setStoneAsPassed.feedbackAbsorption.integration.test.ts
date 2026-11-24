@@ -4,11 +4,12 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
-import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
-import { concedeEveryPeerConcern } from '../__test_assets__/concedeEveryPeerConcern';
-import { countReviewerRuns } from '../__test_assets__/countReviewerRuns';
-import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { answerEveryPeerGiven } from '@src/domain.operations/route/.test.assets/answerEveryPeerGiven';
+import { asStableGuardEmit } from '@src/domain.operations/route/.test.assets/asStableGuardEmit';
+import { concedeEveryPeerConcern } from '@src/domain.operations/route/.test.assets/concedeEveryPeerConcern';
+import { countReviewerRuns } from '@src/domain.operations/route/.test.assets/countReviewerRuns';
+import { genContextReviewBrainSupplyDemo } from '@src/domain.operations/route/.test.assets/genContextReviewBrainSupplyDemo';
+
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const noopContext = genContextReviewBrainSupplyDemo();

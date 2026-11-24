@@ -1,5 +1,4 @@
 import * as path from 'path';
-
 import { given, then, useThen, when } from 'test-fns';
 
 import {
@@ -33,21 +32,30 @@ describe('reflect.snapshot.capture', () => {
         }),
       );
 
-      then('🔴 it refuses as a constraint — exit 2, a qualified header, no stack', () => {
-        // the defect this clamps: an absent project crashed with a raw node stack
-        expect(result.code).toEqual(2);
-        expect(result.stderr).toContain('✋ ConstraintError: no claude code project');
-        expect(result.stderr).toContain('fix: run claude code in this repo once');
-        expect(result.stderr).not.toContain('Node.js v');
-        expect(result.stderr).not.toMatch(/^\s+at /m);
-      });
+      then(
+        '🔴 it refuses as a constraint — exit 2, a qualified header, no stack',
+        () => {
+          // the defect this clamps: an absent project crashed with a raw node stack
+          expect(result.code).toEqual(2);
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: no claude code project',
+          );
+          expect(result.stderr).toContain(
+            'fix: run claude code in this repo once',
+          );
+          expect(result.stderr).not.toContain('Node.js v');
+          expect(result.stderr).not.toMatch(/^\s+at /m);
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
       });
 
       then('error mentions claude project not found', () => {
-        expect(result.stderr.toLowerCase()).toMatch(/claude|project|found|transcript/);
+        expect(result.stderr.toLowerCase()).toMatch(
+          /claude|project|found|transcript/,
+        );
       });
 
       then('stderr matches snapshot', () => {

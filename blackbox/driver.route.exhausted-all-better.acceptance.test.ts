@@ -277,12 +277,7 @@ const setStanceRowsAsAbsolute = async (input: {
     if (input.scope === 'first' && index !== indexFirstStance) return line;
     return JSON.stringify({
       ...row,
-      given: path.join(
-        dirReal,
-        '.reviews',
-        'peer',
-        path.basename(row.given),
-      ),
+      given: path.join(dirReal, '.reviews', 'peer', path.basename(row.given)),
     });
   });
   await fs.writeFile(pathLedger, `${linesAbsolute.join('\n')}\n`);
@@ -348,29 +343,35 @@ describe('driver.route.exhausted-all-better', () => {
         return { judgeSame, judgeAlias, passedAlias, ledger, dirs };
       });
 
-      when('[t0] the judge runs through the path the stances were written under', () => {
-        then('it passes', () => {
-          expect(scene.judgeSame.stdout).toContain('passed: true');
-          expect(scene.judgeSame.stdout).toContain(
-            'reason: reviews pass (blockers: 0/0',
-          );
-          expect(scene.judgeSame.code).toEqual(0);
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t0] the judge runs through the path the stances were written under',
+        () => {
+          then('it passes', () => {
+            expect(scene.judgeSame.stdout).toContain('passed: true');
+            expect(scene.judgeSame.stdout).toContain(
+              'reason: reviews pass (blockers: 0/0',
+            );
+            expect(scene.judgeSame.code).toEqual(0);
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
 
       when('[t1] the judge runs through a symlinked alias of the route', () => {
-        then('it passes too — the path the judge sees does not orphan a stance', () => {
-          expect(scene.judgeAlias.stdout).toContain('passed: true');
-          expect(scene.judgeAlias.stdout).not.toContain(
-            'blockers exceed threshold',
-          );
-          expect(scene.judgeAlias.code).toEqual(0);
-        });
+        then(
+          'it passes too — the path the judge sees does not orphan a stance',
+          () => {
+            expect(scene.judgeAlias.stdout).toContain('passed: true');
+            expect(scene.judgeAlias.stdout).not.toContain(
+              'blockers exceed threshold',
+            );
+            expect(scene.judgeAlias.code).toEqual(0);
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
@@ -382,9 +383,9 @@ describe('driver.route.exhausted-all-better', () => {
         then('the stone passes, and no concern is demanded again', () => {
           expect(scene.passedAlias.code).toEqual(0);
           expect(scene.passedAlias.stdout).toContain('passage = allowed');
-          expect(scene.passedAlias.stdout + scene.passedAlias.stderr).not.toContain(
-            'undeclared',
-          );
+          expect(
+            scene.passedAlias.stdout + scene.passedAlias.stderr,
+          ).not.toContain('undeclared');
         });
         then('matches snapshot', () => {
           expect(
@@ -394,24 +395,27 @@ describe('driver.route.exhausted-all-better', () => {
       });
 
       when('[t3] the ledger is read', () => {
-        then('each stance row names its given by filename, never by an absolute path', () => {
-          // one row per concern: friction carries blocker.1 and blocker.2, so its given repeats
-          const stances = scene.ledger
-            .split('\n')
-            .filter((line) => line.trim().length > 0)
-            .map((line) => JSON.parse(line))
-            .filter((row) => row.status === 'conceded')
-            .map((row) => ({
-              reviewer: row.reviewer as string,
-              about: row.about as string,
-              given: row.given as string,
-            }));
-          expect(stances.length).toBeGreaterThan(0);
-          stances.forEach((one) =>
-            expect(one.given).toEqual(path.basename(one.given)),
-          );
-          expect(stances).toMatchSnapshot();
-        });
+        then(
+          'each stance row names its given by filename, never by an absolute path',
+          () => {
+            // one row per concern: friction carries blocker.1 and blocker.2, so its given repeats
+            const stances = scene.ledger
+              .split('\n')
+              .filter((line) => line.trim().length > 0)
+              .map((line) => JSON.parse(line))
+              .filter((row) => row.status === 'conceded')
+              .map((row) => ({
+                reviewer: row.reviewer as string,
+                about: row.about as string,
+                given: row.given as string,
+              }));
+            expect(stances.length).toBeGreaterThan(0);
+            stances.forEach((one) =>
+              expect(one.given).toEqual(path.basename(one.given)),
+            );
+            expect(stances).toMatchSnapshot();
+          },
+        );
       });
     },
   );
@@ -455,44 +459,53 @@ describe('driver.route.exhausted-all-better', () => {
         };
       });
 
-      when('[t0] the judge runs through the path the rows were written under', () => {
-        then('it passes', () => {
-          expect(scene.judgeSame.stdout).toContain('passed: true');
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t0] the judge runs through the path the rows were written under',
+        () => {
+          then('it passes', () => {
+            expect(scene.judgeSame.stdout).toContain('passed: true');
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
 
-      when('[t1] the judge runs through a symlinked alias — the measured tree', () => {
-        then('it passes, with no stance declared again', () => {
-          expect(scene.judgeAlias.stdout).toContain('passed: true');
-          expect(scene.judgeAlias.stdout).not.toContain(
-            'blockers exceed threshold (3 > 0)',
-          );
-          expect(scene.judgeAlias.code).toEqual(0);
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t1] the judge runs through a symlinked alias — the measured tree',
+        () => {
+          then('it passes, with no stance declared again', () => {
+            expect(scene.judgeAlias.stdout).toContain('passed: true');
+            expect(scene.judgeAlias.stdout).not.toContain(
+              'blockers exceed threshold (3 > 0)',
+            );
+            expect(scene.judgeAlias.code).toEqual(0);
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
 
-      when('[t2] the driver runs `--as passed` through the alias (vision case=5 [t1])', () => {
-        then('the stone passes, and no new `conceded` row is written', () => {
-          expect(scene.passedAlias.code).toEqual(0);
-          expect(scene.passedAlias.stdout).toContain('passage = allowed');
-          expect(scene.concededAfter).toEqual(scene.concededBefore);
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.passedAlias, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t2] the driver runs `--as passed` through the alias (vision case=5 [t1])',
+        () => {
+          then('the stone passes, and no new `conceded` row is written', () => {
+            expect(scene.passedAlias.code).toEqual(0);
+            expect(scene.passedAlias.stdout).toContain('passage = allowed');
+            expect(scene.concededAfter).toEqual(scene.concededBefore);
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.passedAlias, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 
@@ -514,10 +527,13 @@ describe('driver.route.exhausted-all-better', () => {
       });
 
       when('[t0] the judge runs through a symlinked alias of the route', () => {
-        then('it passes — the dispute is shed the same way a `better` concession is', () => {
-          expect(scene.judgeAlias.stdout).toContain('passed: true');
-          expect(scene.judgeAlias.code).toEqual(0);
-        });
+        then(
+          'it passes — the dispute is shed the same way a `better` concession is',
+          () => {
+            expect(scene.judgeAlias.stdout).toContain('passed: true');
+            expect(scene.judgeAlias.code).toEqual(0);
+          },
+        );
         then('it names both sheds', () => {
           expect(scene.judgeAlias.stderr).toContain(
             'disputed: 1 blocker, 0 nitpicks excluded from the tally',
@@ -565,9 +581,12 @@ describe('driver.route.exhausted-all-better', () => {
       });
 
       when('[t1] the judge runs through a symlinked alias of the route', () => {
-        then('a stance on an overruled lane sheds naught — its lane left the sum', () => {
-          expect(scene.judgeAlias.stderr).not.toContain('conceded better:');
-        });
+        then(
+          'a stance on an overruled lane sheds naught — its lane left the sum',
+          () => {
+            expect(scene.judgeAlias.stderr).not.toContain('conceded better:');
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
@@ -629,14 +648,17 @@ describe('driver.route.exhausted-all-better', () => {
           );
           expect(scene.judgeAlias.code).toEqual(2);
         });
-        then('it names the urgent lane and the budget lever, scoped to that lane', () => {
-          expect(scene.judgeAlias.stderr).toContain(
-            '✋ halted, an urgent concession stands — friction',
-          );
-          expect(scene.judgeAlias.stderr).toContain(
-            `rhx route.guard.budget --for review --add 2 --peer friction --stone ${STONE}`,
-          );
-        });
+        then(
+          'it names the urgent lane and the budget lever, scoped to that lane',
+          () => {
+            expect(scene.judgeAlias.stderr).toContain(
+              '✋ halted, an urgent concession stands — friction',
+            );
+            expect(scene.judgeAlias.stderr).toContain(
+              `rhx route.guard.budget --for review --add 2 --peer friction --stone ${STONE}`,
+            );
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
@@ -669,16 +691,21 @@ describe('driver.route.exhausted-all-better', () => {
         });
       });
 
-      when('[t2] the fix lands and the driver re-arrives through the alias', () => {
-        then('friction spends the granted round — 4 of 5', () => {
-          expect(scene.rearrivedAlias.stdout).toContain('r3: friction (l2, 4/5)');
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.rearrivedAlias, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t2] the fix lands and the driver re-arrives through the alias',
+        () => {
+          then('friction spends the granted round — 4 of 5', () => {
+            expect(scene.rearrivedAlias.stdout).toContain(
+              'r3: friction (l2, 4/5)',
+            );
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.rearrivedAlias, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 
@@ -771,20 +798,25 @@ describe('driver.route.exhausted-all-better', () => {
         });
       });
 
-      when('[t3] the driver concedes blocker.2 `better`, absorbs, and passes through the alias', () => {
-        then('the stone passes', () => {
-          expect(scene.passedAfterDeclared.code).toEqual(0);
-          expect(scene.passedAfterDeclared.stdout).toContain('passage = allowed');
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({
-              result: scene.passedAfterDeclared,
-              dirs: scene.dirs,
-            }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t3] the driver concedes blocker.2 `better`, absorbs, and passes through the alias',
+        () => {
+          then('the stone passes', () => {
+            expect(scene.passedAfterDeclared.code).toEqual(0);
+            expect(scene.passedAfterDeclared.stdout).toContain(
+              'passage = allowed',
+            );
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({
+                result: scene.passedAfterDeclared,
+                dirs: scene.dirs,
+              }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 
@@ -914,11 +946,14 @@ describe('driver.route.exhausted-all-better', () => {
           );
           expect(scene.judgeAlias.code).toEqual(2);
         });
-        then('its budget command is scoped to the l1 lane, never a bare add', () => {
-          expect(scene.judgeAlias.stderr).toContain(
-            `rhx route.guard.budget --for review --add 2 --peer intent --stone ${STONE}`,
-          );
-        });
+        then(
+          'its budget command is scoped to the l1 lane, never a bare add',
+          () => {
+            expect(scene.judgeAlias.stderr).toContain(
+              `rhx route.guard.budget --for review --add 2 --peer intent --stone ${STONE}`,
+            );
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
@@ -933,16 +968,19 @@ describe('driver.route.exhausted-all-better', () => {
             'an urgent concession stands',
           );
         });
-        then('the gate names the l1 urgent lane with --peer, never a bare `--add`', () => {
-          // .why = a bare add lands on the latest level (l2) alone, so it would pad friction and
-          //        leave the urgent lane spent; the halt names the urgent lane, as the judge does
-          expect(scene.passedAlias.stdout).toContain(
-            `rhx route.guard.budget --for review --add N --peer intent --stone ${STONE}`,
-          );
-          expect(scene.passedAlias.stdout).not.toContain(
-            `rhx route.guard.budget --for review --add N --stone ${STONE}`,
-          );
-        });
+        then(
+          'the gate names the l1 urgent lane with --peer, never a bare `--add`',
+          () => {
+            // .why = a bare add lands on the latest level (l2) alone, so it would pad friction and
+            //        leave the urgent lane spent; the halt names the urgent lane, as the judge does
+            expect(scene.passedAlias.stdout).toContain(
+              `rhx route.guard.budget --for review --add N --peer intent --stone ${STONE}`,
+            );
+            expect(scene.passedAlias.stdout).not.toContain(
+              `rhx route.guard.budget --for review --add N --stone ${STONE}`,
+            );
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.passedAlias, dirs: scene.dirs }),
@@ -961,16 +999,21 @@ describe('driver.route.exhausted-all-better', () => {
         });
       });
 
-      when('[t3] the fix lands and the driver re-arrives through the alias', () => {
-        then('intent spends the granted round — 4 of 5', () => {
-          expect(scene.rearrivedAlias.stdout).toContain('r2: intent (l1, 4/5)');
-        });
-        then('matches snapshot', () => {
-          expect(
-            asJourneySnap({ result: scene.rearrivedAlias, dirs: scene.dirs }),
-          ).toMatchSnapshot();
-        });
-      });
+      when(
+        '[t3] the fix lands and the driver re-arrives through the alias',
+        () => {
+          then('intent spends the granted round — 4 of 5', () => {
+            expect(scene.rearrivedAlias.stdout).toContain(
+              'r2: intent (l1, 4/5)',
+            );
+          });
+          then('matches snapshot', () => {
+            expect(
+              asJourneySnap({ result: scene.rearrivedAlias, dirs: scene.dirs }),
+            ).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 
@@ -1005,14 +1048,17 @@ describe('driver.route.exhausted-all-better', () => {
       });
 
       when('[t1] the judge runs through a symlinked alias of the route', () => {
-        then('only the live lane sheds — the overruled lane stances offset naught', () => {
-          // friction (l2, live) sheds its 2; intent (l1, overruled) left the sum, so its stance
-          // must not add a third to the shed
-          expect(scene.judgeAlias.stdout).toContain('passed: true');
-          expect(scene.judgeAlias.stdout).toContain(
-            'after 2 blockers shed (0 disputed + 2 conceded better)',
-          );
-        });
+        then(
+          'only the live lane sheds — the overruled lane stances offset naught',
+          () => {
+            // friction (l2, live) sheds its 2; intent (l1, overruled) left the sum, so its stance
+            // must not add a third to the shed
+            expect(scene.judgeAlias.stdout).toContain('passed: true');
+            expect(scene.judgeAlias.stdout).toContain(
+              'after 2 blockers shed (0 disputed + 2 conceded better)',
+            );
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
@@ -1094,14 +1140,17 @@ describe('driver.route.exhausted-all-better', () => {
           expect(out).toContain('intent');
           expect(out).toContain('friction');
         });
-        then('a re-minted given takes a filename a pre-rewind stance keyed', () => {
-          // .why = without the collision, a voided stance could never meet a re-minted given,
-          //        and [t2] would stay green whether or not the rewind voids stances
-          const collided = scene.givensReminted.filter((name) =>
-            scene.givensStanced.includes(name),
-          );
-          expect(collided.length).toBeGreaterThan(0);
-        });
+        then(
+          'a re-minted given takes a filename a pre-rewind stance keyed',
+          () => {
+            // .why = without the collision, a voided stance could never meet a re-minted given,
+            //        and [t2] would stay green whether or not the rewind voids stances
+            const collided = scene.givensReminted.filter((name) =>
+              scene.givensStanced.includes(name),
+            );
+            expect(collided.length).toBeGreaterThan(0);
+          },
+        );
         then('matches snapshot', () => {
           expect(
             asJourneySnap({ result: scene.rearrivedAlias, dirs: scene.dirs }),

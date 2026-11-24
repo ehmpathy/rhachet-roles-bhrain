@@ -66,7 +66,8 @@ describe('driver.route.guard-cwd.acceptance', () => {
       then('output mentions approval needed (not path error)', () => {
         // the key assertion: if $route was broken, we'd see a path error
         // instead, we should see "approval" or "wait" which means the judge ran correctly
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|wait/);
         // should not contain doubled path errors
         expect(output).not.toContain('not found');
@@ -163,14 +164,18 @@ describe('driver.route.guard-cwd.acceptance', () => {
         });
       });
 
-      then('exit code is non-zero (blocked by approval, not path error)', () => {
-        expect(result.code).not.toEqual(0);
-      });
+      then(
+        'exit code is non-zero (blocked by approval, not path error)',
+        () => {
+          expect(result.code).not.toEqual(0);
+        },
+      );
 
       then('output mentions approval (judge found the stone)', () => {
         // if $route was broken, we'd get "stone not found" from doubled path
         // correct behavior: judge finds stone but needs approval
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|wait/);
       });
 

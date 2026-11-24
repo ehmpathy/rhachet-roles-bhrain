@@ -15,7 +15,9 @@ const MEMORY_PATH = '/home/agent/.claude/projects/p/memory/x.md';
  */
 const HOOK_COMMAND = ROLE_LEARNER.hooks?.onBrain?.onTool?.[0]?.command;
 if (!HOOK_COMMAND)
-  throw new Error('learner role registers no onTool hook; the suite has no subject');
+  throw new Error(
+    'learner role registers no onTool hook; the suite has no subject',
+  );
 
 /**
  * .what = run the registered hook command, as claude code does, in a tree
@@ -124,26 +126,38 @@ describe('learner.memory-guard.hook.acceptance', () => {
       });
     });
 
-    when('[t0b] a write into native memory behind a `>` look-alike fires the hook', () => {
-      then('it is blocked, exit 2, for `2>&1` and a quoted `=>`', async () => {
-        const results = {
-          fdDup: runBash({
-            tree: scene.tree,
-            command: `echo x > ${MEMORY_PATH} 2>&1`,
-          }),
-          arrow: runBash({
-            tree: scene.tree,
-            command: `echo '=>' > ${MEMORY_PATH}`,
-          }),
-        };
-        expect(results.fdDup.exitCode).toEqual(2);
-        expect(results.arrow.exitCode).toEqual(2);
-        expect({
-          fdDup: await asHookSnap({ result: results.fdDup, tree: scene.tree }),
-          arrow: await asHookSnap({ result: results.arrow, tree: scene.tree }),
-        }).toMatchSnapshot();
-      });
-    });
+    when(
+      '[t0b] a write into native memory behind a `>` look-alike fires the hook',
+      () => {
+        then(
+          'it is blocked, exit 2, for `2>&1` and a quoted `=>`',
+          async () => {
+            const results = {
+              fdDup: runBash({
+                tree: scene.tree,
+                command: `echo x > ${MEMORY_PATH} 2>&1`,
+              }),
+              arrow: runBash({
+                tree: scene.tree,
+                command: `echo '=>' > ${MEMORY_PATH}`,
+              }),
+            };
+            expect(results.fdDup.exitCode).toEqual(2);
+            expect(results.arrow.exitCode).toEqual(2);
+            expect({
+              fdDup: await asHookSnap({
+                result: results.fdDup,
+                tree: scene.tree,
+              }),
+              arrow: await asHookSnap({
+                result: results.arrow,
+                tree: scene.tree,
+              }),
+            }).toMatchSnapshot();
+          },
+        );
+      },
+    );
 
     when('[t1] a call that touches no memory path fires the hook', () => {
       then('it is allowed, exit 0, silent', async () => {
@@ -155,25 +169,32 @@ describe('learner.memory-guard.hook.acceptance', () => {
       });
     });
 
-    when('[t1b] a Write and an Edit outside native memory fire the hook', () => {
-      then('each is allowed, exit 0, silent', async () => {
-        const results = {
-          write: runHook({
-            tree: scene.tree,
-            toolName: 'Write',
-            toolInput: { file_path: 'src/a.ts', content: 'x' },
-          }),
-          edit: runHook({
-            tree: scene.tree,
-            toolName: 'Edit',
-            toolInput: { file_path: 'src/a.ts', old_string: 'x', new_string: 'y' },
-          }),
-        };
-        expect(results.write).toEqual({ exitCode: 0, stderr: '' });
-        expect(results.edit).toEqual({ exitCode: 0, stderr: '' });
-        expect(results).toMatchSnapshot();
-      });
-    });
+    when(
+      '[t1b] a Write and an Edit outside native memory fire the hook',
+      () => {
+        then('each is allowed, exit 0, silent', async () => {
+          const results = {
+            write: runHook({
+              tree: scene.tree,
+              toolName: 'Write',
+              toolInput: { file_path: 'src/a.ts', content: 'x' },
+            }),
+            edit: runHook({
+              tree: scene.tree,
+              toolName: 'Edit',
+              toolInput: {
+                file_path: 'src/a.ts',
+                old_string: 'x',
+                new_string: 'y',
+              },
+            }),
+          };
+          expect(results.write).toEqual({ exitCode: 0, stderr: '' });
+          expect(results.edit).toEqual({ exitCode: 0, stderr: '' });
+          expect(results).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t2] a read of native memory with `2>&1` fires the hook', () => {
       then('it is allowed, exit 0, silent', async () => {
@@ -188,23 +209,26 @@ describe('learner.memory-guard.hook.acceptance', () => {
       });
     });
 
-    when('[t2b] a read of native memory with a quoted arrow fires the hook', () => {
-      then('it is allowed, exit 0, silent, for `=>` and `->`', async () => {
-        const results = {
-          fat: runBash({
-            tree: scene.tree,
-            command: `grep '=>' ${MEMORY_PATH}`,
-          }),
-          thin: runBash({
-            tree: scene.tree,
-            command: `grep -- '->' ${MEMORY_PATH}`,
-          }),
-        };
-        expect(results.fat).toEqual({ exitCode: 0, stderr: '' });
-        expect(results.thin).toEqual({ exitCode: 0, stderr: '' });
-        expect(results).toMatchSnapshot();
-      });
-    });
+    when(
+      '[t2b] a read of native memory with a quoted arrow fires the hook',
+      () => {
+        then('it is allowed, exit 0, silent, for `=>` and `->`', async () => {
+          const results = {
+            fat: runBash({
+              tree: scene.tree,
+              command: `grep '=>' ${MEMORY_PATH}`,
+            }),
+            thin: runBash({
+              tree: scene.tree,
+              command: `grep -- '->' ${MEMORY_PATH}`,
+            }),
+          };
+          expect(results.fat).toEqual({ exitCode: 0, stderr: '' });
+          expect(results.thin).toEqual({ exitCode: 0, stderr: '' });
+          expect(results).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t3] a copy into native memory behind a loop fires the hook', () => {
       then('it is blocked, exit 2', async () => {
@@ -237,41 +261,41 @@ describe('learner.memory-guard.hook.acceptance', () => {
       );
     });
 
-    when('[t4b] a memory read redirected to a relative path, no cwd sent', () => {
-      then(
-        'it is blocked, exit 2, with the unplaced nudge: the target may land in memory',
-        async () => {
-          const result = runBash({
-            tree: scene.tree,
-            command: `cat ${MEMORY_PATH} > out.txt`,
-          });
-          expect(result.exitCode).toEqual(2);
-          expect(result.stderr).toContain(
-            'an unplaced write beside claude native memory',
-          );
-          expect(
-            await asHookSnap({ result, tree: scene.tree }),
-          ).toMatchSnapshot();
-        },
-      );
-    });
+    when(
+      '[t4b] a memory read redirected to a relative path, no cwd sent',
+      () => {
+        then(
+          'it is blocked, exit 2, with the unplaced nudge: the target may land in memory',
+          async () => {
+            const result = runBash({
+              tree: scene.tree,
+              command: `cat ${MEMORY_PATH} > out.txt`,
+            });
+            expect(result.exitCode).toEqual(2);
+            expect(result.stderr).toContain(
+              'an unplaced write beside claude native memory',
+            );
+            expect(
+              await asHookSnap({ result, tree: scene.tree }),
+            ).toMatchSnapshot();
+          },
+        );
+      },
+    );
 
     when('[t4c] a relative write, with the memory dir sent as the cwd', () => {
-      then(
-        'it is blocked, exit 2: the target lands in memory',
-        async () => {
-          const result = runBash({
-            tree: scene.tree,
-            command: 'echo x > a.md',
-            cwd: path.dirname(MEMORY_PATH),
-          });
-          expect(result.exitCode).toEqual(2);
-          expect(result.stderr).toContain('a.md');
-          expect(
-            await asHookSnap({ result, tree: scene.tree }),
-          ).toMatchSnapshot();
-        },
-      );
+      then('it is blocked, exit 2: the target lands in memory', async () => {
+        const result = runBash({
+          tree: scene.tree,
+          command: 'echo x > a.md',
+          cwd: path.dirname(MEMORY_PATH),
+        });
+        expect(result.exitCode).toEqual(2);
+        expect(result.stderr).toContain('a.md');
+        expect(
+          await asHookSnap({ result, tree: scene.tree }),
+        ).toMatchSnapshot();
+      });
     });
 
     when('[t5] a Write tool call into native memory fires the hook', () => {
@@ -317,30 +341,31 @@ describe('learner.memory-guard.hook.acceptance', () => {
           command: `cp ${MEMORY_PATH} /tmp/x.md`,
         });
         expect(result.exitCode).toEqual(2);
-        expect(result.stderr).toContain(
-          'a copy beside claude native memory',
-        );
+        expect(result.stderr).toContain('a copy beside claude native memory');
         expect(
           await asHookSnap({ result, tree: scene.tree }),
         ).toMatchSnapshot();
       });
     });
 
-    when('[t8] a redirect through a var beside the memory dir fires the hook', () => {
-      then('it is blocked, exit 2, with the unplaced nudge', async () => {
-        const result = runBash({
-          tree: scene.tree,
-          command: `D=${path.dirname(MEMORY_PATH)}; echo x > $D/a.md`,
+    when(
+      '[t8] a redirect through a var beside the memory dir fires the hook',
+      () => {
+        then('it is blocked, exit 2, with the unplaced nudge', async () => {
+          const result = runBash({
+            tree: scene.tree,
+            command: `D=${path.dirname(MEMORY_PATH)}; echo x > $D/a.md`,
+          });
+          expect(result.exitCode).toEqual(2);
+          expect(result.stderr).toContain(
+            'an unplaced write beside claude native memory',
+          );
+          expect(
+            await asHookSnap({ result, tree: scene.tree }),
+          ).toMatchSnapshot();
         });
-        expect(result.exitCode).toEqual(2);
-        expect(result.stderr).toContain(
-          'an unplaced write beside claude native memory',
-        );
-        expect(
-          await asHookSnap({ result, tree: scene.tree }),
-        ).toMatchSnapshot();
-      });
-    });
+      },
+    );
 
     when('[t9] a malformed json payload fires the hook', () => {
       then('it is allowed, exit 0, silent: never 2', async () => {
@@ -395,27 +420,33 @@ describe('learner.memory-guard.hook.acceptance', () => {
     });
 
     when('[t11] a payload past the 128KB env cap fires the hook', () => {
-      then('it is judged: a memory write blocks, exit 2; a read passes, exit 0', async () => {
-        // 160KB: past the cap linux puts on one env string, so an exported payload fails the exec
-        const BULK = 'x'.repeat(160_000);
-        const results = {
-          write: runBash({
-            tree: scene.tree,
-            command: `echo ${BULK} > ${MEMORY_PATH}`,
-          }),
-          read: runBash({
-            tree: scene.tree,
-            command: `grep ${BULK} ${MEMORY_PATH}`,
-          }),
-        };
-        expect(results.write.exitCode).toEqual(2);
-        expect(results.write.stderr).toContain('memory would fade');
-        expect(results.read).toEqual({ exitCode: 0, stderr: '' });
-        expect({
-          write: await asHookSnap({ result: results.write, tree: scene.tree }),
-          read: await asHookSnap({ result: results.read, tree: scene.tree }),
-        }).toMatchSnapshot();
-      });
+      then(
+        'it is judged: a memory write blocks, exit 2; a read passes, exit 0',
+        async () => {
+          // 160KB: past the cap linux puts on one env string, so an exported payload fails the exec
+          const BULK = 'x'.repeat(160_000);
+          const results = {
+            write: runBash({
+              tree: scene.tree,
+              command: `echo ${BULK} > ${MEMORY_PATH}`,
+            }),
+            read: runBash({
+              tree: scene.tree,
+              command: `grep ${BULK} ${MEMORY_PATH}`,
+            }),
+          };
+          expect(results.write.exitCode).toEqual(2);
+          expect(results.write.stderr).toContain('memory would fade');
+          expect(results.read).toEqual({ exitCode: 0, stderr: '' });
+          expect({
+            write: await asHookSnap({
+              result: results.write,
+              tree: scene.tree,
+            }),
+            read: await asHookSnap({ result: results.read, tree: scene.tree }),
+          }).toMatchSnapshot();
+        },
+      );
     });
   });
 });

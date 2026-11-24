@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`audit.test.intentions.integration given: [case1] a branch that only rewraps and requotes a suite when: [t0] the audit runs then: the output matches the snapshot 1`] = `
+"🦉 so it is. the intent held
+
+🔍 audit.test.intentions
+   ├─ base: base @ [SHA]
+   ├─ suites
+   │  ├─ modified: 1
+   │  ├─ moved: 0
+   │  ├─ retired: 0
+   │  ├─ deleted: 0
+   │  └─ added: 0
+   ├─ tokens, over modified + moved + retired
+   │  ├─ identical: 1
+   │  ├─ reordered, none added or removed: 0
+   │  └─ changed: 0
+   ├─ totals, base → head
+   │  ├─ blocks: 3 → 3
+   │  ├─ assertions: 2 → 2
+   │  └─ skips added: 0
+   │
+   └─ ✨ no skip added, no block or assertion lost
+"
+`;
+
+exports[`audit.test.intentions.integration given: [case3] a branch that skips a test and drops an assertion when: [t0] the audit runs then: the output matches the snapshot 1`] = `
+"🦉 patience. the intent slipped somewhere
+
+🔍 audit.test.intentions
+   ├─ base: base @ [SHA]
+   ├─ suites
+   │  ├─ modified: 1
+   │  ├─ moved: 0
+   │  ├─ retired: 0
+   │  ├─ deleted: 0
+   │  └─ added: 0
+   ├─ tokens, over modified + moved + retired
+   │  ├─ identical: 0
+   │  ├─ reordered, none added or removed: 0
+   │  └─ changed: 1
+   │     └─ wave.test.ts
+   │        ├─ removed: { } ( ( ( ) ) ) expect height : 3 toEqual rolls false
+   │        └─ added: skip
+   ├─ totals, base → head
+   │  ├─ blocks: 3 → 3
+   │  ├─ assertions: 2 → 1
+   │  └─ skips added: 1
+   │
+   └─ ✋ 2 defect(s)
+      ├─ skip added in wave.test.ts: then.skip('it breaks', () => {
+      └─ assertions lost in wave.test.ts: 1
+"
+`;

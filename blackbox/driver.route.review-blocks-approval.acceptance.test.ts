@@ -96,7 +96,8 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
       });
 
       then('output mentions blockers or review failure', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/block|fail|not passed/);
       });
 

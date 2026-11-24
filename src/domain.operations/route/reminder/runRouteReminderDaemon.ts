@@ -1,4 +1,5 @@
-import { asNodeErrnoCode } from '../asNodeErrnoCode';
+import { asNodeErrnoCode } from '@src/domain.operations/route/asNodeErrnoCode';
+
 import {
   DEFAULT_REMINDER_JITTER_RATIO,
   getRouteReminderJitteredMs,

@@ -10,9 +10,9 @@ import type {
   RouteStoneGuardReviewsStructured,
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { asGuardPositiveInt } from '@src/domain.operations/asGuardPositiveInt';
 import { asErrorCauseClause } from '@src/domain.operations/route/asErrorCauseClause';
 
-import { asGuardPositiveInt } from '../../asGuardPositiveInt';
 import { asBrainSubKey } from './asBrainSubKey';
 import { asDeclaredGuardKey } from './asDeclaredGuardKey';
 import { asErrorCause } from './asErrorCause';

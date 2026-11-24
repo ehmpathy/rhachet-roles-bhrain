@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { isPathFound } from '../../../isPathFound';
+import { isPathFound } from '@src/domain.operations/route/isPathFound';
+
 import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
 import {
   getSelfReviewChallengeDecision,

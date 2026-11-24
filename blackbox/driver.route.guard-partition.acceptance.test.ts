@@ -115,9 +115,9 @@ describe('driver.route.guard-partition.acceptance', () => {
       });
 
       then('the whole set lands at $route/.route/partitions.json', () => {
-        expect(JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8'))).toEqual(
-          { all: PARTITIONS_COVERED, byPeer: {} },
-        );
+        expect(
+          JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8')),
+        ).toEqual({ all: PARTITIONS_COVERED, byPeer: {} });
       });
 
       then('stdout matches snapshot', () => {
@@ -166,18 +166,21 @@ describe('driver.route.guard-partition.acceptance', () => {
         }),
       );
 
-      then('exit code is 2 (constraint — the caller must widen the set)', () => {
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'exit code is 2 (constraint — the caller must widen the set)',
+        () => {
+          expect(result.code).toEqual(2);
+        },
+      );
 
       then('the refusal names the unclaimed file, on stderr', () => {
         expect(result.stderr).toContain('src/route/getRoute.ts');
       });
 
       then('the prior declaration is left as it stood', () => {
-        expect(JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8'))).toEqual(
-          { all: PARTITIONS_COVERED, byPeer: {} },
-        );
+        expect(
+          JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8')),
+        ).toEqual({ all: PARTITIONS_COVERED, byPeer: {} });
       });
 
       then('stderr matches snapshot', () => {
@@ -538,10 +541,15 @@ describe('driver.route.guard-partition.acceptance', () => {
         }),
       );
 
-      then('exit code is 2, and stderr prints the corrected declaration', () => {
-        expect(result.code).toEqual(2);
-        expect(result.stderr).toContain("fix: --partition 'route=src/route/**'");
-      });
+      then(
+        'exit code is 2, and stderr prints the corrected declaration',
+        () => {
+          expect(result.code).toEqual(2);
+          expect(result.stderr).toContain(
+            "fix: --partition 'route=src/route/**'",
+          );
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('refuse append form');
@@ -653,17 +661,20 @@ describe('driver.route.guard-partition.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('🔴 the WHOLE set is written back, the glob folded into its slug', () => {
-        expect(JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8'))).toEqual(
-          {
+      then(
+        '🔴 the WHOLE set is written back, the glob folded into its slug',
+        () => {
+          expect(
+            JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8')),
+          ).toEqual({
             all: [
               `review=src/review/**,${ROUTE}/**,src/extra/**`,
               `route={src/route/**,${ROUTE}/**}`,
             ],
             byPeer: {},
-          },
-        );
-      });
+          });
+        },
+      );
 
       then('stdout matches snapshot', () => {
         expect(result.stdout).toMatchSnapshot('apply claim');
@@ -701,12 +712,15 @@ describe('driver.route.guard-partition.acceptance', () => {
         expect(result.stderr).toContain('--into');
       });
 
-      then('🔴 the whole-set echo prints a held brace set as a comma list', () => {
-        expect(result.stderr).toContain(
-          `--partition 'route=src/route/**,${ROUTE}/**'`,
-        );
-        expect(result.stderr).not.toMatch(/[{}]/);
-      });
+      then(
+        '🔴 the whole-set echo prints a held brace set as a comma list',
+        () => {
+          expect(result.stderr).toContain(
+            `--partition 'route=src/route/**,${ROUTE}/**'`,
+          );
+          expect(result.stderr).not.toMatch(/[{}]/);
+        },
+      );
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('refuse claim into unknown slug');
@@ -797,11 +811,14 @@ describe('driver.route.guard-partition.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('it says it is a read, and names the stone and its reviewers', () => {
-        expect(result.stdout).toContain('naught written, no review run');
-        expect(result.stdout).toContain(`stone = ${STONE}`);
-        expect(result.stdout).toContain('scope @all — read by r1, r2');
-      });
+      then(
+        'it says it is a read, and names the stone and its reviewers',
+        () => {
+          expect(result.stdout).toContain('naught written, no review run');
+          expect(result.stdout).toContain(`stone = ${STONE}`);
+          expect(result.stdout).toContain('scope @all — read by r1, r2');
+        },
+      );
 
       then('each partition counts and lists the files it alone claims', () => {
         expect(result.stdout).toContain('newdir: 6 narrow targets');
@@ -893,10 +910,13 @@ describe('driver.route.guard-partition.acceptance', () => {
         expect(result.stderr).toContain('--mode apply');
       });
 
-      then('🔴 the repair names domains, never a catch-all, never a brace', () => {
-        expect(result.stderr).not.toContain("'rest=");
-        expect(result.stderr).not.toMatch(/--partition '[^']*[{}]/);
-      });
+      then(
+        '🔴 the repair names domains, never a catch-all, never a brace',
+        () => {
+          expect(result.stderr).not.toContain("'rest=");
+          expect(result.stderr).not.toMatch(/--partition '[^']*[{}]/);
+        },
+      );
 
       then('naught is written', () => {
         expect(result.after).toEqual(result.before);
@@ -912,7 +932,12 @@ describe('driver.route.guard-partition.acceptance', () => {
       const result = useThen('the read is refused', async () =>
         invokeRouteSkill({
           skill: 'route.guard.partition',
-          args: { for: 'review', peer: '@all', stone: '9.absent', route: ROUTE },
+          args: {
+            for: 'review',
+            peer: '@all',
+            stone: '9.absent',
+            route: ROUTE,
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -927,40 +952,47 @@ describe('driver.route.guard-partition.acceptance', () => {
       });
     });
 
-    when('[t3] an override names a peer the stone guard does not declare', () => {
-      const result = useThen('the override is refused', async () => {
-        const before = fs.readFileSync(asDeclarationPath(), 'utf-8');
-        const output = await invokeRouteSkill({
-          skill: 'route.guard.partition',
-          args: {
-            for: 'review',
-            peer: 'r3',
-            stone: STONE,
-            route: ROUTE,
-            partition: SET_BY_DOMAIN,
-            mode: 'apply',
-          },
-          cwd: scene.tempDir,
+    when(
+      '[t3] an override names a peer the stone guard does not declare',
+      () => {
+        const result = useThen('the override is refused', async () => {
+          const before = fs.readFileSync(asDeclarationPath(), 'utf-8');
+          const output = await invokeRouteSkill({
+            skill: 'route.guard.partition',
+            args: {
+              for: 'review',
+              peer: 'r3',
+              stone: STONE,
+              route: ROUTE,
+              partition: SET_BY_DOMAIN,
+              mode: 'apply',
+            },
+            cwd: scene.tempDir,
+          });
+          const after = fs.readFileSync(asDeclarationPath(), 'utf-8');
+          return { ...output, before, after };
         });
-        const after = fs.readFileSync(asDeclarationPath(), 'utf-8');
-        return { ...output, before, after };
-      });
 
-      then('🔴 exit code is 2, and naught is written', () => {
-        expect(result.code).toEqual(2);
-        expect(result.after).toEqual(result.before);
-      });
+        then('🔴 exit code is 2, and naught is written', () => {
+          expect(result.code).toEqual(2);
+          expect(result.after).toEqual(result.before);
+        });
 
-      then('🔴 stderr names the typo and the peers the stone holds', () => {
-        expect(result.stderr).toContain('✋ ConstraintError: ');
-        expect(result.stderr).toContain(`peer r3 is not a reviewer of stone ${STONE}`);
-        expect(result.stderr).toContain('r1, r2');
-      });
+        then('🔴 stderr names the typo and the peers the stone holds', () => {
+          expect(result.stderr).toContain('✋ ConstraintError: ');
+          expect(result.stderr).toContain(
+            `peer r3 is not a reviewer of stone ${STONE}`,
+          );
+          expect(result.stderr).toContain('r1, r2');
+        });
 
-      then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('refuse override of unknown peer');
-      });
-    });
+        then('stderr matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot(
+            'refuse override of unknown peer',
+          );
+        });
+      },
+    );
 
     when('[t4] an override names a stone the route does not hold', () => {
       const result = useThen('the override is refused', async () => {
@@ -992,7 +1024,9 @@ describe('driver.route.guard-partition.acceptance', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot('refuse override of unknown stone');
+        expect(result.stderr).toMatchSnapshot(
+          'refuse override of unknown stone',
+        );
       });
     });
 
@@ -1028,9 +1062,14 @@ describe('driver.route.guard-partition.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('it names the one reviewer, its stone, and that it overrides @all', () => {
-        expect(result.stdout).toContain(`peer = r1 on ${STONE} (overrides @all)`);
-      });
+      then(
+        'it names the one reviewer, its stone, and that it overrides @all',
+        () => {
+          expect(result.stdout).toContain(
+            `peer = r1 on ${STONE} (overrides @all)`,
+          );
+        },
+      );
 
       then('naught is written', () => {
         expect(result.after).toEqual(result.before);
@@ -1062,7 +1101,9 @@ describe('driver.route.guard-partition.acceptance', () => {
       });
 
       then('🔴 the set lands under that one reviewer on that one stone', () => {
-        const declared = JSON.parse(fs.readFileSync(asDeclarationPath(), 'utf-8'));
+        const declared = JSON.parse(
+          fs.readFileSync(asDeclarationPath(), 'utf-8'),
+        );
         expect(declared.byPeer[`${STONE}/r1`]).toEqual(SET_BY_DOMAIN);
         expect(declared.all).toEqual(SET_BY_DOMAIN);
       });

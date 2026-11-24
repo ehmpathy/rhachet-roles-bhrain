@@ -1,11 +1,11 @@
 import { given, then, useThen, when } from 'test-fns';
 
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
-
 import {
   DriveBlockerState,
   DriveBrainInheritance,
-} from '../drive/DriveBlocker';
+} from '@src/domain.operations/route/drive/DriveBlocker';
+
 import { applyStoneBrainOnEntry } from './applyStoneBrainOnEntry';
 import type { StoneBrainOutcome } from './setStoneBrain';
 

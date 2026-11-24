@@ -38,7 +38,10 @@ const ASSETS_DIR = path.join(
  */
 describe('driver.route.overrule-exhaust-approve.acceptance', () => {
   const genScene = async (input: { slug: string }) => {
-    const tempDir = genTempDirForRhachet({ slug: input.slug, clone: ASSETS_DIR });
+    const tempDir = genTempDirForRhachet({
+      slug: input.slug,
+      clone: ASSETS_DIR,
+    });
     await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
     await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
@@ -71,7 +74,11 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
   // B5 combination. skip it and l3's [t0] blocker outlives its own exhaustion — which
   // is the point of the fix, since exhaustion must not be a free exit from a critique
   const arrive = async (input: { tempDir: string }) => {
-    await answerEveryPeerGiven({ cwd: input.tempDir, stone: '1.feature', severity: 'urgent' });
+    await answerEveryPeerGiven({
+      cwd: input.tempDir,
+      stone: '1.feature',
+      severity: 'urgent',
+    });
     return setStone({ tempDir: input.tempDir, as: 'passed' });
   };
 
@@ -83,114 +90,147 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
       `# Feature\n\nImplemented — ${input.note}.`,
     );
 
-  given('[case1] B5 — l1 overruled, l3 exhausts, human approves → passage allowed', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = await genScene({ slug: 'overrule-exhaust-approve-b5' });
-      await arrive({ tempDir }); // l1 rejects (1/5), l3 locked
-      await setStone({ tempDir, as: 'overruled' }); // wave l1 → l3 becomes the live gate
-      return { tempDir };
-    });
+  given(
+    '[case1] B5 — l1 overruled, l3 exhausts, human approves → passage allowed',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = await genScene({ slug: 'overrule-exhaust-approve-b5' });
+        await arrive({ tempDir }); // l1 rejects (1/5), l3 locked
+        await setStone({ tempDir, as: 'overruled' }); // wave l1 → l3 becomes the live gate
+        return { tempDir };
+      });
 
-    // step 1: l3 runs its one round (1/1) and rejects → passage BLOCKED (l3 not terminal).
-    const ranResult = useWhen('[t0] l3 runs its single round and rejects', () => {
-      const result = useThen('l3 blocks the pass', async () =>
-        arrive({ tempDir: scene.tempDir }),
+      // step 1: l3 runs its one round (1/1) and rejects → passage BLOCKED (l3 not terminal).
+      const ranResult = useWhen(
+        '[t0] l3 runs its single round and rejects',
+        () => {
+          const result = useThen('l3 blocks the pass', async () =>
+            arrive({ tempDir: scene.tempDir }),
+          );
+
+          then(
+            'CLAMP: passage BLOCKED — l3 ran (1/1) and rejects, not yet terminal',
+            () => {
+              expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
+              expect(result.stdout).not.toContain('passage = allowed');
+              expect(result.stdout).not.toContain('passage = overruled');
+              expect(result.stdout).toContain('premium-checker');
+              expect(result.stdout).toMatch(/premium-checker[\s\S]*rejected/);
+            },
+          );
+
+          then('stdout has good vibes (l3 ran, blocked)', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
+
+          return result;
+        },
       );
 
-      then('CLAMP: passage BLOCKED — l3 ran (1/1) and rejects, not yet terminal', () => {
-        expect(result.code).toEqual(2); // constraint (blocked), not 1 (malfunction)
-        expect(result.stdout).not.toContain('passage = allowed');
-        expect(result.stdout).not.toContain('passage = overruled');
-        expect(result.stdout).toContain('premium-checker');
-        expect(result.stdout).toMatch(/premium-checker[\s\S]*rejected/);
-      });
+      // step 2: bump the hash → l3 is now over budget → SKIPPED = exhausted (terminal).
+      // every level is now terminal (l1 overruled, l3 exhausted) → the stone halts for approval.
+      const exhaustedResult = useWhen(
+        '[t1] l3 exhausts (skipped) → halts for approval',
+        () => {
+          const result = useThen(
+            'l3 exhausted, all levels terminal',
+            async () => {
+              await bumpArtifact({
+                tempDir: scene.tempDir,
+                note: 'v2 so l3 re-checks',
+              });
+              return arrive({ tempDir: scene.tempDir });
+            },
+          );
 
-      then('stdout has good vibes (l3 ran, blocked)', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+          then(
+            'the prior step truly ran+blocked (sequence precondition)',
+            () => {
+              expect(ranResult.code).toEqual(2);
+            },
+          );
 
-      return result;
-    });
+          then(
+            'CLAMP: passage BLOCKED — awaits the human, not a silent pass',
+            () => {
+              // exit 2 = constraint (human must approve), not merely non-zero — a code 1 (malfunction)
+              // here would signal a regression that turned the blocked-constraint into a crash
+              expect(result.code).toEqual(2);
+              expect(result.stdout).not.toContain('passage = allowed');
+              expect(result.stdout).not.toContain('passage = overruled');
+            },
+          );
 
-    // step 2: bump the hash → l3 is now over budget → SKIPPED = exhausted (terminal).
-    // every level is now terminal (l1 overruled, l3 exhausted) → the stone halts for approval.
-    const exhaustedResult = useWhen('[t1] l3 exhausts (skipped) → halts for approval', () => {
-      const result = useThen('l3 exhausted, all levels terminal', async () => {
-        await bumpArtifact({ tempDir: scene.tempDir, note: 'v2 so l3 re-checks' });
-        return arrive({ tempDir: scene.tempDir });
-      });
+          then(
+            'l3 reads exhausted (its budget is spent, review SKIPPED)',
+            () => {
+              expect(result.stdout).toContain('premium-checker');
+              expect(result.stdout).toMatch(/premium-checker[\s\S]*exhausted/);
+            },
+          );
 
-      then('the prior step truly ran+blocked (sequence precondition)', () => {
-        expect(ranResult.code).toEqual(2);
-      });
+          then('l1 carries the forgiven marker (overruled, terminal)', () => {
+            expect(result.stdout).toContain('overruled ✓ — forgiven by human');
+          });
 
-      then('CLAMP: passage BLOCKED — awaits the human, not a silent pass', () => {
-        // exit 2 = constraint (human must approve), not merely non-zero — a code 1 (malfunction)
-        // here would signal a regression that turned the blocked-constraint into a crash
-        expect(result.code).toEqual(2);
-        expect(result.stdout).not.toContain('passage = allowed');
-        expect(result.stdout).not.toContain('passage = overruled');
-      });
+          then('stdout has good vibes (exhausted, awaits approval)', () => {
+            expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+          });
 
-      then('l3 reads exhausted (its budget is spent, review SKIPPED)', () => {
-        expect(result.stdout).toContain('premium-checker');
-        expect(result.stdout).toMatch(/premium-checker[\s\S]*exhausted/);
-      });
-
-      then('l1 carries the forgiven marker (overruled, terminal)', () => {
-        expect(result.stdout).toContain('overruled ✓ — forgiven by human');
-      });
-
-      then('stdout has good vibes (exhausted, awaits approval)', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-
-      return result;
-    });
-
-    // step 3: human approves the exhausted l3.
-    when('[t2] human approves the exhausted reviewer', () => {
-      const result = useThen('the approval', async () => {
-        // .note = the prior exhausted step is a precondition for a meaningful approval
-        // exit 2 = constraint-block (awaits approval), not merely non-zero — a code 1 (malfunction)
-        // would mean the precondition crashed rather than cleanly blocked, so this test's premise fails
-        expect(exhaustedResult.code).toEqual(2);
-        return setStone({ tempDir: scene.tempDir, as: 'approved' });
-      });
-
-      then('exit code is 0 — approval recorded', () => {
-        expect(result.code).toEqual(0);
-      });
-
-      then('stdout has good vibes (approved)', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-
-    // step 4: THE CLAMP — with l1 overruled AND l3 exhausted+approved, passage is ALLOWED.
-    when('[t3] pass after approval → passage allowed (B5)', () => {
-      const result = useThen('the honest B5 pass', async () =>
-        arrive({ tempDir: scene.tempDir }),
+          return result;
+        },
       );
 
-      then('CLAMP: exit code is 0 — every level is terminal (overruled + exhausted+approved)', () => {
-        // .why = B5's whole point: the l1 overrule and the l3 exhaustion+approval are TWO distinct
-        //        forgiveness routes that must COMBINE to allow passage. a bypass that read l1's raw
-        //        'rejected' verdict (overrule is a flag, not a verdict) would wrongly block here.
-        expect(result.code).toEqual(0);
+      // step 3: human approves the exhausted l3.
+      when('[t2] human approves the exhausted reviewer', () => {
+        const result = useThen('the approval', async () => {
+          // .note = the prior exhausted step is a precondition for a meaningful approval
+          // exit 2 = constraint-block (awaits approval), not merely non-zero — a code 1 (malfunction)
+          // would mean the precondition crashed rather than cleanly blocked, so this test's premise fails
+          expect(exhaustedResult.code).toEqual(2);
+          return setStone({ tempDir: scene.tempDir, as: 'approved' });
+        });
+
+        then('exit code is 0 — approval recorded', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('stdout has good vibes (approved)', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
 
-      then('CLAMP: passage is granted — reason is overruled (an overrule enabled the pass)', () => {
-        // .why = passage is legitimately granted, and its reason is `overruled` because an
-        //        overrule (l1) was part of what enabled it — the honest token per the vision's
-        //        `passage = overruled` sense. the exhausted l3 was cleared by the human approval.
-        expect(result.stdout).toContain('passage = overruled');
-        expect(result.stdout).not.toContain('passage = blocked');
-      });
+      // step 4: THE CLAMP — with l1 overruled AND l3 exhausted+approved, passage is ALLOWED.
+      when('[t3] pass after approval → passage allowed (B5)', () => {
+        const result = useThen('the honest B5 pass', async () =>
+          arrive({ tempDir: scene.tempDir }),
+        );
 
-      then('stdout has good vibes (B5 pass)', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then(
+          'CLAMP: exit code is 0 — every level is terminal (overruled + exhausted+approved)',
+          () => {
+            // .why = B5's whole point: the l1 overrule and the l3 exhaustion+approval are TWO distinct
+            //        forgiveness routes that must COMBINE to allow passage. a bypass that read l1's raw
+            //        'rejected' verdict (overrule is a flag, not a verdict) would wrongly block here.
+            expect(result.code).toEqual(0);
+          },
+        );
+
+        then(
+          'CLAMP: passage is granted — reason is overruled (an overrule enabled the pass)',
+          () => {
+            // .why = passage is legitimately granted, and its reason is `overruled` because an
+            //        overrule (l1) was part of what enabled it — the honest token per the vision's
+            //        `passage = overruled` sense. the exhausted l3 was cleared by the human approval.
+            expect(result.stdout).toContain('passage = overruled');
+            expect(result.stdout).not.toContain('passage = blocked');
+          },
+        );
+
+        then('stdout has good vibes (B5 pass)', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

@@ -68,7 +68,11 @@ describe('driver.route.peer-mixed-verdict-halt.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -105,7 +109,11 @@ describe('driver.route.peer-mixed-verdict-halt.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -148,7 +156,11 @@ describe('driver.route.peer-mixed-verdict-halt.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.execute',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -161,11 +173,14 @@ describe('driver.route.peer-mixed-verdict-halt.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('passage is malfunction (highest-precedence reason drives it)', () => {
-        // .why = malfunction outranks exhaustion, so the persisted + headline kind is
-        //        malfunction — the primary remedy the human needs is the overrule
-        expect(result.stdout).toContain('passage = malfunction');
-      });
+      then(
+        'passage is malfunction (highest-precedence reason drives it)',
+        () => {
+          // .why = malfunction outranks exhaustion, so the persisted + headline kind is
+          //        malfunction — the primary remedy the human needs is the overrule
+          expect(result.stdout).toContain('passage = malfunction');
+        },
+      );
 
       then('l1 shows exhausted (skipped, terminal)', () => {
         expect(result.stdout).toContain('l1-reviewer');
@@ -179,26 +194,35 @@ describe('driver.route.peer-mixed-verdict-halt.acceptance', () => {
 
       // ---- the core clamp: NEITHER reason may hide the other ----
 
-      then('CLAMP: reason names BOTH the malfunction AND the exhaustion', () => {
-        // .why = the halt-precedence bug named only the first gate found in code order.
-        //        the fix surfaces the FULL set: both markers must appear in the reason.
-        expect(result.stdout).toMatch(/malfunction/i);
-        expect(result.stdout).toContain('budget exhausted');
-      });
+      then(
+        'CLAMP: reason names BOTH the malfunction AND the exhaustion',
+        () => {
+          // .why = the halt-precedence bug named only the first gate found in code order.
+          //        the fix surfaces the FULL set: both markers must appear in the reason.
+          expect(result.stdout).toMatch(/malfunction/i);
+          expect(result.stdout).toContain('budget exhausted');
+        },
+      );
 
-      then('CLAMP: options offer the overrule remedy (for the malfunction)', () => {
-        // .why = the prior halt offered only approve/budget, never the overrule the
-        //        malfunction needs — the exact guidance gap that caused a second block
-        expect(result.stdout).toContain('overrule the malfunction');
-        expect(result.stdout).toContain('--as overruled');
-      });
+      then(
+        'CLAMP: options offer the overrule remedy (for the malfunction)',
+        () => {
+          // .why = the prior halt offered only approve/budget, never the overrule the
+          //        malfunction needs — the exact guidance gap that caused a second block
+          expect(result.stdout).toContain('overrule the malfunction');
+          expect(result.stdout).toContain('--as overruled');
+        },
+      );
 
-      then('CLAMP: options offer the budget/approve remedy (for the exhaustion)', () => {
-        // .why = the human should address every reason in ONE sitting, so the exhausted
-        //        level's remedies ride beside the overrule — no second round-trip
-        expect(result.stdout).toContain('increase budget');
-        expect(result.stdout).toContain('approve as-is');
-      });
+      then(
+        'CLAMP: options offer the budget/approve remedy (for the exhaustion)',
+        () => {
+          // .why = the human should address every reason in ONE sitting, so the exhausted
+          //        level's remedies ride beside the overrule — no second round-trip
+          expect(result.stdout).toContain('increase budget');
+          expect(result.stdout).toContain('approve as-is');
+        },
+      );
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();

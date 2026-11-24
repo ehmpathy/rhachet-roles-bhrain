@@ -161,24 +161,30 @@ describe('driver.route.malfunction.acceptance', () => {
     });
 
     when('[t0] reviewer malfunctions (exit 1)', () => {
-      const result = useThen('route.stone.set triggers malfunction', async () => {
-        // set flag to make reviewer malfunction
-        await fs.writeFile(
-          path.join(scene.tempDir, '.test', 'reviewer-should-malfunction'),
-          '',
-        );
+      const result = useThen(
+        'route.stone.set triggers malfunction',
+        async () => {
+          // set flag to make reviewer malfunction
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'reviewer-should-malfunction'),
+            '',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.feature' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.feature',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.feature', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.feature', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 2 (malfunction halts the stone)', () => {
         // .note = this 2 is `route.stone.set`'s halt code — a halted stone exits 2 on
@@ -208,9 +214,12 @@ describe('driver.route.malfunction.acceptance', () => {
         expect(content).toContain('malfunction');
       });
 
-      then('the malfunction tree is pinned — the reviewer is marked malfunction and the stone is blocked', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the malfunction tree is pinned — the reviewer is marked malfunction and the stone is blocked',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] reviewer is fixed and re-run', () => {
@@ -343,24 +352,30 @@ describe('driver.route.malfunction.acceptance', () => {
     });
 
     when('[t0] reviewer finds constraints (exit 2)', () => {
-      const result = useThen('route.stone.set triggers constraint', async () => {
-        // set flag to make reviewer find constraints
-        await fs.writeFile(
-          path.join(scene.tempDir, '.test', 'reviewer-should-constraint'),
-          '',
-        );
+      const result = useThen(
+        'route.stone.set triggers constraint',
+        async () => {
+          // set flag to make reviewer find constraints
+          await fs.writeFile(
+            path.join(scene.tempDir, '.test', 'reviewer-should-constraint'),
+            '',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.feature' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.feature',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.feature', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.feature', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is 2 (constraint blocks)', () => {
         expect(result.code).toEqual(2);
@@ -375,9 +390,12 @@ describe('driver.route.malfunction.acceptance', () => {
         expect(reviewFiles.length).toBeGreaterThan(0);
       });
 
-      then('the constraint tree is pinned — the reviewer is marked constraint and the stone is blocked', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
+      then(
+        'the constraint tree is pinned — the reviewer is marked constraint and the stone is blocked',
+        () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        },
+      );
     });
 
     when('[t1] artifact fixed and re-run', () => {

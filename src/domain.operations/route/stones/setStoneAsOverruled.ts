@@ -1,11 +1,12 @@
 import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
-import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getOneStoneGuardLevelState } from '../guard/review/getOneStoneGuardLevelState';
-import { getOneStoneGuardOverruleTarget } from '../guard/review/getOneStoneGuardOverruleTarget';
-import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
-import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
+import { formatRouteStoneEmit } from '@src/domain.operations/route/formatRouteStoneEmit';
+import { getDecisionIsCallerHuman } from '@src/domain.operations/route/getDecisionIsCallerHuman';
+import { getOneStoneGuardLevelState } from '@src/domain.operations/route/guard/review/getOneStoneGuardLevelState';
+import { getOneStoneGuardOverruleTarget } from '@src/domain.operations/route/guard/review/getOneStoneGuardOverruleTarget';
+import { asRouteStoneSetCommandHead } from '@src/domain.operations/route/guard/review/peer/asRouteStoneSetCommandHead';
+import { setStoneGuardOverrule } from '@src/domain.operations/route/judges/setStoneGuardOverrule';
+
 import { findOneStoneByPattern } from './asStoneGlob';
 import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';
 import { getAllStones } from './getAllStones';

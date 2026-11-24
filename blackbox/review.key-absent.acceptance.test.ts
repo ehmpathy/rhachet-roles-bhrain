@@ -80,19 +80,25 @@ describe('review.key-absent.acceptance', () => {
         invokeReviewWithKeyAbsent({ cwd: scene.tempDir, home: scene.home }),
       );
 
-      then('CLAMP: exit 2 — a constraint the caller fixes, never a malfunction', () => {
-        // .why = an absent key is caller-fixable. a bare `not.toEqual(0)` would also pass
-        //        for exit 1, the code an uncaught crash returns
-        expect(result.code).toEqual(2);
-      });
+      then(
+        'CLAMP: exit 2 — a constraint the caller fixes, never a malfunction',
+        () => {
+          // .why = an absent key is caller-fixable. a bare `not.toEqual(0)` would also pass
+          //        for exit 1, the code an uncaught crash returns
+          expect(result.code).toEqual(2);
+        },
+      );
 
-      then('CLAMP: the refusal names the key and the command that fills it', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('OPENROUTER_API_KEY');
-        expect(output).toContain(
-          'rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep',
-        );
-      });
+      then(
+        'CLAMP: the refusal names the key and the command that fills it',
+        () => {
+          const output = result.stdout + result.stderr;
+          expect(output).toContain('OPENROUTER_API_KEY');
+          expect(output).toContain(
+            'rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep',
+          );
+        },
+      );
 
       then('CLAMP: the refusal renders without a stack trace', () => {
         // .why = the refusal comes from rhachet's own helpful-errors copy; before the fix,
@@ -106,7 +112,9 @@ describe('review.key-absent.acceptance', () => {
         // .why = only the refusal is pinned. the preamble above it carries a spinner frame and
         //        an elapsed counter, which vary with host speed, and is pinned by other suites
         const output = sanitizeTimeForSnapshot(result.stdout + result.stderr);
-        expect(asRefusalBlock({ output, hint: REFUSAL_HINT })).toMatchSnapshot();
+        expect(
+          asRefusalBlock({ output, hint: REFUSAL_HINT }),
+        ).toMatchSnapshot();
       });
     });
   });

@@ -10,7 +10,10 @@ import {
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-multilevel');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/route-peer-budget-multilevel',
+);
 
 /**
  * .what = journey 4: multi-level mixed terminal + budget extension
@@ -39,8 +42,12 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
 
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
       await execAsync('chmod +x .test/mock-review-linter.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-spellcheck.sh', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-architect.sh', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-spellcheck.sh', {
+        cwd: tempDir,
+      });
+      await execAsync('chmod +x .test/mock-review-architect.sh', {
+        cwd: tempDir,
+      });
 
       return { tempDir };
     });
@@ -50,24 +57,31 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
     // -------------------------------------------------------------------------
 
     when('[t0] artifact created, level 1 reviewers run first', () => {
-      const result = useThen('linter and spellcheck run, architect awaits', async () => {
-        await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v1";',
-        );
+      const result = useThen(
+        'linter and spellcheck run, architect awaits',
+        async () => {
+          await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v1";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.vision',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero (blockers)', () => {
         expect(result.code).not.toEqual(0);
@@ -92,23 +106,30 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
     });
 
     when('[t1] second attempt, linter uses more budget', () => {
-      const result = useThen('linter rounds 2/2, about to exhaust', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v2";',
-        );
+      const result = useThen(
+        'linter rounds 2/2, about to exhaust',
+        async () => {
+          await fs.writeFile(
+            path.join(scene.tempDir, 'src', 'feature.ts'),
+            'export const feature = () => "v2";',
+          );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+          // answer whatever the prior round left owed, before this one is entered.
+          // a no-op on the first arrival; on every later one it is what the entrance
+          // gate now requires — an edit alone no longer buys re-entry
+          await answerEveryPeerGiven({
+            cwd: scene.tempDir,
+            stone: '1.vision',
+            severity: 'urgent',
+          });
 
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        });
-      });
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.vision', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -123,57 +144,70 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
     // PHASE 2: linter exhausts, spellcheck continues to approval
     // -------------------------------------------------------------------------
 
-    when('[t2] third attempt, spellcheck passes (linter already exhausted)', () => {
-      const result = useThen('spellcheck approves, level 1 now terminal', async () => {
-        await fs.writeFile(
-          path.join(scene.tempDir, 'src', 'feature.ts'),
-          'export const feature = () => "v3";',
+    when(
+      '[t2] third attempt, spellcheck passes (linter already exhausted)',
+      () => {
+        const result = useThen(
+          'spellcheck approves, level 1 now terminal',
+          async () => {
+            await fs.writeFile(
+              path.join(scene.tempDir, 'src', 'feature.ts'),
+              'export const feature = () => "v3";',
+            );
+
+            // make spellcheck pass
+            await fs.writeFile(
+              path.join(scene.tempDir, '.test', 'spellcheck-should-pass'),
+              '',
+            );
+
+            // answer whatever the prior round left owed, before this one is entered.
+            // a no-op on the first arrival; on every later one it is what the entrance
+            // gate now requires — an edit alone no longer buys re-entry
+            await answerEveryPeerGiven({
+              cwd: scene.tempDir,
+              stone: '1.vision',
+              severity: 'urgent',
+            });
+
+            return invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.vision', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
+          },
         );
 
-        // make spellcheck pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'spellcheck-should-pass'), '');
-
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
-
-        return invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.vision', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
+        then('exit code is non-zero (architect still has blockers)', () => {
+          expect(result.code).not.toEqual(0);
         });
-      });
 
-      then('exit code is non-zero (architect still has blockers)', () => {
-        expect(result.code).not.toEqual(0);
-      });
+        then('linter is exhausted', () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toContain('exhaust');
+          expect(output).toContain('linter');
+        });
 
-      then('linter is exhausted', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toContain('exhaust');
-        expect(output).toContain('linter');
-      });
+        then('spellcheck is approved', () => {
+          const output = result.stdout.toLowerCase();
+          expect(output).toContain('spellcheck');
+          expect(output).toContain('approved');
+        });
 
-      then('spellcheck is approved', () => {
-        const output = result.stdout.toLowerCase();
-        expect(output).toContain('spellcheck');
-        expect(output).toContain('approved');
-      });
+        then('architect is now unlocked and ran (not awaits)', () => {
+          expect(result.stdout).toContain('architect');
+          // architect should show it ran (rejected status with blockers), not still awaits
+          const output = result.stdout.toLowerCase();
+          expect(output).not.toMatch(/architect.*awaits/s);
+          // should show rejected (ran and found blockers)
+          expect(output).toMatch(/architect.*reject/s);
+        });
 
-      then('architect is now unlocked and ran (not awaits)', () => {
-        expect(result.stdout).toContain('architect');
-        // architect should show it ran (rejected status with blockers), not still awaits
-        const output = result.stdout.toLowerCase();
-        expect(output).not.toMatch(/architect.*awaits/s);
-        // should show rejected (ran and found blockers)
-        expect(output).toMatch(/architect.*reject/s);
-      });
-
-      then('snapshot [t2]: level 1 terminal, architect unlocked', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
+        then('snapshot [t2]: level 1 terminal, architect unlocked', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      },
+    );
 
     // -------------------------------------------------------------------------
     // PHASE 3: architect runs and exhausts
@@ -189,7 +223,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -227,7 +265,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -285,7 +327,13 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
       const result = useThen('architect budget extended 2 → 4', async () =>
         invokeRouteSkill({
           skill: 'route.guard.budget',
-          args: { for: 'review', add: '2', peer: 'architect', stone: '1.vision', route: '.' },
+          args: {
+            for: 'review',
+            add: '2',
+            peer: 'architect',
+            stone: '1.vision',
+            route: '.',
+          },
           cwd: scene.tempDir,
         }),
       );
@@ -352,12 +400,19 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
         );
 
         // make architect pass
-        await fs.writeFile(path.join(scene.tempDir, '.test', 'architect-should-pass'), '');
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'architect-should-pass'),
+          '',
+        );
 
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision', severity: 'urgent' });
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -366,9 +421,12 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
         });
       });
 
-      then('exit code is non-zero (linter still exhausted, needs approval)', () => {
-        expect(result.code).not.toEqual(0);
-      });
+      then(
+        'exit code is non-zero (linter still exhausted, needs approval)',
+        () => {
+          expect(result.code).not.toEqual(0);
+        },
+      );
 
       then('architect is now approved', () => {
         const output = result.stdout.toLowerCase();
@@ -401,7 +459,8 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
       });
 
       then('requires human approval', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        const output =
+          result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|human/);
       });
 

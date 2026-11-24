@@ -19,48 +19,53 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-malfunction');
  *        this" prompt (design-note B5, precedence: malfunction > contemplation)
  */
 describe('driver.route.peer-contemplation-malfunction.acceptance', () => {
-  given('[case1] a stone gated on a reviewer that emits no numeric counts', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDirForRhachet({
-        slug: 'peer-malfunction',
-        clone: ASSETS_DIR,
-      });
-      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
-      await execAsync('chmod +x .test/mock-review-malfunction.sh', {
-        cwd: tempDir,
-      });
-      await fs.writeFile(
-        path.join(tempDir, '1.execute.md'),
-        '# execute\n\nthe work under review.\n',
-      );
-      return { tempDir };
-    });
-
-    when('[t0] driver attempts --as passed', () => {
-      const result = useThen('the guard runs the reviewer', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.execute', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('the stone is halted (non-zero), not passed', () => {
-        expect(result.code).not.toEqual(0);
+  given(
+    '[case1] a stone gated on a reviewer that emits no numeric counts',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'peer-malfunction',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-malfunction.sh', {
+          cwd: tempDir,
+        });
+        await fs.writeFile(
+          path.join(tempDir, '1.execute.md'),
+          '# execute\n\nthe work under review.\n',
+        );
+        return { tempDir };
       });
 
-      then('no contemplation reply-prompt is shown', () => {
-        expect(result.stdout).not.toContain('the reviewers await your reply');
-      });
+      when('[t0] driver attempts --as passed', () => {
+        const result = useThen('the guard runs the reviewer', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
+        );
 
-      then('the malfunction is surfaced', () => {
-        const output = result.stdout + result.stderr;
-        expect(output.toLowerCase()).toContain('malfunction');
-      });
+        then('the stone is halted (non-zero), not passed', () => {
+          expect(result.code).not.toEqual(0);
+        });
 
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        then('no contemplation reply-prompt is shown', () => {
+          expect(result.stdout).not.toContain('the reviewers await your reply');
+        });
+
+        then('the malfunction is surfaced', () => {
+          const output = result.stdout + result.stderr;
+          expect(output.toLowerCase()).toContain('malfunction');
+        });
+
+        then('stdout matches snapshot', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
       });
-    });
-  });
+    },
+  );
 });

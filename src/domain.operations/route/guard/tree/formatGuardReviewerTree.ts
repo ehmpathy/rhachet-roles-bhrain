@@ -1,9 +1,9 @@
-import { asMeterCountDisplay } from '../asMeterCountDisplay';
+import { asMeterCountDisplay } from '@src/domain.operations/route/guard/asMeterCountDisplay';
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
-} from '../review/peer/getRouteGuardReviewPeerPathTaken';
-import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
+} from '@src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerPathTaken';
+import { TALLIED_FOOTER_PREFIX } from '@src/domain.operations/route/guard/review/TALLIED_FOOTER_PREFIX';
 
 /**
  * .what = derives the paired `taken: <path>` detail line for a peer given path

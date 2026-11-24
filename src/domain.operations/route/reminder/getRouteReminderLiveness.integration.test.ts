@@ -4,8 +4,8 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { genRouteWithPassage } from '@src/domain.operations/route/.test/genRouteWithPassage';
 
-import { genRouteWithPassage } from '../.test/genRouteWithPassage';
 import { getRouteReminderLiveness } from './getRouteReminderLiveness';
 
 /**
