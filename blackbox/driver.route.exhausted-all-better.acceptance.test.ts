@@ -937,10 +937,10 @@ describe('driver.route.exhausted-all-better', () => {
           // .why = a bare add lands on the latest level (l2) alone, so it would pad friction and
           //        leave the urgent lane spent; the halt names the urgent lane, as the judge does
           expect(scene.passedAlias.stdout).toContain(
-            `rhx route.guard.budget --for review --add N --peer intent --stone ${STONE}`,
+            `rhx route.guard.budget --for review --add 2 --peer intent --stone ${STONE}`,
           );
           expect(scene.passedAlias.stdout).not.toContain(
-            `rhx route.guard.budget --for review --add N --stone ${STONE}`,
+            `rhx route.guard.budget --for review --add 2 --stone ${STONE}`,
           );
         });
         then('matches snapshot', () => {

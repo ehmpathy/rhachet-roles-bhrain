@@ -42,6 +42,11 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.gitignore-subjects' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.gitignore-subjects.acceptance', () => {
   // capture the temp dir so afterAll can restore perms for clean auto-prune
   let restrictedDir: string | null = null;
@@ -52,7 +57,7 @@ describe('review.gitignore-subjects.acceptance', () => {
       await fs.chmod(restrictedDir, 0o755).catch(() => undefined);
   });
 
-  given('[case1] a gitignored restricted directory inside the scan scope', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] a gitignored restricted directory inside the scan scope', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review scans src/**/* with a mode-000 gitignored subdir', () => {
       const res = useThen(
         'invoke review over a scope that contains the restricted dir',

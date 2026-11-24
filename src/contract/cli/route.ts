@@ -43,6 +43,7 @@ import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guar
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 import { getOneReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/getOneReviewTotalsFromFiles';
 import { asConcedeSeverity } from '@src/domain.operations/route/guard/review/peer/asConcedeSeverity';
+import { asJudgeApprovalHaltLines } from '@src/domain.operations/route/guard/review/peer/asJudgeApprovalHaltLines';
 import { asJudgeReasonWithShed } from '@src/domain.operations/route/guard/review/peer/asJudgeReasonWithShed';
 import { asJudgeResidualLines } from '@src/domain.operations/route/guard/review/peer/asJudgeResidualLines';
 import { asJudgeUrgentHaltLines } from '@src/domain.operations/route/guard/review/peer/asJudgeUrgentHaltLines';
@@ -58,7 +59,6 @@ import {
   getStoneLiveUrgentConcessionSlugs,
 } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
 import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
-import { JUDGE_HALT_ASK_HUMAN_LABEL } from '@src/domain.operations/route/guard/review/peer/JUDGE_HALT_ASK_HUMAN_LABEL';
 import { asBudgetGrantWarrantLines } from '@src/domain.operations/route/guard/review/peer/meter/asBudgetGrantWarrantLines';
 import { asGuardBudgetHeadLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetHeadLines';
 import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
@@ -1293,17 +1293,11 @@ const judgeApproved = async (input: {
 
   // halt until a human approves
   if (!approval) {
-    const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
-    const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
     console.log('passed: false');
     console.log('reason: wait for human approval');
     console.log('');
-    console.log('✋ halted, human approval required');
-    console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);
-    console.log(`   │  └─ ${approveCmd}`);
-    console.log('   │');
-    console.log('   └─ after human approves, run');
-    console.log(`      └─ ${passCmd}`);
+    for (const line of asJudgeApprovalHaltLines({ stone: input.stone }))
+      console.log(line);
     process.exit(2);
   }
 
@@ -1486,7 +1480,7 @@ const judgeReviewed = async (input: {
   //     budget: the maintenance floor was met, and it passes as tech debt with NO budget increase
   //     and NO human (`define.invariant.review.peer.budget.urgent-earns-budget`).
   // 🔴 an `urgent` concession is NOT shed — it ships nameable harm, so it KEEPS the hold and
-  //    earns a human's glance and a round.
+  //    earns a round the driver grants, and a note to its human.
   // 🔴 .why per-concern = a lane-grain exclusion would shed every concern that lane raised, the
   //    driver's OWN concessions among them (rule.forbid.suppression-of-undeclared-concerns)
   // 🔴 the corpus is read ONCE, and its givens narrowed to the files the total counts. a stance on
@@ -1544,10 +1538,11 @@ const judgeReviewed = async (input: {
     console.error(line);
 
   if (!verdict.passed) {
-    // 🔴 when a LIVE URGENT concession holds the stone, the judge names the human whose budget
-    //    grant is the remedy — the same shape the `approved?` judge uses for absent approval
-    //    (define.invariant.review.peer.judge.urgent-guides-the-budget-ask). a `better`/none hold
-    //    names no human: its remedy is the driver's own top-up.
+    // 🔴 when a LIVE URGENT concession holds the stone, the judge names its remedy: the driver's
+    //    own top-up, plus the note its human is owed. the shape mirrors the `approved?` judge —
+    //    one halt names one remedy and its owner — but the owner here is the driver, since the
+    //    budget command checks no actor (define.invariant.review.peer.judge.urgent-guides-the-budget-grant).
+    //    a `better`/none hold prints no budget remedy: no round was earned.
     const slugsUrgentLive = computeLiveUrgentConcessionSlugs(corpusCounted);
     // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
     // lines above stay on stdout, which the guard parses on a pass too
@@ -1555,6 +1550,7 @@ const judgeReviewed = async (input: {
     if (slugsUrgentLive.length > 0)
       for (const line of asJudgeUrgentHaltLines({
         slugs: { urgent: slugsUrgentLive },
+        meters: peerStatuses,
         stone: stoneMatched.name,
       }))
         console.error(line);

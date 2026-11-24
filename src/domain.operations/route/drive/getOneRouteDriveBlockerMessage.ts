@@ -99,7 +99,7 @@ export const getOneRouteDriveBlockerMessage = async (input: {
     // would render a concession halt that no longer holds (S12).
     // ⚠️ the kind is three-way (F028/S14): `none` (a lane the driver never conceded still
     //    awaits a human), `better` (all conceded, floor met — the driver's own), or `urgent`
-    //    (all conceded, ≥1 urgent — a warned human wait). the concession words fire only for
+    //    (all conceded, ≥1 urgent — a round the driver grants itself). the concession words fire only for
     //    a `better`/`urgent` set, and the urgent warn only for `urgent`.
     const { kind: concession, slugs: concessionSlugs } =
       await getStoneConcessionExhaustion({

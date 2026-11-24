@@ -16,7 +16,7 @@ term.synonyms.forbidden:
 - `better` — the COMMON grade: code idealism, maintenance, polish. it never earns budget; it evolves
   into later as tech debt the budget's floor keeps in check.
 - `urgent` — a nameable shipped harm in the closed set **security · safety · monetary · reputation
-  · behavioral**. it earns a human's budget grant.
+  · behavioral**. it earns more budget, which the driver grants itself and explains to its human.
 
 ```
 rhx route.stone.set --stone <stone> --as conceded --with <reviewer> --about blocker.2 --severity urgent
@@ -30,7 +30,8 @@ tolerates an ABSENT severity on a legacy row, read as `better` (backward compat,
 
 🔴 **`better` is the closed set's default, and it NEVER earns budget.** a budget hit with only
 `better` concessions is good enough — the stone proceeds, no human, no more budget. a live `urgent`
-concession is the ONE case that needs increased budget and warns the human this PR.
+concession is the ONE case that needs increased budget, and the driver owes its human a written
+why the stone bought it.
 
 ⇒ so a severity is not a knob the driver turns for attention. it is the answer to the reviewer's own
 harm test (`rule.forbid.overzealous-blockers`): name the harm that ships → `urgent`; you cannot →
@@ -58,7 +59,7 @@ harm test (`rule.forbid.overzealous-blockers`): name the harm that ships → `ur
 - `src/domain.operations/route/guard/review/peer/getStoneConcededLaneSlugs.ts` —
   `computeConcessionExhaustionKind` reads it to grade the halt three-way (`none` · `better` · `urgent`)
 - `src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs.ts` — names the
-  human a live `urgent` concession owes a budget grant
+  lanes a live `urgent` concession earns a budget grant for
 
 ## .reason
 

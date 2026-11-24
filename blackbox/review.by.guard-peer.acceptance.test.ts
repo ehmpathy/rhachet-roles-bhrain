@@ -372,6 +372,11 @@ const SRC_DIRTY_TERMS =
   '  return { token: input.token };\n' +
   '};\n';
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by.guard-peer' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = the EXHAUSTIVE seam matrix between a route guard and review.by --for
  * .why = a route guard peer review is the MAIN consumer of `review.by --for`. this proves the whole
@@ -399,7 +404,7 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = PASS — term-aggregation on clean generic code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
     when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
@@ -471,7 +476,7 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = PASS — term-application on clean term code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
     when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
@@ -544,7 +549,7 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = FINDINGS — term-application on dirty terms → guard REJECTS
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
     when(
       '[t0] the stone is passed → the peer bites, the guard rejects off a raw base review',
       () => {

@@ -10,7 +10,15 @@ import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-describe('stepReflect.caseProseAuthor', () => {
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REFLECT=1 rhx git.repo.test --what integration --scope 'path://stepReflect.caseProseAuthor' --mode apply
+const isLiveBrainReflectTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REFLECT === '1';
+const describeIfLiveBrainReflectTargeted = isLiveBrainReflectTargeted
+  ? describe
+  : describe.skip;
+
+describeIfLiveBrainReflectTargeted('stepReflect.caseProseAuthor', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 

@@ -473,7 +473,7 @@ export const formatGuardTree = (input: {
       //    the ONE shared transformer every reason surface calls
       //    (rule.require.single-source-of-truth-for-render). before this, both guard-tree
       //    renders showed the raw marker (r011 blocker.1). the warn NESTS under reason —
-      //    it explains why that reason is a human wait, so it is reason's child, never a
+      //    it explains why that reason earns a round, so it is reason's child, never a
       //    peer of it. reason's own connector depends on whether a block follows it — the
       //    malfunction clear block or the options.
       const { reasonText, warnText } = asConcessionReasonDisplay({
@@ -527,7 +527,7 @@ export const formatGuardTree = (input: {
     // 🔴 decode a concession marker to its human line + urgent warn via the ONE shared
     //    transformer (rule.require.single-source-of-truth-for-render). a guard section always
     //    follows reason here, so reason takes ├─. the warn NESTS under reason — it explains
-    //    why that reason is a human wait, so it is reason's child, never a peer of it.
+    //    why that reason earns a round, so it is reason's child, never a peer of it.
     //    before this the raw marker shipped (r011 blocker.1).
     const { reasonText, warnText } = asConcessionReasonDisplay({
       reason: reasonHead,

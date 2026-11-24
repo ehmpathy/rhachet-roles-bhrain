@@ -96,11 +96,11 @@ exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that
   │   └── skills = 1
   │       ├── say = 1
   │       └── ref = 0
-  ├── tokens = 9,890 (full emitted payload, o200k_base)
-  └── budget = 9,890 / 10,000 tokens (99% used)"
+  ├── tokens = 9,908 (full emitted payload, o200k_base)
+  └── budget = 9,908 / 10,000 tokens (99% used)"
 `;
 
-exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that links the driver role when: [t1] the consumer costs its boot specs then: the linked spec reads as linked, under its budget 1`] = `"9,890 / 10,000 tokens (99%)  .agent/repo=bhrain/role=driver/boot.yml (linked)"`;
+exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that links the driver role when: [t1] the consumer costs its boot specs then: the linked spec reads as linked, under its budget 1`] = `"9,908 / 10,000 tokens (99%)  .agent/repo=bhrain/role=driver/boot.yml (linked)"`;
 
 exports[`roles.boot.consumer-seat.acceptance given: [case3] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
 {

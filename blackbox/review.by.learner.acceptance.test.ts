@@ -149,6 +149,11 @@ const assureCliExitedClean = (input: {
   cwd: string;
 }): void => assureCliExitedAs({ ...input, code: 0 });
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by.learner' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = acceptance coverage for review.by against the REAL shipped learner role
  * .why = the demo fixture proves the engine; this proves review.by drives a real role's review
@@ -165,7 +170,7 @@ describe('review.by.learner.acceptance', () => {
   // the ergonomic form — `rhx review.by --role learner` resolves the learner's OWN wrapper
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-wrapper] the clean `rhx review.by --role learner` form', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-wrapper] the clean `rhx review.by --role learner` form', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx resolves the learner-owned review.by wrapper',
       () => {
@@ -217,7 +222,7 @@ describe('review.by.learner.acceptance', () => {
   // all rubrics at once — the full learner review set
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-all] the learner review set on clean code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-all] the learner review set on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by --role learner (no --for) runs both rubrics',
       () => {
@@ -290,7 +295,7 @@ describe('review.by.learner.acceptance', () => {
   // per-rubric via --for — the application rubric alone
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-app] --for term-application on clean code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-app] --for term-application on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the application rubric runs',
       () => {
@@ -336,7 +341,7 @@ describe('review.by.learner.acceptance', () => {
   // per-rubric via --for — the aggregation rubric alone
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-agg] --for term-aggregation on clean code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-agg] --for term-aggregation on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the aggregation rubric runs',
       () => {
@@ -390,7 +395,7 @@ describe('review.by.learner.acceptance', () => {
   // calls itself deliberate invites the reviewer to excuse it. and with no docs at all, the
   // test brain cannot tie the three words to one concept, and answers `no issues found`.
 
-  given('[case-detect] --for term-application on a term-dirty file', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-detect] --for term-application on a term-dirty file', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] the application rubric detects a term violation',
       () => {

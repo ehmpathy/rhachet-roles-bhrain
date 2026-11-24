@@ -38,7 +38,7 @@ export const computeLiveUrgentConcessionSlugs = (input: {
     .filter((stance) => stance.severity === 'urgent')
     .map((stance) => stance.reviewer);
 
-  // dedupe: one reviewer may carry several urgent concerns, but names the human once
+  // dedupe: one reviewer may carry several urgent concerns, but its lane is named once
   return [...new Set(urgentSlugs)];
 };
 
@@ -47,19 +47,16 @@ export const computeLiveUrgentConcessionSlugs = (input: {
  * .why = two consumers read it, and each asks the same question — did a concession earn a round?
  *
  *        1. the `reviewed?` judge holds a stone when the concern sum exceeds the allowances, and a
- *           CONCEDED concern is kept in that sum. so the judge names the human an urgent concession
- *           is owed, the same way the `approved?` judge names the human who must approve
- *           (`define.invariant.review.peer.judge.urgent-guides-the-budget-ask`).
+ *           CONCEDED concern is kept in that sum. so the judge names the lanes and the remedy, the
+ *           same shape the `approved?` judge uses
+ *           (`define.invariant.review.peer.judge.urgent-guides-the-budget-grant`).
  *
  *        2. 🔴 the budget GATE reads it as the WARRANT. `route.guard.budget --add N` is refused by
  *           default, and a live urgent concession is the first of three conjuncts that lift the
- *           refusal (`computeBudgetGrantRefusal`). ⇒ a driver who can name a shipped harm takes
- *           the round itself, with no human at all.
+ *           refusal (`computeBudgetGrantRefusal`).
  *
- * 🟡 .note = so the two consumers now disagree about WHO acts on the same fact: the judge names a
- *         human, and the gate hands the round to the driver. that divergence is fulcrum F03 of
- *         `v2026_09_17.fix-budget-grant-needs-urgent-concession`, and it is UNRULED — the judge's
- *         copy is deliberately untouched until a council rules it.
+ * .note = both consumers name one owner: the driver. who owns the grant is stated once, in the
+ *         `REMEDY_LABEL_BUDGET_GRANT` docblock
  *
  * .note = a `better` concession (or none) is NOT here, and past a spent meter it earns NO round.
  *         its remedy is the FIX the driver already named, never a top-up
@@ -68,7 +65,7 @@ export const computeLiveUrgentConcessionSlugs = (input: {
  *         more.
  *
  * .note = live = keyed to the slug's LATEST given (S03's per-generation lapse). a stance declared
- *         against a prior generation has lapsed and summons no human.
+ *         against a prior generation has lapsed and earns no round.
  */
 export const getStoneLiveUrgentConcessionSlugs = async (input: {
   route: string;

@@ -1,7 +1,7 @@
 import { asUrgentHarmSet } from '../../../../asUrgentHarmSet';
 import { asMeterCountDisplay } from '../../../asMeterCountDisplay';
 import { getGuardStoneNames } from '../../../getGuardStoneNames';
-import { formatReviewBudgetTopupCommand } from '../formatReviewBudgetTopupCommand';
+import { formatReviewBudgetGrantCommand } from '../formatReviewBudgetGrantCommand';
 import { asGuardBudgetHeadLines } from './asGuardBudgetHeadLines';
 import type {
   BudgetGrantMeter,
@@ -147,7 +147,7 @@ export const formatBudgetGrantRefusalLines = (input: {
       `   └─ what to do — yours to run, no human needed`,
       `      └─ name the one stone you meant, in full`,
       // 🔴 the command comes from the CANONICAL builder, never an inline re-spell.
-      //    `formatReviewBudgetTopupCommand` is the one renderer of this string, and it already
+      //    `formatReviewBudgetGrantCommand` is the one renderer of this string, and it already
       //    served three callers — an inline fourth is a second source of truth for one fact, so
       //    the day the builder gains a flag this remedy would hand over a command the command
       //    itself refuses (`rule.require.single-source-of-truth-for-render`).
@@ -163,7 +163,7 @@ export const formatBudgetGrantRefusalLines = (input: {
       //    costs a re-parse — the cost `rule.require.treestruct-output` names.
       ...names.map(
         (name, index) =>
-          `         ${index === names.length - 1 ? '└─' : '├─'} ${formatReviewBudgetTopupCommand(
+          `         ${index === names.length - 1 ? '└─' : '├─'} ${formatReviewBudgetGrantCommand(
             {
               add: input.add,
               peer: input.peer,

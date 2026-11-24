@@ -17,7 +17,7 @@ export const REASON_MARK_CONCESSION =
  * .what = the phrase that marks an exhaustion halt as an URGENT concession halt
  * .why = the severity split (F028/S14). an all-`better` concession hit is the driver's own
  *        (the `better` mark above → push, no human). an `urgent` concession ships nameable
- *        harm, so it earns a human's glance and a round — a DIFFERENT halt, and it says so
+ *        harm, so it earns a round the driver grants, and a note to its human — a DIFFERENT halt, and it says so
  *        in its own mark. `define.invariant.review.peer.budget.urgent-earns-budget`.
  *
  * 🔴 it must be DISJOINT from `REASON_MARK_CONCESSION` — the `better` predicate matches on
@@ -114,8 +114,9 @@ export const asExhaustedReasonForDisplay = (input: {
  * .why = the one read of the better mark above. the disposition op and both drive surfaces
  *        call this rather than each carry the literal, so the write and the reads cannot drift.
  *
- * 🔴 it matches the `better` mark ONLY. an `urgent` concession is a human halt, so it must
- *    NOT read as this push case — the two marks are disjoint by construction.
+ * 🔴 it matches the `better` mark ONLY. an `urgent` concession holds the stone until the driver
+ *    grants the round it earned, so it must NOT read as this push case — the two marks are
+ *    disjoint by construction.
  * .note = a null reason is NOT a concession halt. absence is not a claim — an exhausted
  *         status with no reason is the ordinary human wait it has always been.
  */
@@ -124,9 +125,9 @@ export const isRouteGuardConcessionExhaustion = (input: {
 }): boolean => (input.reason ?? '').includes(REASON_MARK_CONCESSION);
 
 /**
- * .what = whether an exhaustion halt is an URGENT concession halt — a warned human wait
+ * .what = whether an exhaustion halt is an URGENT concession halt — a round the stone earned
  * .why = the one read of the urgent mark. the emit surfaces call this to add the warn line
- *        that tells the human an urgent concession earned the round they must grant.
+ *        that states an urgent concession earned the round, which the driver grants itself.
  */
 export const isRouteGuardUrgentConcessionExhaustion = (input: {
   reason: string | null | undefined;
@@ -174,9 +175,10 @@ export const REASON_TEXT_CONCESSION_URGENT =
  * ⚠️ the urgent grade IS the warrant that makes the top-up driver-owned, so this line states what
  *    the grade earned and lets the options block below state who spends it.
  *
- * 🟡 the obligation to tell a human rides the two surfaces that ASK for it — the concede ack, at
- *    the moment of the grade, and the grant warrant, at the moment of the spend. a third ask on a
- *    halt that hands over no budget would dilute both.
+ * 🟡 the obligation to tell a human rides the surfaces that ASK for it — the concede ack, at the
+ *    moment of the grade; the judge's urgent halt, at the moment the driver decides to spend; and
+ *    the grant warrant, after the spend. all three read `ASK_TEXT_BUDGET_NOTE`, so one sentence
+ *    has one source however many surfaces carry it.
  *
  * .note = composed of two exported clauses, so the judge's urgent halt (which names the lanes
  *         between them) reads both from this one source
@@ -185,3 +187,24 @@ export const WARN_TEXT_CONCESSION_URGENT_HEAD = 'an urgent concession stands';
 export const WARN_TEXT_CONCESSION_URGENT_HARM =
   'its harm ships if unfixed, so this stone earns more budget';
 export const WARN_TEXT_CONCESSION_URGENT = `${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${WARN_TEXT_CONCESSION_URGENT_HARM}`;
+
+/**
+ * .what = the label over an urgent top-up: who owns the lever, on every surface that offers it
+ * .why = the drive halt and the judge's urgent halt offer the same command. one label from one
+ *        source means they cannot name two owners for one lever
+ *        (rule.require.single-source-of-truth-for-render).
+ *
+ * 🔴 the owner is the driver. `route.guard.budget` checks no actor — a human who runs it meets the
+ *    same three-conjunct gate (`computeBudgetGrantRefusal`) — so to name a human here would ask for
+ *    a round trip that grants no power the driver lacks
+ *    (`term=route.guard.budget._.choice._.md`).
+ */
+export const REMEDY_LABEL_BUDGET_GRANT = 'increase budget — yours to spend';
+
+/**
+ * .what = the ask that the driver write its human why this stone bought budget
+ * .why = an urgent top-up is the driver's to spend, so the human's view of the spend is this note.
+ *        no mechanism sends it; the driver writes it (`asBudgetGrantWarrantLines` docblock)
+ */
+export const ASK_TEXT_BUDGET_NOTE =
+  'tell your human why this stone bought budget';

@@ -30,7 +30,7 @@ output:
     review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
     review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
     judge, approved? 👋      a human must approve — attention needed
-    ..., exhausted 👋        peer budget spent, a human must approve or extend
+    ..., exhausted 👋        peer budget spent, no lane conceded — a human must approve or extend
     ..., blocked ✋          blocked, act now — attention needed
     ..., malfunction 💥      a reviewer or judge broke, a human must fix
 

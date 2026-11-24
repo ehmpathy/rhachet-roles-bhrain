@@ -22,6 +22,11 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what integration --scope 'path://stepReview.caseGoalExhaustive' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('stepReview.caseGoalExhaustive', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
@@ -30,52 +35,58 @@ describe('stepReview.caseGoalExhaustive', () => {
     brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] goal=exhaustive on dirty chapter', () => {
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] stepReview with goal=exhaustive',
-      () => {
-        const outputPath = path.join(os.tmpdir(), 'review-exhaustive-dirty.md');
-        afterAll(async () => fs.rm(outputPath, { force: true }));
-
-        // single API call, result shared across assertions
-        const result = useThen('stepReview succeeds', async () => {
-          const res = await stepReview(
-            {
-              rules: '.agent/**/briefs/rules/*.md',
-              paths: 'chapters/chapter2.md',
-              output: outputPath,
-              focus: 'push',
-              goal: 'exhaustive',
-              cwd: ASSETS_PROSE,
-            },
-            { brain: scene.brain },
+  given.runIf(isLiveBrainReviewTargeted)(
+    '[case1] goal=exhaustive on dirty chapter',
+    () => {
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview with goal=exhaustive',
+        () => {
+          const outputPath = path.join(
+            os.tmpdir(),
+            'review-exhaustive-dirty.md',
           );
+          afterAll(async () => fs.rm(outputPath, { force: true }));
 
-          // log output for observability
-          logOutputHead({
-            label: 'exhaustive.dirty.review',
-            output: res.review.formatted,
+          // single API call, result shared across assertions
+          const result = useThen('stepReview succeeds', async () => {
+            const res = await stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'chapters/chapter2.md',
+                output: outputPath,
+                focus: 'push',
+                goal: 'exhaustive',
+                cwd: ASSETS_PROSE,
+              },
+              { brain: scene.brain },
+            );
+
+            // log output for observability
+            logOutputHead({
+              label: 'exhaustive.dirty.review',
+              output: res.review.formatted,
+            });
+
+            return res;
           });
 
-          return res;
-        });
+          then('review is defined and non-empty', async () => {
+            expect(result.review.formatted).toBeDefined();
+            expect(result.review.formatted.length).toBeGreaterThan(0);
+          });
 
-        then('review is defined and non-empty', async () => {
-          expect(result.review.formatted).toBeDefined();
-          expect(result.review.formatted.length).toBeGreaterThan(0);
-        });
+          then('review includes blockers for gerund violations', async () => {
+            expect(result.review.formatted.toLowerCase()).toContain('blocker');
+          });
 
-        then('review includes blockers for gerund violations', async () => {
-          expect(result.review.formatted.toLowerCase()).toContain('blocker');
-        });
-
-        then('prompt was compiled with exhaustive goal', async () => {
-          // verify the prompt was compiled with exhaustive goal
-          // (indirectly tested via correct file counts)
-          expect(result.metrics.files.rulesCount).toBe(2);
-          expect(result.metrics.files.targetsCount).toBe(1);
-        });
-      },
-    );
-  });
+          then('prompt was compiled with exhaustive goal', async () => {
+            // verify the prompt was compiled with exhaustive goal
+            // (indirectly tested via correct file counts)
+            expect(result.metrics.files.rulesCount).toBe(2);
+            expect(result.metrics.files.targetsCount).toBe(1);
+          });
+        },
+      );
+    },
+  );
 });

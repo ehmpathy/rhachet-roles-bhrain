@@ -30,7 +30,7 @@ output:
     review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
     review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
     judge, approved? 👋      a human must approve — attention needed
-    ..., exhausted 👋        peer budget spent, a human must approve or extend
+    ..., exhausted 👋        peer budget spent, no lane conceded — a human must approve or extend
     ..., blocked ✋          blocked, act now — attention needed
     ..., malfunction 💥      a reviewer or judge broke, a human must fix
 
@@ -96,6 +96,16 @@ exports[`routeStatusLine.acceptance given: [case10] a bound route driver-blocked
 
 exports[`routeStatusLine.acceptance given: [case11] a bound route with an exhausted peer-budget status when: [t0] the renderer runs with that cwd then: its output matches the exhausted snapshot: route.status.line - peer.exhausted 1`] = `
 "🗿 1.vision, review.peer, l1@i003, exhausted 👋
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case11b] a bound route exhausted on a concession graded urgent when: [t0] the renderer runs with that cwd then: its output matches the concession-exhausted snapshot 1`] = `
+"🗿 1.vision, review.peer, l1@i003 🔍
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case11c] a bound route exhausted on a concession graded better when: [t0] the renderer runs with that cwd then: its output matches the concession-exhausted snapshot 1`] = `
+"🗿 1.vision, review.peer, l1@i003 🔍
 "
 `;
 

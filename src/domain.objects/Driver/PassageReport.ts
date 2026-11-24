@@ -15,7 +15,8 @@ import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport'
  *              (--as blocked), which carries no `blocker` — the driver wall is not a
  *              member of RouteStoneGuardBlockerType at all. read `blocker` to tell
  *              them apart: present = the guard held the road, absent = the driver did
- * - 'exhausted': peer-review budget is spent; a human must approve or extend
+ * - 'exhausted': peer-review budget is spent; a human must approve or extend, unless the
+ *                reason carries a concession mark, where the next act is the driver's
  * - 'arrived': driver entered the guard's reviews — in flight (push)
  * - 'promised': driver promised a self-review — forward motion (push)
  * - 'absorbed': driver absorbed a peer review — forward motion (push)

@@ -77,6 +77,11 @@ const asOpenrouterRow = (input: { stdout: string }): FirewallRow => {
   });
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_KEYRACK_FIREWALL=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://keyrack.firewall-key-absent' --mode apply
+const isLiveKeyrackFirewallTargeted =
+  process.env.BHRAIN_TEST_LIVE_KEYRACK_FIREWALL === '1';
+
 /**
  * .what = acceptance clamp on the CI credential step when the openrouter secret is absent
  * .why = vision case 4 (`key-absent-in-ci`, a critipath): a maintainer pushes before anyone
@@ -129,7 +134,7 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
     });
   });
 
-  given('[case2] this repo keyrack manifest, and actions secrets that carry the real key', () => {
+  given.runIf(isLiveKeyrackFirewallTargeted)('[case2] this repo keyrack manifest, and actions secrets that carry the real key', () => {
     // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): the
     //        real OPENROUTER_API_KEY, as the test run's keyrack unlock supplies it, goes through
     //        the same CI step. an absent key fails loud, never skips.

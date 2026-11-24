@@ -86,6 +86,11 @@ const genBrainStub = (input: {
   };
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what integration --scope 'path://setOnePrefixPoke' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('setOnePrefixPoke', () => {
   given('[case1] a poke the provider served almost entirely from cache', () => {
     const scene = useBeforeAll(async () => {
@@ -334,44 +339,47 @@ describe('setOnePrefixPoke', () => {
     },
   );
 
-  given('[case4] a poke sent to the real provider', () => {
-    /**
-     * .why = the stubs above prove the SHAPE of the call. this proves the provider
-     *        accepts that shape — the head in the system slot, the ack schema — and
-     *        answers with every field a poke row reads. one tiny prompt, so the cost
-     *        is a fraction of a cent (rule.require.external-contract-integration-tests)
-     * .note = the head carries a fresh marker, so no prior run's cache can answer it;
-     *         a cache read is not asserted here, only that the provider measured one
-     */
-    when.repeatably(REPEATABLY_CONFIG)('[t0] the poke is sent', () => {
-      const scene = useBeforeAll(async () => {
-        const cwd = genTempDir({ slug: 'poke-live' });
-        const headBrief = await genHeadBriefInRun({
-          cwd,
-          head: `${HEAD_OF_TEST}\nmarker: ${getUuid()}\n`,
+  given.runIf(isLiveBrainReviewTargeted)(
+    '[case4] a poke sent to the real provider',
+    () => {
+      /**
+       * .why = the stubs above prove the SHAPE of the call. this proves the provider
+       *        accepts that shape — the head in the system slot, the ack schema — and
+       *        answers with every field a poke row reads. one tiny prompt, so the cost
+       *        is a fraction of a cent (rule.require.external-contract-integration-tests)
+       * .note = the head carries a fresh marker, so no prior run's cache can answer it;
+       *         a cache read is not asserted here, only that the provider measured one
+       */
+      when.repeatably(REPEATABLY_CONFIG)('[t0] the poke is sent', () => {
+        const scene = useBeforeAll(async () => {
+          const cwd = genTempDir({ slug: 'poke-live' });
+          const headBrief = await genHeadBriefInRun({
+            cwd,
+            head: `${HEAD_OF_TEST}\nmarker: ${getUuid()}\n`,
+          });
+          const answer = await setOnePrefixPoke(
+            { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
+            { brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }) },
+          );
+          return { answer };
         });
-        const answer = await setOnePrefixPoke(
-          { headBrief, tail: TAIL_OF_TEST, msOfTimeout: null },
-          { brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }) },
-        );
-        return { answer };
-      });
 
-      then('the provider measured the prompt it read', () => {
-        expect(scene.answer.promptTokens).toBeGreaterThan(0);
-      });
+        then('the provider measured the prompt it read', () => {
+          expect(scene.answer.promptTokens).toBeGreaterThan(0);
+        });
 
-      then('the cache read is a measured count, never absent', () => {
-        expect(Number.isInteger(scene.answer.cacheGetTokens)).toEqual(true);
-        expect(scene.answer.cacheGetTokens).toBeGreaterThanOrEqual(0);
-        expect(scene.answer.cacheGetTokens).toBeLessThanOrEqual(
-          scene.answer.promptTokens,
-        );
-      });
+        then('the cache read is a measured count, never absent', () => {
+          expect(Number.isInteger(scene.answer.cacheGetTokens)).toEqual(true);
+          expect(scene.answer.cacheGetTokens).toBeGreaterThanOrEqual(0);
+          expect(scene.answer.cacheGetTokens).toBeLessThanOrEqual(
+            scene.answer.promptTokens,
+          );
+        });
 
-      then('the cost is a price the poke row can render', () => {
-        expect(scene.answer.cost).toMatch(/^\$\d/);
+        then('the cost is a price the poke row can render', () => {
+          expect(scene.answer.cost).toMatch(/^\$\d/);
+        });
       });
-    });
-  });
+    },
+  );
 });

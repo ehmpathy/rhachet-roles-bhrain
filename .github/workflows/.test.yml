@@ -186,6 +186,13 @@ jobs:
       fail-fast: false
       matrix:
         shard: ${{ fromJson(needs.enshard.outputs.integration-matrix) }}
+    # .why = each live-brain given runs only where a named flag targets it; ci holds the keys
+    #        (keyrack firewall), so ci targets every live flag and the real provider is called
+    env:
+      BHRAIN_TEST_LIVE_BRAIN_REVIEW: "1"
+      BHRAIN_TEST_LIVE_BRAIN_TALLY: "1"
+      BHRAIN_TEST_LIVE_BRAIN_REFLECT: "1"
+      BHRAIN_TEST_LIVE_KEYRACK_FIREWALL: "1"
     steps:
       - name: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -322,6 +329,13 @@ jobs:
       fail-fast: false
       matrix:
         shard: ${{ fromJson(needs.enshard.outputs.acceptance-matrix) }}
+    # .why = each live-brain given runs only where a named flag targets it; ci holds the keys
+    #        (keyrack firewall), so ci targets every live flag and the real provider is called
+    env:
+      BHRAIN_TEST_LIVE_BRAIN_REVIEW: "1"
+      BHRAIN_TEST_LIVE_BRAIN_TALLY: "1"
+      BHRAIN_TEST_LIVE_BRAIN_REFLECT: "1"
+      BHRAIN_TEST_LIVE_KEYRACK_FIREWALL: "1"
     steps:
       - name: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4

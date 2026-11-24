@@ -23,6 +23,11 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by.journey' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = the end-to-end journey for review.by — a violation is caught, fixed, then clean.
  * .why = journeys ride in a dedicated `.journey.acceptance.test.ts` file (the repo's journey
@@ -30,7 +35,7 @@ const REPEATABLE_CONFIG = {
  *        boundary/error cases in review.by.acceptance.test.ts.
  */
 describe('review.by.journey.acceptance', () => {
-  given('[case17] journey: violation to fix to clean', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case17] journey: violation to fix to clean', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] dirty then fixed', () => {
       const journey = useThen('review.by reflects the fix', async () => {
         const cwd = await genReviewByFixture({

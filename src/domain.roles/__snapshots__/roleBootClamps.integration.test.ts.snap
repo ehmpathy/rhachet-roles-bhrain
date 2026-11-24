@@ -746,7 +746,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "- **PASSAGE**: a \`rejected\` lane is not terminal. passage is your explicit \`--as passed\`. work every reviewer to terminal before a human is pulled.",
       "- **DISPUTABLE**: any concern that counts toward the tally is yours to dispute, approved lane or not. forced to absorb only a rejected lane's.",
       "- **EXHAUSTED**: unlocks the LEVEL, not the DEBT. answer an exhausted reviewer's blocker. levers: \`.taken\`, budget top-up, human.",
-      "- **BUDGET**: a budget hit needs a human ⟺ a live \`urgent\` concession stands. grade each (\`--severity better|urgent\`): nameable shipped harm → \`urgent\`, else \`better\`.",
+      "- **BUDGET**: a budget hit earns more ⟺ a live \`urgent\` concession stands. you run the top-up; you write your human why the stone bought it. grade each (\`--severity better|urgent\`): nameable shipped harm → \`urgent\`, else \`better\`.",
     ],
   },
   {
@@ -1179,7 +1179,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "| \`rhx route.guard.budget --for review --add N --stone <stone>\` | driver, ONLY with a warrant |",
       "| \`rhx route.mutate grant allow\` · \`--as approved\` · \`--as overruled\` · commit quota · \`absent\` credential · release auth | human |",
       "",
-      "\`rhx route.mutate grant get\` first: granted → edit; not → ask the human once per route. a hand-run \`rhx review\` is no lever (\`rule.forbid.hand-run-reviews\`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.",
+      "\`rhx route.mutate grant get\` first: granted → edit; not → ask the human once per route. a hand-run \`rhx review\` is no lever (\`rule.forbid.hand-run-reviews\`). malfunction, self-review, and non-urgent judge halts print remedies with no owner column: you sort.",
       "",
       "## budget: refused by default",
       "",
@@ -1345,7 +1345,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
   "driver/briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md",
   "driver/briefs/define.invariant.review.peer.budget.urgent-earns-budget.md",
   "driver/briefs/define.invariant.review.peer.exhausted.md",
-  "driver/briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md",
+  "driver/briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-grant.md",
   "driver/briefs/define.invariant.review.peer.passage.md",
   "driver/briefs/define.routes-are-gardened.kind=philosophy.md",
   "driver/briefs/howdoes.a-concern-travels-from-reviewer-to-absorption.md",
@@ -1363,7 +1363,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
 exports[`roleBootClamps given: [case2] the driver role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
   "budget": 10000,
-  "payload": 9936,
+  "payload": 9954,
 }
 `;
 
@@ -1854,7 +1854,7 @@ exports[`roleBootClamps given: [case9] the researcher role boot when: [t1] it bo
 exports[`roleBootClamps given: [case10] the reviewer role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
   "budget": 9750,
-  "payload": 9560,
+  "payload": 9562,
 }
 `;
 

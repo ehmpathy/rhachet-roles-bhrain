@@ -132,7 +132,7 @@ exports[`formatRouteDriveBudgetExhausted given: [case1c] a spent ladder where �
       │
       ├─ spend your own lever first, then ask a human
       │  ├─ increase budget — yours to spend
-      │  │  └─ rhx route.guard.budget --for review --add N --peer mech-rules --stone 5.1.execution
+      │  │  └─ rhx route.guard.budget --for review --add 2 --peer mech-rules --stone 5.1.execution
       │  │
       │  └─ approve as-is — a human must grant
       │     └─ rhx route.stone.set --stone 5.1.execution --as approved

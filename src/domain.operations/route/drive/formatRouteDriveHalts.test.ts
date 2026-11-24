@@ -292,9 +292,9 @@ describe('formatRouteDriveBudgetExhausted', () => {
           expect(output).toContain(WARN_TEXT_CONCESSION_URGENT);
         });
 
-        // an urgent concession sheds NONE of the human's part — it rides the ordinary human
-        // wait and adds a reason for it, so the approve tail stays (unlike a `better` concede).
-        then('it renders the human wait, never the driver-own tail', () => {
+        // an urgent concession lists two owners — the driver's grant first, a human's
+        // approve-as-is after — so the approve option stays (unlike a `better` concede).
+        then('it renders both owners, never the driver-only tail', () => {
           expect(output).toContain('approve as-is — a human must grant');
           expect(output).not.toContain('what to do — no human needed');
         });

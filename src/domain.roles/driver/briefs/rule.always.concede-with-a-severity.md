@@ -12,7 +12,7 @@ rhx route.stone.set --stone <stone> --as conceded --with <reviewer> --about <con
 
 - **`better`** is the common grade — code idealism, maintenance, polish. it never earns more budget.
 - **`urgent`** is the escalation — a defect that ships REAL harm. it is the ONE concession that
-  earns an increased budget, and the only one that warrants a human at a budget hit.
+  earns an increased budget: a top-up you run, and a note to your human of why this stone bought it.
 
 ⇒ `better` is the grade you reach for most, but you reach for it EXPLICITLY — a concede with no
 `--severity` is refused, so the harm test below is made on every concession rather than skipped.
@@ -29,7 +29,7 @@ is how the fleet tells the two kinds of residual defect apart:
 - a `better` concession is real work the team owes; it accrues as tech debt if the budget is not
   spent, and it evolves into a later round. it must **never** weigh the team down with more budget.
 - an `urgent` concession ships harm now, so it defers the good-enough verdict — the one case that
-  earns more rounds and a human's glance.
+  earns more rounds, granted by the driver, with a note to its human.
 
 ⇒ if a driver graded everything `urgent`, the budget would stop to bound anything. if a driver
 graded everything `better`, a real shipped defect would slip past good-enough. the severity is the

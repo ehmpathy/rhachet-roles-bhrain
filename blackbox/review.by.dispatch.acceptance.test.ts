@@ -23,6 +23,11 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by.dispatch' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = acceptance coverage for the real `rhx review.by --repo bhrain --role reviewer` dispatch
  * .why = the review.by.acceptance suite invokes review.by.sh directly, below rhachet's dispatch,
@@ -105,7 +110,7 @@ describe('review.by.dispatch.acceptance', () => {
   // dispatched happy path — LLM-backed (when.repeatably)
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-rhx3] the base dispatched via rhx against clean code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-rhx3] the base dispatched via rhx against clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx review.by --repo bhrain --role reviewer -- --role demo runs',
       () => {

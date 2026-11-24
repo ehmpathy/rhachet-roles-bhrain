@@ -1,7 +1,7 @@
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { getLatestPassageForRoute } from '../passage/getLatestPassageForRoute';
-import { isReminderLiveForPassageStatus } from './isReminderLiveForPassageStatus';
+import { isReminderLiveForPassage } from './isReminderLiveForPassage';
 
 // .note = the `../passage/` import is intra-context composition, NOT a cross-context scope leak.
 //   `route/` is ONE bounded context; passage/, drive/, judges/, stones/, bouncer/, and reminder/
@@ -48,9 +48,13 @@ export const getRouteReminderLiveness = async (input: {
   // no passage yet → no active drive to nudge
   if (!latest) return { live: false, status: null };
 
-  // apply the pure predicate to the latest status
+  // apply the pure predicate to the latest passage; its reason tells a concession exhaustion
+  // (the driver's own move) from a human one
   return {
-    live: isReminderLiveForPassageStatus({ status: latest.status }),
+    live: isReminderLiveForPassage({
+      status: latest.status,
+      reason: latest.reason ?? null,
+    }),
     status: latest.status,
   };
 };

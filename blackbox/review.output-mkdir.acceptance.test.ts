@@ -26,8 +26,13 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.output-mkdir' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.output-mkdir.acceptance', () => {
-  given('[case1] mechanic codebase with review skill', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] mechanic codebase with review skill', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --output to absent parent dir', () => {
       const res = useThen(
         'invoke review skill with --output to absent parent',

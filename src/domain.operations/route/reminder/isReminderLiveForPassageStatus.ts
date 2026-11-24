@@ -32,7 +32,9 @@ import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
  * dead (false, daemon exits) — a human, not a nudge, must act (a nudge would be the infiniloop):
  * - 'blocked'      = a hard driver wall (incl. awaited-approval, which is blocked+approval)
  * - 'rewound'      = the stone was parked for fresh evaluation
- * - 'exhausted'    = peer-review budget spent; a human must approve or extend
+ * - 'exhausted'    = peer-review budget spent; a human must approve or extend. a concession
+ *                    exhaustion (the driver's own move) is the one exception, and its reason
+ *                    carries the mark — `isReminderLiveForPassage` reads it
  * - 'malfunction'  = a reviewer or judge broke; a human must repair
  */
 export const REMINDER_LIVENESS_BY_STATUS = {

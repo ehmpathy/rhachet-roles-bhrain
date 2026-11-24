@@ -430,9 +430,9 @@ export const stepRouteDrive = async (
       return { emit: { stdout: asBooted(blockerMessage.stdout, 'halt') } };
 
     // exhausted status → show the approve-or-extend / concession prompt at boot too.
-    // .why = an exhausted status is a halt of any kind — ordinary/urgent (a human must
-    //        approve or extend the peer budget) or a `better` concession (the driver's own
-    //        `--add N --peer`). all render the same prompt, and onBoot blocks no stop, so it
+    // .why = an exhausted status is a halt of any kind — ordinary (a human must approve or
+    //        extend the peer budget), `urgent` (the driver grants its own round), or `better`
+    //        (the driver owes its fix). all render the same prompt, and onBoot blocks no stop, so it
     //        consumes only the message. the ONE live read inside getRouteDriveExhaustedMessage
     //        classifies the halt (S12), so onBoot never re-decodes the concession mark here
     //        (rule.require.single-source-of-truth-for-render).
@@ -525,13 +525,13 @@ export const stepRouteDrive = async (
     // blocked and malfunction already returned above; a stale volatile blocker keeps
     // status 'blocked' and so pushes forward here.
     //
-    // 🔴 the message AND the stop disposition come from ONE live read (B1 fix). a `better`
-    //    concession BLOCKS the stop (stderr code 2) — no human is owed, so to allow the stop
-    //    would end the session over a command the driver holds (`--add N --peer`), and a
-    //    human would have to restart it. every other exhaustion — ordinary, `urgent` (a
-    //    grant a HUMAN must make, r008.b1), or a stale halt — ALLOWS the stop. the decision
-    //    can no longer disagree with the rendered message, because both read the same live
-    //    concession kind inside getRouteDriveExhaustedMessage (S12).
+    // 🔴 the message AND the stop disposition come from ONE live read (B1 fix). a concession
+    //    of either severity BLOCKS the stop (stderr code 2) — no human is owed, so to allow
+    //    the stop would end the session over a command the driver holds (the `better` fix,
+    //    or the `urgent` grant), and a human would have to restart it. an ordinary
+    //    exhaustion or a stale halt ALLOWS the stop (`isRouteDriveExhaustionStopBlocked`).
+    //    the decision can no longer disagree with the rendered message, because both read
+    //    the same live concession kind inside getRouteDriveExhaustedMessage (S12).
     //
     // .note = the block emits stderr code 2, the same shape the feedbackUnabsorbed and undeclared
     //         gates use for "the driver can act NOW".

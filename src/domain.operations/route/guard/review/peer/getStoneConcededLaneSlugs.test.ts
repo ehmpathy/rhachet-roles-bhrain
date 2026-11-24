@@ -221,10 +221,10 @@ describe('computeConcededLaneSlugs', () => {
 
 /**
  * .what = unit cases for the three-way severity classifier the exhaustion verdict reads
- * .why = it decides WHOSE budget lever an exhausted-and-conceded ladder names. `better` is the
- *        driver's own top-up (no human); `urgent` is a human's grant; `none` is an ordinary human
- *        wait. a false `better` strands harm as maintenance; a false `urgent` weighs the fleet down
- *        with a human summons the design already rendered
+ * .why = it decides what an exhausted-and-conceded ladder earns. `better` is good enough (no more
+ *        budget); `urgent` earns more budget, which the driver grants itself and explains to its
+ *        human; `none` is an ordinary human wait. a false `better` strands harm as maintenance; a
+ *        false `urgent` buys a round the stone did not warrant
  *        (define.invariant.review.peer.budget.urgent-earns-budget).
  */
 describe('computeConcessionExhaustionKind', () => {
@@ -241,7 +241,7 @@ describe('computeConcessionExhaustionKind', () => {
     ];
 
     when('[t0] the verdict asks', () => {
-      then('the kind is `better` — the driver tops up their own budget', () => {
+      then('the kind is `better` — good enough, no more budget', () => {
         expect(
           computeConcessionExhaustionKind({
             absorptions,
@@ -304,7 +304,7 @@ describe('computeConcessionExhaustionKind', () => {
 
     when('[t0] the verdict asks', () => {
       then(
-        'the kind is `urgent` — one urgent among many earns a human grant',
+        'the kind is `urgent` — one urgent among many earns more budget',
         () => {
           expect(
             computeConcessionExhaustionKind({

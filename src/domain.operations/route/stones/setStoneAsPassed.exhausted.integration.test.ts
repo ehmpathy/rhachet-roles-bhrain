@@ -8,6 +8,10 @@ import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
 import { concedeEveryPeerConcern } from '../__test_assets__/concedeEveryPeerConcern';
 import { countReviewerRuns } from '../__test_assets__/countReviewerRuns';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { isRouteGuardUrgentConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import { getRouteReminderLiveness } from '../reminder/getRouteReminderLiveness';
+import { stepRouteDrive } from '../stepRouteDrive';
+import { stepRouteStatusLine } from '../stepRouteStatusLine';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const noopContext = genContextReviewBrainSupplyDemo();
@@ -214,6 +218,76 @@ describe('setStoneAsPassed.exhausted', () => {
           expect(exhaustedEntry.reason).toContain('limited');
         },
       );
+    });
+
+    /**
+     * 🔴 .what = the urgent exhaustion this journey reached, read by the three surfaces that
+     *         decide whether the session waits on a human: the onStop hook, the status line,
+     *         and the reminder liveness
+     * .why = the grant is the driver's, so each surface must push the driver on. the pure
+     *        predicates pin the rule; this step pins the WIRE — revert any one caller to
+     *        its `better`-only read and this step goes red
+     */
+    when('[t3] the drive surfaces read the urgent exhaustion', () => {
+      const result = useThen('each surface reads the route', async () => {
+        const passage = await fs.readFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          'utf-8',
+        );
+        const reasonLatest =
+          passage
+            .trim()
+            .split('\n')
+            .map((line) => JSON.parse(line))
+            .reverse()
+            .find((entry) => entry.status === 'exhausted')?.reason ?? null;
+        const onStop = await stepRouteDrive({
+          route: tempDir,
+          when: 'hook.onStop',
+        });
+        const statusLine = await stepRouteStatusLine({ route: tempDir });
+        const reminder = await getRouteReminderLiveness({ route: tempDir });
+        return { reasonLatest, onStop, statusLine, reminder };
+      });
+
+      then('the exhaustion carries the urgent concession mark', () => {
+        expect(
+          isRouteGuardUrgentConcessionExhaustion({
+            reason: result.reasonLatest,
+          }),
+        ).toBe(true);
+      });
+
+      then(
+        'the onStop hook blocks the stop — the grant is the driver’s',
+        () => {
+          expect(result.onStop.emit?.stderr?.code).toEqual(2);
+        },
+      );
+
+      then('the status line reads a push, not a human wait', () => {
+        expect(result.statusLine.line).not.toContain('👋');
+      });
+
+      then('the reminder stays live', () => {
+        expect(result.reminder.live).toBe(true);
+      });
+
+      then('matches snapshot — step 4: each drive surface, whole', () => {
+        expect(
+          asStableEmit({
+            emit: [
+              `--- onStop (stderr code ${result.onStop.emit?.stderr?.code})`,
+              result.onStop.emit?.stdout ?? '',
+              '--- status line',
+              result.statusLine.line,
+              '--- reminder',
+              `live = ${result.reminder.live}`,
+            ].join('\n'),
+            route: tempDir,
+          }),
+        ).toMatchSnapshot('exhausted journey - [t3] the drive surfaces');
+      });
     });
   });
 

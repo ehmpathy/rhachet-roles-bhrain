@@ -58,8 +58,8 @@ most concerns keep a codebase workable — a cost the team pays and the user doe
   tallier CANNOT recover
 
 ⇒ the tallier reads your explicit label; it never upgrades a `better` to `urgent`. the grade is
-yours, and it is load-bearing: a budget hit with a live `urgent` warns the human and earns more
-budget, where an all-`better` hit is good enough and needs no human
+yours, and it is load-bearing: a budget hit with a live `urgent` earns more budget and a note to
+the human, where an all-`better` hit is good enough and needs neither
 (`define.invariant.review.peer.budget.urgent-earns-budget`).
 
 ## .why it matters
@@ -68,7 +68,7 @@ a mis-graded severity is as expensive as a mis-graded kind, in each direction:
 
 | the mis-grade | the cost |
 |---|---|
-| a `better` concern labeled `urgent` | it earns a round and a human's glance it did not warrant — the budget stops to bound aught |
+| a `better` concern labeled `urgent` | it earns a round and a note it did not warrant — the budget stops to bound aught |
 | an `urgent` concern labeled `better`, or left unlabeled | a shipped harm slips past good-enough and evolves into a defect that reaches a user |
 
 ## .enforcement

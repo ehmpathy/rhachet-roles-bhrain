@@ -693,7 +693,7 @@ export const setStoneAsPassed = async (
   // budget by design: what remains at exhaustion is tech debt, earning no budget
   // increase and no human (define.invariant.review.peer.budget.urgent-earns-budget,
   // S16). only `none` (a lane never conceded → human wait) and `urgent` (ships harm →
-  // budget + a human warn) halt here.
+  // a round the driver grants, and a note to its human) halt here.
   const { kind: concession, slugs: concessionSlugs } =
     await getStoneConcessionExhaustion({
       route: input.route,
@@ -726,8 +726,9 @@ export const setStoneAsPassed = async (
 
     // exhausted peer budget → its own passage status (not a 'blocked' + blocker)
     // .why = by phase an exhausted peer review looks like ordinary review.peer (a calm
-    //        push), but it is truly a human-wait: a halt(exhausted) where a human must
-    //        approve or extend. it maps direct to that halt with no phase-inference,
+    //        push), but it is truly a halt(exhausted): a human must approve or extend, or,
+    //        for an urgent concession, the driver grants its own round (that disposition
+    //        reads the reason's urgent mark and pushes). it maps direct to that halt with no phase-inference,
     //        and is ephemeral — the next --as <status> supersedes it (latest-entry-wins).
     // .note = writes the status directly (like malfunction/constraint), not via
     //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.

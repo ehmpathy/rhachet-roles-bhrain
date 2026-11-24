@@ -56,7 +56,7 @@ exports[`setStoneAsPassed.exhausted given: [case1] peer reviewer exhaustion writ
    │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
-   │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
+   │  │  └─ rhx route.guard.budget --for review --add 2 --peer limited --stone 1.test
    │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.test --as approved
    └─ guard
@@ -70,6 +70,43 @@ exports[`setStoneAsPassed.exhausted given: [case1] peer reviewer exhaustion writ
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.test._.review.i002.<hash>.r001._.given.by_peer.limited.md
               └─ taken: .reviews/peer/1.test._.review.i002.<hash>.r001._.taken.by_self.limited.md"
+`;
+
+exports[`setStoneAsPassed.exhausted given: [case1] peer reviewer exhaustion writes to passage.jsonl when: [t3] the drive surfaces read the urgent exhaustion then: matches snapshot — step 4: each drive surface, whole: exhausted journey - [t3] the drive surfaces 1`] = `
+"--- onStop (stderr code 2)
+🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <route>
+   │  └─ stone = 1.test
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: you conceded — the round to confirm your fix needs more budget
+      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
+      │
+      ├─ reviews
+      │   └─ r1: limited (l1, 2/2)
+      │       ├─ exhausted 🌙
+      │       ├─ terminal — does not block higher levels
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.test._.review.i002.<hash>.r001._.given.by_peer.limited.md
+      │       └─ taken: .reviews/peer/1.test._.review.i002.<hash>.r001._.taken.by_self.limited.md
+      │
+      ├─ spend your own lever first, then ask a human
+      │  ├─ increase budget — yours to spend
+      │  │  └─ rhx route.guard.budget --for review --add 2 --peer limited --stone 1.test
+      │  │
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1.test --as approved
+      │
+      └─ once either remedy lands, run
+         └─ rhx route.stone.set --stone 1.test --as passed
+--- status line
+🗿 1.test, review.peer, l1@i002 🔍
+--- reminder
+live = true"
 `;
 
 exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered after the reviewer exhausted when: [t0] the only review runs and raises a blocker then: matches snapshot — the only round this budget allows 1`] = `
@@ -122,7 +159,7 @@ exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered afte
    │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
-   │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
+   │  │  └─ rhx route.guard.budget --for review --add 2 --peer limited --stone 1.test
    │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.test --as approved
    └─ guard
@@ -268,7 +305,7 @@ exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while 
    │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
-   │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
+   │  │  └─ rhx route.guard.budget --for review --add 2 --peer limited --stone 1.test
    │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.test --as approved
    └─ guard

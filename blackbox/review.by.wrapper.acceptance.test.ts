@@ -25,6 +25,11 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by.wrapper' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = acceptance coverage for the wrapper-extends-base usecase
  * .why = the whole point of the base engine is that each role ships its OWN thin review.by that
@@ -106,7 +111,7 @@ describe('review.by.wrapper.acceptance', () => {
   // wrapper happy path — LLM-backed (when.repeatably)
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-wrap2] the demo wrapper runs against clean code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-wrap2] the demo wrapper runs against clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx review.by --role demo (via the demo wrapper) runs',
       () => {

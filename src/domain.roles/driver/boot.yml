@@ -49,7 +49,7 @@ always:
       - briefs/define.invariant.review.peer.exhausted.md
       - briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md
       - briefs/define.invariant.review.peer.budget.urgent-earns-budget.md
-      - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md
+      - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-grant.md
       # the RouteReminder runbook — the auto-wire path, the manual inspect/override skills,
       # and what the nudge does NOT cover. ref because a driver never turns the reminder on:
       # route.drive findserts it and reaps it, so an enrolled drive is covered with no action.

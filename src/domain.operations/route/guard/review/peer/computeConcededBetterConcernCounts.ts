@@ -13,7 +13,7 @@ import type { ReviewAbsorption } from './ReviewAbsorption';
  *        increase and NO human (`define.invariant.review.peer.budget.urgent-earns-budget`).
  *
  * 🔴 an `urgent` concession is NOT counted here — it ships nameable harm, so it KEEPS the hold
- *    and earns a human's glance and a round. an ungraded concede is read as `better` (the
+ *    and earns a round the driver grants, and a note to its human. an ungraded concede is read as `better` (the
  *    maintenance floor is the safe default; a mis-graded `better` never earns a round).
  *
  * 🔴 it keys each stance to the slug's LATEST given via `getLiveReviewAbsorptions` — the same

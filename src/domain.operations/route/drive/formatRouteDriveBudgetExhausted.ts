@@ -93,9 +93,10 @@ export const formatRouteDriveBudgetExhausted = (input: {
 
   // 🔴 an URGENT concession is a THIRD halt (F028/S14). the driver conceded, but ≥1
   //    concession ships nameable harm — security · safety · monetary · reputation ·
-  //    behavioral — so the maintenance floor is not enough: it earns a human's glance and
-  //    a round. so it renders as the human wait (unlike a `better` concession, which is
-  //    the driver's own), PLUS a warn line that tells the human why the round is owed
+  //    behavioral — so the maintenance floor is not enough: it earns a round, which the
+  //    driver grants itself and explains to its human. both grades push the session on, but
+  //    only this one holds passage until that grant (a `better` concession is shed and passes),
+  //    PLUS a warn line that states why the round is earned
   //    (`define.invariant.review.peer.budget.urgent-earns-budget`).
   // 🔴 the REASON LINE and the WARN come from the ONE shared decoder, never from a second
   //    inline decode. this file used to re-derive them and keyed its reason on `isConcession`
@@ -104,9 +105,10 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    for the SAME persisted reason. two surfaces a driver meets consecutively, one halt, two
   //    contradictory statements (r1 b2; rule.require.single-source-of-truth-for-render).
   //
-  // 🟡 the DISPOSITION branches below still key on `isConcession` (better-only), and that is
-  //    the design: a better concession is the driver's own push, an urgent one is a human wait.
-  //    what the decoder settles is the WORDS, never the layout.
+  // 🟡 the LAYOUT branches below still key on `isConcession` (better-only), and that is the
+  //    design: a better concession's whole answer is the driver's fix, while an urgent one
+  //    lists two owners — the driver's grant first, a human's approve-as-is after — so it keeps
+  //    the owner-sorted lead. what the decoder settles is the WORDS, never the layout.
   const display = asConcessionReasonDisplay({ reason: input.reason });
 
   // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
@@ -128,11 +130,10 @@ export const formatRouteDriveBudgetExhausted = (input: {
       ? `      ├─ reason: ${display.reasonText}`
       : `      ├─ reason: peer reviewer budget exhausted`,
   );
-  // 🟡 the urgent warn rides on the ordinary human-wait render, never the `better` one —
-  //    an urgent concession sheds none of the human's part; it adds a reason for it.
+  // 🟡 the urgent warn rides on the ordinary owner-sorted render, never the `better` one —
+  //    an urgent concession keeps both remedies; it adds the reason the grant is earned.
   // 🔴 nested under `reason`, never a peer of it — the warn explains WHY that reason line
-  //    is a human wait rather than a driver's own push, so it is a child of the reason, not
-  //    a second top-level fact.
+  //    earns a round, so it is a child of the reason, not a second top-level fact.
   if (display.warnText) lines.push(`      │  └─ 🟡 ${display.warnText}`);
   lines.push(`      │`);
 

@@ -225,14 +225,14 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         expect(output).toContain('exhaust');
       });
 
-      then('the exhaustion halts on an URGENT concession — the budget lever AND a human grant are both owed (S16)', () => {
+      then('the exhaustion halts on an URGENT concession — the budget lever belongs to the driver, with a human approval as the alternative (S16)', () => {
         // the journey concedes each round as `urgent` (a shipped harm), so at exhaustion
         // every skipped lane carries a LIVE urgent concession — its stance is against its
         // latest given, since an exhausted lane mints no newer one. under S16 an urgent
-        // concession is NOT shed by the judge: its harm ships if unfixed, so the round is
-        // owed a human's grant (define.invariant.review.peer.budget.urgent-earns-budget).
-        // the halt names the concession, offers the driver's own budget lever, AND warns
-        // that a human must grant — the human-approval BYPASS the journey exercises at [t5].
+        // concession is NOT shed by the judge: its harm ships if unfixed, so the stone
+        // earns more budget (define.invariant.review.peer.budget.urgent-earns-budget).
+        // the halt names the concession, offers the driver's own budget lever, AND offers a
+        // human approval as the alternative — the BYPASS the journey exercises at [t5].
         // (a `better`-only exhaustion would instead be SHED and PASS, no halt — S16.)
         const output = result.stdout.toLowerCase();
         expect(output).toContain(

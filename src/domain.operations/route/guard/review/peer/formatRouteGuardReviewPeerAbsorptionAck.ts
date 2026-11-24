@@ -8,9 +8,10 @@ import { asRouteStoneAbsorbCommand } from './asRouteStoneAbsorbCommand';
 import { asRouteStoneSetCommandHead } from './asRouteStoneSetCommandHead';
 import { asRouteStoneStanceCommand } from './asRouteStoneStanceCommand';
 import {
-  formatReviewBudgetTopupCommand,
-  ROUNDS_OFFERED_ON_TOPUP,
-} from './formatReviewBudgetTopupCommand';
+  formatReviewBudgetGrantCommand,
+  ROUNDS_OFFERED_ON_GRANT,
+} from './formatReviewBudgetGrantCommand';
+import { ASK_TEXT_BUDGET_NOTE } from './genRouteGuardExhaustedReason';
 
 // the two verbs both ack branches share with ABSORPTION_CONCEDE_STEPS — composed rather than
 // re-spelled, so an S11 reword of either word lands once (r004 nitpick.3)
@@ -176,14 +177,14 @@ const asAbsorptionAckSteps = (input: {
 
   // an URGENT concede on a spent lane buys the round that confirms the fix — after the fix (S11),
   // and always scoped to this one lane (S09). a `better` grade past the meter earns no round
-  const stepsTopup: AbsorptionAckStep[] =
+  const stepsGrant: AbsorptionAckStep[] =
     input.absorption === 'conceded' && input.buysRound
       ? [
           {
             title: `buy the round, once the ${input.concern.kind} is fixed`,
             commands: [
-              formatReviewBudgetTopupCommand({
-                add: ROUNDS_OFFERED_ON_TOPUP,
+              formatReviewBudgetGrantCommand({
+                add: ROUNDS_OFFERED_ON_GRANT,
                 peer: input.slug,
                 stone: input.stone,
               }),
@@ -203,7 +204,7 @@ const asAbsorptionAckSteps = (input: {
     ],
   };
 
-  return [stepAbsorbLane, ...stepsElsewhere, ...stepsTopup, stepRearrive];
+  return [stepAbsorbLane, ...stepsElsewhere, ...stepsGrant, stepRearrive];
 };
 
 /**
@@ -329,9 +330,7 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   //    it and what a human asks about. a pull may hold many stones, or none of this one's
   //    rounds — so to name a pull points the explanation at the wrong unit.
   if (input.absorption === 'conceded' && input.severity === 'urgent')
-    lines.push(
-      `   ├─ warn  = ships harm — tell your human why this stone bought budget`,
-    );
+    lines.push(`   ├─ warn  = ships harm — ${ASK_TEXT_BUDGET_NOTE}`);
 
   lines.push(`   │`);
 

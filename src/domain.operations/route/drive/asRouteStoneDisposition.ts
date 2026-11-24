@@ -2,7 +2,10 @@ import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStoneDisposition } from '@src/domain.objects/Driver/RouteStoneDisposition';
 import type { RouteStoneGuardBlockerType } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
-import { isRouteGuardConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import {
+  isRouteGuardConcessionExhaustion,
+  isRouteGuardUrgentConcessionExhaustion,
+} from '../guard/review/peer/genRouteGuardExhaustedReason';
 
 /**
  * .what = derives a stone's disposition (push | halt) from its latest passage state
@@ -34,11 +37,13 @@ export const asRouteStoneDisposition = (input: {
   if (input.status === 'malfunction') return { of: 'halt', why: 'malfunction' };
 
   if (input.status === 'exhausted') {
-    // 🔴 a CONCESSION exhaustion is the driver's own (S12). every skipped lane carries a
-    //    live concession, so the remedy is a budget top-up scoped to those lanes — and
-    //    `rule.always.spend-own-levers-before-escalation` files that lever under the
-    //    driver. this op's axis is "does a HUMAN need to act?", and here none does, so
-    //    the honest answer is `push` rather than a halt with a friendlier word.
+    // 🔴 a CONCESSION exhaustion, of EITHER severity, is the driver's own (S12). every
+    //    skipped lane carries a live concession, so the remedy is the driver's: a `better`
+    //    concession owes the fix it named; an `urgent` one earned a round the driver grants
+    //    itself (`--peer` per urgent lane), and owes its human a note of why
+    //    (`rule.always.spend-own-levers-before-escalation`). this op's axis is "does a HUMAN
+    //    need to act?", and for neither does one, so the honest answer is `push` rather
+    //    than a halt with a friendlier word.
     //
     // ⚠️ the fact rides in the REASON because this op must stay pure and sync: the
     //    statusline calls it on a ~300ms debounce and could not afford a route read.
@@ -46,7 +51,10 @@ export const asRouteStoneDisposition = (input: {
     //    `null` and gets the extant human-wait answer, the safe default — a missed
     //    concession costs a driver one human round; a falsely claimed one strands
     //    the stone.
-    if (isRouteGuardConcessionExhaustion({ reason: input.reason }))
+    if (
+      isRouteGuardConcessionExhaustion({ reason: input.reason }) ||
+      isRouteGuardUrgentConcessionExhaustion({ reason: input.reason })
+    )
       return { of: 'push' };
 
     // an exhausted peer budget waits on a human to approve or extend
