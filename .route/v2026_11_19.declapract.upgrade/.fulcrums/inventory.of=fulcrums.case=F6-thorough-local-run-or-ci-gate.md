@@ -20,4 +20,7 @@ it acts against a literal stone instruction. the stone's motive (no suite left u
 stone `3.1.repair.test.defects`; `3.1.repair.test.defects.yield.md` status table; self review `has-all-tests-passed-dynamic`.
 
 ## .verdict
-open — the driver's best guess, for the director to confirm.
+settled B, by the driver, under the director's grant to settle it.
+- why a ci run on the same commit stands in: the ci `test` workflow runs every suite a local thorough run would (unit, integration, acceptance, every shard), on the exact commit the pr ships, with the strict keys this host lacks. a local thorough run proves less: it cannot reach acceptance here at all
+- the proof on record: `test` run `45196464465` on head `73fa92f3`: 46 checks pass, 1 skipped (`github / apply`, a deploy job). it carries the new `audit.test.intentions` suite too
+- the bound: this stands in only when the ci run and the local tree share one commit. a local edit not yet pushed has no ci proof, and owes a branch-scope local run before any claim

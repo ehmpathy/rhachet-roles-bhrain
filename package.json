@@ -59,7 +59,6 @@
     "build:complete": "npm run build:complete:dist && npm run build:complete:repo",
     "build": "npm run build:clean && npm run build:compile && npm run build:complete --if-present",
     "build:ifstale": "set -eu && if [ -f dist/.build.stamp ] && [ -z \"$(find src assets package.json pnpm-lock.yaml tsconfig.json tsconfig.build.json app.json app.config.ts -newer dist/.build.stamp -type f ! -name '*.test.ts' ! -name '*.test.tsx' ! -name '*.snap' -print -quit 2>/dev/null)\" ]; then echo '👌 dist is fresh, build skipped'; else npm run build && touch dist/.build.stamp; fi",
-    "test:auth": "[ \"$ECHO\" = 'true' ] && echo '. .agent/repo=.this/role=any/skills/use.apikeys.sh' || . .agent/repo=.this/role=any/skills/use.apikeys.sh",
     "test:commits": "LAST_TAG=$(git describe --tags --abbrev=0 @^ 2> /dev/null || git rev-list --max-parents=0 HEAD) && commitlint --from \"${LAST_TAG:-}\" --to HEAD --verbose",
     "test:types": "tsc -p ./tsconfig.json --noEmit",
     "test:format:biome": "biome format",
