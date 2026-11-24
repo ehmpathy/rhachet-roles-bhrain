@@ -21,8 +21,11 @@ describe('delRouteReminderPidHandleIfPid.integration', () => {
   given('[case1] a handle that names pid 1111', () => {
     const scene = useBeforeAll(async () => {
       const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-cad-'));
-      await fs.mkdir(path.join(route, '.route'), { recursive: true });
-      const pidPath = getRouteReminderPidPath({ route, cloneAddr: CLONE_ADDR });
+      const pidPath = getRouteReminderPidPath({
+        repoRoot: route,
+        cloneAddr: CLONE_ADDR,
+      });
+      await fs.mkdir(path.dirname(pidPath), { recursive: true });
       await fs.writeFile(pidPath, '1111');
       return { route, pidPath };
     });
@@ -30,7 +33,7 @@ describe('delRouteReminderPidHandleIfPid.integration', () => {
     when('[t0] a teardown for a DIFFERENT pid (2222) runs', () => {
       const outcome = useBeforeAll(async () =>
         delRouteReminderPidHandleIfPid({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
           pid: 2222,
         }),
@@ -54,7 +57,7 @@ describe('delRouteReminderPidHandleIfPid.integration', () => {
     when('[t1] a teardown for the MATCHING pid (1111) runs', () => {
       const outcome = useBeforeAll(async () =>
         delRouteReminderPidHandleIfPid({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
           pid: 1111,
         }),
@@ -80,14 +83,37 @@ describe('delRouteReminderPidHandleIfPid.integration', () => {
   given('[case2] an absent handle', () => {
     const scene = useBeforeAll(async () => {
       const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-cad-'));
-      await fs.mkdir(path.join(route, '.route'), { recursive: true });
       return { route };
     });
 
     when('[t0] a teardown runs over the absent handle', () => {
       then('it is an idempotent no-op (removed:false)', async () => {
         const outcome = await delRouteReminderPidHandleIfPid({
-          route: scene.route,
+          repoRoot: scene.route,
+          cloneAddr: CLONE_ADDR,
+          pid: 1111,
+        });
+        expect(outcome.removed).toBe(false);
+      });
+    });
+  });
+
+  // the clone home is present, but no pid file sits in it — the second shape of an absent handle
+  given('[case3] a clone home with no pid handle in it', () => {
+    const scene = useBeforeAll(async () => {
+      const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-cad-'));
+      const pidPath = getRouteReminderPidPath({
+        repoRoot: route,
+        cloneAddr: CLONE_ADDR,
+      });
+      await fs.mkdir(path.dirname(pidPath), { recursive: true });
+      return { route };
+    });
+
+    when('[t0] a teardown runs over the absent file', () => {
+      then('it is an idempotent no-op (removed:false)', async () => {
+        const outcome = await delRouteReminderPidHandleIfPid({
+          repoRoot: scene.route,
           cloneAddr: CLONE_ADDR,
           pid: 1111,
         });

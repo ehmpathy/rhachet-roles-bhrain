@@ -5,8 +5,10 @@ import { getError, given, then, useBeforeAll, when } from 'test-fns';
 import { genRouteWithPassage } from '../.test/genRouteWithPassage';
 import { asNodeErrnoCode } from '../asNodeErrnoCode';
 import { getRouteReminderCrashLogPath } from './getRouteReminderCrashLogPath';
+import { getRouteReminderPidPath } from './getRouteReminderPidPath';
 import { runRouteReminderDaemon } from './runRouteReminderDaemon';
 import { sayToClone } from './sayToClone';
+import { setRouteReminderFocus } from './setRouteReminderFocus';
 
 /**
  * .what = an end-to-end proof that the REAL daemon loop tears itself down from REAL state
@@ -34,23 +36,74 @@ const genSleepRecorder = (): {
   return { sleep, waits };
 };
 
+// focus a clone on a freshly built route; the route's temp dir anchors the clone handle
+const withFocus = async (input: {
+  built: { route: string };
+  cloneAddr: string;
+}): Promise<{ route: string }> => {
+  await setRouteReminderFocus({
+    repoRoot: input.built.route,
+    cloneAddr: input.cloneAddr,
+    route: input.built.route,
+  });
+  return { route: input.built.route };
+};
+
+// the pid the loop under test runs as. it need not be a real process: the ownership check is a
+// byte compare of the clone's handle against it
+const OWN_PID = 4242;
+
+// plant the clone's handle with a named pid, as a spawn parent's claim would
+const withHandle = async (input: {
+  repoRoot: string;
+  cloneAddr: string;
+  pid: number;
+}): Promise<{ pidPath: string }> => {
+  const pidPath = getRouteReminderPidPath({
+    repoRoot: input.repoRoot,
+    cloneAddr: input.cloneAddr,
+  });
+  await fs.mkdir(path.dirname(pidPath), { recursive: true });
+  await fs.writeFile(pidPath, String(input.pid));
+  return { pidPath };
+};
+
+// read the clone's handle, or null where it is absent
+const readHandleOrNull = async (input: {
+  pidPath: string;
+}): Promise<string | null> => {
+  const error = await getError(async () => fs.readFile(input.pidPath, 'utf8'));
+  if (error && asNodeErrnoCode(error) === 'ENOENT') return null;
+  return fs.readFile(input.pidPath, 'utf8');
+};
+
 describe('runRouteReminderDaemon.integration', () => {
   given('[case1] a route whose latest passage is blocked', () => {
-    const scene = useBeforeAll(async () =>
-      genRouteWithPassage({
-        lines: [
-          { stone: '5.1.execution', status: 'arrived' },
-          { stone: '5.1.execution', status: 'blocked', blocker: 'approval' },
-        ],
-      }),
-    );
+    const scene = useBeforeAll(async () => {
+      const focused = await withFocus({
+        built: await genRouteWithPassage({
+          lines: [
+            { stone: '5.1.execution', status: 'arrived' },
+            { stone: '5.1.execution', status: 'blocked', blocker: 'approval' },
+          ],
+        }),
+        cloneAddr: '@:driver-1',
+      });
+      const { pidPath } = await withHandle({
+        repoRoot: focused.route,
+        cloneAddr: '@:driver-1',
+        pid: OWN_PID,
+      });
+      return { ...focused, pidPath };
+    });
 
     when('[t0] the real daemon loop runs against the blocked route', () => {
       const outcome = useBeforeAll(async () =>
         runRouteReminderDaemon(
           {
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: '@:driver-1',
+            pid: OWN_PID,
             intervalMs: 1,
             sayTimeoutMs: 30_000,
           },
@@ -67,13 +120,23 @@ describe('runRouteReminderDaemon.integration', () => {
       then('it exits on the FIRST tick — no sleep, no second cycle', () => {
         expect(outcome.ticks).toBe(1);
       });
+
+      then(
+        'it drops its own handle on exit — no stale pid file outlives it',
+        async () => {
+          expect(await readHandleOrNull({ pidPath: scene.pidPath })).toBeNull();
+        },
+      );
     });
   });
 
   given('[case2] an active route whose driver session is gone', () => {
     const scene = useBeforeAll(async () =>
-      genRouteWithPassage({
-        lines: [{ stone: '5.1.execution', status: 'arrived' }],
+      withFocus({
+        built: await genRouteWithPassage({
+          lines: [{ stone: '5.1.execution', status: 'arrived' }],
+        }),
+        cloneAddr: '@:nonexistent-clone-for-test',
       }),
     );
 
@@ -83,8 +146,9 @@ describe('runRouteReminderDaemon.integration', () => {
         // dead-session door → the loop self-exits
         runRouteReminderDaemon(
           {
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: '@:nonexistent-clone-for-test',
+            pid: OWN_PID,
             intervalMs: 1,
             sayTimeoutMs: 30_000,
           },
@@ -137,6 +201,13 @@ describe('runRouteReminderDaemon.integration', () => {
             ? { reached: true }
             : { reached: false, reason: 'clone dropped' };
         };
+        await withFocus({ built, cloneAddr: '@:driver-1' });
+        // the slot names this loop's pid, so the ownership check after each sleep holds
+        await withHandle({
+          repoRoot: built.route,
+          cloneAddr: '@:driver-1',
+          pid: OWN_PID,
+        });
         return { route: built.route, sayToCloneFake };
       });
 
@@ -145,8 +216,9 @@ describe('runRouteReminderDaemon.integration', () => {
           const recorder = genSleepRecorder();
           const outcome = await runRouteReminderDaemon(
             {
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: '@:driver-1',
+              pid: OWN_PID,
               intervalMs: 1000,
               sayTimeoutMs: 30_000,
             },
@@ -184,11 +256,20 @@ describe('runRouteReminderDaemon.integration', () => {
     // try/catch would swallow the fault into a busy retry-loop, and THIS test would flip red
     // (rule.require.clamp-edge-cases). the route stays active throughout, so the tick reaches the
     // inject and the throw is the subject.
-    const scene = useBeforeAll(async () =>
-      genRouteWithPassage({
-        lines: [{ stone: '5.1.execution', status: 'arrived' }],
-      }),
-    );
+    const scene = useBeforeAll(async () => {
+      const focused = await withFocus({
+        built: await genRouteWithPassage({
+          lines: [{ stone: '5.1.execution', status: 'arrived' }],
+        }),
+        cloneAddr: '@:driver-1',
+      });
+      const { pidPath } = await withHandle({
+        repoRoot: focused.route,
+        cloneAddr: '@:driver-1',
+        pid: OWN_PID,
+      });
+      return { ...focused, pidPath };
+    });
 
     when('[t0] the loop runs and sayToClone throws a genuine fault', () => {
       then(
@@ -199,8 +280,9 @@ describe('runRouteReminderDaemon.integration', () => {
           const error = await getError(async () =>
             runRouteReminderDaemon(
               {
-                route: scene.route,
+                repoRoot: scene.route,
                 cloneAddr: '@:driver-1',
+                pid: OWN_PID,
                 intervalMs: 1,
                 sayTimeoutMs: 30_000,
               },
@@ -226,6 +308,10 @@ describe('runRouteReminderDaemon.integration', () => {
             ),
           );
           expect(asNodeErrnoCode(crashError)).toBe('ENOENT');
+
+          // the throw still drops the handle: the drop wraps every exit, a crash included, so a
+          // stale pid file never names a dead daemon
+          expect(await readHandleOrNull({ pidPath: scene.pidPath })).toBeNull();
         },
       );
     });
@@ -253,15 +339,16 @@ describe('runRouteReminderDaemon.integration', () => {
           getRouteReminderCrashLogPath({ route: built.route, index: 0 }),
         );
         await fs.writeFile(crashDir, 'i am a file, not a dir');
-        return { route: built.route };
+        return withFocus({ built, cloneAddr: '@:nonexistent-clone-for-test' });
       });
 
       when('[t0] the loop runs and the inject cannot reach the clone', () => {
         const outcome = useBeforeAll(async () =>
           runRouteReminderDaemon(
             {
-              route: scene.route,
+              repoRoot: scene.route,
               cloneAddr: '@:nonexistent-clone-for-test',
+              pid: OWN_PID,
               intervalMs: 1,
               sayTimeoutMs: 30_000,
             },
@@ -276,6 +363,117 @@ describe('runRouteReminderDaemon.integration', () => {
             expect(outcome.ticks).toBe(1);
           },
         );
+      });
+    },
+  );
+
+  given(
+    '[case6] a live route whose handle names another daemon (a fresh spawn reclaimed the slot)',
+    () => {
+      // the orphan clamp: a daemon whose pid the handle no longer names must yield the slot, else
+      // it nudges beside the daemon that holds it — two nudges per interval, the wish's own
+      // defect. the route is live and the clone answers, so no tick door would ever close; only
+      // the ownership check ends the loop. red without that check: the loop runs until the fake
+      // clone drops, at tick 3, and exits session-dead
+      const scene = useBeforeAll(async () => {
+        const built = await genRouteWithPassage({
+          lines: [{ stone: '5.1.execution', status: 'arrived' }],
+        });
+        const sayCalls: string[] = [];
+        const sayToCloneFake = async (input: {
+          addr: string;
+          what: string;
+        }): Promise<{ reached: true } | { reached: false; reason: string }> => {
+          sayCalls.push(input.what);
+          return sayCalls.length <= 2
+            ? { reached: true }
+            : { reached: false, reason: 'clone dropped' };
+        };
+        await withFocus({ built, cloneAddr: '@:driver-1' });
+        const { pidPath } = await withHandle({
+          repoRoot: built.route,
+          cloneAddr: '@:driver-1',
+          pid: OWN_PID + 1,
+        });
+        return { route: built.route, sayToCloneFake, sayCalls, pidPath };
+      });
+
+      when('[t0] the loop runs as a pid the handle does not name', () => {
+        const result = useBeforeAll(async () => {
+          const recorder = genSleepRecorder();
+          const outcome = await runRouteReminderDaemon(
+            {
+              repoRoot: scene.route,
+              cloneAddr: '@:driver-1',
+              pid: OWN_PID,
+              intervalMs: 1000,
+              sayTimeoutMs: 30_000,
+            },
+            {
+              sayToClone: scene.sayToCloneFake,
+              sleep: recorder.sleep,
+              random: () => 0.5,
+            },
+          );
+          return { outcome, waits: recorder.waits };
+        });
+
+        then('it exits handle-lost before its second tick', () => {
+          expect(result.outcome.exitReason).toBe('handle-lost');
+          expect(result.outcome.ticks).toBe(1);
+          expect(result.waits).toEqual([1000]);
+        });
+
+        then('it nudged once, never again beside the slot holder', () => {
+          expect(scene.sayCalls).toHaveLength(1);
+        });
+
+        then(
+          'it leaves the handle of the daemon that holds the slot',
+          async () => {
+            expect(await readHandleOrNull({ pidPath: scene.pidPath })).toEqual(
+              String(OWN_PID + 1),
+            );
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case7] a live route whose handle is wiped (e.g. rm -rf .agent/.cache)',
+    () => {
+      // an absent handle leaves the slot free, so the next drive spawns a fresh daemon. the old
+      // one must yield at once, else it is an orphan no `del` can reach
+      const scene = useBeforeAll(async () => {
+        const built = await genRouteWithPassage({
+          lines: [{ stone: '5.1.execution', status: 'arrived' }],
+        });
+        await withFocus({ built, cloneAddr: '@:driver-1' });
+        return { route: built.route };
+      });
+
+      when('[t0] the loop runs with no handle on disk', () => {
+        const outcome = useBeforeAll(async () =>
+          runRouteReminderDaemon(
+            {
+              repoRoot: scene.route,
+              cloneAddr: '@:driver-1',
+              pid: OWN_PID,
+              intervalMs: 1,
+              sayTimeoutMs: 30_000,
+            },
+            {
+              sayToClone: async () => ({ reached: true }),
+              sleep: async () => undefined,
+            },
+          ),
+        );
+
+        then('it exits handle-lost after its first sleep', () => {
+          expect(outcome.exitReason).toBe('handle-lost');
+          expect(outcome.ticks).toBe(1);
+        });
       });
     },
   );

@@ -24,7 +24,7 @@ describe('bumpRouteReminderCrashBreaker.integration', () => {
     when('[t0] the breaker is read before any bump', () => {
       const breaker = useBeforeAll(async () =>
         getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-a',
         }),
       );
@@ -48,13 +48,13 @@ describe('bumpRouteReminderCrashBreaker.integration', () => {
         const counts: number[] = [];
         for (let i = 0; i < 3; i += 1) {
           const { state } = await bumpRouteReminderCrashBreaker({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: '@:clone-b',
           });
           counts.push(state.count);
         }
         const persisted = await getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-b',
         });
         return { counts, persistedCount: persisted.count };
@@ -81,30 +81,30 @@ describe('bumpRouteReminderCrashBreaker.integration', () => {
     when('[t0] the breaker is bumped, then deleted', () => {
       const result = useBeforeAll(async () => {
         await bumpRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
         await bumpRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
         const before = await getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
 
         await delRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
         const after = await getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
 
         // a second del on an already-absent file is a benign no-op (idempotent)
         await delRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-c',
         });
 
@@ -129,15 +129,15 @@ describe('bumpRouteReminderCrashBreaker.integration', () => {
     when('[t0] one session bumps, the other does not', () => {
       const result = useBeforeAll(async () => {
         await bumpRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-x',
         });
         const x = await getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-x',
         });
         const y = await getRouteReminderCrashBreaker({
-          route: scene.route,
+          repoRoot: scene.route,
           cloneAddr: '@:clone-y',
         });
         return { xCount: x.count, yCount: y.count };
@@ -175,13 +175,13 @@ describe('bumpRouteReminderCrashBreaker.integration', () => {
           await Promise.all(
             Array.from({ length: 20 }, () =>
               bumpRouteReminderCrashBreaker({
-                route: scene.route,
+                repoRoot: scene.route,
                 cloneAddr: '@:clone-race',
               }),
             ),
           );
           const persisted = await getRouteReminderCrashBreaker({
-            route: scene.route,
+            repoRoot: scene.route,
             cloneAddr: '@:clone-race',
           });
           return { persistedCount: persisted.count };

@@ -2,11 +2,16 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 
 import { DEFAULT_REMINDER_INTERVAL_MS } from './DEFAULT_REMINDER_INTERVAL_MS';
 import { DEFAULT_REMINDER_SAY_TIMEOUT_MS } from './DEFAULT_REMINDER_SAY_TIMEOUT_MS';
+import {
+  delRouteReminderLegacyHandles,
+  type RouteReminderLegacyReapOutcome,
+} from './delRouteReminderLegacyHandles';
 import { delRouteReminderPidHandleIfPid } from './delRouteReminderPidHandleIfPid';
 import { getRouteReminder } from './getRouteReminder';
 import { isProcessAlive } from './isProcessAlive';
 import { RouteReminderOrphanError } from './RouteReminderOrphanError';
 import { readRouteReminderRawPid } from './readRouteReminderRawPid';
+import { setRouteReminderLegacyReapLog } from './setRouteReminderLegacyReapLog';
 import { setRouteReminderPidHandle } from './setRouteReminderPidHandle';
 import { stopProcess } from './stopProcess';
 import {
@@ -26,7 +31,7 @@ import {
  */
 const reapOrThrowOrphan = (input: {
   pid: number;
-  route: string;
+  repoRoot: string;
   label: 'write' | 'reconcile';
   cause: unknown;
 }): void => {
@@ -39,14 +44,20 @@ const reapOrThrowOrphan = (input: {
         faultCause: input.cause,
         reapError,
         pid: input.pid,
-        route: input.route,
+        repoRoot: input.repoRoot,
       },
     );
   }
 };
 
 /**
- * .what = registers a driver session's RouteReminder daemon — an ATOMIC findsert on the handle
+ * .what = registers a clone's RouteReminder daemon — an ATOMIC findsert on the clone handle
+ *
+ * .note = one daemon per clone: the handle is keyed on the clone alone, so a clone with two live
+ *         routes still maps to one handle and one daemon. which route the daemon nudges about is the
+ *         focus (setRouteReminderFocus), which the caller sets before this findsert. a daemon with
+ *         no focus exits at its first tick by design, so it reports `alive: false`; the one caller
+ *         that counts crashes (syncRouteReminderForDrive) reads the focus before it counts one
  * .why = the route system upserts the reminder as a route goes live. gen (findsert) keeps it
  *        idempotent AND race-safe: if a live daemon already answers for this session, return it;
  *        a concurrent double-register can never leave two daemons, because the pid handle is
@@ -73,34 +84,58 @@ const reapOrThrowOrphan = (input: {
  */
 export const genRouteReminder = async (
   input: {
-    route: string;
+    repoRoot: string;
     cloneAddr: string;
     intervalMs: number | null;
     sayTimeoutMs: number | null;
   },
   context: {
     spawnDaemon: (input: {
-      route: string;
+      repoRoot: string;
       cloneAddr: string;
       intervalMs: number;
       sayTimeoutMs: number;
     }) => Promise<{ pid: number }>;
   },
-): Promise<{ pid: number; created: boolean; alive: boolean }> => {
+): Promise<{
+  pid: number;
+  created: boolean;
+  alive: boolean;
+  legacyOutcomes: RouteReminderLegacyReapOutcome[];
+}> => {
   // fast path — a live daemon already answers for this session → return it, spawn none. it was live
-  // when getRouteReminder read it (a dead/stale handle reads as absent), so it reports alive.
+  // when getRouteReminder read it (a dead/stale handle reads as absent), so it reports alive. the
+  // legacy sweep runs only before a spawn, so the fast path reports no legacy outcome
   const reminderFound = await getRouteReminder({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
   });
   if (reminderFound)
-    return { pid: reminderFound.pid, created: false, alive: true };
+    return {
+      pid: reminderFound.pid,
+      created: false,
+      alive: true,
+      legacyOutcomes: [],
+    };
+
+  // before a spawn, reap any per-route daemon this clone spawned before the handle moved to the
+  // clone home, so the spawn below leaves exactly one daemon for the clone. the sweep sits past the
+  // fast path: a live clone daemon was spawned after a sweep already ran, so the hot path reads naught
+  const { outcomes: legacyOutcomes } = await delRouteReminderLegacyHandles({
+    repoRoot: input.repoRoot,
+    cloneAddr: input.cloneAddr,
+  });
+  await setRouteReminderLegacyReapLog({
+    repoRoot: input.repoRoot,
+    cloneAddr: input.cloneAddr,
+    outcomes: legacyOutcomes,
+  });
 
   // spawn a fresh daemon via the injected host boundary
   const intervalMs = input.intervalMs ?? DEFAULT_REMINDER_INTERVAL_MS;
   const sayTimeoutMs = input.sayTimeoutMs ?? DEFAULT_REMINDER_SAY_TIMEOUT_MS;
   const { pid } = await context.spawnDaemon({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
     intervalMs,
     sayTimeoutMs,
@@ -110,14 +145,14 @@ export const genRouteReminder = async (
   // concurrent winner or stale handle. on any fault, the just-spawned daemon is reaped so no
   // orphan lingers.
   const claimed = await claimHandleForSpawnedPid({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
     pid,
     triesLeft: 2,
   });
 
   // a CONCURRENT winner claimed the slot first → its daemon was live at claim time; report alive.
-  if (!claimed.created) return { ...claimed, alive: true };
+  if (!claimed.created) return { ...claimed, alive: true, legacyOutcomes };
 
   // OWN the findsert postcondition: a FRESH spawn that does not SURVIVE its boot crashed on arrival
   // (a broken host, a bad node binary, an OOM mid-boot). verify boot-SURVIVAL — alive across a short
@@ -135,11 +170,11 @@ export const genRouteReminder = async (
   });
   if (!alive)
     await delRouteReminderPidHandleIfPid({
-      route: input.route,
+      repoRoot: input.repoRoot,
       cloneAddr: input.cloneAddr,
       pid: claimed.pid,
     });
-  return { pid: claimed.pid, created: true, alive };
+  return { pid: claimed.pid, created: true, alive, legacyOutcomes };
 };
 
 /**
@@ -151,13 +186,13 @@ export const genRouteReminder = async (
  *        (rule.require.immutable-vars).
  */
 const claimHandleForSpawnedPid = async (input: {
-  route: string;
+  repoRoot: string;
   cloneAddr: string;
   pid: number;
   triesLeft: number;
 }): Promise<{ pid: number; created: boolean }> => {
   const { claimed } = await setRouteReminderPidHandle({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
     pid: input.pid,
   }).catch((writeError: unknown) => {
@@ -165,7 +200,7 @@ const claimHandleForSpawnedPid = async (input: {
     // un-reapable orphan). a clean reap means the write fault is the true cause → rethrow it unwrapped.
     reapOrThrowOrphan({
       pid: input.pid,
-      route: input.route,
+      repoRoot: input.repoRoot,
       label: 'write',
       cause: writeError,
     });
@@ -198,14 +233,14 @@ const claimHandleForSpawnedPid = async (input: {
  *         reapSpawnedPidOnFault, which owns the reap-on-fault guarantee for the whole reconcile.
  */
 const reconcileExtantHandle = async (input: {
-  route: string;
+  repoRoot: string;
   cloneAddr: string;
   pid: number;
   triesLeft: number;
 }): Promise<{ pid: number; created: boolean }> => {
   // a handle already existed. read the pid it NAMES (not its liveness) so we can reconcile safely.
   const holder = await readRouteReminderRawPid({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
   });
 
@@ -225,7 +260,7 @@ const reconcileExtantHandle = async (input: {
   // stale pid we just read, so a fresh handle raced-in by a concurrent register (a DIFFERENT pid)
   // is left intact — never orphaned — then retry the claim (rule.forbid.behavior-hazards).
   await delRouteReminderPidHandleIfPid({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
     pid: holder.pid,
   });
@@ -249,7 +284,7 @@ const reconcileExtantHandle = async (input: {
  *         re-reap is a harmless ESRCH no-op, and re-wrapping would only bury the original cause.
  */
 const reapSpawnedPidOnFault = async (
-  input: { route: string; pid: number },
+  input: { repoRoot: string; pid: number },
   body: () => Promise<{ pid: number; created: boolean }>,
 ): Promise<{ pid: number; created: boolean }> =>
   body().catch((faultError: unknown) => {
@@ -260,7 +295,7 @@ const reapSpawnedPidOnFault = async (
     // un-reapable orphan). a clean reap means the reconcile fault is the true cause → rethrow it.
     reapOrThrowOrphan({
       pid: input.pid,
-      route: input.route,
+      repoRoot: input.repoRoot,
       label: 'reconcile',
       cause: faultError,
     });
@@ -273,15 +308,14 @@ const reapSpawnedPidOnFault = async (
  *        reaps our daemon and throws so a human sees the non-convergence (rule.require.failfast).
  *
  * .note = a non-converged claim is an INTERNAL INVARIANT violation, so it throws an
- *         UnexpectedCodePathError (the internal-invariant class this codebase carries; the
- *         mechanic's MalfunctionError is not exported by this helpful-errors version) with
- *         route + cloneAddr + pid, so a maintainer sees WHICH session failed (rule.require.failloud).
+ *         UnexpectedCodePathError (the internal-invariant class) with repoRoot + cloneAddr + pid, so
+ *         a maintainer sees WHICH session failed (rule.require.failloud).
  *         it is NOT a RouteReminderOrphanError: the daemon is reaped BEFORE the throw, so no process
  *         is left loose — the auto-wire's fault-guard surfaces this loud + proceeds, and only a
  *         RouteReminderOrphanError propagates.
  */
 const retryClaim = (input: {
-  route: string;
+  repoRoot: string;
   cloneAddr: string;
   pid: number;
   triesLeft: number;
@@ -290,11 +324,11 @@ const retryClaim = (input: {
     stopProcess({ pid: input.pid, signal: 'SIGKILL' });
     throw new UnexpectedCodePathError(
       'RouteReminder handle claim did not converge; the just-spawned daemon was reaped, so none is orphaned',
-      { route: input.route, cloneAddr: input.cloneAddr, pid: input.pid },
+      { repoRoot: input.repoRoot, cloneAddr: input.cloneAddr, pid: input.pid },
     );
   }
   return claimHandleForSpawnedPid({
-    route: input.route,
+    repoRoot: input.repoRoot,
     cloneAddr: input.cloneAddr,
     pid: input.pid,
     triesLeft: input.triesLeft - 1,

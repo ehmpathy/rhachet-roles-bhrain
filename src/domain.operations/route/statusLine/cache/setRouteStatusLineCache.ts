@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { asTempPathBeside } from '../../asTempPathBeside';
 import type { RouteStatusLineCacheRecord } from './getOneRouteStatusLineCache';
 
 /**
@@ -25,9 +26,7 @@ export const setRouteStatusLineCache = (input: {
   findsertCacheDirGitignore({ dirPath: path.dirname(input.cachePath) });
 
   // write a temp file unique to this process, then rename it over the cache file
-  const tempPath = asRouteStatusLineCacheTempPath({
-    cachePath: input.cachePath,
-  });
+  const tempPath = asTempPathBeside({ path: input.cachePath });
   try {
     fs.writeFileSync(tempPath, JSON.stringify(input.record));
     fs.renameSync(tempPath, input.cachePath);
@@ -52,11 +51,3 @@ const findsertCacheDirGitignore = (input: { dirPath: string }): void => {
   if (fs.existsSync(gitignorePath)) return;
   fs.writeFileSync(gitignorePath, '*\n');
 };
-
-/**
- * .what = a temp path beside the cache file, unique to this process and this write
- * .why = two seats that write at once must never share a temp file, or a rename could
- *        publish the other's half-written bytes
- */
-const asRouteStatusLineCacheTempPath = (input: { cachePath: string }): string =>
-  `${input.cachePath}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`;

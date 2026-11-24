@@ -19,6 +19,7 @@ never a license to coin a synonym.
 | `route` | route · appendix · archive · bind · fulcrum · stone · stone.entry · stone.passage |
 | `route.brain` | address · halt · halt.cause · inheritance |
 | `route.guard` | guard · rung · brain · brain.dispatch · brain.dispatch.claim · brain.effort · brain.switch · budget · budget.grant · budget.grant.refusal · budget.grant.warrant · concurrency · concurrency.group · level · level.pour · level.slot · level.wave |
+| `route.reminder` | focus · handle · handle.legacy · handle.stem · reap |
 | `route.guard.review` | review · absorption · absorption.concede · absorption.concede.severity · absorption.dispute · clearance · contemplate · contemplate.absent · contemplate.stale · converse · feedback · forgive · given · given.concern · latest · malfunction · overrule · peer · peer.meter · retired · reviewer · spoken · taken · tallier · terminal · unreadable · vibe |
 | `review` | attribution · breadth · breakdown · cost · focus · meter · trace · scope · scope.locus · scope.partition · scope.polluter · scope.split · scope.target |
 | `review.grade` | grade · attribution.attributed · attribution.unattributed · cache.cold · cache.warm · honesty · honesty.metered · honesty.refused · honesty.unknown |

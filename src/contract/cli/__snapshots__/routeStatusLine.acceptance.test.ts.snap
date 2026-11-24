@@ -129,6 +129,7 @@ exports[`routeStatusLine.acceptance given: [case16] a bound route whose inputs d
   "asRouteBindFlagName.js",
   "asRouteStatusLineCachePath.js",
   "asRouteStatusLineRouteDir.js",
+  "asTempPathBeside.js",
   "getFsErrorCode.js",
   "getInvocationArgs.js",
   "getOneRouteStatusLineBranch.js",

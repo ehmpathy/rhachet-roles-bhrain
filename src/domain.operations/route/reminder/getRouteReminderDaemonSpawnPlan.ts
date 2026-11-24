@@ -7,17 +7,18 @@ import { ROUTE_REMINDER_FLAGS } from './ROUTE_REMINDER_FLAGS';
  *        `route.reminder` cli subpath (an isolated, brain-free export — no heavy imports at
  *        startup, rule.require.isolated-cli-subpath-exports), exactly as the shell skills do.
  *
+ * .note = the daemon is launched per CLONE: it gets the clone's anchor (`--repo-root`) and address,
+ *         never a route. which route it nudges about is the focus it reads each tick.
+ *
  * .note = `process.execPath` (the node binary) is the command; the eval imports the cli subpath
- *         and calls `routeReminderDaemon`, then `--` passes the daemon its args. the posix `--`
- *         end-of-options marker matches how every bhrain shell skill invokes the cli.
+ *         and calls `routeReminderDaemon`, then `--` passes the daemon its args.
  *
  * .note = the flag NAMES come from ROUTE_REMINDER_FLAGS (the single source of truth this producer
- *         shares with the route.reminder consumer). the producer prepends `--`; a rename is then one
- *         edit the compiler propagates to both sides, never a two-place drift (rule.require.ubiqlang).
+ *         shares with the route.reminder consumer).
  */
 export const getRouteReminderDaemonSpawnPlan = (input: {
   nodePath: string;
-  route: string;
+  repoRoot: string;
   cloneAddr: string;
   intervalMs: number;
   sayTimeoutMs: number;
@@ -25,10 +26,10 @@ export const getRouteReminderDaemonSpawnPlan = (input: {
   command: input.nodePath,
   args: [
     '-e',
-    "import('rhachet-roles-bhrain/cli/route.reminder').then(m => m.routeReminderDaemon())",
+    "import('rhachet-roles-bhrain/cli/route.reminder').then(m => m.routeReminderCli({ verb: 'daemon' }))",
     '--',
-    `--${ROUTE_REMINDER_FLAGS.route}`,
-    input.route,
+    `--${ROUTE_REMINDER_FLAGS.repoRoot}`,
+    input.repoRoot,
     `--${ROUTE_REMINDER_FLAGS.cloneAddr}`,
     input.cloneAddr,
     `--${ROUTE_REMINDER_FLAGS.intervalMs}`,

@@ -2,17 +2,21 @@
 ######################################################################
 # .what = shell entrypoint for route.reminder.del skill (DEREGISTER)
 #
-# .why = turns the RouteReminder off for a driver session — stops the
-#        live daemon and clears its handle. idempotent: a re-run on an
-#        already-absent reminder is a safe no-op.
+# .why = turns a clone's one RouteReminder off — stops the live daemon and
+#        clears its handle. idempotent: a re-run on an already-absent
+#        reminder is a safe no-op.
 #
 # usage:
-#   ./route.reminder.del.sh --route .behavior/my-feature --clone-addr driver-1
+#   ./route.reminder.del.sh                          # inside an enrolled clone
+#   ./route.reminder.del.sh --clone-addr @:driver-1
 #
 # options:
-#   --route        path to route directory (required)
-#   --clone-addr   the driver session's clone address (required)
+#   --clone-addr   the clone address (default: this session's own)
+#
+# note:
+#   the reminder is one per clone, so del takes no --route (refused: exit 2, names the fix).
+#   the handle sits under the repo root of the cwd.
 ######################################################################
 set -euo pipefail
 
-exec node -e "import('rhachet-roles-bhrain/cli/route.reminder').then(m => m.routeReminderDel())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain/cli/route.reminder').then(m => m.routeReminderCli({ verb: 'del' }))" -- "$@"

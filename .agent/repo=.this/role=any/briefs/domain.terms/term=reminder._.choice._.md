@@ -11,9 +11,10 @@ term.synonyms.forbidden:
 ## .what
 a **reminder** is a scheduled prose nudge — "you can do it! drive on, fulcrum, and converge" —
 injected into a driver session to keep a stalled drive in motion (past an api outage or a brain
-hesitancy). a **RouteReminder** is a reminder bound to one route + driver session; it rides an
-external self-exit daemon that reads route-state + session-liveness each tick and exits itself
-when the drive is dead or parked (the wish's no-infiniloop guarantee).
+hesitancy). a **RouteReminder** is a reminder bound to one driver clone; it rides one external
+self-exit daemon per clone, which reads the clone's **focus** (the route it drives now), that
+route's state, and session liveness each tick, and exits itself when the drive is dead or parked
+(the wish's no-infiniloop guarantee). see `term=route.reminder.focus._.choice._.md`.
 
 the term names the CONCEPT, not the payload text (`nudge`) nor the wall-clock cycle (`tick`):
 a reminder holds only while its payload is human prose. a deterministic command payload would be
@@ -24,7 +25,7 @@ where the term composes declared operations:
 - src/domain.operations/route/reminder/genRouteReminder.ts        # register (findsert the daemon handle)
 - src/domain.operations/route/reminder/getRouteReminder.ts        # detect (is it set + live)
 - src/domain.operations/route/reminder/delRouteReminder.ts        # deregister (stop + clear handle)
-- src/domain.operations/route/reminder/getRouteReminderPidPath.ts  # the per-session handle path
+- src/domain.operations/route/reminder/getRouteReminderPidPath.ts  # the per-clone handle path
 - src/domain.operations/route/reminder/getRouteReminderLiveness.ts # read route liveness for the exit decision
 - src/domain.operations/route/reminder/isReminderLiveForPassageStatus.ts  # the pure exit predicate
 - src/domain.operations/route/reminder/stepRouteReminderTick.ts    # one tick: inject or exit

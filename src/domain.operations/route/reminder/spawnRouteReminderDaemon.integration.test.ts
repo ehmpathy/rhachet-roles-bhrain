@@ -60,20 +60,22 @@ const genSpawnRecorder = (): {
 };
 
 describe('spawnRouteReminderDaemon.integration', () => {
-  given('[case1] a route dir and an injected recorder spawn', () => {
+  given('[case1] a clone anchor dir and an injected recorder spawn', () => {
     const scene = useBeforeAll(async () => {
-      const route = await fs.mkdtemp(path.join(os.tmpdir(), 'reminder-spawn-'));
+      const repoRoot = await fs.mkdtemp(
+        path.join(os.tmpdir(), 'reminder-spawn-'),
+      );
       const recorder = genSpawnRecorder();
       const result = await spawnRouteReminderDaemon(
         {
-          route,
+          repoRoot,
           cloneAddr: '@:driver-1',
           intervalMs: 1200000,
           sayTimeoutMs: 30000,
         },
         { spawn: recorder.spawn },
       );
-      return { route, recorder, result };
+      return { repoRoot, recorder, result };
     });
 
     when('[t0] the daemon is spawned', () => {
@@ -87,11 +89,12 @@ describe('spawnRouteReminderDaemon.integration', () => {
       });
 
       then(
-        'the daemon args carry route + clone-addr + interval + say-timeout',
+        'the daemon args carry repo-root + clone-addr + interval + say-timeout, and no route',
         () => {
           const args = scene.recorder.calls[0]?.args ?? [];
-          expect(args).toContain('--route');
-          expect(args).toContain(scene.route);
+          expect(args).not.toContain('--route');
+          expect(args).toContain('--repo-root');
+          expect(args).toContain(scene.repoRoot);
           expect(args).toContain('--clone-addr');
           expect(args).toContain('@:driver-1');
           expect(args).toContain('--interval-ms');
@@ -126,76 +129,70 @@ describe('spawnRouteReminderDaemon.integration', () => {
       });
 
       then(
-        'the per-session daemon log file was created in .route/',
+        'the clone daemon log file was created in the clone home, which ignores itself',
         async () => {
           const logPath = getRouteReminderLogPath({
-            route: scene.route,
+            repoRoot: scene.repoRoot,
             cloneAddr: '@:driver-1',
           });
           const stat = await fs.stat(logPath);
           expect(stat.isFile()).toBe(true);
+          const gitignore = await fs.readFile(
+            path.join(path.dirname(logPath), '.gitignore'),
+            'utf-8',
+          );
+          expect(gitignore).toEqual('*\n');
         },
       );
     });
   });
 
-  given('[case3] a RELATIVE route input + an injected recorder spawn', () => {
-    // the r8 blocker: the detached child inherits cwd=gitRoot, so a relative `--route` handed
-    // through unchanged would be read by the daemon against gitRoot — the WRONG passage.jsonl —
-    // and it would self-exit `route-not-live` while the register already reported "spawned and
-    // live". the fix absolutizes the route against the REGISTER process's cwd before the spawn.
-    // this clamps it: a relative input must reach the daemon argv as its ABSOLUTE form. RED
-    // before the fix (argv carries the bare relative token), GREEN after (argv carries absolute).
-    const scene = useBeforeAll(async () => {
-      // a real live-passage route dir, addressed by a RELATIVE path from the register cwd
-      const routeAbsolute = await fs.mkdtemp(
-        path.join(os.tmpdir(), 'reminder-relroute-'),
-      );
-      await fs.mkdir(path.join(routeAbsolute, '.route'), { recursive: true });
-      await fs.writeFile(
-        path.join(routeAbsolute, '.route', 'passage.jsonl'),
-        `${JSON.stringify({ stone: '1.vision', status: 'passed' })}\n`,
-      );
-      const routeRelative = path.relative(process.cwd(), routeAbsolute);
-      const recorder = genSpawnRecorder();
-      await spawnRouteReminderDaemon(
-        {
-          route: routeRelative,
-          cloneAddr: '@:driver-1',
-          intervalMs: 1200000,
-          sayTimeoutMs: 30000,
-        },
-        { spawn: recorder.spawn },
-      );
-      return { routeAbsolute, routeRelative, recorder };
-    });
+  given(
+    '[case3] a RELATIVE repo root input + an injected recorder spawn',
+    () => {
+      // the detached child runs from the git root, so a relative `--repo-root` handed through as-is
+      // would be read against the wrong dir: the daemon would find no focus and self-exit while the
+      // register reported it live. a relative input must reach the argv in its ABSOLUTE form
+      const scene = useBeforeAll(async () => {
+        const repoRootAbsolute = await fs.mkdtemp(
+          path.join(os.tmpdir(), 'reminder-relroot-'),
+        );
+        const repoRootRelative = path.relative(process.cwd(), repoRootAbsolute);
+        const recorder = genSpawnRecorder();
+        await spawnRouteReminderDaemon(
+          {
+            repoRoot: repoRootRelative,
+            cloneAddr: '@:driver-1',
+            intervalMs: 1200000,
+            sayTimeoutMs: 30000,
+          },
+          { spawn: recorder.spawn },
+        );
+        return { repoRootAbsolute, repoRootRelative, recorder };
+      });
 
-    when('[t0] the daemon is spawned from the relative route', () => {
-      then(
-        'the daemon argv carries the ABSOLUTE route, not the relative',
-        () => {
+      when('[t0] the daemon is spawned from the relative repo root', () => {
+        then('the daemon argv carries the ABSOLUTE repo root', () => {
           const args = scene.recorder.calls[0]?.args ?? [];
-          const flagAt = args.indexOf('--route');
-          const routeArg = args[flagAt + 1];
-          expect(path.isAbsolute(String(routeArg))).toBe(true);
-          expect(routeArg).toBe(scene.routeAbsolute);
-          expect(args).not.toContain(scene.routeRelative);
-        },
-      );
+          const rootArg = args[args.indexOf('--repo-root') + 1];
+          expect(rootArg).toBe(scene.repoRootAbsolute);
+          expect(args).not.toContain(scene.repoRootRelative);
+        });
 
-      then(
-        'the per-session log was created under the ABSOLUTE route dir',
-        async () => {
-          const logPath = getRouteReminderLogPath({
-            route: scene.routeAbsolute,
-            cloneAddr: '@:driver-1',
-          });
-          const stat = await fs.stat(logPath);
-          expect(stat.isFile()).toBe(true);
-        },
-      );
-    });
-  });
+        then(
+          'the clone log was created under the ABSOLUTE repo root',
+          async () => {
+            const logPath = getRouteReminderLogPath({
+              repoRoot: scene.repoRootAbsolute,
+              cloneAddr: '@:driver-1',
+            });
+            const stat = await fs.stat(logPath);
+            expect(stat.isFile()).toBe(true);
+          },
+        );
+      });
+    },
+  );
 
   given(
     '[case2] a spawned daemon that emits a DELAYED async `error` after return',
@@ -217,7 +214,7 @@ describe('spawnRouteReminderDaemon.integration', () => {
         const lines: string[] = [];
         const result = await spawnRouteReminderDaemon(
           {
-            route,
+            repoRoot: route,
             cloneAddr: '@:driver-1',
             intervalMs: 1200000,
             sayTimeoutMs: 30000,

@@ -40,8 +40,11 @@ export const genRouteWithPassage = async (input: {
   lines: ({ stone?: string } & Record<string, unknown>)[];
   stones?: 'per-passage' | 'none';
   stonesOpen?: string[];
+  // the dir the route is made in (default: os.tmpdir()); a case that needs several routes inside
+  // one git repo passes that repo's dir
+  parent?: string;
 }): Promise<{ route: string }> => {
-  const route = await fs.mkdtemp(path.join(os.tmpdir(), 'route-'));
+  const route = await fs.mkdtemp(path.join(input.parent ?? os.tmpdir(), 'route-'));
   const passagePath = path.join(route, '.route', 'passage.jsonl');
   await fs.mkdir(path.dirname(passagePath), { recursive: true });
   await fs.writeFile(

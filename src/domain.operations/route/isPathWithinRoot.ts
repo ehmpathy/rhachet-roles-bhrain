@@ -7,13 +7,15 @@ import * as path from 'path';
  *   the orchestrator does the impure `path.join` + `fs.realpath` (symlink-hardened),
  *   then hands the resolved path here for a string-only containment test.
  *
- * .note = an escape (rel starts with `..`, or is absolute on a different root) yields
- *   false; the orchestrator then fails loud (ConstraintError, exit 2) before any read.
+ * .note = an escape (rel is `..` or starts with a `..` segment, or is absolute on a different
+ *   root) yields false; the orchestrator then fails loud (ConstraintError, exit 2) before any read.
+ *   a child whose name merely starts with two dots (`..foo`) is inside, not an escape.
  */
 export const isPathWithinRoot = (input: {
   pathResolved: string;
   repoRoot: string;
 }): boolean => {
   const rel = path.relative(input.repoRoot, input.pathResolved);
-  return !rel.startsWith('..') && !path.isAbsolute(rel);
+  const isEscape = rel === '..' || rel.startsWith(`..${path.sep}`);
+  return !isEscape && !path.isAbsolute(rel);
 };

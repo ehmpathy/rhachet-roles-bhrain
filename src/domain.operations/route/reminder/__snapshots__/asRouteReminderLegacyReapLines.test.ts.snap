@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteReminderLegacyReapLines a fault with no errno names its message, its class prefix cut 1`] = `
+[
+  "RouteReminder legacy handle kept, reap faulted (/repo/.behavior/v1.old/.route/x.pid): the reap of pid 41 faulted: the handle moved — fix: stop pid 41 by hand (kill 41), remove /repo/.behavior/v1.old/.route/x.pid, then run rhx route.reminder.gen",
+]
+`;
+
+exports[`asRouteReminderLegacyReapLines a live daemon signalled reads as reaped 1`] = `
+[
+  "RouteReminder legacy daemon reaped — pid 41, handle /repo/.behavior/v1.old/.route/x.pid",
+]
+`;
+
+exports[`asRouteReminderLegacyReapLines a stale file reads as cleared, never as a stopped daemon 1`] = `
+[
+  "RouteReminder legacy handle cleared — pid 41 was already gone, handle /repo/.behavior/v1.old/.route/x.pid",
+]
+`;
+
+exports[`asRouteReminderLegacyReapLines a torn file names no pid to stop, and no json dump 1`] = `
+[
+  "RouteReminder legacy handle kept, reap faulted (/repo/.behavior/v1.old/.route/x.pid): the pid file is torn — fix: the file names no pid; remove /repo/.behavior/v1.old/.route/x.pid, then run rhx route.reminder.gen",
+]
+`;
+
+exports[`asRouteReminderLegacyReapLines an EPERM fault says never signal the recycled pid 1`] = `
+[
+  "RouteReminder legacy handle kept, reap faulted (/repo/.behavior/v1.old/.route/x.pid): the signal to pid 41 was refused (EPERM) — fix: pid 41 was recycled to a foreign process, so do not signal it; remove /repo/.behavior/v1.old/.route/x.pid, then run rhx route.reminder.gen",
+]
+`;
+
+exports[`asRouteReminderLegacyReapLines an absent handle renders no line 1`] = `[]`;
+
+exports[`asRouteReminderLegacyReapLines another fault on a readable pid says to stop it by hand 1`] = `
+[
+  "RouteReminder legacy handle kept, reap faulted (/repo/.behavior/v1.old/.route/x.pid): the reap of pid 41 faulted (EACCES) — fix: stop pid 41 by hand (kill 41), remove /repo/.behavior/v1.old/.route/x.pid, then run rhx route.reminder.gen",
+]
+`;

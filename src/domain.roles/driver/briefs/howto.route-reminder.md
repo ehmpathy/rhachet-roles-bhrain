@@ -19,11 +19,22 @@ you do **not** turn the reminder on by hand. `route.drive` runs as an onBoot/onS
 your driver clone, continuously while a route is inflight — so every drive keeps the reminder in
 sync with the route's live state:
 
+- **one per clone** — a clone holds one reminder, whatever routes it drives or stacks. each drive
+  points the reminder's **focus** at its route; the daemon reads the focus each tick and nudges
+  about that route alone. a clone that drives route A, then route B, keeps one daemon, and its
+  next nudge is about B.
 - **auto-start** — while the route is a **live drive**, each drive **findserts** the reminder (a
   live daemon is returned, never duplicated). the first drive after the route goes live spawns it.
-- **auto-stop** — the moment the route is **dead** (blocked / rewound / exhausted / malfunction),
-  the next drive **reaps** the reminder. the daemon also self-exits on its own next tick — the two
-  paths converge, so a dead route is never nudged.
+- **auto-stop** — the moment the focus route is **dead** (blocked / rewound / exhausted /
+  malfunction), the next drive of it **reaps** the reminder. a drive moves the focus to the route
+  it drives first, so a drive of any dead route reaps it, a `route.drive --route <other>` peek
+  included; only a drive that loses a race to a newer focus leaves the reminder be. the daemon
+  also self-exits on its own next tick once its focus is dead — the two paths converge, so a dead
+  route is never nudged.
+- **owns its slot** — the daemon drops its own handle on exit, and exits if the handle stops to
+  name its pid (e.g. `.agent/.cache` was wiped), so no orphan nudges beside a fresh daemon. the
+  handle is published whole (a temp file, then a link), so a crash mid-write leaves none torn; a
+  handle torn by hand makes `get` and `gen` refuse, and `rhx route.reminder.del` clears it.
 - **your clone address** is read in-process from the enroller-injected `RHACHET_CLONE_SERIAL`, so
   a plain (non-enrolled) `claude` session simply skips the reminder — no setup, no error.
 
@@ -47,27 +58,37 @@ the auto path already findserts the reminder on every drive, so you rarely need 
 want the reminder before your first drive.
 
 ```
-rhx route.reminder.gen --route <route-dir> --clone-addr <driver-clone-addr>
+rhx route.reminder.gen --route <route-dir>
 ```
 
-- `--route` = the route directory you drive (e.g. `.behavior/v2026_08_07.driver-cron`)
-- `--clone-addr` = your driver session's enrolled clone address (`rhx clone list` enumerates them)
+- `--route` = the route to focus (e.g. `.behavior/v2026_08_07.driver-cron`); default: the
+  branch's bound route
+- `--clone-addr` = the clone address; default: this session's own (`rhx clone list` enumerates them)
 - `--interval-ms` = optional cadence override; default ~20min. the sleeps *between* ticks are
   jittered to spread repeat nudges apart; the first tick fires near register (not jittered)
 
-`gen` is a **findsert**: a second call reads the extant live pid first, so it never spawns a
-duplicate daemon. it reports the spawned pid, and whether the daemon is live or already
-self-exited on arrival (a route already not-live exits it on tick 1).
+`gen` on a live route sets the focus to it, then **findserts**: a call that finds a live daemon
+spawns no duplicate, and that daemon nudges about the new focus from its next tick. it reports
+the pid, and whether the daemon is live or crashed on arrival.
+
+`gen` on a route that is not a live drive spawns none. with a daemon live, it keeps that daemon's
+focus, so the route the clone drives is still nudged. with none live, it sets the focus and says
+the next route.drive of a live route registers it. either way it names why the route is not live, with its
+passage status (e.g. `route-not-live, status blocked`).
 
 ## inspect: check whether it is live
 
 ```
-rhx route.reminder.get --route <route-dir> --clone-addr <driver-clone-addr>
+rhx route.reminder.get
 ```
 
-reports whether the reminder is live (a deterministic pid-file read + liveness probe). a fresh
-route with no reminder reports "reminder is not live". use this to confirm the auto path spawned
-the daemon as expected.
+reports whether the clone's reminder is live, its pid, and its focus route (a deterministic
+pid-file read + liveness probe). a reminder that halted with its route names that route and why.
+a clone with no reminder reports "reminder is not live". `get` takes no `--route`: the reminder
+is one per clone.
+
+the handle files sit under the repo root, at
+`.agent/.cache/repo=bhrain/role=driver/skill=route.reminder/` (gitignored), one set per clone.
 
 ## manual override: turn it off
 
@@ -76,11 +97,11 @@ daemon self-exits on its own tick. reach for `del` only to release the pid **at 
 right after you block a route by hand, rather than wait for the next drive or tick.
 
 ```
-rhx route.reminder.del --route <route-dir> --clone-addr <driver-clone-addr>
+rhx route.reminder.del
 ```
 
 `del` is idempotent — a no-op if the reminder was never live ("reminder was not live"). it stops
-the daemon and clears its handle.
+the clone's daemon and clears its handle. like `get`, it takes no `--route`.
 
 **note:** the no-infiniloop guarantee holds even if you never call `del` — the daemon reads
 route-state each tick and exits on its own, and `route.drive` reaps on the next dead-route drive.
@@ -92,12 +113,16 @@ route-state each tick and exits on its own, and `route.drive` reaps on the next 
 
 | moment | trigger | what happens |
 |--------|---------|--------------|
-| drive is live | `route.drive` (auto) | findserts the daemon, writes its per-session pid handle |
-| every later drive | `route.drive` (auto) | re-findsert: returns the live daemon, spawns no duplicate |
-| route reads dead | `route.drive` (auto) | reaps the daemon, clears the handle |
-| block / dead session | (self-exit) | the daemon reads the state and exits itself |
+| drive is live | `route.drive` (auto) | sets the focus, findserts the daemon, writes its per-clone pid handle |
+| every later drive | `route.drive` (auto) | sets the focus, re-findserts: returns the live daemon, spawns no duplicate |
+| drive moves to another route | `route.drive` (auto) | moves the focus; the one daemon nudges about the new route |
+| a dead route is driven | `route.drive` of it, `--route` peek included (auto) | moves the focus to it, reaps the daemon, clears the handle |
+| a drive that lost a race to a newer focus | `route.drive` of a dead route (auto) | leaves the daemon on the newer focus |
+| block / dead session | (self-exit) | the daemon reads the state, drops its handle, exits itself |
+| handle wiped or reclaimed | (self-exit, from tick 2) | the daemon sees its pid is no longer named, and exits |
 | inspect liveness | `route.reminder.get` (manual) | reads the handle + probes the pid |
 | force on / off now | `route.reminder.gen` / `del` (manual) | override outside the drive loop |
+| a per-route daemon from before one-per-clone | a spawn (drive or `gen`), or `del` | reaps it from `.behavior/*/.route/` and `.route/*/.route/`, one line per pid (`del` prints them; a spawn logs them to the clone log); a reap that faults keeps the handle and names the fix |
 
 ---
 
