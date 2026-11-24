@@ -35,10 +35,6 @@ exports[`learner.terms.hook.journey.acceptance given: [case1] a repo that links 
 ✨ hooks
    └─ no changes needed
 
-💡 tip
-   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
-   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
-
 "
 `;
 
