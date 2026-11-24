@@ -1,0 +1,19 @@
+{
+  "key": "8705976151ce2877",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "declapract-typescript-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(tests): old-use-apikeys deletes the file but leaves test:auth that sources it",
+  "description": "## .what\nthe bad-practice `cicd-common/bad-practices/old-use-apikeys` deletes `.agent/repo=.this/role=any/skills/use.apikeys.sh` and `use.apikeys.json`, and `tests-any/best-practice/package.json` rewrites `test` without its `eval $(ECHO=true npm run --silent test:auth)` prefix. but no check removes the `test:auth` entry itself, so a consumer is left with a command that sources a file the practice deleted. `package-json-order/best-practice/package.json.declapract.ts:58` still lists `test:auth` as a sort key.\n\nupstream behavior `v2026_03_27.fix-test-creds` planned this removal (\"update package.json to remove test:auth command and eval source pattern\"); the eval half shipped, the command half did not reach consumers.\n\n## .ask\n- extend `old-use-apikeys` (or the tests-any package.json check) to drop an extant `test:auth` whose body sources `use.apikeys.sh`\n- drop `test:auth` from the package-json-order key list\n\nfirst seen in rhachet-roles-bhrain `.route/v2026_11_19.declapract.upgrade`, stone 3.3 (C1), classified a practice bug in stone 3.4.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": "findsert",
+  "heldSeq": 55,
+  "recordStatus": "QUEUED",
+  "reason": "upstream:auth",
+  "deliveredExid": null
+}

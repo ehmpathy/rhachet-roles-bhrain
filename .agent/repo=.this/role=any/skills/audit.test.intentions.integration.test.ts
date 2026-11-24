@@ -207,6 +207,29 @@ describe('audit.test.intentions.integration', () => {
     });
   });
 
+  given('[case9] a branch that adds a test whose string literal names a skip', () => {
+    const scene = useBeforeAll(async () =>
+      genRepoWithEdit({
+        slug: 'audit-intent-skip-in-string',
+        after: SUITE_BEFORE.replace(
+          "  then('it rolls', () => {",
+          "  then('its fixture text holds then.skip(', () => {\n    expect(\"then.skip('a wave'\").toContain('skip');\n  });\n  then('it rolls', () => {",
+        ),
+      }),
+    );
+
+    when('[t0] the audit runs', () => {
+      const out = useBeforeAll(async () => runSkill({ cwd: scene.tempDir }));
+
+      then('it exits 0, since no code skips a test', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+      then('it counts no skip added', () => {
+        expect(out.stdout).toContain('skips added: 0');
+      });
+    });
+  });
+
   given('[case6] a branch that only moves tokens, as an import hoist does', () => {
     const scene = useBeforeAll(async () =>
       genRepoWithEdit({

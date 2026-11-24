@@ -84,13 +84,16 @@ const asTokens = (source) =>
     .map((token) =>
       token[0] === "'" || token[0] === '"' ? `"${token.slice(1, -1).replace(/\\(['"])/g, '$1')}"` : token,
     );
+// blank each string literal, so a fixture whose text names `.skip(` reads as no skip
+const PATTERN_STRING = /'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\\n]|\\.)*`/g;
+const asCodeOnly = (line) => line.replace(PATTERN_STRING, '""');
 const asMeasure = (ref, rel) => {
   const source = rel === null ? '' : git(['show', `${ref}:${rel}`]);
   const lines = source.split('\n');
   return {
     blocks: lines.filter((line) => PATTERN_BLOCK.test(line)).length,
     expects: lines.filter((line) => PATTERN_EXPECT.test(line)).length,
-    skips: lines.filter((line) => PATTERN_SKIP.test(line)),
+    skips: lines.filter((line) => PATTERN_SKIP.test(asCodeOnly(line))),
     tokens: asTokens(source),
   };
 };
