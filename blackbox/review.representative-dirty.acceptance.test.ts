@@ -25,8 +25,13 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.representative-dirty' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.representative-dirty.acceptance', () => {
-  given('[case2] mechanic codebase with dirty code', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case2] mechanic codebase with dirty code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review skill on dirty.ts with goal=representative',
       () => {

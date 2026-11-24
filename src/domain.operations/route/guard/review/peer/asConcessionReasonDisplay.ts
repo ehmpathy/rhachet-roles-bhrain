@@ -25,10 +25,10 @@ import {
  *     stone owes more budget (`define.invariant.review.peer.budget.urgent-earns-budget`).
  *   - `isConcession` — true for EITHER severity. a caller that must branch its own layout on
  *     "did a concession cause this halt?" reads this rather than re-derives it from the marks.
- *     🔴 it is NOT the disposition: a `better` concession is the driver's own push while an
- *     `urgent` one is a human wait, so a surface that branches its HEADER and TAIL on the
- *     disposition keys on `isRouteGuardConcessionExhaustion` (better-only) and keys only its
- *     REASON LINE on this. `formatRouteDriveBudgetExhausted` conflated the two and printed
+ *     🔴 it is NOT the layout key: a `better` concession's whole answer is the driver's fix,
+ *     while an `urgent` one lists two owners (the driver's grant, a human's approve-as-is), so a
+ *     surface that branches its HEADER and TAIL on that keys on `isRouteGuardConcessionExhaustion`
+ *     (better-only) and keys only its REASON LINE on this. `formatRouteDriveBudgetExhausted` conflated the two and printed
  *     `reason: peer reviewer budget exhausted` on an urgent halt, where the synchronous emit
  *     printed the concession words for the same persisted reason — one halt, two contradictory
  *     statements on two surfaces a driver meets consecutively (r1 b2).
@@ -41,8 +41,8 @@ export const asConcessionReasonDisplay = (input: {
   isConcession: boolean;
 } => {
   // 🔴 the two marks are DISJOINT by construction — `isRouteGuardConcessionExhaustion` matches
-  //    the `better` mark ONLY, because it drives the push-vs-human-wait DISPOSITION (a better
-  //    concession is the driver's own push; an urgent one is a human wait). but for DISPLAY,
+  //    the `better` mark ONLY, because it drives the one-remedy LAYOUT (a better concession's
+  //    whole answer is the driver's fix; an urgent one lists two owners). but for DISPLAY,
   //    both severities ARE concessions, so both must shed the raw marker for the human line —
   //    else an urgent halt ships its parseable marker verbatim, which is the very defect this
   //    decoder closes. so the reason text keys on `better OR urgent`, the warn on urgent alone.

@@ -12,6 +12,11 @@ import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/Revie
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REFLECT=1 rhx git.repo.test --what integration --scope 'path://stepReflect.casePriorRules.default' --mode apply
+const isLiveBrainReflectTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REFLECT === '1';
+
 /**
  * .what = stepReflect against a target that already holds a rule on the feedback's topic
  * .why = the prior rule is what invites an UPDATE proposal, so this is the case that drives
@@ -28,7 +33,7 @@ describe('stepReflect.casePriorRules.default', () => {
     brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given(
+  given.runIf(isLiveBrainReflectTargeted)(
     '[case1] target with prior rule (default brain = openrouter/deepseek)',
     () => {
       // track cleanup paths outside useThen to avoid deferred proxy issues

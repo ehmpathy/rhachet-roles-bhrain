@@ -12,4 +12,4 @@ reviewers ─▶ 1. ABSORB (per concern) ─▶ 2. .taken (per reviewer) ─▶ 
 - **PASSAGE**: a `rejected` lane is not terminal. passage is your explicit `--as passed`. work every reviewer to terminal before a human is pulled.
 - **DISPUTABLE**: any concern that counts toward the tally is yours to dispute, approved lane or not. forced to absorb only a rejected lane's.
 - **EXHAUSTED**: unlocks the LEVEL, not the DEBT. answer an exhausted reviewer's blocker. levers: `.taken`, budget top-up, human.
-- **BUDGET**: a budget hit needs a human ⟺ a live `urgent` concession stands. grade each (`--severity better|urgent`): nameable shipped harm → `urgent`, else `better`.
+- **BUDGET**: a budget hit earns more ⟺ a live `urgent` concession stands. you run the top-up; you write your human why the stone bought it. grade each (`--severity better|urgent`): nameable shipped harm → `urgent`, else `better`.

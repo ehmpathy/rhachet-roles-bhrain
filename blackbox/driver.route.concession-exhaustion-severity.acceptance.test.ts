@@ -48,7 +48,7 @@ const ASSETS_DIR = path.join(
  *         + tally code: a lane rejects → the driver concedes its one blocker (graded better
  *         or urgent) → absorbs → budget runs out → the two severities land OPPOSITELY — a
  *         `better` concession sheds the tally and the stone PASSES with no human touched, an
- *         `urgent` one halts and asks a human for a budget grant
+ *         `urgent` one halts and names the budget grant as the driver's own lever
  *
  * .why = this composition was NEVER live-dogfooded before this test: a repo-wide walk of
  *        this route's own passage ledger found zero occurrences of either concession-
@@ -114,7 +114,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             tempDir: scene.tempDir,
             body: '[REPAIR] tech debt — no shipped harm. fixed on the next pass.\n',
           });
-          await invokeRouteSkill({
+          const conceded = await invokeRouteSkill({
             skill: 'route.stone.set',
             args: {
               stone: '1.vision',
@@ -126,7 +126,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             },
             cwd: scene.tempDir,
           });
-          return invokeRouteSkill({
+          const absorbed = await invokeRouteSkill({
             skill: 'route.stone.set',
             args: {
               stone: '1.vision',
@@ -136,10 +136,21 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             },
             cwd: scene.tempDir,
           });
+          return { conceded, absorbed };
         });
 
-        then('the absorb is accepted', () => {
-          expect(result.code).toEqual(0);
+        then('the concede and the absorb are accepted', () => {
+          expect(result.conceded.code).toEqual(0);
+          expect(result.absorbed.code).toEqual(0);
+        });
+
+        then('the concede ack and the absorb emit are pinned', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.conceded.stdout),
+          ).toMatchSnapshot('a better concede ack — no harm, no top-up');
+          expect(
+            sanitizeTimeForSnapshot(result.absorbed.stdout),
+          ).toMatchSnapshot('the absorb of the better-conceded lane');
         });
       },
     );
@@ -241,7 +252,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             tempDir: scene.tempDir,
             body: '[REPAIR] ships nameable harm — fixed on the next pass.\n',
           });
-          await invokeRouteSkill({
+          const conceded = await invokeRouteSkill({
             skill: 'route.stone.set',
             args: {
               stone: '1.vision',
@@ -253,7 +264,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             },
             cwd: scene.tempDir,
           });
-          return invokeRouteSkill({
+          const absorbed = await invokeRouteSkill({
             skill: 'route.stone.set',
             args: {
               stone: '1.vision',
@@ -263,10 +274,27 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
             },
             cwd: scene.tempDir,
           });
+          return { conceded, absorbed };
         });
 
-        then('the absorb is accepted', () => {
-          expect(result.code).toEqual(0);
+        then('the concede and the absorb are accepted', () => {
+          expect(result.conceded.code).toEqual(0);
+          expect(result.absorbed.code).toEqual(0);
+        });
+
+        then('the urgent concede ack asks for the note to the human', () => {
+          expect(result.conceded.stdout).toContain(
+            'tell your human why this stone bought budget',
+          );
+        });
+
+        then('the concede ack and the absorb emit are pinned', () => {
+          expect(
+            sanitizeTimeForSnapshot(result.conceded.stdout),
+          ).toMatchSnapshot('an urgent concede ack — harm ships, the note is owed');
+          expect(
+            sanitizeTimeForSnapshot(result.absorbed.stdout),
+          ).toMatchSnapshot('the absorb of the urgent-conceded lane');
         });
       },
     );
@@ -283,7 +311,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
         );
 
         then(
-          '🔴 the stone is HELD — an urgent concession is a human wait, not a push',
+          '🔴 the stone is HELD — an urgent concession waits on a grant, not a push',
           () => {
             // opposite of case1's t2: the SAME shape (one exhausted lane, one live
             // concession), and only the SEVERITY differs. that one bit is the whole
@@ -292,10 +320,11 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
           },
         );
 
-        then('the emit asks a human for a budget grant', () => {
+        then('the emit names the driver grant, with human approval as the alternative', () => {
           const combined = result.stdout + result.stderr;
           expect(combined).toContain('approve as-is — a human must grant');
           expect(combined).toContain('increase budget — yours to spend');
+          expect(combined).not.toContain('ask your human');
         });
 
         then('the emit warns that an urgent concession stands', () => {
@@ -319,7 +348,7 @@ describe('driver.route.concession-exhaustion-severity.acceptance', () => {
           expect(
             sanitizeTimeForSnapshot(result.stdout + result.stderr),
           ).toMatchSnapshot(
-            'an urgent concession halts — a human is warned and asked for a budget grant',
+            'an urgent concession halts — the driver grant is named',
           );
         });
       },

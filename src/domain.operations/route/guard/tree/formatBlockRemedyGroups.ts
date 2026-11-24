@@ -2,11 +2,15 @@ import { asReviewPartitionDeclarationText } from '../../../review/partition/asRe
 import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
 import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartitionCommand';
 import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
-import { formatReviewBudgetTopupCommand } from '../review/peer/formatReviewBudgetTopupCommand';
+import {
+  formatReviewBudgetGrantCommand,
+  ROUNDS_OFFERED_ON_GRANT,
+} from '../review/peer/formatReviewBudgetGrantCommand';
 import {
   asUrgentConcessionSlugs,
   isRouteGuardConcessionExhaustion,
   isRouteGuardUrgentConcessionExhaustion,
+  REMEDY_LABEL_BUDGET_GRANT,
 } from '../review/peer/genRouteGuardExhaustedReason';
 
 /**
@@ -96,13 +100,14 @@ const asBudgetHaltRemedyGroup = (input: {
   hasBetterConcession: boolean;
 }): BlockRemedyGroup => {
   // an URGENT concession earned the round, so the top-up is the driver's own lever to spend —
-  // one command per urgent lane where the reason names them
+  // one command per urgent lane where the reason names them. the count is the shared
+  // `ROUNDS_OFFERED_ON_GRANT`, so the drive halt and the judge halt print one command
   if (input.hasUrgentConcession && input.slugs.urgent.length > 0)
     return {
-      label: `increase budget — yours to spend`,
+      label: REMEDY_LABEL_BUDGET_GRANT,
       cmd: input.slugs.urgent.map((slug) =>
-        formatReviewBudgetTopupCommand({
-          add: 'N',
+        formatReviewBudgetGrantCommand({
+          add: ROUNDS_OFFERED_ON_GRANT,
           peer: slug,
           stone: input.stone,
         }),
@@ -110,9 +115,9 @@ const asBudgetHaltRemedyGroup = (input: {
     };
   if (input.hasUrgentConcession)
     return {
-      label: `increase budget — yours to spend`,
-      cmd: formatReviewBudgetTopupCommand({
-        add: 'N',
+      label: REMEDY_LABEL_BUDGET_GRANT,
+      cmd: formatReviewBudgetGrantCommand({
+        add: ROUNDS_OFFERED_ON_GRANT,
         peer:
           input.slugs.exhausted.length === 1 ? input.slugs.exhausted[0]! : null,
         stone: input.stone,
@@ -212,7 +217,7 @@ const asExhaustedSlugs = (input: { reason: string }): string[] => {
  *    re-arrival.
  *
  * 🔴 .an URGENT concession KEEPS the tail, and the suppress read must not reach it.
- *    an urgent concession ships nameable harm, so it earns a human's glance BESIDE its round
+ *    an urgent concession ships nameable harm, so a human's approval stays an option BESIDE the round the driver grants
  *    (`define.invariant.review.peer.budget.urgent-earns-budget`), and `[case2][t0]` pins it.
  *    ⇒ the caller's `suppressApprovalTail` is computed off the DISJOINT `better` predicate, so no
  *      reader of this operation has to learn which half of the severity axis it holds.

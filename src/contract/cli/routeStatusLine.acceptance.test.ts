@@ -5,6 +5,7 @@ import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 import { fileURLToPath, pathToFileURL } from 'url';
 
+import { genRouteGuardExhaustedReason } from '@src/domain.operations/route/guard/review/peer/genRouteGuardExhaustedReason';
 import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
@@ -624,6 +625,71 @@ describe('routeStatusLine.acceptance', () => {
       });
     });
   });
+
+  // a concession exhaustion is the driver's push, never a human wait: no 👋, either severity
+  const CASES_CONCESSION_EXHAUSTED = [
+    { label: 'case11b', concession: 'urgent' as const },
+    { label: 'case11c', concession: 'better' as const },
+  ];
+  CASES_CONCESSION_EXHAUSTED.map((thisCase) =>
+    given(
+      `[${thisCase.label}] a bound route exhausted on a concession graded ${thisCase.concession}`,
+      () => {
+        const scene = useBeforeAll(async () => ({
+          tempDir: genBoundRouteRepo({
+            slug: `statusline-cli-${thisCase.label}`,
+            guard: PEER_GUARD,
+            meters: [
+              {
+                stone: '1.vision',
+                reviewer: { slug: 'reviewer-a' },
+                rounds: 3,
+              },
+            ],
+            passage: [
+              {
+                stone: '1.vision',
+                status: 'exhausted',
+                reason: genRouteGuardExhaustedReason({
+                  slugs: {
+                    exhausted: ['reviewer-a'],
+                    urgent:
+                      thisCase.concession === 'urgent' ? ['reviewer-a'] : [],
+                  },
+                  concession: thisCase.concession,
+                }),
+              },
+            ],
+          }),
+        }));
+
+        when('[t0] the renderer runs with that cwd', () => {
+          const out = useBeforeAll(async () =>
+            runRenderer({ cwd: scene.tempDir }),
+          );
+
+          then(
+            'it shows the peer phase as the driver push, no wave for a human',
+            () => {
+              const lines = out.stdout
+                .split('\n')
+                .filter((l) => l.trim() !== '');
+              expect(lines[0]).toEqual('🗿 1.vision, review.peer, l1@i003 🔍');
+              expect(out.stdout).not.toContain('👋');
+            },
+          );
+
+          then('its output matches the concession-exhausted snapshot', () => {
+            expect(out.stdout).toMatchSnapshot();
+          });
+
+          then('it exits 0', () => {
+            expect(out.exitCode).toEqual(0);
+          });
+        });
+      },
+    ),
+  );
 
   given(
     '[case12] a bound route blocked on feedbackUnabsorbed peer review',

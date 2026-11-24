@@ -74,6 +74,11 @@ const expectDisintermediatedRawReview = (input: {
   expect(input.stdout).not.toMatch(/[├└]─ rubrics\b/);
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.by' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.by.acceptance', () => {
   // ─────────────────────────────────────────────────────────────────────────
   // cases run in order of their ordinal. the error / fail-fast boundaries are
@@ -81,7 +86,7 @@ describe('review.by.acceptance', () => {
   // and each one says so via `when.repeatably`
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case1] valid role, no --for, code satisfies every rubric', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] valid role, no --for, code satisfies every rubric', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by against clean code',
       () => {
@@ -131,7 +136,7 @@ describe('review.by.acceptance', () => {
     );
   });
 
-  given('[case2] valid role, code violates a rubric', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case2] valid role, code violates a rubric', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by against dirty code',
       () => {
@@ -176,7 +181,7 @@ describe('review.by.acceptance', () => {
     );
   });
 
-  given('[case3] --for a single valid slug, code is clean → DISINTERMEDIATE', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case3] --for a single valid slug, code is clean → DISINTERMEDIATE', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --for runs', () => {
       const res = useThen('it runs only that rubric and passes', async () => {
         const cwd = await genReviewByFixture({
@@ -218,7 +223,7 @@ describe('review.by.acceptance', () => {
     });
   });
 
-  given('[case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --for on dirty', () => {
       const res = useThen('it runs only that rubric and finds blockers', async () => {
         const cwd = await genReviewByFixture({
@@ -267,7 +272,7 @@ describe('review.by.acceptance', () => {
     });
   });
 
-  given('[case4] --for one slug on a multi-rubric role', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case4] --for one slug on a multi-rubric role', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the named rubric runs',
       () => {
@@ -329,7 +334,7 @@ describe('review.by.acceptance', () => {
     );
   });
 
-  given('[case5] --paths + --brain forward to the review engine', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case5] --paths + --brain forward to the review engine', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by forwards scope', () => {
       const res = useThen('it runs review against the given paths', async () => {
         const cwd = await genReviewByFixture({
@@ -566,7 +571,7 @@ describe('review.by.acceptance', () => {
     });
   });
 
-  given('[case13] rubrics.yml declares a vibe override', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case13] rubrics.yml declares a vibe override', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by runs', () => {
       const res = useThen('stdout carries the overridden vibe', async () => {
         const cwd = await genReviewByFixture({
@@ -613,7 +618,7 @@ rubrics:
     });
   });
 
-  given('[case14] a prefer-severity rubric never forces a blocker exit', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case14] a prefer-severity rubric never forces a blocker exit', () => {
     // a `prefer` rubric can only yield nitpicks, never blockers, so the exit must stay 0
     // regardless of the reviewer's score. the exit code holds whether or not the LLM emits a
     // nitpick at all; the stdout is snapped with the brain-decided bytes masked.
@@ -685,7 +690,7 @@ rubrics:
     );
   });
 
-  given('[case15] --for one slug, code violates it (the guard shape)', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case15] --for one slug, code violates it (the guard shape)', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] single rubric with findings',
       () => {
@@ -888,7 +893,7 @@ rubrics:
     });
   });
 
-  given('[case21] a mechanic role whose rubrics.yml declares the turtle vibe', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case21] a mechanic role whose rubrics.yml declares the turtle vibe', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --role mechanic runs', () => {
       const res = useThen(
         'the turtle vibe rides the rubrics.yml all the way to stdout',
@@ -943,7 +948,7 @@ rubrics:
     });
   });
 
-  given('[case22] a behaver role whose rubrics.yml declares the beaver vibe', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case22] a behaver role whose rubrics.yml declares the beaver vibe', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review.by --role behaver runs', () => {
       const res = useThen(
         'the beaver vibe rides the rubrics.yml all the way to stdout',
@@ -1130,7 +1135,7 @@ rubrics:
     });
   });
 
-  given('[case-multirule] a single rubric that bundles TWO rule files', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case-multirule] a single rubric that bundles TWO rule files', () => {
     // regression guard: genReviewRubricCmd once joined a rubric's rules into one
     // comma-separated --rules value, but review's glob does not split on commas, so a two-rule
     // rubric matched no files and malfunctioned. this bundles two rule files into one rubric and

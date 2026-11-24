@@ -37,8 +37,13 @@ const GIT_ENV = {
   GIT_COMMITTER_EMAIL: 'test@test.com',
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.rules-only-default' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.rules-only-default.acceptance', () => {
-  given('[case1] user specifies only --rules (default case)', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] user specifies only --rules (default case)', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with only --rules dirpath', () => {
       const res = useThen('invoke review skill with rules only', async () => {
         // clone fixture to temp dir with git initialized
@@ -148,7 +153,7 @@ describe('review.rules-only-default.acceptance', () => {
     });
   });
 
-  given('[case2] user excludes .behavior via negation pattern', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case2] user excludes .behavior via negation pattern', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review with --diffs since-main --paths !.behavior/**', () => {
       const res = useThen('invoke review with exclusion pattern', async () => {
         // clone fixture to temp dir with git initialized

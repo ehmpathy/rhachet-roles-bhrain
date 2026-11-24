@@ -3,6 +3,7 @@ import { join } from 'path';
 import { keyrack } from 'rhachet/keyrack';
 
 import { DEFAULT_TEST_BRAIN } from './src/.test/genTestBrainContext';
+import { isLiveBrainTestRun } from './src/.test/isLiveBrainTestRun';
 import { sdkBrainTierPick } from './src/.test/sdkBrainTierPick';
 import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified';
 
@@ -19,6 +20,13 @@ import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified
  */
 // eslint-disable-next-line import/no-default-export
 export default async (): Promise<void> => {
+  // a run no live-brain flag targets asks no brain, so it holds no pick
+  if (!isLiveBrainTestRun({ env: process.env })) {
+    console.log(
+      '🦉 brain tier pick: skipped, no BHRAIN_TEST_LIVE_<X>=1 flag targets this run',
+    );
+    return;
+  }
   if (existsSync(join(process.cwd(), '.agent/keyrack.yml')))
     keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });
   const result = await setBrainTierPickQualified(

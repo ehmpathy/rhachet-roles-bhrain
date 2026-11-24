@@ -54,6 +54,6 @@ _(none open)_
   purpose, unless a critical-severity concession defers the good-enough verdict
 - `define.invariant.review.peer.budget.urgent-earns-budget` — the invariant this term composes: a
   `better` hit is the maintenance floor met (proceed, no human); an `urgent` hit ships nameable harm
-  (warn the human, earn a round)
+  (earn a round the driver grants, and a note to its human)
 - `rule.forbid.overzealous-blockers` (reviewer) — the harm test severity borrows: *name the harm
   that ships with it.* the same test that grades a blocker grades a concede's severity

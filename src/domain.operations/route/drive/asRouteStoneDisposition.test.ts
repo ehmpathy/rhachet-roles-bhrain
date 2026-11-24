@@ -59,6 +59,32 @@ const TEST_CASES: {
     expect: { of: 'push' },
   },
   {
+    // 🔴 an URGENT concession earned a round the driver grants itself (`--peer` per urgent
+    //    lane), so no human is owed here either — only a note of why. a halt here would
+    //    stop the session and cost a human round trip to restart it
+    description:
+      'exhausted + an URGENT concession reason → push (the driver grants its own round)',
+    given: {
+      status: 'exhausted',
+      blocker: null,
+      reason:
+        'an urgent concession earned a round (mech); peer reviewer budget exhausted: mech',
+    },
+    expect: { of: 'push' },
+  },
+  {
+    // a malfunction outranks an urgent concession too — a broken reviewer needs a human
+    description:
+      'malfunction + an URGENT concession reason → halt(malfunction)',
+    given: {
+      status: 'malfunction',
+      blocker: null,
+      reason:
+        'reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: mech',
+    },
+    expect: { of: 'halt', why: 'malfunction' },
+  },
+  {
     // a malfunction outranks a concession — a broken reviewer needs a human regardless
     description: 'malfunction + a CONCESSION reason → halt(malfunction)',
     given: {

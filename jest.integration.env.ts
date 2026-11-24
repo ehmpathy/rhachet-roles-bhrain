@@ -5,6 +5,7 @@ import util from 'util';
 
 import { keyrack } from 'rhachet/keyrack';
 
+import { isLiveBrainTestRun } from './src/.test/isLiveBrainTestRun';
 // every `when.repeatably` attempt checks the attempt-1 snapshot
 import './src/.test/withAttemptAgnosticSnapshots';
 
@@ -107,7 +108,9 @@ if (requiresTestDb) {
  * .why =
  *   - auto-inject keys into process.env
  *   - fail fast with helpful error if keyrack locked or keys absent
+ *   - only where a `BHRAIN_TEST_LIVE_<X>=1` flag targets the run (see isLiveBrainTestRun); the
+ *     default run makes no live call, so it sources no key
  */
 const keyrackYmlPath = join(process.cwd(), '.agent/keyrack.yml');
-if (existsSync(keyrackYmlPath))
+if (existsSync(keyrackYmlPath) && isLiveBrainTestRun({ env: process.env }))
   keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });

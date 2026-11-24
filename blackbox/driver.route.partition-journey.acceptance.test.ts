@@ -246,6 +246,11 @@ const asRepairCommandFromStdout = (input: { stdout: string }): string => {
   return collected.parts.join(' ').replace(/^.*?(rhx route\.guard\.partition)/, '$1');
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://driver.route.partition-journey' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = journey acceptance test for guarded review partitions, end to end through the CLI
  * .why = partitions are a progressive enhancement of a guarded peer lane. two claims, and
@@ -265,7 +270,7 @@ const asRepairCommandFromStdout = (input: { stdout: string }): string => {
  *         of that step re-arrives on the same branch and asserts structure, never verdict
  */
 describe('driver.route.partition-journey.acceptance', () => {
-  given('[case1] a guarded stone whose lane overflows (arc A)', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] a guarded stone whose lane overflows (arc A)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = await genRepoOnBranch({ slug: 'route-partition-journey' });
       return { tempDir };
@@ -346,11 +351,12 @@ describe('driver.route.partition-journey.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(asNormalized(result.invoked.stdout)).toMatchSnapshot('stdout');
+        // no hint: a hinted key in a flag-gated given reads as obsolete on a skip
+        expect(asNormalized(result.invoked.stdout)).toMatchSnapshot();
       });
 
       then('the given matches snapshot', () => {
-        expect(asNormalized(result.given)).toMatchSnapshot('given');
+        expect(asNormalized(result.given)).toMatchSnapshot();
       });
     });
 
@@ -445,7 +451,7 @@ describe('driver.route.partition-journey.acceptance', () => {
 
       then('the ack matches snapshot', () => {
         // every journey step is pinned (rule.require.snapshot-every-journey-step)
-        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot('absorbed');
+        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot();
       });
 
       then('the .taken sits beside the given', () => {
@@ -639,7 +645,7 @@ describe('driver.route.partition-journey.acceptance', () => {
     );
   });
 
-  given('[case2] a guarded stone whose lane fits (arc B)', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case2] a guarded stone whose lane fits (arc B)', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] the same small change is arrived at twice — once bare, once with a declared set',
       () => {

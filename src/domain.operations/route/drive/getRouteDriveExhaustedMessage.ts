@@ -4,6 +4,7 @@ import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuard
 import { getStoneConcessionExhaustion } from '../guard/review/peer/getStoneConcededLaneSlugs';
 import { formatRouteDriveBudgetExhausted } from './formatRouteDriveBudgetExhausted';
 import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
+import { isRouteDriveExhaustionStopBlocked } from './isRouteDriveExhaustionStopBlocked';
 
 /**
  * .what = renders the onStop/onBoot/direct message for an exhausted STATUS, AND the stop
@@ -32,10 +33,9 @@ import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
  * 🟡 the concession is asked of EVERY currently-exhausted lane, never any. one lane the
  *    driver never conceded still awaits a human, so the concession words must not fire.
  *
- * .note = `blocksStop` is true ONLY for a `better` concession — the driver's own lever
- *         (`--add N --peer`). `none` (a lane never conceded) and `urgent` (a warned human
- *         wait) are a human's to end, so they allow the stop; a stale halt (no lane
- *         exhausted now) blocks no stop either.
+ * .note = `blocksStop` is true for a concession of either severity — the next act is the
+ *         driver's (`isRouteDriveExhaustionStopBlocked`). `none` (a lane never conceded) allows
+ *         the stop; a stale halt (no lane exhausted now) blocks no stop either.
  */
 export const getRouteDriveExhaustedMessage = async (input: {
   stone: RouteStone;
@@ -95,9 +95,8 @@ export const getRouteDriveExhaustedMessage = async (input: {
       }),
       meters,
     }),
-    // 🔴 the same live `concession` that shaped the message decides the stop: a `better`
-    //    concession is the driver's own lever (block the stop, code 2), while `none`/`urgent`
-    //    await a human (allow the stop). decision and render can no longer disagree.
-    blocksStop: concession === 'better',
+    // 🔴 the same live `concession` that shaped the message decides the stop. decision and
+    //    render can no longer disagree.
+    blocksStop: isRouteDriveExhaustionStopBlocked({ concession }),
   };
 };

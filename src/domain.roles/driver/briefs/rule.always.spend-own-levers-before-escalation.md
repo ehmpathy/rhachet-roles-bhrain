@@ -52,13 +52,14 @@ and worse, it reads as a wall when it was a step.
 **adjacency is the trap.** two remedies rendered side by side with no owner column read as two
 human remedies, and the driver's own lever is the one that gets surfaced upward.
 
-🟡 **an owner label on the surface covers ONE halt kind, and is a courtesy rather than a
+🟡 **an owner label on the surface covers SOME halt kinds, and is a courtesy rather than a
 guarantee.** the budget halt names its owners, and the driver's lever is sorted first — but
 **which** lever that is depends on what the last round conceded: `increase budget — yours to
 spend` on an urgent concession, `fix what you conceded — yours to run` on a better one, and
-`converge with the reviewer — yours to run` where naught was conceded. a reviewer malfunction, a
-self-review gate, and a judge threshold each print a remedy list with no owner column at all.
-**the sort is yours to perform.**
+`converge with the reviewer — yours to run` where naught was conceded. the judge's urgent halt
+reads the same `increase budget — yours to spend` label. a reviewer malfunction, a self-review
+gate, and a judge threshold with no urgent concession each print a remedy list with no owner
+column at all. **the sort is yours to perform.**
 
 ## .the rule
 
@@ -143,9 +144,10 @@ it does not fold into `rule.always.converge-to-terminal`.
 ## 🟡 .the bar is not a human gate
 
 the refusal did not move the lever to the human. it put a **bar** in front of it, and the bar is a
-sentence the driver writes about its own work — a human may grant regardless.
+sentence the driver writes about its own work. the command checks no actor, so a human who runs it
+meets the same bar: there is no human-only grant to ask for (`term=route.guard.budget._.choice._.md`).
 
 ⇒ so this rule's core is untouched by it: **the answer to most budget halts is convergence, and
-convergence is yours.** a driver that reaches for a human's grant before it has tried to converge
+convergence is yours.** a driver that hands a human the top-up before it has tried to converge
 has surfaced a halt it could have answered itself, which is the exact spend of a human's attention
 this rule exists to prevent.

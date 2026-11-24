@@ -7,7 +7,7 @@
  *        the smallest useful grant: one round to re-read the fix, one in reserve where the
  *        re-read raises a follow-on. a `1` strands the driver at the same wall.
  */
-export const ROUNDS_OFFERED_ON_TOPUP = 2;
+export const ROUNDS_OFFERED_ON_GRANT = 2;
 
 /**
  * .what = the ONE canonical `route.guard.budget --for review` top-up command string
@@ -17,13 +17,15 @@ export const ROUNDS_OFFERED_ON_TOPUP = 2;
  *        `rule.forbid.duplicate-format-tree-operations` names that exact hazard: one shared
  *        builder parameterized by the context differences, so a change lands once.
  *
- * .note = the two callers differ on exactly the two parameters below — the amount (a literal `N`
- *         a human fills, versus a concrete round count) and whether one lane is named. each other
- *         part — the verb, the `--for review` scope, the `--stone` tail — is one truth here.
+ * .note = callers differ on exactly the two parameters below — the round count and whether one
+ *         lane is named. each other part — the verb, the `--for review` scope, the `--stone`
+ *         tail — is one truth here.
+ * .note = the count is always concrete. the top-up is the driver's own lever, so a placeholder
+ *         would be a step it must decode before it runs the command it was handed
  */
-export const formatReviewBudgetTopupCommand = (input: {
-  /** the round count to add — a concrete number, or the literal `'N'` a human fills in */
-  add: number | 'N';
+export const formatReviewBudgetGrantCommand = (input: {
+  /** the round count to add */
+  add: number;
   /** the one lane to scope the top-up to, or null to extend every exhausted lane */
   peer: string | null;
   stone: string;

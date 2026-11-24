@@ -215,9 +215,10 @@ describe('routeStoneJudge.tally.acceptance', () => {
       // one reviewer raises 1 nitpick; the allowance is 0, so its verdict is `rejected`
       // and the driver owes a stance. the judge tally then decides on the severity of that
       // stance: a `better` concession is hard-capped by the budget and SHED (pass); an
-      // `urgent` one ships harm and is KEPT (block). same fixture, two severities.
-      const writeFixture = (slug: string) => {
-        const tempDir = genTempDir({ slug, git: true });
+      // `urgent` one ships harm and is KEPT (block). same fixture, two severities. the budget
+      // varies only to set the lane's meter: 1 runs it dry in one round, 5 leaves rounds in hand
+      const writeFixture = (input: { slug: string; budget: number }) => {
+        const tempDir = genTempDir({ slug: input.slug, git: true });
         fs.writeFileSync(
           path.join(tempDir, '1.test.stone'),
           '# stone: do the task\n',
@@ -232,7 +233,7 @@ describe('routeStoneJudge.tally.acceptance', () => {
             '  peer:',
             '    - slug: finicky',
             '      run: echo "blockers: 0"; echo "nitpicks: 1"',
-            '      budget: 5',
+            `      budget: ${input.budget}`,
             '      level: 1',
             'judges:',
             '  - echo "passed: true\\nreason: ok"',
@@ -241,10 +242,24 @@ describe('routeStoneJudge.tally.acceptance', () => {
         );
         return tempDir;
       };
+      const concedeUrgent = async (tempDir: string): Promise<void> => {
+        await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+        await setStoneAsConcernAbsorbed({
+          stone: '1.test',
+          route: tempDir,
+          as: 'conceded',
+          with: 'finicky',
+          about: 'nitpick.1',
+          severity: 'urgent',
+        });
+      };
 
       when('[t0] the driver concedes the nitpick as `better`', () => {
         const out = useBeforeAll(async () => {
-          const tempDir = writeFixture('judge-tally-better-shed');
+          const tempDir = writeFixture({
+            slug: 'judge-tally-better-shed',
+            budget: 5,
+          });
           driveGuardRound({ tempDir });
           // answer the given (R1), then concede the one nitpick as `better`
           await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
@@ -273,17 +288,12 @@ describe('routeStoneJudge.tally.acceptance', () => {
 
       when('[t1] the driver concedes the SAME nitpick as `urgent`', () => {
         const out = useBeforeAll(async () => {
-          const tempDir = writeFixture('judge-tally-urgent-kept');
-          driveGuardRound({ tempDir });
-          await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
-          await setStoneAsConcernAbsorbed({
-            stone: '1.test',
-            route: tempDir,
-            as: 'conceded',
-            with: 'finicky',
-            about: 'nitpick.1',
-            severity: 'urgent',
+          const tempDir = writeFixture({
+            slug: 'judge-tally-urgent-kept',
+            budget: 1,
           });
+          driveGuardRound({ tempDir });
+          await concedeUrgent(tempDir);
           return {
             judge: runJudge({ tempDir, allowNitpicks: 0 }),
           };
@@ -294,20 +304,199 @@ describe('routeStoneJudge.tally.acceptance', () => {
           expect(out.judge.exitCode).toEqual(2);
         });
 
-        // 🔴 the sharpest driver-visible remedy in the feature — it names the human's
-        //    lever and the follow-on passage command — pinned WHOLE, never by a
-        //    `toContain` fragment (r009 i011 blocker.1). a reword or a dropped branch
-        //    of this block must fail the clamp, not slip past it
+        // 🔴 the sharpest driver-visible remedy in the feature — it names the driver's own
+        //    lever and the follow-on passage command — pinned WHOLE, never by a `toContain`
+        //    fragment alone (r009 i011 blocker.1). a reword or a dropped branch of this block
+        //    must fail the clamp, not slip past it
         then(
-          'stderr names the human ask, the budget command, and the passage command — whole-body pinned',
+          'stderr names the driver grant, the budget command, and the passage command — whole-body pinned',
           () => {
             expect(out.judge.stderr).toContain(
               '✋ halted, an urgent concession stands — finicky',
             );
+            expect(out.judge.stderr).toContain(
+              'rhx route.guard.budget --for review --add 2 --peer finicky --stone 1.test',
+            );
+            expect(out.judge.stderr).not.toContain('ask your human');
             expect(out.judge.stderr).toMatchSnapshot();
           },
         );
       });
+
+      when(
+        '[t2] the SAME urgent concession, on a lane with a round in hand',
+        () => {
+          const out = useBeforeAll(async () => {
+            const tempDir = writeFixture({
+              slug: 'judge-tally-urgent-in-hand',
+              budget: 5,
+            });
+            driveGuardRound({ tempDir });
+            await concedeUrgent(tempDir);
+            return {
+              judge: runJudge({ tempDir, allowNitpicks: 0 }),
+            };
+          });
+
+          then('the judge BLOCKS — an `urgent` concession is NOT shed', () => {
+            expect(out.judge.stdout).toContain('passed: false');
+            expect(out.judge.exitCode).toEqual(2);
+          });
+
+          // the lane has a round in hand (budget 5, one round spent), so the gate would refuse a
+          // grant `rounds-remain`: the halt names the fix and the passage command, and offers no
+          // grant it cannot land
+          then(
+            'stderr names the round in hand and the passage command, and offers no grant — whole-body pinned',
+            () => {
+              expect(out.judge.stderr).toContain(
+                '✋ halted, an urgent concession stands — finicky',
+              );
+              expect(out.judge.stderr).toContain(
+                '   ├─ a round is in hand — finicky; a grant opens once it runs dry',
+              );
+              expect(out.judge.stderr).not.toContain('route.guard.budget');
+              expect(out.judge.stderr).not.toContain('ask your human');
+              expect(out.judge.stderr).toMatchSnapshot();
+            },
+          );
+        },
+      );
+    },
+  );
+
+  given(
+    '[case4] two urgent lanes on unequal budgets, and an urgent lane the guard retired',
+    () => {
+      // each lane raises 1 nitpick and the driver concedes it `urgent`, so the judge keeps it
+      // and halts on the urgent concession. the halt's rows then depend on each lane's meter:
+      // a dry lane earns a grant row, a lane with a round in hand earns the in-hand row, and a
+      // lane with no meter row (the guard no longer declares it) earns the unread row
+      const asGuardLane = (lane: {
+        slug: string;
+        budget: number;
+      }): string[] => [
+        `    - slug: ${lane.slug}`,
+        '      run: echo "blockers: 0"; echo "nitpicks: 1"',
+        `      budget: ${lane.budget}`,
+        '      level: 1',
+      ];
+      const writeGuard = (input: {
+        tempDir: string;
+        lanes: { slug: string; budget: number }[];
+      }): void =>
+        fs.writeFileSync(
+          path.join(input.tempDir, '1.test.guard'),
+          [
+            'artifacts:',
+            '  - "$route/1.test*.md"',
+            'reviews:',
+            '  peer:',
+            ...input.lanes.flatMap(asGuardLane),
+            'judges:',
+            '  - echo "passed: true\\nreason: ok"',
+            '',
+          ].join('\n'),
+        );
+      const writeFixture = (input: {
+        slug: string;
+        lanes: { slug: string; budget: number }[];
+      }): string => {
+        const tempDir = genTempDir({ slug: input.slug, git: true });
+        fs.writeFileSync(
+          path.join(tempDir, '1.test.stone'),
+          '# stone: do the task\n',
+        );
+        fs.writeFileSync(path.join(tempDir, '1.test.md'), '# test artifact\n');
+        writeGuard({ tempDir, lanes: input.lanes });
+        return tempDir;
+      };
+      const concedeUrgent = async (input: {
+        tempDir: string;
+        slugs: string[];
+      }): Promise<void> => {
+        await answerEveryPeerGiven({ route: input.tempDir, stone: '1.test' });
+        for (const slug of input.slugs)
+          await setStoneAsConcernAbsorbed({
+            stone: '1.test',
+            route: input.tempDir,
+            as: 'conceded',
+            with: slug,
+            about: 'nitpick.1',
+            severity: 'urgent',
+          });
+      };
+
+      when('[t0] one urgent lane is dry and one has a round in hand', () => {
+        const out = useBeforeAll(async () => {
+          const lanes = [
+            { slug: 'parched', budget: 1 },
+            { slug: 'finicky', budget: 5 },
+          ];
+          const tempDir = writeFixture({
+            slug: 'judge-tally-urgent-mixed',
+            lanes,
+          });
+          driveGuardRound({ tempDir });
+          await concedeUrgent({ tempDir, slugs: ['parched', 'finicky'] });
+          return { judge: runJudge({ tempDir, allowNitpicks: 0 }) };
+        });
+
+        then('the judge BLOCKS on the urgent concessions', () => {
+          expect(out.judge.stdout).toContain('passed: false');
+          expect(out.judge.exitCode).toEqual(2);
+        });
+
+        then(
+          'stderr offers the grant for the dry lane only, and names the lane in hand — whole-body pinned',
+          () => {
+            expect(out.judge.stderr).toContain(
+              'rhx route.guard.budget --for review --add 2 --peer parched --stone 1.test',
+            );
+            expect(out.judge.stderr).not.toContain('--peer finicky');
+            expect(out.judge.stderr).toContain(
+              '   ├─ a round is in hand — finicky; a grant opens once it runs dry',
+            );
+            expect(out.judge.stderr).not.toContain('ask your human');
+            expect(out.judge.stderr).toMatchSnapshot();
+          },
+        );
+      });
+
+      when(
+        '[t1] an urgent lane is retired from the guard after its stance',
+        () => {
+          const out = useBeforeAll(async () => {
+            const tempDir = writeFixture({
+              slug: 'judge-tally-urgent-unread',
+              lanes: [
+                { slug: 'parched', budget: 1 },
+                { slug: 'scribe', budget: 1 },
+              ],
+            });
+            driveGuardRound({ tempDir });
+            await concedeUrgent({ tempDir, slugs: ['parched', 'scribe'] });
+            // the guard drops the lane: its stance stays live, but no meter row reads it
+            writeGuard({ tempDir, lanes: [{ slug: 'parched', budget: 1 }] });
+            return { judge: runJudge({ tempDir, allowNitpicks: 0 }) };
+          });
+
+          then('the judge BLOCKS on the urgent concessions', () => {
+            expect(out.judge.stdout).toContain('passed: false');
+            expect(out.judge.exitCode).toEqual(2);
+          });
+
+          then(
+            'stderr names the retired lane unread and offers it no grant — whole-body pinned',
+            () => {
+              expect(out.judge.stderr).toContain('spend unread — scribe');
+              expect(out.judge.stderr).not.toContain('--peer scribe');
+              expect(out.judge.stderr).not.toContain('a round is in hand');
+              expect(out.judge.stderr).toMatchSnapshot();
+            },
+          );
+        },
+      );
     },
   );
 

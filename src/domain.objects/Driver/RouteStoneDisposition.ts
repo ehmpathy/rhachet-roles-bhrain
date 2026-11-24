@@ -7,7 +7,9 @@
  * .note = 'push' = the route self-drives (the agent can act now, or no block stands).
  *         'halt' = the route stopped and a human is needed; `why` names which help:
  *         - 'approval'    → a human must approve (👋)
- *         - 'exhausted'   → peer budget spent; a human must approve or extend (👋)
+ *         - 'exhausted'   → peer budget spent; a human must approve or extend (👋). a
+ *                           concession exhaustion, of either severity, is a push instead:
+ *                           its next act is the driver's
  *         - 'blocked'     → a driver wall (--as blocked); a human must clear it (✋)
  *         - 'malfunction' → a reviewer/judge broke; a human must fix it (💥)
  */

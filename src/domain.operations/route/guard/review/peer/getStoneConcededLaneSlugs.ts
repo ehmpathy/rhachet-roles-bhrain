@@ -52,8 +52,8 @@ export const computeConcededLaneSlugs = (input: {
 /**
  * .what = the exhausted lanes that carry a live concession, right now
  * .why = the exhaustion halt reads this to decide WHOSE halt it is. every skipped lane
- *        conceded ⇒ the remedy is a budget top-up, which is the driver's own lever, so
- *        no human is owed. any skipped lane NOT conceded ⇒ the ordinary human wait.
+ *        conceded ⇒ the driver's move (`better`: the fix; `urgent`: the grant). any
+ *        skipped lane NOT conceded ⇒ the ordinary human wait.
  */
 export const getStoneConcededLaneSlugs = async (input: {
   route: string;
@@ -83,7 +83,7 @@ export const getStoneConcededLaneSlugs = async (input: {
  *
  *        ⇒ `define.invariant.review.peer.budget.urgent-earns-budget`: a `better` hit is
  *        the maintenance floor met (good enough, proceed); an `urgent` hit ships nameable
- *        harm, so it earns a human's glance and a round.
+ *        harm, so it earns a round the driver grants, and a note to its human.
  *
  * .note = an ungraded concede is read as `better` — the ledger carries `severity?` absent
  *         on a legacy row, and the maintenance floor is the safe default (a mis-graded

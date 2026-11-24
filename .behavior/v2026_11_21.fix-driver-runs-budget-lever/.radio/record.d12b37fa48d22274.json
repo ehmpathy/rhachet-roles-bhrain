@@ -1,0 +1,19 @@
+{
+  "key": "d12b37fa48d22274",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "enroll refuses on role hooks in the user claude layer, and no verb clears them",
+  "description": "## .the defect\n\na role hook in the user claude layer (`~/.claude/settings.json`) has no rhachet verb that owns it. `rhx enroll` reads that layer, finds a hook of a role the clone is not enrolled in, and refuses. no `rhx init --hooks`, `rhx roles init`, or `rhx roles link` rewrites or prunes the user layer. a driver on the grove cannot clear the leak; only a hand edit of a shared human file can.\n\nseen on rhachet 1.53.0 (host) and 1.51.0 (lockfile pin). `assertCloneSettingsLayersHoldOnlyEnrolledRoles` is in both.\n\n## .the refusal, verbatim\n\n```\n✋ ConstraintError: a clone would load hooks from roles it is not enrolled in\n\n{\n  \"hint\": \"your home claude settings hold role hooks; remove every hook whose `author` names a `role=` from the file(s) above, then enroll again\",\n  \"rolesEnrolled\": [\n    \"reviewer\",\n    \"behaver\",\n    \"ergonomist\",\n    \"mechanic\"\n  ],\n  \"leaks\": [\n    {\n      \"event\": \"PreToolUse\",\n      \"author\": \"repo=bhrain/role=learner\",\n      \"source\": \"user\",\n      \"path\": \"/home/camper/.claude/settings.json\"\n    },\n    {\n      \"event\": \"Stop\",\n      \"author\": \"repo=bhuild/role=dispatcher\",\n      \"source\": \"user\",\n      \"path\": \"/home/camper/.claude/settings.json\"\n    }\n  ]\n}\n```\n\n## .the cost\n\nehmpathy/rhachet-roles-bhrain, route `v2026_11_21.fix-driver-runs-budget-lever`, stone `5.3.verification`: all three level-3 review lanes spawn a clone via `rhx enroll claude …` and refuse at this check, two rounds in a row. the judge counts each unread lane as a blocker, so the stone cannot pass.\n\n## .the shape of the fix\n\n- a verb that owns role hooks in the user layer, e.g. `rhx init --hooks --scope user --mode prune` (plan by default): list every hook whose `author` names a `role=`; remove them on apply\n- the enroll refusal hint names that verb, so the fix is one paste\n- deeper: find which path wrote role hooks into the user layer at all, and stop it there",
+  "status": null,
+  "via": "gh.issues",
+  "auth": null,
+  "idem": null,
+  "heldSeq": 47,
+  "recordStatus": "QUEUED",
+  "reason": "radio.uses:blocked — default",
+  "deliveredExid": null
+}

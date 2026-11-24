@@ -149,8 +149,9 @@ residual: 1/0 blockers, 1/7 nitpicks
 
 ✋ halted, an urgent concession stands — friction
    ├─ its harm ships if unfixed, so this stone earns more budget
-   ├─ please ask your human to
+   ├─ increase budget — yours to spend
    │  └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision
+   ├─ 🟡 tell your human why this stone bought budget
    │
    └─ after the grant, address the concession, then run
       └─ rhx route.stone.set --stone 1.vision --as passed"
@@ -194,7 +195,7 @@ exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, f
    │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
-   │  │  └─ rhx route.guard.budget --for review --add N --peer friction --stone 1.vision
+   │  │  └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision
    │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.vision --as approved
    └─ guard
@@ -609,9 +610,10 @@ residual: 2/0 blockers, 1/7 nitpicks
 
 ✋ halted, an urgent concession stands — intent, friction
    ├─ its harm ships if unfixed, so this stone earns more budget
-   ├─ please ask your human to
+   ├─ increase budget — yours to spend
    │  ├─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision
    │  └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision
+   ├─ 🟡 tell your human why this stone bought budget
    │
    └─ after the grant, address the concession, then run
       └─ rhx route.stone.set --stone 1.vision --as passed"
@@ -639,8 +641,9 @@ residual: 1/0 blockers, 1/7 nitpicks
 
 ✋ halted, an urgent concession stands — intent
    ├─ its harm ships if unfixed, so this stone earns more budget
-   ├─ please ask your human to
+   ├─ increase budget — yours to spend
    │  └─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision
+   ├─ 🟡 tell your human why this stone bought budget
    │
    └─ after the grant, address the concession, then run
       └─ rhx route.stone.set --stone 1.vision --as passed"
@@ -684,7 +687,7 @@ exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded
    │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
-   │  │  └─ rhx route.guard.budget --for review --add N --peer intent --stone 1.vision
+   │  │  └─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision
    │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.vision --as approved
    └─ guard

@@ -66,7 +66,7 @@ that ships with it.** you can → urgent. you cannot → `better`, and it evolve
 | the budget hit, and the live concessions are… | the halt |
 |---|---|
 | **all `better`** (or none) | 🔴 **good enough — NO human, NO more budget.** the stone proceeds |
-| **at least one `urgent`** | ⚠️ **needs increased budget.** warn the human this PR; they grant more |
+| **at least one `urgent`** | ⚠️ **needs increased budget.** the driver tops up, and tells its human why this stone bought it |
 
 ⇒ this refines the concession-exhaustion behavior: a concession-exhaustion is the driver's own lever
 ONLY when an urgent concession sits on it. with no urgent concession, exhaustion is a **pass**, not a
@@ -80,7 +80,7 @@ halt.
 | you reach for `urgent` to buy a round | name the harm first. no nameable harm → it is `better`, and it evolves |
 | the budget is hit and every concession is `better` | good enough. proceed — do not summon a human |
 | a `better` concession tempts you to ask for more budget | forbidden. `better` never earns budget |
-| an urgent concession sat on the last round | warn the human this PR; they grant more |
+| an urgent concession sat on the last round | top up yourself; tell your human why this stone bought it |
 
 ## .see also
 

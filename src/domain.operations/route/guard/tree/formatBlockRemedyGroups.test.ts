@@ -114,7 +114,7 @@ describe('computeBlockRemedyGroups', () => {
       });
 
       // 🔴 the approve tail STANDS beside the top-up, and that is the severity split: an urgent
-      //    concession ships nameable harm, so it earns a human's glance as well as the round
+      //    concession ships nameable harm, so a human's approval stays an option beside the driver's round
       then(
         'the branch is unchanged by the extraction — budget, then approve',
         () => {
@@ -127,7 +127,7 @@ describe('computeBlockRemedyGroups', () => {
 
       then('a lone slug is named with --peer', () => {
         expect(groups[0]!.cmd).toEqual(
-          'rhx route.guard.budget --for review --add N --peer mech-given-when-then --stone 5.3.verification',
+          'rhx route.guard.budget --for review --add 2 --peer mech-given-when-then --stone 5.3.verification',
         );
       });
 
@@ -151,7 +151,7 @@ describe('computeBlockRemedyGroups', () => {
       // multi-slug exhaustion wants; to name one of three would under-serve the halt.
       then('no --peer is emitted — the top-up covers them all', () => {
         expect(groups[0]!.cmd).toEqual(
-          'rhx route.guard.budget --for review --add N --stone 5.3.verification',
+          'rhx route.guard.budget --for review --add 2 --stone 5.3.verification',
         );
       });
     });
@@ -194,7 +194,7 @@ describe('computeBlockRemedyGroups', () => {
           'the top-up names the urgent lane with --peer, and only it',
           () => {
             expect(groups[0]!.cmd).toEqual([
-              'rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
+              'rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision',
             ]);
           },
         );
@@ -212,8 +212,8 @@ describe('computeBlockRemedyGroups', () => {
 
       then('one --peer command per urgent lane, in the mark order', () => {
         expect(groups[0]!.cmd).toEqual([
-          'rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
-          'rhx route.guard.budget --for review --add N --peer friction --stone 1.vision',
+          'rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision',
+          'rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision',
         ]);
       });
 
@@ -226,8 +226,8 @@ describe('computeBlockRemedyGroups', () => {
           });
           expect(lines).toEqual([
             '   └─ increase budget — yours to spend',
-            '      ├─ rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
-            '      └─ rhx route.guard.budget --for review --add N --peer friction --stone 1.vision',
+            '      ├─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision',
+            '      └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision',
           ]);
         },
       );

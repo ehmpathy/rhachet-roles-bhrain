@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asJudgeApprovalHaltLines given: [case1] a stone that awaits approval when: [t0] rendered then: matches snapshot 1`] = `
+"✋ halted, human approval required
+   ├─ please ask your human to
+   │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │
+   └─ after human approves, run
+      └─ rhx route.stone.set --stone 1.vision --as passed"
+`;

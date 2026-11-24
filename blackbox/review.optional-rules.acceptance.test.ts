@@ -35,6 +35,11 @@ const REPEATABLE_CONFIG = {
 const asRedactedOutputWithReviewPath = (raw: string): string =>
   asRedactedOutput(raw).replace(/(├─ review: ).*/g, '$1<REVIEW_PATH>');
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.optional-rules' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * .what = acceptance tests for `--optional rules`
  * .why = when a repo has no local rules, an empty rules glob under `--optional rules` must
@@ -365,7 +370,7 @@ describe('review.optional-rules.acceptance', () => {
     });
   });
 
-  given('[case7] --optional rules set, but the rules glob DOES match files', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case7] --optional rules set, but the rules glob DOES match files', () => {
     // .why = the vision's edgecase table promises the flag is a NO-OP when the glob is
     //        effective: "--optional rules but rules glob does match files → normal review".
     //        this guards against a regression where --optional short-circuits a real review.

@@ -36,7 +36,7 @@ ONLY verdict a driver passes on alone:
 | terminal verdict | required act before passage |
 |---|---|
 | `approved` | none — clears autonomously |
-| `exhausted` | a human `--as approved`, OR — if a live urgent concession stands — a human budget grant |
+| `exhausted` | a human `--as approved`, OR — if a live urgent concession stands — the driver's own top-up, with a note to its human |
 | `malfunction` | a human `--as overruled` |
 | `constraint` | a human `--as overruled` |
 | `overruled` | already forgiven (a human act put it there) |
@@ -61,9 +61,9 @@ after disputes shed their concerns) and compares to one allowance. over the allo
 - ⇒ sub-law: **`define.invariant.review.peer.budget.urgent-earns-budget`** — only a live `urgent`
   concession earns an increased budget, and the driver owes its human a written why the stone bought
   it; an all-`better` (or no-urgent) hit is good enough and proceeds with no human.
-- ⇒ sub-law: **`define.invariant.review.peer.judge.urgent-guides-the-budget-ask`** — when the judge
-  holds on a live urgent concession, it GUIDES the driver to the human budget-ask, the way `approved?`
-  guides to the approval-ask.
+- ⇒ sub-law: **`define.invariant.review.peer.judge.urgent-guides-the-budget-grant`** — when the judge
+  holds on a live urgent concession, it GUIDES the driver to its own top-up and the note its human is
+  owed, the way `approved?` guides to the approval-ask.
 
 ## .kind
 
@@ -113,6 +113,6 @@ blind to an unlocked level that should have a verdict but produced no file.
 - `define.invariant.review.peer.absorption.disputable-regardless-of-verdict` — condition (b): which concerns MAY be absorbed
 - `define.invariant.review.peer.exhausted` — condition (a): exhausted ⟺ skipped
 - `define.invariant.review.peer.budget.urgent-earns-budget` — condition (c): only urgent earns budget
-- `define.invariant.review.peer.judge.urgent-guides-the-budget-ask` — condition (c): the judge surfaces the ask
+- `define.invariant.review.peer.judge.urgent-guides-the-budget-grant` — condition (c): the judge surfaces the ask
 - `howdoes.the-review-gates-you-drive-within` — the read for the driver, of these three gates
 - `define.passage-statuses` — only `passed` constitutes valid passage

@@ -10,6 +10,11 @@ import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REFLECT=1 rhx git.repo.test --what integration --scope 'path://stepReflect.caseUnclearFeedback' --mode apply
+const isLiveBrainReflectTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REFLECT === '1';
+
 describe('stepReflect.caseUnclearFeedback', () => {
   // increase timeout for brain invocations (3 minutes per attempt)
   jest.setTimeout(180000 * REPEATABLY_CONFIG.attempts);
@@ -18,60 +23,63 @@ describe('stepReflect.caseUnclearFeedback', () => {
     brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] unclear feedback with no extractable rules', () => {
-    // track cleanup paths outside useThen to avoid deferred proxy issues
-    // .note = deliberate mutation: the useThen block fills these paths once, so afterAll can
-    //         remove the dirs it made; a useThen proxy cannot be read from afterAll
-    const cleanup: { sourceDir?: string; targetDir?: string } = {};
-    afterAll(async () => {
-      if (cleanup.sourceDir)
-        await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
-      if (cleanup.targetDir)
-        await fs.rm(cleanup.targetDir, { recursive: true, force: true });
-    });
-
-    when.repeatably(REPEATABLY_CONFIG)('[t0] stepReflect completes', () => {
-      // single brain call per attempt, result shared across assertions
-      const scene = useThen('stepReflect succeeds', async () => {
-        const { repoDir: sourceDir } =
-          await setupSourceRepo('unclear-feedback');
-        const { targetDir } = await setupTargetDir();
-
-        // track for cleanup
-        cleanup.sourceDir = sourceDir;
-        cleanup.targetDir = targetDir;
-
-        const result = await stepReflect(
-          {
-            source: sourceDir,
-            target: targetDir,
-            mode: 'push',
-          },
-          { brain: brainScene.brain },
-        );
-
-        return { sourceDir, targetDir, result };
+  given.runIf(isLiveBrainReflectTargeted)(
+    '[case1] unclear feedback with no extractable rules',
+    () => {
+      // track cleanup paths outside useThen to avoid deferred proxy issues
+      // .note = deliberate mutation: the useThen block fills these paths once, so afterAll can
+      //         remove the dirs it made; a useThen proxy cannot be read from afterAll
+      const cleanup: { sourceDir?: string; targetDir?: string } = {};
+      afterAll(async () => {
+        if (cleanup.sourceDir)
+          await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
+        if (cleanup.targetDir)
+          await fs.rm(cleanup.targetDir, { recursive: true, force: true });
       });
 
-      then('completes without error', async () => {
-        expect(scene.result).toBeDefined();
-      });
+      when.repeatably(REPEATABLY_CONFIG)('[t0] stepReflect completes', () => {
+        // single brain call per attempt, result shared across assertions
+        const scene = useThen('stepReflect succeeds', async () => {
+          const { repoDir: sourceDir } =
+            await setupSourceRepo('unclear-feedback');
+          const { targetDir } = await setupTargetDir();
 
-      then('produces zero or minimal rules', async () => {
-        const pureFiles = await fs.readdir(scene.result.draft.pureDir);
-        const ruleFiles = pureFiles.filter((f) => f.startsWith('rule.'));
-        // unclear feedback should produce few or no rules
-        expect(ruleFiles.length).toBeLessThanOrEqual(1);
-      });
+          // track for cleanup
+          cleanup.sourceDir = sourceDir;
+          cleanup.targetDir = targetDir;
 
-      then('has zero or minimal operations', async () => {
-        const totalOps =
-          scene.result.results.created +
-          scene.result.results.updated +
-          scene.result.results.appended;
-        // unclear feedback should result in few or no sync operations
-        expect(totalOps).toBeLessThanOrEqual(1);
+          const result = await stepReflect(
+            {
+              source: sourceDir,
+              target: targetDir,
+              mode: 'push',
+            },
+            { brain: brainScene.brain },
+          );
+
+          return { sourceDir, targetDir, result };
+        });
+
+        then('completes without error', async () => {
+          expect(scene.result).toBeDefined();
+        });
+
+        then('produces zero or minimal rules', async () => {
+          const pureFiles = await fs.readdir(scene.result.draft.pureDir);
+          const ruleFiles = pureFiles.filter((f) => f.startsWith('rule.'));
+          // unclear feedback should produce few or no rules
+          expect(ruleFiles.length).toBeLessThanOrEqual(1);
+        });
+
+        then('has zero or minimal operations', async () => {
+          const totalOps =
+            scene.result.results.created +
+            scene.result.results.updated +
+            scene.result.results.appended;
+          // unclear feedback should result in few or no sync operations
+          expect(totalOps).toBeLessThanOrEqual(1);
+        });
       });
-    });
-  });
+    },
+  );
 });

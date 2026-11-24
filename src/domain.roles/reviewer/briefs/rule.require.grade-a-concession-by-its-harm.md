@@ -21,11 +21,11 @@ same answer.
 ## .why it matters to a reviewer
 
 the budget is the maintenance floor (`philosophy.a-review-budget-balances-perfection-with-pragmatism`).
-a concession's severity decides whether the budget hit needs a human:
+a concession's severity decides whether the budget hit earns more budget:
 
 - **all `better`, or none** → good enough, no human, the stone proceeds
-- **≥1 `urgent`** → needs increased budget, and the driver owes its human a written why the stone
-  bought it
+- **≥1 `urgent`** → needs increased budget: the driver runs the top-up, and owes its human a written
+  why the stone bought it
 
 🟡 **that warn is a sentence the driver writes, never a notice the engine sends.** no mechanism
 mails anyone — the render asks, and a driver that reads *"the human is warned"* as already-done
@@ -35,7 +35,7 @@ so a mis-graded concession is as expensive as a mis-graded blocker, in the oppos
 
 | the mis-grade | the cost |
 |---|---|
-| a `better` point graded `urgent` | it earns a round and a human's glance it did not warrant — the budget stops to bound aught |
+| a `better` point graded `urgent` | it earns a round and a note it did not warrant — the budget stops to bound aught |
 | an `urgent` point graded `better` | a shipped harm slips past good-enough and evolves into a defect that reaches a user |
 
 ## .the test — for a reviewer who reads a concession

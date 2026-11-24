@@ -33,7 +33,7 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
       │
       └─ spend your own lever first, then ask a human
          ├─ increase budget — yours to spend
-         │  └─ rhx route.guard.budget --for review --add N --peer l1-reviewer --stone 1.execute
+         │  └─ rhx route.guard.budget --for review --add 2 --peer l1-reviewer --stone 1.execute
          │
          ├─ overrule the malfunction — a human must grant
          │  └─ rhx route.stone.set --stone 1.execute --as overruled
@@ -76,7 +76,7 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
       │
       └─ spend your own lever first, then ask a human
          ├─ increase budget — yours to spend
-         │  └─ rhx route.guard.budget --for review --add N --peer l1-reviewer --stone 1.execute
+         │  └─ rhx route.guard.budget --for review --add 2 --peer l1-reviewer --stone 1.execute
          │
          ├─ overrule the malfunction — a human must grant
          │  └─ rhx route.stone.set --stone 1.execute --as overruled

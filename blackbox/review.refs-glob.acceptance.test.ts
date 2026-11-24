@@ -25,11 +25,16 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.refs-glob' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.2: pass multiple refs via glob pattern
    */
-  given('[case1] glob pattern matches multiple ref files', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] glob pattern matches multiple ref files', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to glob pattern', () => {
       const res = useThen('invoke review skill with glob refs', async () => {
         // clone fixture to temp dir
@@ -99,7 +104,7 @@ describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.7: multiple --refs via repeated flags
    */
-  given('[case2] multiple refs via repeated --refs flags', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case2] multiple refs via repeated --refs flags', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs specified multiple times', () => {
       const res = useThen(
         'invoke review skill with repeated refs flags',

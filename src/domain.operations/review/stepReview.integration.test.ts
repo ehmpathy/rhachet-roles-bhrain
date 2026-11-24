@@ -83,6 +83,11 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
   return { repoDir };
 };
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what integration --scope 'path://stepReview' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 /**
  * 🔴 .mock = NONE. this suite calls the REAL external LLM provider.
  *
@@ -362,28 +367,31 @@ describe('stepReview', () => {
     });
   });
 
-  given('[case4] output parent directory is inaccessible', () => {
-    when('[t0] stepReview is called with unwritable path', () => {
-      then('throws error about permission denied', async () => {
-        const error = await getError(
-          stepReview(
-            {
-              rules: '.agent/**/briefs/rules/*.md',
-              paths: 'src/*.ts',
-              output: '/nonexistent/parent/review.md',
-              focus: 'push',
-              goal: 'representative',
-              cwd: ASSETS_TYPESCRIPT,
-            },
-            { brain: scene.brain },
-          ),
-        );
+  given.runIf(isLiveBrainReviewTargeted)(
+    '[case4] output parent directory is inaccessible',
+    () => {
+      when('[t0] stepReview is called with unwritable path', () => {
+        then('throws error about permission denied', async () => {
+          const error = await getError(
+            stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'src/*.ts',
+                output: '/nonexistent/parent/review.md',
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_TYPESCRIPT,
+              },
+              { brain: scene.brain },
+            ),
+          );
 
-        expect(error).toBeDefined();
-        expect(error.message).toContain('EACCES');
+          expect(error).toBeDefined();
+          expect(error.message).toContain('EACCES');
+        });
       });
-    });
-  });
+    },
+  );
 
   given('[case5] valid inputs with rules and paths - rule enumeration', () => {
     when('[t0] stepReview is called', () => {
@@ -587,6 +595,11 @@ describe('stepReview', () => {
     });
   });
 
+  // [t0] reads globs only and runs on every host; [t1] and [t2] call the brain, behind the flag
+  const whenLiveBrainReviewRepeatably = isLiveBrainReviewTargeted
+    ? when.repeatably(REPEATABLY_CONFIG)
+    : when.skip;
+
   given('[case9] prose-author example repo', () => {
     when('[t0] before any changes', () => {
       then('rules glob matches 2 prose style rules', async () => {
@@ -623,7 +636,7 @@ describe('stepReview', () => {
       });
     });
 
-    when.repeatably(REPEATABLY_CONFIG)(
+    whenLiveBrainReviewRepeatably(
       '[t1] stepReview on chapter2.fixed.md',
       () => {
         const outputPath = path.join(os.tmpdir(), 'prose-review-fixed.md');
@@ -684,7 +697,7 @@ describe('stepReview', () => {
       },
     );
 
-    when.repeatably(REPEATABLY_CONFIG)('[t2] stepReview on chapter2.md', () => {
+    whenLiveBrainReviewRepeatably('[t2] stepReview on chapter2.md', () => {
       const outputPath = path.join(os.tmpdir(), 'prose-review-unfixed.md');
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -722,70 +735,75 @@ describe('stepReview', () => {
     });
   });
 
-  given('[case10] rules traversal through symlink via stepReview', () => {
-    // .what = tests that stepReview finds and uses rules through a symlink
-    // .why = wish requires proof of symlink fix 'via the review skill'
-    const ASSETS_SYMLINK = path.join(__dirname, '.test/assets');
+  given.runIf(isLiveBrainReviewTargeted)(
+    '[case10] rules traversal through symlink via stepReview',
+    () => {
+      // .what = tests that stepReview finds and uses rules through a symlink
+      // .why = wish requires proof of symlink fix 'via the review skill'
+      const ASSETS_SYMLINK = path.join(__dirname, '.test/assets');
 
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] stepReview with rules glob through symlink',
-      () => {
-        const outputPath = path.join(os.tmpdir(), 'symlink-rules-review.md');
-        afterAll(async () => fs.rm(outputPath, { force: true }));
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview with rules glob through symlink',
+        () => {
+          const outputPath = path.join(os.tmpdir(), 'symlink-rules-review.md');
+          afterAll(async () => fs.rm(outputPath, { force: true }));
 
-        // single API call, result shared across assertions
-        const result = useThen(
-          'stepReview succeeds with symlink rules',
-          async () => {
-            const res = await stepReview(
-              {
-                // rules path goes through symlink to example.repo/rules/
-                rules: 'example.symlink/via-symlink-rules/**/*.md',
-                // target file with violations from example.repo/src/
-                paths: 'example.repo/src/invalid.ts',
-                output: outputPath,
-                focus: 'push',
-                goal: 'representative',
-                cwd: ASSETS_SYMLINK,
-              },
-              { brain: scene.brain },
-            );
+          // single API call, result shared across assertions
+          const result = useThen(
+            'stepReview succeeds with symlink rules',
+            async () => {
+              const res = await stepReview(
+                {
+                  // rules path goes through symlink to example.repo/rules/
+                  rules: 'example.symlink/via-symlink-rules/**/*.md',
+                  // target file with violations from example.repo/src/
+                  paths: 'example.repo/src/invalid.ts',
+                  output: outputPath,
+                  focus: 'push',
+                  goal: 'representative',
+                  cwd: ASSETS_SYMLINK,
+                },
+                { brain: scene.brain },
+              );
 
-            // log output for observability
-            logOutputHead({
-              label: 'symlink.rules.review',
-              output: res.review.formatted,
-            });
+              // log output for observability
+              logOutputHead({
+                label: 'symlink.rules.review',
+                output: res.review.formatted,
+              });
 
-            return res;
-          },
-        );
+              return res;
+            },
+          );
 
-        then('review completes without "rules not found" error', async () => {
-          expect(result.review.formatted).toBeDefined();
-          expect(result.review.formatted.length).toBeGreaterThan(0);
-        });
+          then('review completes without "rules not found" error', async () => {
+            expect(result.review.formatted).toBeDefined();
+            expect(result.review.formatted.length).toBeGreaterThan(0);
+          });
 
-        then('metrics show rules were found through symlink', async () => {
-          // 2 rules in example.repo/rules/ via symlink
-          expect(result.metrics.files.rulesCount).toBe(2);
-          // 1 target file
-          expect(result.metrics.files.targetsCount).toBe(1);
-        });
+          then('metrics show rules were found through symlink', async () => {
+            // 2 rules in example.repo/rules/ via symlink
+            expect(result.metrics.files.rulesCount).toBe(2);
+            // 1 target file
+            expect(result.metrics.files.targetsCount).toBe(1);
+          });
 
-        then(
-          'review detects violations (rules applied correctly)',
-          async () => {
-            // invalid.ts has console.log and any type violations
-            // rules should detect these since symlink traversal works
-            expect(result.review.formatted.toLowerCase()).toContain('blocker');
-          },
-        );
-      },
-    );
-  });
+          then(
+            'review detects violations (rules applied correctly)',
+            async () => {
+              // invalid.ts has console.log and any type violations
+              // rules should detect these since symlink traversal works
+              expect(result.review.formatted.toLowerCase()).toContain(
+                'blocker',
+              );
+            },
+          );
+        },
+      );
+    },
+  );
 
-  given(
+  given.runIf(isLiveBrainReviewTargeted)(
     '[case11] --conversation threads prior-dialogue files into the prompt',
     () => {
       // .what = regression for the doubled-path read fault: a --conversation file

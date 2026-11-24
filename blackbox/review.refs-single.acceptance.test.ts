@@ -25,12 +25,17 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_REVIEW=1 rhx git.repo.test --what acceptance --against local --env test --scope 'path://review.refs-single' --mode apply
+const isLiveBrainReviewTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_REVIEW === '1';
+
 describe('review.refs-single.acceptance', () => {
   /**
    * usecase.1: pass single ref file to review skill
    * usecase.3: ref content is accessible to rules in review
    */
-  given('[case1] single ref file provided to review', () => {
+  given.runIf(isLiveBrainReviewTargeted)('[case1] single ref file provided to review', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to single file', () => {
       const res = useThen('invoke review skill with single ref', async () => {
         // clone fixture to temp dir

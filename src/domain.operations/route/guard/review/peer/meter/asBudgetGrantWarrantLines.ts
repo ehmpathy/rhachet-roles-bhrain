@@ -1,3 +1,5 @@
+import { ASK_TEXT_BUDGET_NOTE } from '../genRouteGuardExhaustedReason';
+
 /**
  * .what = the tree rows a GRANTED budget top-up renders to name the warrant that earned it
  * .why = a grant records which fact it read, beside the fact itself. the predicate reads a live
@@ -27,9 +29,9 @@
  *    asks about. a pull may hold many stones, or none of this one's rounds.
  *
  * 🟡 .and the ask is REPEATED here, which is the point.
- *    the concede ack asks for the same sentence at the moment of the grade; this asks again at the
- *    moment of the spend. a driver reads the ack once and this on every grant, so the ask lands
- *    beside the act that owes it.
+ *    the concede ack asks for the same sentence at the moment of the grade, and the judge's urgent
+ *    halt asks at the moment the driver decides to spend; this asks again after the spend. all
+ *    three read `ASK_TEXT_BUDGET_NOTE`, so the ask lands beside each act that owes it.
  *
  * 🔴 .the granted row carries NO glyph; the warn row does.
  *    a glyph marks the *"important callout"* `rule.prefer.chill-nature-emojis` reserves one for, so
@@ -56,6 +58,6 @@ export const asBudgetGrantWarrantLines = (input: {
     return `${prefix} ${slug} · conceded urgent`;
   }),
   '   │',
-  '   ├─ 🟡 tell your human why this stone bought budget',
+  `   ├─ 🟡 ${ASK_TEXT_BUDGET_NOTE}`,
   '   │',
 ];

@@ -76,12 +76,13 @@ your levers are a `.taken`, a budget top-up (if it must re-read to confirm), or 
 
 ## 5. the BUDGET law — only an `urgent` concession earns more; `better` never does
 
-> **a budget hit needs a human ⟺ a live `urgent` concession stands**
+> **a budget hit earns more budget ⟺ a live `urgent` concession stands**
 
 the budget is the maintenance floor. spend at least the budget, and what remains evolves later. a
 concession graded `better` (code idealism, maintenance) is shed by the judge and passes — no human.
 a concession graded `urgent` (a nameable shipped harm — security · safety · monetary · reputation ·
-behavioral) warns the human and earns more budget.
+behavioral) earns more budget: you run the top-up yourself, and write your human why this stone
+bought it.
 
 ⇒ what is required of you: grade every concession (`--severity better|urgent`), by the harm test —
 name the harm that ships if unfixed. no nameable harm → `better`. never reach for `urgent` to buy a

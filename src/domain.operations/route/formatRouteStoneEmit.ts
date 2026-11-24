@@ -575,13 +575,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         // 🟡 the urgent warn names what the grade earns — more budget, for this stone
         //    (define.invariant.review.peer.budget.urgent-earns-budget). it must reach EVERY
         //    halt a driver sees, and this synchronous emit is the primary one.
-        // 🔴 it states the EARNING and never the owner, because the two surfaces that render
-        //    it disagree on who spends: the exhaustion gate's options block says `yours to
-        //    spend` (the urgent grade is the driver's own warrant), while the judge halt says
-        //    `ask your human` (`…judge.urgent-guides-the-budget-ask`). a warn that picked one
-        //    owner would contradict whichever block it sat above — and it sits above both.
+        // 🔴 it states the EARNING and never the owner: the owner is the remedy block's to name.
+        //    the options block below reads `REMEDY_LABEL_BUDGET_GRANT`, the same label the
+        //    judge's urgent halt prints on its own surface. a second owner line here would be a
+        //    second copy.
         // 🔴 nested under `reason`, never a peer of it — the warn explains WHY that reason
-        //    is a human wait, so it is the reason's child, not a second top-level fact.
+        //    earns a round, so it is the reason's child, not a second top-level fact.
         //    `warnText` is only ever set for an urgent concession, which always carries the
         //    `budget exhausted` marker, so `reasonConnector` is always `├─` here — the `│`
         //    continuation below is the one this nest relies on.
