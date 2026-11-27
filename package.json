@@ -25,6 +25,7 @@
     "./cli/review._.cost": "./dist/contract/cli/review._.cost.js",
     "./cli/reflect": "./dist/contract/cli/reflect.js",
     "./cli/reflect.on.token.spend": "./dist/contract/cli/reflect.on.token.spend.js",
+    "./cli/reflect.on.transcripts": "./dist/contract/cli/reflect.on.transcripts.js",
     "./cli/research": "./dist/contract/cli/research.js",
     "./cli/goal": "./dist/contract/cli/goal.js",
     "./cli/memory": "./dist/contract/cli/memory.js",

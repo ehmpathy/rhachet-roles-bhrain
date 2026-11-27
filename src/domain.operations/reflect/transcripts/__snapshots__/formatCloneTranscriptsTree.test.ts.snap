@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatCloneTranscriptsTree given: [case1] a forked session and a transcript that could not be read when: [t0] rendered for this tree then: it matches the snapshot 1`] = `
+"🦉 who spoke last?
+
+🌕 reflect.on.transcripts
+   ├─ scope: this tree
+   ├─ shown: 2
+   ├─ hidden: 410 under 2 prompts · 6 past the limit
+   └─ sessions, newest human prompt first
+      ├─ 28230521-39ee-4813-8d61-8680dbeb2a41
+      │  ├─ actor: hash=affc8cb5
+      │  ├─ prompt last: 2026-11-26 · "pave a tool to transform timestamps into a form a human can read, so the logs..."
+      │  ├─ activity: 2026-11-23 → 2026-11-27
+      │  ├─ size: 122 prompts · 38085 entries · 132.0MB
+      │  └─ resume: CLAUDE_CONFIG_DIR='/repo/.agent/.actors/actor.via.hash=affc8cb5/brain/.claude' claude --resume 28230521-39ee-4813-8d61-8680dbeb2a41
+      │
+      └─ ffffffff-ffff-4fff-8fff-ffffffffffff
+         ├─ actor: human
+         ├─ fault: EACCES: permission denied
+         └─ resume: CLAUDE_CONFIG_DIR='/home/me/.claude' claude --resume ffffffff-ffff-4fff-8fff-ffffffffffff
+"
+`;
+
+exports[`formatCloneTranscriptsTree given: [case2] no session left after the filters when: [t0] rendered then: it matches the snapshot 1`] = `
+"🦉 who spoke last?
+
+🌕 reflect.on.transcripts
+   ├─ scope: this tree
+   ├─ shown: 0
+   ├─ hidden: 3 under 2 prompts · 0 past the limit
+   └─ no session found
+      └─ widen with --all, or lower --min-prompts
+"
+`;
