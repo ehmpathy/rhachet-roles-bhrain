@@ -1,0 +1,484 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t0] each face is asked for help then: each renders as the snapshot shows: course --help 1`] = `
+"🦉 tea first
+
+📜 education.pursuit.course
+   ├─ what = descend into one course of a pursuit, and return from it
+   ├─ usage
+   │  ├─ rhx education.pursuit.course init --course <slug>
+   │  └─ rhx education.pursuit.course exit
+   ├─ runs only within a pursuit; open one with rhx education.pursuit init
+   ├─ a course ends only by exit, once every stone before 6.exit has passed
+   ├─ examples
+   │  ├─ rhx education.pursuit.course init --course idempotency
+   │  └─ rhx education.pursuit.course exit
+   ├─ guard verb = judge --criterion exited --route $route
+   └─ exit = 0 done · 1 malfunction · 2 refused, with its fix"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t0] each face is asked for help then: each renders as the snapshot shows: pedigree --help 1`] = `
+"🦉 tea first
+
+📜 education.pedigree
+   ├─ what = the record of what each role was taught: pursuits, courses, greats, claims
+   ├─ usage
+   │  ├─ rhx education.pedigree get [--for <role>]
+   │  └─ rhx education.pedigree set [--from <pursuit route>]
+   ├─ inputs
+   │  ├─ --for (get) one role; default every role this repo holds
+   │  └─ --from (set) the pursuit to stamp; default the bound one
+   ├─ examples
+   │  ├─ rhx education.pedigree get --for mechanic
+   │  └─ rhx education.pedigree set   # from 4.graduate of a pursuit
+   └─ exit = 0 done · 1 malfunction · 2 refused, with its fix"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t0] each face is asked for help then: each renders as the snapshot shows: pursuit --help 1`] = `
+"🦉 tea first
+
+📜 education.pursuit
+   ├─ what = send a role on a pursuit: courses from the greats, then graduation
+   ├─ usage
+   │  └─ rhx education.pursuit init --for <role> --slug <slug> [--course <slug>…]
+   ├─ inputs
+   │  ├─ --for (required) the role to educate: own, linked, or native to this repo
+   │  ├─ --slug the pursuit name, kebab; defaults to the course when one --course is named
+   │  └─ --course a course to seed the plot, in order; repeatable
+   ├─ examples
+   │  ├─ rhx education.pursuit init --for mechanic --course idempotency
+   │  └─ rhx education.pursuit init --for mechanic --slug reliable-writes --course idempotency --course retries
+   ├─ guard verb = judge --criterion plot-valid|courses-exited|pedigree-stamped|boot-within-budget --route $route
+   └─ exit = 0 done · 1 malfunction · 2 refused, with its fix"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t1] a course init runs before any pursuit then: the refusal renders as the snapshot shows 1`] = `
+"✋ ConstraintError: a course runs only within a pursuit
+   ├─ bound = (none)
+   └─ fix: open one first: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t2.1] the pedigree is read for an unknown role then: the refusal renders as the snapshot shows 1`] = `
+"✋ ConstraintError: no role mechanik in this repo
+   ├─ role = mechanik
+   ├─ roles found = mechanic (native)
+   └─ fix: did you mean --for mechanic?"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t2] a pursuit opens for an unknown role then: the refusal renders as the snapshot shows 1`] = `
+"✋ ConstraintError: no role mechanik in this repo
+   ├─ role = mechanik
+   ├─ roles found = mechanic (native)
+   └─ fix: did you mean --for mechanic?"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course exit, done 1`] = `
+"🦉 as leaves fall
+
+📜 education.pursuit.course exit
+   ├─ course = 1. idempotency
+   ├─ stones = all passed, exit recorded
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   ├─ bound = the pursuit (was .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency)
+   └─ next: rhx route.drive"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course exit, stones unpassed 1`] = `
+"✋ ConstraintError: a course exits only once its stones have passed
+   ├─ stones unpassed
+   │  ├─ 1.1.outcome.declare
+   │  ├─ 1.2.outcome.baseline
+   │  ├─ 2.1.greats.aim
+   │  ├─ 2.2.greats.read
+   │  ├─ 3.practice.vitro
+   │  ├─ 4.1.entool.blueprint
+   │  ├─ 4.2.entool.execute
+   │  ├─ 5.1.outcome.assess
+   │  └─ 5.2.outcome.reflect
+   └─ fix: drive each through its guard, then exit again: rhx route.drive"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course init 1`] = `
+"🦉 stillness before action
+
+📜 education.pursuit.course init
+   ├─ course = 1. idempotency
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency
+   ├─ files = 13 created, 0 kept
+   ├─ bound = the course (was .route/v$DATE.education.pursuit.mechanic.reliable-writes)
+   └─ next: rhx route.drive"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course init, already exited 1`] = `
+"✋ ConstraintError: course idempotency has already exited
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: init the next plotted course, or pass 2.courses.pursue once every one has exited"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course init, not next in the plot 1`] = `
+"✋ ConstraintError: course retries is not next in the plot
+   ├─ course = retries
+   └─ fix: courses run in plot order; run: rhx education.pursuit.course init --course idempotency"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course init, within a course 1`] = `
+"✋ ConstraintError: already within a course; exit it first
+   ├─ bound = .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: finish its stones, then run: rhx education.pursuit.course exit"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course judge exited, after exit 1`] = `
+"passed: true
+reason: the exit is recorded"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: course judge exited, before exit 1`] = `
+"passed: false
+reason: stones not yet passed: 1.1.outcome.declare, 1.2.outcome.baseline, 2.1.greats.aim, 2.2.greats.read, 3.practice.vitro, 4.1.entool.blueprint, 4.2.entool.execute, 5.1.outcome.assess, 5.2.outcome.reflect; run: rhx route.drive"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pedigree get, none 1`] = `
+"🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = mechanic (native)
+   ├─ pursuits graduated = 0
+   └─ next: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pedigree get, one pursuit 1`] = `
+"🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = mechanic (native)
+   └─ pursuit = v$DATE reliable-writes
+      └─ 1. idempotency
+         ├─ outcome = baseline 1/4 → after 4/4 · transfer task passed
+         ├─ greats = helland · kleppmann
+         ├─ claims = 1 held, 1 refuted
+         └─ yields = 1 brief, 0 skills"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pedigree set 1`] = `
+"🦉 so it is
+
+📜 education.pedigree set
+   ├─ role = mechanic (native)
+   ├─ pursuit = v$DATE reliable-writes
+   ├─ courses
+   │  └─ 1. idempotency · baseline 1/4 → after 4/4
+   ├─ entry = .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.reliable-writes.md
+   ├─ index = .agent/repo=.this/role=mechanic/briefs/education/pedigree._.md
+   └─ boot = .agent/repo=.this/role=mechanic/boot.yml names both (index at say, entry at ref)"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit init 1`] = `
+"🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   ├─ role = mechanic (native)
+   │  ├─ briefs = .agent/repo=.this/role=mechanic/briefs
+   │  ├─ skills = .agent/repo=.this/role=mechanic/skills
+   │  └─ boot = .agent/repo=.this/role=mechanic/boot.yml
+   ├─ courses seeded
+   │  └─ 1. idempotency
+   ├─ files = 8 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit init, graduated today 1`] = `
+"✋ ConstraintError: pursuit reliable-writes already graduated today
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   └─ fix: read it via rhx education.pedigree get, or open a new pursuit under another --slug"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge boot-within-budget 1`] = `
+"passed: true
+reason: the role declares no budget"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge boot-within-budget, held 1`] = `
+"passed: false
+reason: the role's boot exceeds its declared budget (.agent/repo=.this/role=mechanic/boot.yml); move a say entry to ref, or raise budget.tokens deliberately, then re-stamp: rhx education.pedigree set"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge courses-exited 1`] = `
+"passed: true
+reason: all 1 plotted courses have exited"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge courses-exited, held 1`] = `
+"passed: false
+reason: courses not yet exited: idempotency; run: rhx education.pursuit.course init --course idempotency"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge pedigree-stamped, after set 1`] = `
+"passed: true
+reason: the pedigree entry is stamped"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge pedigree-stamped, before set 1`] = `
+"passed: false
+reason: the pedigree entry is absent; run: rhx education.pedigree set"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge plot-valid 1`] = `
+"passed: true
+reason: the plot names sound courses, in order"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t3] a pursuit opens, then its first course then: each step renders as the snapshot shows: pursuit judge plot-valid, held 1`] = `
+"passed: false
+reason: the plot has faults: row 1: course \`\`idempotency\`\` is no lowercase kebab slug; repair .route/v$DATE.education.pursuit.mechanic.reliable-writes/1.courses.plot.yield.md"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: course init, no course 1`] = `
+"✋ ConstraintError: --course is required
+   └─ fix: name the plotted course: rhx education.pursuit.course init --course <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: course judge, criterion of the pursuit 1`] = `
+"✋ ConstraintError: judge needs --criterion exited and --route
+   └─ fix: pass --criterion exited --route $route"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: flag unknown 1`] = `
+"✋ ConstraintError: unknown flag --rol
+   └─ fix: use one of: --for"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: flag with no value 1`] = `
+"✋ ConstraintError: --for needs a value
+   └─ fix: pass --for <value>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: judge with no criterion 1`] = `
+"✋ ConstraintError: judge needs --criterion and --route
+   └─ fix: pass --criterion plot-valid|courses-exited|pedigree-stamped|boot-within-budget --route $route"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: one-value flag twice 1`] = `
+"✋ ConstraintError: --for takes one value
+   └─ fix: pass --for once"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: pursuit init, no role 1`] = `
+"✋ ConstraintError: --for is required
+   └─ fix: name the role to educate: rhx education.pursuit init --for mechanic --slug <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: pursuit init, no slug 1`] = `
+"✋ ConstraintError: a pursuit needs a --slug
+   └─ fix: pass --slug <slug>, or name exactly one --course and it serves as the slug"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: pursuit init, slug not kebab 1`] = `
+"✋ ConstraintError: a slug must be lowercase kebab
+   ├─ slugs bad = Bad_Slug
+   └─ fix: use only a-z, 0-9, and single hyphens, e.g. reliable-writes"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb absent, course 1`] = `
+"✋ ConstraintError: no verb given
+   └─ fix: run: rhx education.pursuit.course init --course <slug>, or exit"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb absent, pedigree 1`] = `
+"✋ ConstraintError: no verb given
+   └─ fix: run: rhx education.pedigree get, or set"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb absent, pursuit 1`] = `
+"✋ ConstraintError: no verb given
+   └─ fix: run: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb unknown 1`] = `
+"✋ ConstraintError: unknown verb \`stamp\`
+   └─ fix: run: rhx education.pedigree get, or set"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb unknown, course 1`] = `
+"✋ ConstraintError: unknown verb \`stamp\`
+   └─ fix: run: rhx education.pursuit.course init --course <slug>, or exit"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t4] a face is called with flags it cannot read then: each refusal renders as the snapshot shows: verb unknown, pursuit 1`] = `
+"✋ ConstraintError: unknown verb \`stamp\`
+   └─ fix: run: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t5] the pedigree is read for every role, then over a corrupt entry then: each renders as the snapshot shows: pedigree get, corrupt entry 1`] = `
+"✋ ConstraintError: a pedigree entry does not parse
+   ├─ entry path = .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.broken.md
+   └─ fix: restore its title and courses table, or re-stamp it: rhx education.pedigree set --from <its pursuit route>"
+`;
+
+exports[`education faces given: [case1] a repo with a native mechanic, on a feature branch when: [t5] the pedigree is read for every role, then over a corrupt entry then: each renders as the snapshot shows: pedigree get, every role 1`] = `
+"🦉 roots run deep
+
+📜 education.pedigree get
+   └─ mechanic
+      └─ pursuit = v$DATE reliable-writes
+         └─ 1. idempotency
+            ├─ outcome = baseline 1/4 → after 4/4 · transfer task passed
+            ├─ greats = helland · kleppmann
+            ├─ claims = 1 held, 1 refuted
+            └─ yields = 1 brief, 0 skills
+
+✨ did you know?
+   └─ open a pursuit: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t0] pursuit init runs on main, then beside another bound route then: each refusal renders as the snapshot shows: course exit, a route that is no course bound 1`] = `
+"✋ ConstraintError: exit runs only within a course
+   ├─ bound = .behavior/v$DATE.other
+   └─ fix: the branch stands on a route that is no course; drive it as usual: rhx route.drive, or bind a pursuit to enter a course from"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t0] pursuit init runs on main, then beside another bound route then: each refusal renders as the snapshot shows: pursuit init, another route bound 1`] = `
+"✋ ConstraintError: the branch is already bound to .behavior/v$DATE.other
+   ├─ bound = .behavior/v$DATE.other
+   └─ fix: open this pursuit on a fresh branch (git checkout -b feat/<slug>), or finish the bound route first"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t0] pursuit init runs on main, then beside another bound route then: each refusal renders as the snapshot shows: pursuit init, on main 1`] = `
+"✋ ConstraintError: cannot bind route on protected branch
+   ├─ branch = main
+   └─ fix: bind from a feature branch: git checkout -b feat/<slug>"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t1] a branch with no bind calls exit, then pedigree set then: --from reaches the stamp: a route that is absent refuses, named: pedigree set, --from a route that is absent 1`] = `
+"✋ ConstraintError: the route to stamp does not exist
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.absent
+   └─ fix: pass --from the route of a pursuit this repo holds, under .route/"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t1] a branch with no bind calls exit, then pedigree set then: each refusal renders as the snapshot shows: course exit, no course bound 1`] = `
+"✋ ConstraintError: exit runs only within a course
+   ├─ bound = (none)
+   └─ fix: enter one from a pursuit: rhx education.pursuit.course init --course <slug>"
+`;
+
+exports[`education faces given: [case2] a repo whose branch cannot take the bind when: [t1] a branch with no bind calls exit, then pedigree set then: each refusal renders as the snapshot shows: pedigree set, no pursuit bound 1`] = `
+"✋ ConstraintError: a pedigree is stamped from a pursuit route
+   ├─ route = (none)
+   └─ fix: run it from a bound pursuit, or pass --from .route/v$date.education.pursuit.$role.$slug"
+`;
+
+exports[`education faces given: [case3] a face run from a subdir of the repo when: [t0] pursuit init runs there then: the refusal renders as the snapshot shows 1`] = `
+"✋ ConstraintError: education runs from the repo root
+   ├─ cwd = $REPO/src
+   ├─ repo root = $REPO
+   └─ fix: run it from $REPO"
+`;
+
+exports[`education faces given: [case4] a pursuit opened with no --course, then re-run when: [t0] pursuit init runs with a --slug and no --course then: it renders as the snapshot shows 1`] = `
+"🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   ├─ role = mechanic (native)
+   │  ├─ briefs = .agent/repo=.this/role=mechanic/briefs
+   │  ├─ skills = .agent/repo=.this/role=mechanic/skills
+   │  └─ boot = .agent/repo=.this/role=mechanic/boot.yml (absent, so every brief boots at say)
+   ├─ courses seeded
+   │  └─ (none; 1.courses.plot plots them)
+   ├─ files = 8 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive"
+`;
+
+exports[`education faces given: [case4] a pursuit opened with no --course, then re-run when: [t1] pursuit init re-runs, now with a --course then: it renders as the snapshot shows 1`] = `
+"🦉 the pond is still
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   ├─ role = mechanic (native)
+   │  ├─ briefs = .agent/repo=.this/role=mechanic/briefs
+   │  ├─ skills = .agent/repo=.this/role=mechanic/skills
+   │  └─ boot = .agent/repo=.this/role=mechanic/boot.yml (absent, so every brief boots at say)
+   ├─ courses seeded
+   │  └─ (kept as 0.wish.md holds them; a re-run never rewrites the wish, edit it to change the seed)
+   ├─ files = 0 created, 8 kept
+   ├─ bound = the pursuit (kept)
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: naught new was written; resume with rhx route.drive"
+`;
+
+exports[`education faces given: [case4] a pursuit opened with no --course, then re-run when: [t2] a verb is passed a flag it does not read then: each renders as the snapshot shows: exit with --course 1`] = `
+"✋ ConstraintError: exit does not read --course
+   └─ fix: exit reads no flag; drop --course"
+`;
+
+exports[`education faces given: [case4] a pursuit opened with no --course, then re-run when: [t2] a verb is passed a flag it does not read then: each renders as the snapshot shows: pedigree set with --for 1`] = `
+"✋ ConstraintError: set does not read --for
+   └─ fix: set reads only: --from"
+`;
+
+exports[`education faces given: [case5] a repo that publishes roles with empty dirs, as this one does when: [t0] the pedigree is read for every role, then per role then: each renders as the snapshot shows: pedigree get, a role with no briefs dir 1`] = `
+"🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = reflector (own)
+   ├─ pursuits graduated = 0
+   └─ next: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case5] a repo that publishes roles with empty dirs, as this one does when: [t0] the pedigree is read for every role, then per role then: each renders as the snapshot shows: pedigree get, empty-dir roles 1`] = `
+"🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ navigator
+   │  └─ pursuit = v$DATE routes
+   │     └─ 1. landmarks
+   │        ├─ outcome = baseline 1/3 → after 3/3 · transfer task passed
+   │        ├─ greats = lynch
+   │        ├─ claims = 1 held
+   │        └─ yields = 1 brief, 0 skills
+   │
+   └─ no courses (1 role)
+      └─ reflector
+
+✨ did you know?
+   └─ open a pursuit: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education faces given: [case6] a repo that publishes its own mechanic when: [t0] a pursuit opens for the own role then: it renders as the snapshot shows: pursuit init, own role 1`] = `
+"🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency
+   ├─ role = mechanic (own)
+   │  ├─ briefs = src/domain.roles/mechanic/briefs
+   │  ├─ skills = src/domain.roles/mechanic/skills
+   │  └─ boot = src/domain.roles/mechanic/boot.yml
+   ├─ courses seeded
+   │  └─ 1. idempotency
+   ├─ files = 8 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive"
+`;
+
+exports[`education faces given: [case7] a pursuit opened with two courses at once when: [t0] pursuit init runs with two --course flags then: it renders as the snapshot shows 1`] = `
+"🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   ├─ role = mechanic (native)
+   │  ├─ briefs = .agent/repo=.this/role=mechanic/briefs
+   │  ├─ skills = .agent/repo=.this/role=mechanic/skills
+   │  └─ boot = .agent/repo=.this/role=mechanic/boot.yml (absent, so every brief boots at say)
+   ├─ courses seeded
+   │  ├─ 1. idempotency
+   │  └─ 2. retries
+   ├─ files = 8 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive"
+`;

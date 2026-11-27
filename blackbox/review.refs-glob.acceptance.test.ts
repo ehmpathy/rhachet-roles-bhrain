@@ -4,6 +4,7 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
@@ -29,7 +30,8 @@ describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.2: pass multiple refs via glob pattern
    */
-  given('[case1] glob pattern matches multiple ref files', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] glob pattern matches multiple ref files', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to glob pattern', () => {
       const res = useThen('invoke review skill with glob refs', async () => {
         // clone fixture to temp dir
@@ -99,7 +101,8 @@ describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.7: multiple --refs via repeated flags
    */
-  given('[case2] multiple refs via repeated --refs flags', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case2] multiple refs via repeated --refs flags', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs specified multiple times', () => {
       const res = useThen(
         'invoke review skill with repeated refs flags',

@@ -8,7 +8,7 @@ exports[`keyrack.firewall-key-absent.acceptance given: [case1] this repo keyrack
 }
 `;
 
-exports[`keyrack.firewall-key-absent.acceptance given: [case2] this repo keyrack manifest, and actions secrets that carry the real key when: [t0] the CI credential step runs then: the granted row is pinned, its secret masked 1`] = `
+exports[`keyrack.firewall-key-absent.acceptance given: [case2] this repo keyrack manifest, and actions secrets that carry the key when: [t0] the CI credential step runs then: the granted row is pinned, its secret masked 1`] = `
 {
   "grant": {
     "env": "test",

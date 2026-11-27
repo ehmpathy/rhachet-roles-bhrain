@@ -129,22 +129,16 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
     });
   });
 
-  given('[case2] this repo keyrack manifest, and actions secrets that carry the real key', () => {
-    // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): the
-    //        real OPENROUTER_API_KEY, as the test run's keyrack unlock supplies it, goes through
-    //        the same CI step. an absent key fails loud, never skips.
+  given('[case2] this repo keyrack manifest, and actions secrets that carry the key', () => {
+    // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): a
+    //        present OPENROUTER_API_KEY goes through the same CI step
     // .note = the firewall grants on presence; it never calls openrouter, so this case proves
-    //        the keyrack contract (key present → granted row), not that the key is live. the live
-    //        provider call is proven by the brain-backed review acceptance suites, which send
-    //        this same granted key to openrouter and parse its reply
-    const secrets = useBeforeAll(async () => {
-      const key = process.env.OPENROUTER_API_KEY;
-      if (!key)
-        throw new ConstraintError('OPENROUTER_API_KEY is required for this case', {
-          hint: 'run: rhx keyrack unlock --owner ehmpath --env test',
-        });
-      return { OPENROUTER_API_KEY: key };
-    });
+    //        the keyrack contract (key present → granted row), not that a key is live. so the
+    //        secret is a fixture value, and the case runs keyless. the live provider call is
+    //        proven by the brain-backed review acceptance suites, under BRAIN_LIVE=true
+    const secrets = useBeforeAll(async () => ({
+      OPENROUTER_API_KEY: 'fixture-key-firewall-grants-on-presence',
+    }));
 
     when('[t0] the CI credential step runs', () => {
       const result = useThen('the firewall reports', async () =>

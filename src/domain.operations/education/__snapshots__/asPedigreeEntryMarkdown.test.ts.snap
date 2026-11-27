@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asPedigreeEntryMarkdown given: [case1] a pursuit of two courses when: [t0] the entry is rendered then: it renders as the snapshot shows 1`] = `
+"# pedigree: mechanic · v2026_11_23 reliable-writes
+
+the courses mechanic took in this pursuit, in the order pursued. route: \`.route/v2026_11_23.education.pursuit.mechanic.reliable-writes\`
+
+## .courses
+
+| k | course | builds on | baseline | after | transfer | greats | held | refuted | untested | briefs | skills |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | idempotency | — | 1/4 | 4/4 | passed | helland · kleppmann | 2 | 1 | 0 | 2 | 0 |
+| 2 | retries | idempotency | 0/3 | 3/3 | passed | aws builders library | 1 | 0 | 0 | 0 | 1 |
+
+## .course=1.idempotency
+
+route: \`.route/v2026_11_23.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency\`
+
+| claim | verdict |
+| --- | --- |
+| k1 natural-key upsert dedupes a replay | held |
+| k3 a key at the boundary dedupes a charge | held |
+| k7 backoff alone makes a write safe | refuted |
+
+| path | kind |
+| --- | --- |
+| briefs/rule.require.idempotency-key-at-external-boundaries.md | brief |
+| briefs/howto.replay-a-consumer-in-vitro.md | brief |
+
+## .course=2.retries
+
+route: \`.route/v2026_11_23.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=2.retries\`
+
+| claim | verdict |
+| --- | --- |
+| k1 jitter spreads a retry storm | held |
+
+| path | kind |
+| --- | --- |
+| skills/retry.replay.sh | skill |
+"
+`;

@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import {
   genTempDirForRhachet,
@@ -26,7 +27,8 @@ const REPEATABLE_CONFIG = {
 } as const;
 
 describe('review.join-intersect.acceptance', () => {
-  given('[case1] intersect mode with both diffs and paths', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] intersect mode with both diffs and paths', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] only dirty.ts is changed, paths matches both files', () => {
       const res = useThen('invoke review with intersect', async () => {
         // clone fixture to temp dir with git initialized (all files committed to main)
@@ -163,7 +165,8 @@ describe('review.join-intersect.acceptance', () => {
     });
   });
 
-  given('[case3] union mode with empty diffs', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case3] union mode with empty diffs', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] no files changed, paths matches files, union mode', () => {
       const res = useThen('invoke review with union on unchanged repo', async () => {
         // clone fixture (all files committed, no changes)
@@ -218,7 +221,8 @@ describe('review.join-intersect.acceptance', () => {
     });
   });
 
-  given('[case4] default mode is intersect', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case4] default mode is intersect', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] no --join specified, only dirty.ts changed', () => {
       const res = useThen('invoke review without --join flag', async () => {
         // clone fixture
@@ -280,7 +284,8 @@ describe('review.join-intersect.acceptance', () => {
     });
   });
 
-  given('[case5] only --paths specified (no --diffs)', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case5] only --paths specified (no --diffs)', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] single source, join mode does not apply', () => {
       const res = useThen('invoke review with only paths', async () => {
         // clone fixture

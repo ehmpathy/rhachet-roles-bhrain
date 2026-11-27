@@ -5,6 +5,7 @@ import { keyrack } from 'rhachet/keyrack';
 import { DEFAULT_TEST_BRAIN } from './src/.test/genTestBrainContext';
 import { sdkBrainTierPick } from './src/.test/sdkBrainTierPick';
 import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified';
+import { RUN_BRAIN_TEST } from './src/.test/utils/RUN_BRAIN_TEST';
 
 /**
  * .what = runs once before a jest run that drives a live brain
@@ -19,6 +20,10 @@ import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified
  */
 // eslint-disable-next-line import/no-default-export
 export default async (): Promise<void> => {
+  // a keyless run drives no live brain, so it needs no tier pick (bulletin live-brain-tests-three-tiers)
+  if (!RUN_BRAIN_TEST) return;
+
+  // source the brain keys, as the env files do on the live-brain tier
   if (existsSync(join(process.cwd(), '.agent/keyrack.yml')))
     keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });
   const result = await setBrainTierPickQualified(

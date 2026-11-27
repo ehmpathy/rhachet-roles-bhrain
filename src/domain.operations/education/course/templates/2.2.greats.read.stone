@@ -1,0 +1,20 @@
+read the greats of `$COURSE_SLUG` and kernelize them.
+ref: $COURSE_ROUTE/2.1.greats.aim.yield.md
+
+read each work at its source, via bhrowser (`browser.*`). a `websearch` or `webfetch` summary
+is a pointer, never evidence; label any great you could only reach that way.
+
+distill kernels: one concept each, atomic, cited to the page you read (`term=doc.kernel`).
+tag each kernel a claim when a test could refute it (`term=doc.kernel.claim`); a definition is
+a kernel, not a claim.
+
+emit into $COURSE_ROUTE/2.2.greats.read.yield.md, with these two tables:
+
+| great | work | read at |
+|---|---|---|
+| helland | idempotence is not a medical condition | acm queue, 2012 |
+
+| kernel | claim | great | page |
+|---|---|---|---|
+| k1 natural-key upsert dedupes a replay | yes | helland | p.3 |
+| k2 an idempotent op converges on retry | no | kleppmann | ch. 11 |

@@ -6,11 +6,15 @@ import {
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-describe('stepReflect.caseProseAuthor', () => {
+// a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+const describeIfBrainTest = RUN_BRAIN_TEST ? describe : describe.skip;
+
+describeIfBrainTest('stepReflect.caseProseAuthor', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 

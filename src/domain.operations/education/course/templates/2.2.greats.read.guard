@@ -1,0 +1,16 @@
+artifacts:
+  - $route/2.2.greats.read.yield.md
+
+reviews:
+  self:
+    - slug: has-cited-every-kernel-to-a-page-read
+      say: |
+        for each kernel in $COURSE_ROUTE/2.2.greats.read.yield.md: name the page you read it on.
+        a kernel known only from a search summary or a secondhand blog is a pointer, not
+        evidence. relabel it, or read the source.
+
+    - slug: has-tagged-claims-honestly
+      say: |
+        for each kernel tagged a claim: name the test that could refute it.
+        for each kernel not tagged a claim: confirm no test could refute it.
+        a claim no test could refute is a definition; a definition a test could refute is a claim.

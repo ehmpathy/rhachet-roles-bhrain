@@ -1,0 +1,17 @@
+plot the courses of this pursuit. ref: $PURSUIT_ROUTE/0.wish.md
+
+decompose the aim into courses: one subject each, in the order they build on each other.
+the courses seeded in the wish are a start, not the plot; add, split, merge, or reorder them.
+
+for each course, state:
+- slug (kebab, e.g. `idempotency`)
+- the subject, in one line
+- what it builds on (the slug of an earlier course, or `—`)
+- why this order
+
+emit into $PURSUIT_ROUTE/1.courses.plot.yield.md, with this table first:
+
+| k | course | subject | builds on |
+|---|---|---|---|
+| 1 | idempotency | writes that converge under retry | — |
+| 2 | retries | when and how to retry a call | idempotency |

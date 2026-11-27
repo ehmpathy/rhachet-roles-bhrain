@@ -1,0 +1,18 @@
+declare the outcome of course $COURSE_ORDINAL, `$COURSE_SLUG`, before any read.
+ref: $PURSUIT_ROUTE/1.courses.plot.yield.md
+
+state what $ROLE must be able to DO once this course ends, as assessment tasks:
+- whole, realistic tasks from the role's real work, never a quiz of facts
+- varied: 3 to 5 tasks that come at the subject from different sides
+- one task held back for `5.1` as the transfer task, run in a scratch worktree of the real repo, never a checkout in the live tree, which drops its bind
+- a pass bar per task: what an observer would check to call it passed
+
+why first: without a declared outcome, the read has no stop rule and the assess has no bar.
+see `define.education.pursuit.course.shape`.
+
+emit into $COURSE_ROUTE/1.1.outcome.declare.yield.md, with this table:
+
+| task | does | pass bar | held back |
+|---|---|---|---|
+| t1 | replay one queue message three times | exactly one row persists | no |
+| t4 | add a stripe charge to the checkout flow | a retried call charges once | yes |

@@ -1,0 +1,25 @@
+# F11: the upgrade drift in the tree rides this branch, held until the wisher rules
+
+- **fork**: (a) revert the drift not authored by this route and ship the suite alone · (b) keep the drift and ship it with the suite · (c) hold it, flag it, and let the wisher rule before any commit
+- **the drift**, found in self-review `has-pruned-backcompat` (in the tree before stone 5.1, beside the suite's own three `exports` lines):
+  - `rhachet` 1.51.0 → 1.54.1, `rhachet-roles-ehmpathy` 1.42.0 → 1.43.0, `pnpm-lock.yaml` rebuilt
+  - `prepare:rhachet` now inits seven more roles (achiever · telepath · operator · observer · deployer · playwright · enroller)
+  - `.gitattributes` collapses `*.test.ts` in pr diffs
+  - 🔴 `rhachet-artifact-git` moved from `dependencies` to `devDependencies`, while shipped runtime code imports it (`route/judges/runStoneGuardJudges.ts`, `route/reminder/sayToClone.ts`, `route/guard/getRepoRootWithFallback.ts`, `review/setPromptHeadArtifact.ts`, and more). it is no peer dependency, so a consumer's install reaches it only transitively, if at all
+- **taken**: (c). a revert would rewrite `pnpm-lock.yaml`, a ripple outside this suite, and the drift may be a deliberate upgrade the human began; to keep it unread risks a broken publish
+- **rework**: clean either way, before the commit — restore `rhachet-artifact-git` to `dependencies` and re-lock, or drop the drift files from the commit
+- **confidence**: 60% — whether the drift is wanted is the wisher's call; that the dependency move breaks consumers is near-certain
+- **where**: `package.json`, `pnpm-lock.yaml`, `.gitattributes`
+- **verdict**: settled by the foreman — (b) with one repair. the drift ships with the suite; the dependency move is a defect, fixed in this pr, never a question for the human
+  - repair: move `rhachet-artifact-git` 1.1.5 back to `dependencies`, then re-lock. 88 files import it, among them shipped runtime code (`route/judges/runStoneGuardJudges.ts`, `route/reminder/sayToClone.ts`, `route/guard/getRepoRootWithFallback.ts`, `review/setPromptHeadArtifact.ts`, `review/prime/setOnePrefixPoke.ts`). a published package that imports a dev dependency fails at a consumer's runtime with `Cannot find module`. no sense of the wish wants that, so no human call is owed
+  - keep the `rhachet` 1.51.0 → 1.54.1 bump: the suite rests on it. the linked-role row lands a course in a rhachet mod (`.agent/repo=.mods/role=$slug/`), and 1.51 has no mods
+  - keep `rhachet-roles-ehmpathy` 1.43.0, the `prepare:rhachet` roles, and `.gitattributes`. they arrived with the sprout's upgrade, before stone 5.1; a revert rewrites `pnpm-lock.yaml` for no gain and drops roles the tree already boots
+  - clamp: a unit test that reads `package.json` and fails if any package imported from non-test `src/` code sits in `devDependencies` only, so the next upgrade that moves a runtime dep turns the suite red
+- **landed**:
+  - `rhachet-artifact-git` 1.1.5 back in `dependencies`, in `package.json` and the `pnpm-lock.yaml` importer
+  - the clamp's first run found a second defect that predates this branch: `uuid-fns` 1.0.2 sat in `devDependencies` while `review/genLogDirName.ts` and `review/prime/genReviewPrefixPrime.ts` import it at runtime. moved to `dependencies` too
+  - the lock was edited by hand at the importer block (`pnpm install` is not paved here). the resolved versions do not change, only the importer section; CI's frozen install checks it
+  - the clamp is `src/.test/forbidDevDependencyImportsInProd.integration.test.ts`. it sits at integration grain, not unit, because it reads the filesystem (`rule.forbid.unit.remote-boundaries`)
+  - it walks every shipped `src/**/*.ts` (the build's set: no tests, `.test/`, `.scratch/`, `__test*__/`), reads static, `require(…)`, and `import(…)` specifiers, skips `import type`, and allows only `dependencies`, `peerDependencies`, and the package's own name
+  - one narrow allowance: `rhachet-brains-anthropic` in `reflect/tokens/getAllTokenRatesByModel.ts`, a dynamic import whose absent-module fault is caught and read as no rates
+  - it bites: with `rhachet-artifact-git` moved back to dev, `2 passed, 1 failed`; restored, `3 passed, 0 failed`

@@ -67,6 +67,10 @@ exports[`driver.init.status-line-survives-enroll.acceptance given: [case1] a rep
 ✨ hooks
    └─ no changes needed
 
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
+
 "
 `;
 
@@ -141,6 +145,10 @@ exports[`driver.init.status-line-survives-enroll.acceptance given: [case2] a rep
    │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
    └─ boot.md
       └─ created — 1 role
+
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
 
 "
 `;

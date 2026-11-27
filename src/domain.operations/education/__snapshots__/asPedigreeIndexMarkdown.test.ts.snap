@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asPedigreeIndexMarkdown given: [case1] entries out of order when: [t0] the index is rendered then: it renders as the snapshot shows 1`] = `
+"# pedigree: mechanic
+
+every pursuit mechanic graduated, oldest first. each entry, beside this file, cites its courses, greats, and claims.
+
+| date | pursuit | courses | entry |
+|---|---|---|---|
+| v2026_11_23 | reliable-writes | idempotency · retries | \`pedigree.pursuit=v2026_11_23.reliable-writes.md\` |
+| v2026_11_24 | observability | logs | \`pedigree.pursuit=v2026_11_24.observability.md\` |
+"
+`;

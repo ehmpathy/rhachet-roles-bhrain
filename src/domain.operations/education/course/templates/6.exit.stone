@@ -1,0 +1,11 @@
+exit `$COURSE_SLUG`, back to the pursuit.
+
+```sh
+rhx education.pursuit.course exit
+rhx route.drive
+```
+
+exit refuses until every stone before this one has passed. it records the exit, passes this
+stone, and moves the bind back to $PURSUIT_ROUTE, where `2.courses.pursue` pushes the next course.
+
+a course ends only by exit: never pass this stone by hand.

@@ -1,0 +1,2 @@
+judges:
+  - rhx education.pursuit judge --criterion plot-valid --route $route

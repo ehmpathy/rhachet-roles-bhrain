@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`education guards, read by the guard reader given: [case1] the guards the pursuit and course templates ship when: [t0] each is parsed as the guard reader parses it then: each guard reads as the snapshot shows 1`] = `
+[
+  {
+    "artifacts": [],
+    "judges": [
+      "rhx education.pursuit judge --criterion plot-valid --route $route",
+    ],
+    "selfReviews": [],
+    "template": "pursuit/templates/1.courses.plot.guard",
+  },
+  {
+    "artifacts": [
+      "$route/2.courses.pursue.yield/*/6.exit.yield.md",
+    ],
+    "judges": [
+      "rhx education.pursuit judge --criterion courses-exited --route $route",
+    ],
+    "selfReviews": [],
+    "template": "pursuit/templates/2.courses.pursue.guard",
+  },
+  {
+    "artifacts": [
+      "$route/3.courses.review.yield.md",
+      "$PEDIGREE_ENTRY",
+    ],
+    "judges": [
+      "rhx education.pursuit judge --criterion pedigree-stamped --route $route",
+      "rhx education.pursuit judge --criterion boot-within-budget --route $route",
+    ],
+    "selfReviews": [],
+    "template": "pursuit/templates/4.graduate.guard",
+  },
+  {
+    "artifacts": [
+      "$route/2.2.greats.read.yield.md",
+    ],
+    "judges": [],
+    "selfReviews": [
+      {
+        "say": "for each kernel in $COURSE_ROUTE/2.2.greats.read.yield.md: name the page you read it on.
+  a kernel known only from a search summary or a secondhand blog is a pointer, not
+  evidence. relabel it, or read the source.",
+        "slug": "has-cited-every-kernel-to-a-page-read",
+      },
+      {
+        "say": "for each kernel tagged a claim: name the test that could refute it.
+  for each kernel not tagged a claim: confirm no test could refute it.
+  a claim no test could refute is a definition; a definition a test could refute is a claim.",
+        "slug": "has-tagged-claims-honestly",
+      },
+    ],
+    "template": "course/templates/2.2.greats.read.guard",
+  },
+  {
+    "artifacts": [
+      "$route/4.1.entool.blueprint.yield.md",
+    ],
+    "judges": [],
+    "selfReviews": [
+      {
+        "say": "for each planned brief and skill in $COURSE_ROUTE/4.1.entool.blueprint.yield.md: name the held
+  claim it rests on, from $COURSE_ROUTE/3.practice.vitro.yield.md. a yield that rests on a refuted
+  claim is a falsehood planted in the role; cut it. one that rests on an untested claim
+  says so in its own text.",
+        "slug": "has-traced-every-yield-to-a-held-claim",
+      },
+      {
+        "say": "for each planned brief and skill: name the outcome task it serves, from
+  $COURSE_ROUTE/1.1.outcome.declare.yield.md. a yield that serves no task is boot mass the
+  role pays on every session; cut it, or name the task it serves.",
+        "slug": "has-traced-every-yield-to-an-outcome",
+      },
+    ],
+    "template": "course/templates/4.1.entool.blueprint.guard",
+  },
+  {
+    "artifacts": [],
+    "judges": [
+      "rhx education.pursuit.course judge --criterion exited --route $route",
+    ],
+    "selfReviews": [],
+    "template": "course/templates/6.exit.guard",
+  },
+]
+`;

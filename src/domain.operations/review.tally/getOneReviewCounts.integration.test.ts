@@ -8,6 +8,7 @@ import {
 } from '@src/.test/genTestBrainContext';
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 
 import { getOneReviewCounts } from './getOneReviewCounts';
@@ -108,60 +109,68 @@ describe('getOneReviewCounts', () => {
     });
   });
 
-  given('[case3] prose content, exit 0 (reviewer writes prose)', () => {
-    const content = `## summary
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case3] prose content, exit 0 (reviewer writes prose)',
+    () => {
+      const content = `## summary
 
 i found two must-fix problems and one optional suggestion to clean up.
 the two problems block the change; the suggestion is advisory only.`;
 
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] measured with a real brain supplier',
-      () => {
-        const result = useThen('it succeeds probabilistically', async () =>
-          getOneReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
-        );
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] measured with a real brain supplier',
+        () => {
+          const result = useThen('it succeeds probabilistically', async () =>
+            getOneReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
+          );
 
-        then('the tactic is probabilistic', () => {
-          expect(result.detected).toBe(true);
-          if (!result.detected)
-            throw new UnexpectedCodePathError(
-              'no count was detected where a verdict was expected',
-              {
-                hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
-              },
-            );
-          expect(result.tallier).toBe('probabilistic');
-        });
+          then('the tactic is probabilistic', () => {
+            expect(result.detected).toBe(true);
+            if (!result.detected)
+              throw new UnexpectedCodePathError(
+                'no count was detected where a verdict was expected',
+                {
+                  hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
+                },
+              );
+            expect(result.tallier).toBe('probabilistic');
+          });
 
-        then('the counts reflect the prose (2 blockers, 1 nitpick)', () => {
-          if (!result.detected)
-            throw new UnexpectedCodePathError(
-              'no count was detected where a verdict was expected',
-              {
-                hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
-              },
-            );
-          expect(result.blockers).toBe(2);
-          expect(result.nitpicks).toBe(1);
-        });
-      },
-    );
-  });
+          then('the counts reflect the prose (2 blockers, 1 nitpick)', () => {
+            if (!result.detected)
+              throw new UnexpectedCodePathError(
+                'no count was detected where a verdict was expected',
+                {
+                  hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
+                },
+              );
+            expect(result.blockers).toBe(2);
+            expect(result.nitpicks).toBe(1);
+          });
+        },
+      );
+    },
+  );
 
-  given('[case4] garbage content, exit 0 (no verdict)', () => {
-    const content = `asdf qwer zxcv lorem ipsum dolor sit amet`;
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case4] garbage content, exit 0 (no verdict)',
+    () => {
+      const content = `asdf qwer zxcv lorem ipsum dolor sit amet`;
 
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] measured with a real brain supplier',
-      () => {
-        const result = useThen('it succeeds', async () =>
-          getOneReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
-        );
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] measured with a real brain supplier',
+        () => {
+          const result = useThen('it succeeds', async () =>
+            getOneReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
+          );
 
-        then('it returns detected=false (no fabricated verdict)', () => {
-          expect(result.detected).toBe(false);
-        });
-      },
-    );
-  });
+          then('it returns detected=false (no fabricated verdict)', () => {
+            expect(result.detected).toBe(false);
+          });
+        },
+      );
+    },
+  );
 });

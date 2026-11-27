@@ -1,6 +1,7 @@
 import { MalfunctionError } from 'helpful-errors';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 
+import { asAllManifestHookSites } from '@src/.test/asAllManifestHookSites';
 import { getDomainTermsPaths } from '@src/domain.operations/learn/getDomainTermsPaths';
 import { TERMS_HOOK_DECLARED } from '@src/domain.operations/learn/termsHook/TERMS_HOOK_DECLARED';
 
@@ -835,307 +836,365 @@ describe('learn.terms.hook.integration', () => {
     });
   });
 
-  given('[case3] an enabled repo that rhachet re-syncs and derives', () => {
-    // the toggle's whole bet: rhachet's per-role sync, orphan prune, and peer-actor derive all
-    // leave the entry be for an actor that holds the learner. revert the author to
-    // `repo=bhrain/role=learner` and t0 turns red; revert it to a bare toggle author and t1 does
-    const scene = useBeforeAll(async () => {
-      const fixture = genFixture({ slug: 'terms-hook-case3', layout: 'split' });
-      const setOn = runToggle({ scene: fixture, args: ['set', 'on'] });
-      if (setOn.exitCode !== 0)
-        throw new MalfunctionError('set on failed in the case3 fixture', {
-          stderr: setOn.stderr,
-          hint: 'run npm run build, then rerun the suite',
+  given(
+    '[case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md)',
+    () => {
+      // the toggle's whole bet: rhachet's per-role sync, orphan prune, and peer-actor derive all
+      // leave the entry be for an actor that holds the learner. revert the author to
+      // `repo=bhrain/role=learner` and t0 turns red; revert it to a bare toggle author and t1 does
+      const scene = useBeforeAll(async () => {
+        const fixture = genFixture({
+          slug: 'terms-hook-case3',
+          layout: 'split',
+        });
+        const setOn = runToggle({ scene: fixture, args: ['set', 'on'] });
+        if (setOn.exitCode !== 0)
+          throw new MalfunctionError('set on failed in the case3 fixture', {
+            stderr: setOn.stderr,
+            hint: 'run npm run build, then rerun the suite',
+          });
+
+        // the control: the same command under the learner's own role author, beside the toggle's
+        // entry. rhachet's orphan prune drops every `repo=…/role=…` author no linked role with
+        // hooks claims, so this copy must go while the toggle's entry stays
+        const file = path.join(
+          fixture.repo,
+          '.claude',
+          'settings.of.repo.json',
+        );
+        const settings: SettingsRead = JSON.parse(
+          fs.readFileSync(file, 'utf-8'),
+        );
+        const settingsWithControl: SettingsRead = {
+          ...settings,
+          hooks: {
+            ...settings.hooks,
+            Stop: [
+              ...(settings.hooks?.Stop ?? []),
+              {
+                matcher: '*',
+                hooks: [
+                  {
+                    type: 'command',
+                    command: TERMS_HOOK_DECLARED.command,
+                    timeout: TERMS_HOOK_DECLARED.timeoutSeconds,
+                    author: 'repo=bhrain/role=learner',
+                  },
+                ],
+              },
+            ],
+          },
+        };
+        fs.writeFileSync(file, JSON.stringify(settingsWithControl, null, 2));
+
+        // two peer actors, as `rhx enroll` leaves them on disk: one holds the learner, one not
+        const asPeerDir = (hash: string): string =>
+          path.join(
+            fixture.repo,
+            '.agent',
+            '.actors',
+            `actor.via.hash=${hash}`,
+          );
+        for (const [hash, roles] of [
+          ['1a1a1a1a', ['learner']],
+          ['2b2b2b2b', ['driver']],
+        ] as const) {
+          fs.mkdirSync(asPeerDir(hash), { recursive: true });
+          fs.writeFileSync(
+            path.join(asPeerDir(hash), 'actor.json'),
+            JSON.stringify({ schemaVersion: 1, brain: 'claude', roles }),
+          );
+        }
+        // a local rhx, as an installed consumer has one, so the derived Stop command can run whole.
+        // a shim and not a link: pnpm's own bin shim finds its package from its own dir
+        const rhxLocal = path.join(fixture.repo, 'node_modules', '.bin', 'rhx');
+        fs.mkdirSync(path.dirname(rhxLocal), { recursive: true });
+        fs.writeFileSync(rhxLocal, `#!/bin/sh\nexec "${RHX_BIN}" "$@"\n`, {
+          mode: 0o755,
         });
 
-      // the control: the same command under the learner's own role author, beside the toggle's
-      // entry. rhachet's orphan prune drops every `repo=…/role=…` author no linked role with
-      // hooks claims, so this copy must go while the toggle's entry stays
-      const file = path.join(fixture.repo, '.claude', 'settings.of.repo.json');
-      const settings: SettingsRead = JSON.parse(fs.readFileSync(file, 'utf-8'));
-      const settingsWithControl: SettingsRead = {
-        ...settings,
-        hooks: {
-          ...settings.hooks,
-          Stop: [
-            ...(settings.hooks?.Stop ?? []),
-            {
-              matcher: '*',
-              hooks: [
-                {
-                  type: 'command',
-                  command: TERMS_HOOK_DECLARED.command,
-                  timeout: TERMS_HOOK_DECLARED.timeoutSeconds,
-                  author: 'repo=bhrain/role=learner',
-                },
-              ],
-            },
-          ],
-        },
-      };
-      fs.writeFileSync(file, JSON.stringify(settingsWithControl, null, 2));
-
-      // two peer actors, as `rhx enroll` leaves them on disk: one holds the learner, one not
-      const asPeerDir = (hash: string): string =>
-        path.join(fixture.repo, '.agent', '.actors', `actor.via.hash=${hash}`);
-      for (const [hash, roles] of [
-        ['1a1a1a1a', ['learner']],
-        ['2b2b2b2b', ['driver']],
-      ] as const) {
-        fs.mkdirSync(asPeerDir(hash), { recursive: true });
-        fs.writeFileSync(
-          path.join(asPeerDir(hash), 'actor.json'),
-          JSON.stringify({ schemaVersion: 1, brain: 'claude', roles }),
-        );
-      }
-      // a local rhx, as an installed consumer has one, so the derived Stop command can run whole.
-      // a shim and not a link: pnpm's own bin shim finds its package from its own dir
-      const rhxLocal = path.join(fixture.repo, 'node_modules', '.bin', 'rhx');
-      fs.mkdirSync(path.dirname(rhxLocal), { recursive: true });
-      fs.writeFileSync(rhxLocal, `#!/bin/sh\nexec "${RHX_BIN}" "$@"\n`, {
-        mode: 0o755,
-      });
-
-      // the derived settings of one peer, as its sessions read them
-      const getPeerSettings = (input: { hash: string }): SettingsRead =>
-        JSON.parse(
-          fs.readFileSync(
-            path.join(
-              asPeerDir(input.hash),
-              'brain',
-              '.claude',
-              'settings.of.repo.json',
+        // the derived settings of one peer, as its sessions read them
+        const getPeerSettings = (input: { hash: string }): SettingsRead =>
+          JSON.parse(
+            fs.readFileSync(
+              path.join(
+                asPeerDir(input.hash),
+                'brain',
+                '.claude',
+                'settings.of.repo.json',
+              ),
+              'utf-8',
             ),
-            'utf-8',
-          ),
-        );
-      return { ...fixture, asPeerDir, getPeerSettings };
-    });
-
-    /**
-     * .what = run the Stop command a peer's derived settings hold, as its session's stop does
-     * .why = the wish's promise is about sessions: a stale stop is held, a fresh one rests. so
-     *        the command is read out of the derived file, never out of the constant
-     */
-    const runPeerStop = (input: { hash: string }) => {
-      const [hook] = getTermsHooks({
-        settings: scene.getPeerSettings({ hash: input.hash }),
+          );
+        return { ...fixture, asPeerDir, getPeerSettings };
       });
-      if (!hook?.command)
-        throw new MalfunctionError('the peer holds no term hook entry to run', {
-          hash: input.hash,
-          hint: 'case3 [t1] must hold first',
+
+      /**
+       * .what = run the Stop command a peer's derived settings hold, as its session's stop does
+       * .why = the wish's promise is about sessions: a stale stop is held, a fresh one rests. so
+       *        the command is read out of the derived file, never out of the constant
+       */
+      /**
+       * .note = while fulcrum F14 holds, a learner peer derives no term hook (see [t1]), so the
+       *         stop runs the entry the repo actor holds: the one entry a learner peer derives
+       *         once rhachet keeps it. it runs with the same cwd and home a peer stop runs with
+       */
+      const runLearnerStop = () => {
+        const [hook] = getTermsHooks({
+          settings: getSettings({
+            repo: scene.repo,
+            file: 'settings.of.repo.json',
+          }),
         });
-      // bound the run at the hook's own timeout, as claude bounds it: a stop slower than the
-      //   bound is killed, so it would rest silent, and the clamp must go red, not green
-      return run({
-        cmd: '/bin/bash',
-        args: ['-c', hook.command],
-        cwd: scene.repo,
-        home: scene.home,
-        timeoutMs: TERMS_HOOK_DECLARED.timeoutSeconds * 1000,
-      });
-    };
+        if (!hook?.command)
+          throw new MalfunctionError(
+            'the repo holds no term hook entry to run',
+            {
+              repo: scene.repo,
+              hint: 'case3 [t0] must hold first: the toggle entry survives a re-sync',
+            },
+          );
+        // bound the run at the hook's own timeout, as claude bounds it: a stop slower than the
+        //   bound is killed, so it would rest silent, and the clamp must go red, not green
+        return run({
+          cmd: '/bin/bash',
+          args: ['-c', hook.command],
+          cwd: scene.repo,
+          home: scene.home,
+          timeoutMs: TERMS_HOOK_DECLARED.timeoutSeconds * 1000,
+        });
+      };
 
-    when(
-      '[t0] rhachet init --hooks re-syncs the roles and prunes orphans',
-      () => {
+      when(
+        '[t0] rhachet init --hooks re-syncs the roles and prunes orphans',
+        () => {
+          const out = useBeforeAll(async () => {
+            const result = run({
+              cmd: RHACHET_BIN,
+              args: ['init', '--hooks'],
+              cwd: scene.repo,
+              home: scene.home,
+            });
+            return {
+              ...result,
+              after: getSettings({
+                repo: scene.repo,
+                file: 'settings.of.repo.json',
+              }),
+              get: runToggle({ scene, args: ['get'] }),
+            };
+          });
+
+          then('it exits 0', () => {
+            expect(out.exitCode).toEqual(0);
+          });
+
+          then(
+            'the toggle entry survives and the learner-authored control is pruned',
+            () => {
+              // exactly one left, and it is the toggle's: the same init kept one and dropped the other
+              const authors = getTermsHooks({ settings: out.after }).map(
+                (hook) => hook.author,
+              );
+              expect(authors).toEqual(['toggle=learn.terms.hook/role=learner']);
+            },
+          );
+
+          then('the driver hooks the sync owns are still present', () => {
+            // rhachet 1.54+ moves each role hook out of the settings and into the dispatch
+            // manifest beside it, so the sync's own hooks are read from both
+            const manifestPath = path.join(
+              scene.repo,
+              '.claude',
+              'hooks.dispatch.manifest',
+            );
+            const authors = [
+              ...(out.after.hooks?.Stop ?? [])
+                .flatMap((block) => block.hooks)
+                .map((hook) => hook.author),
+              ...asAllManifestHookSites({
+                manifest: fs.existsSync(manifestPath)
+                  ? fs.readFileSync(manifestPath, 'utf-8')
+                  : '',
+              }).map((site) => site.author),
+            ];
+            expect(authors.includes('repo=bhrain/role=driver')).toEqual(true);
+          });
+
+          then('get still reports enabled', () => {
+            expect(out.get.stdout).toContain('status = enabled');
+          });
+
+          then('the get stdout matches the snapshot', () => {
+            expect(out.get.stdout).toMatchSnapshot(
+              'get - enabled, after a re-sync',
+            );
+          });
+        },
+      );
+
+      /**
+       * 🔴 .what = a known product defect, pinned so it reads in every run (fulcrum F14)
+       * .why = rhachet 1.54 reads a hook's role only from a `repo=…/role=…` author
+       *        (`isHookAuthorOfEnrolledRoles`), so the peer narrow drops the toggle's
+       *        `toggle=learn.terms.hook/role=learner` entry; a learner peer gets no term hook.
+       *        the repo actor keeps it
+       * .fix = rhachet keeps a non-role author that names an enrolled role, or the learner
+       *        declares the hook and the toggle flips a state the hook reads:
+       *        .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md.
+       *        once fixed, this case goes red: flip it back to `toHaveLength(1)`
+       */
+      when('[t1] a peer actor that holds the learner is derived', () => {
+        const out = useBeforeAll(
+          async (): Promise<SettingsRead> =>
+            JSON.parse(
+              fs.readFileSync(
+                path.join(
+                  scene.asPeerDir('1a1a1a1a'),
+                  'brain',
+                  '.claude',
+                  'settings.of.repo.json',
+                ),
+                'utf-8',
+              ),
+            ),
+        );
+
+        then(
+          '🔴 F14: its derived settings hold no term hook entry, a defect of rhachet 1.54',
+          () => {
+            expect(getTermsHooks({ settings: out })).toEqual([]);
+          },
+        );
+
+        then('the derived term hooks match the snapshot', () => {
+          expect(getTermsHooks({ settings: out })).toMatchSnapshot(
+            'derived - a peer that holds the learner, F14 defect, reseed .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md',
+          );
+        });
+      });
+
+      when('[t2] a peer actor without the learner is derived', () => {
+        const out = useBeforeAll(
+          async (): Promise<SettingsRead> =>
+            JSON.parse(
+              fs.readFileSync(
+                path.join(
+                  scene.asPeerDir('2b2b2b2b'),
+                  'brain',
+                  '.claude',
+                  'settings.of.repo.json',
+                ),
+                'utf-8',
+              ),
+            ),
+        );
+
+        then('its derived settings hold no term hook entry', () => {
+          expect(getTermsHooks({ settings: out })).toEqual([]);
+        });
+
+        then('the derived term hooks match the snapshot', () => {
+          expect(getTermsHooks({ settings: out })).toMatchSnapshot(
+            'derived - a peer without the learner',
+          );
+        });
+      });
+
+      when('[t3] the learner term hook stops with a stale distillation', () => {
+        // the nudge is what the held session sees, so it is snapped here, words only: a copy
+        //   edit to the face moves this snap too, and the reviewer of that edit sees it land
+        const out = useBeforeAll(async () => ({
+          first: runLearnerStop(),
+          second: runLearnerStop(),
+        }));
+
+        then('its stop is held, exit 2, with the term nudge', () => {
+          expect(out.first.exitCode).toEqual(2);
+          expect(out.first.stderr).toContain('time again, to tend the terms');
+        });
+
+        then(
+          'the hold has no bound: each stop with no fresh distill is held again',
+          () => {
+            expect(out.second.exitCode).toEqual(2);
+            expect(out.second.stderr).toContain(
+              'time again, to tend the terms',
+            );
+          },
+        );
+
+        then('the held stop matches the snapshot', () => {
+          expect({
+            stdout: asAnsiStripped({ text: out.first.stdout }),
+            stderr: asAnsiStripped({ text: out.first.stderr }),
+          }).toMatchSnapshot('learner stop - stale, held');
+        });
+      });
+
+      when('[t4] the learner term hook stops with a fresh distillation', () => {
         const out = useBeforeAll(async () => {
-          const result = run({
+          const sentinel = path.join(
+            scene.repo,
+            getDomainTermsPaths().progressPath,
+          );
+          fs.mkdirSync(path.dirname(sentinel), { recursive: true });
+          fs.writeFileSync(
+            sentinel,
+            '## round\n\nno new terms this round — all names decomposed to sanctioned verbs.',
+          );
+          return runLearnerStop();
+        });
+
+        then('its stop rests, exit 0, silent', () => {
+          expect(out.exitCode).toEqual(0);
+          expect(out.stderr).toEqual('');
+        });
+
+        then('the rested stop matches the snapshot, an empty frame', () => {
+          expect({
+            stdout: asAnsiStripped({ text: out.stdout }),
+            stderr: asAnsiStripped({ text: out.stderr }),
+          }).toMatchSnapshot('learner stop - fresh, rests');
+        });
+      });
+
+      when('[t5] set off runs, then rhachet re-derives the peers', () => {
+        const out = useBeforeAll(async () => {
+          const setOff = runToggle({ scene, args: ['set', 'off'] });
+          const derive = run({
             cmd: RHACHET_BIN,
             args: ['init', '--hooks'],
             cwd: scene.repo,
             home: scene.home,
           });
           return {
-            ...result,
-            after: getSettings({
-              repo: scene.repo,
-              file: 'settings.of.repo.json',
-            }),
-            get: runToggle({ scene, args: ['get'] }),
+            setOff,
+            derive,
+            peer: scene.getPeerSettings({ hash: '1a1a1a1a' }),
           };
         });
 
-        then('it exits 0', () => {
-          expect(out.exitCode).toEqual(0);
+        then('both exit 0', () => {
+          expect(out.setOff.exitCode).toEqual(0);
+          expect(out.derive.exitCode).toEqual(0);
         });
 
         then(
-          'the toggle entry survives and the learner-authored control is pruned',
+          'the learner peer no longer holds the entry, so no stop runs it',
           () => {
-            // exactly one left, and it is the toggle's: the same init kept one and dropped the other
-            const authors = getTermsHooks({ settings: out.after }).map(
-              (hook) => hook.author,
-            );
-            expect(authors).toEqual(['toggle=learn.terms.hook/role=learner']);
+            expect(getTermsHooks({ settings: out.peer })).toEqual([]);
           },
         );
 
-        then('the driver hooks the sync owns are still present', () => {
-          const authors = (out.after.hooks?.Stop ?? [])
-            .flatMap((block) => block.hooks)
-            .map((hook) => hook.author);
-          expect(authors.includes('repo=bhrain/role=driver')).toEqual(true);
-        });
-
-        then('get still reports enabled', () => {
-          expect(out.get.stdout).toContain('status = enabled');
-        });
-
-        then('the get stdout matches the snapshot', () => {
-          expect(out.get.stdout).toMatchSnapshot(
-            'get - enabled, after a re-sync',
+        then('the derived term hooks match the snapshot', () => {
+          expect(getTermsHooks({ settings: out.peer })).toMatchSnapshot(
+            'derived - a learner peer after set off',
           );
         });
-      },
-    );
-
-    when('[t1] a peer actor that holds the learner is derived', () => {
-      const out = useBeforeAll(
-        async (): Promise<SettingsRead> =>
-          JSON.parse(
-            fs.readFileSync(
-              path.join(
-                scene.asPeerDir('1a1a1a1a'),
-                'brain',
-                '.claude',
-                'settings.of.repo.json',
-              ),
-              'utf-8',
-            ),
-          ),
-      );
-
-      then('its derived settings hold the term hook entry', () => {
-        expect(getTermsHooks({ settings: out })).toHaveLength(1);
       });
-
-      then('the derived term hooks match the snapshot', () => {
-        expect(getTermsHooks({ settings: out })).toMatchSnapshot(
-          'derived - a peer that holds the learner',
-        );
-      });
-    });
-
-    when('[t2] a peer actor without the learner is derived', () => {
-      const out = useBeforeAll(
-        async (): Promise<SettingsRead> =>
-          JSON.parse(
-            fs.readFileSync(
-              path.join(
-                scene.asPeerDir('2b2b2b2b'),
-                'brain',
-                '.claude',
-                'settings.of.repo.json',
-              ),
-              'utf-8',
-            ),
-          ),
-      );
-
-      then('its derived settings hold no term hook entry', () => {
-        expect(getTermsHooks({ settings: out })).toEqual([]);
-      });
-
-      then('the derived term hooks match the snapshot', () => {
-        expect(getTermsHooks({ settings: out })).toMatchSnapshot(
-          'derived - a peer without the learner',
-        );
-      });
-    });
-
-    when('[t3] the learner peer stops with a stale distillation', () => {
-      // the nudge is what the held session sees, so it is snapped here, words only: a copy
-      //   edit to the face moves this snap too, and the reviewer of that edit sees it land
-      const out = useBeforeAll(async () => ({
-        first: runPeerStop({ hash: '1a1a1a1a' }),
-        second: runPeerStop({ hash: '1a1a1a1a' }),
-      }));
-
-      then('its stop is held, exit 2, with the term nudge', () => {
-        expect(out.first.exitCode).toEqual(2);
-        expect(out.first.stderr).toContain('time again, to tend the terms');
-      });
-
-      then(
-        'the hold has no bound: each stop with no fresh distill is held again',
-        () => {
-          expect(out.second.exitCode).toEqual(2);
-          expect(out.second.stderr).toContain('time again, to tend the terms');
-        },
-      );
-
-      then('the held stop matches the snapshot', () => {
-        expect({
-          stdout: asAnsiStripped({ text: out.first.stdout }),
-          stderr: asAnsiStripped({ text: out.first.stderr }),
-        }).toMatchSnapshot('peer stop - stale, held');
-      });
-    });
-
-    when('[t4] the learner peer stops with a fresh distillation', () => {
-      const out = useBeforeAll(async () => {
-        const sentinel = path.join(
-          scene.repo,
-          getDomainTermsPaths().progressPath,
-        );
-        fs.mkdirSync(path.dirname(sentinel), { recursive: true });
-        fs.writeFileSync(
-          sentinel,
-          '## round\n\nno new terms this round — all names decomposed to sanctioned verbs.',
-        );
-        return runPeerStop({ hash: '1a1a1a1a' });
-      });
-
-      then('its stop rests, exit 0, silent', () => {
-        expect(out.exitCode).toEqual(0);
-        expect(out.stderr).toEqual('');
-      });
-
-      then('the rested stop matches the snapshot, an empty frame', () => {
-        expect({
-          stdout: asAnsiStripped({ text: out.stdout }),
-          stderr: asAnsiStripped({ text: out.stderr }),
-        }).toMatchSnapshot('peer stop - fresh, rests');
-      });
-    });
-
-    when('[t5] set off runs, then rhachet re-derives the peers', () => {
-      const out = useBeforeAll(async () => {
-        const setOff = runToggle({ scene, args: ['set', 'off'] });
-        const derive = run({
-          cmd: RHACHET_BIN,
-          args: ['init', '--hooks'],
-          cwd: scene.repo,
-          home: scene.home,
-        });
-        return {
-          setOff,
-          derive,
-          peer: scene.getPeerSettings({ hash: '1a1a1a1a' }),
-        };
-      });
-
-      then('both exit 0', () => {
-        expect(out.setOff.exitCode).toEqual(0);
-        expect(out.derive.exitCode).toEqual(0);
-      });
-
-      then(
-        'the learner peer no longer holds the entry, so no stop runs it',
-        () => {
-          expect(getTermsHooks({ settings: out.peer })).toEqual([]);
-        },
-      );
-
-      then('the derived term hooks match the snapshot', () => {
-        expect(getTermsHooks({ settings: out.peer })).toMatchSnapshot(
-          'derived - a learner peer after set off',
-        );
-      });
-    });
-  });
+    },
+  );
 
   given('[case5] hand copies of the withdrawn hook and an older body', () => {
     const scene = useBeforeAll(async () => {

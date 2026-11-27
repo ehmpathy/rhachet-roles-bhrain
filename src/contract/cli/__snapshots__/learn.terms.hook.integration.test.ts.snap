@@ -12,7 +12,7 @@ exports[`learn.terms.hook.integration given: [case1] a split-layout repo with th
 `;
 
 exports[`learn.terms.hook.integration given: [case1] a split-layout repo with the learner linked when: [t1] set on runs then: the file diff is the one hook block alone: set on - the diff, split layout 1`] = `
-"@@ -84,2 +84,13 @@
+"@@ -51,2 +51,13 @@
          ]
 +      },
 +      {
@@ -150,7 +150,7 @@ exports[`learn.terms.hook.integration given: [case2] a repo with the learner lin
 "
 `;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t0] rhachet init --hooks re-syncs the roles and prunes orphans then: the get stdout matches the snapshot: get - enabled, after a re-sync 1`] = `
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t0] rhachet init --hooks re-syncs the roles and prunes orphans then: the get stdout matches the snapshot: get - enabled, after a re-sync 1`] = `
 "🦉 stillness
 
 📜 learn.terms.hook get
@@ -165,20 +165,11 @@ exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhache
 "
 `;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t1] a peer actor that holds the learner is derived then: the derived term hooks match the snapshot: derived - a peer that holds the learner 1`] = `
-[
-  {
-    "author": "toggle=learn.terms.hook/role=learner",
-    "command": "[ ! -e .agent/repo=bhrain/role=learner ] || ./node_modules/.bin/rhx learn.domain.terms --when hook.onStop",
-    "timeout": 5,
-    "type": "command",
-  },
-]
-`;
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t1] a peer actor that holds the learner is derived then: the derived term hooks match the snapshot: derived - a peer that holds the learner, F14 defect, reseed .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md 1`] = `[]`;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t2] a peer actor without the learner is derived then: the derived term hooks match the snapshot: derived - a peer without the learner 1`] = `[]`;
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t2] a peer actor without the learner is derived then: the derived term hooks match the snapshot: derived - a peer without the learner 1`] = `[]`;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t3] the learner peer stops with a stale distillation then: the held stop matches the snapshot: peer stop - stale, held 1`] = `
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t3] the learner term hook stops with a stale distillation then: the held stop matches the snapshot: learner stop - stale, held 1`] = `
 {
   "stderr": "
 🪨 run solid skill repo=bhrain/role=learner/skill=learn.domain.terms
@@ -236,7 +227,7 @@ exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhache
 }
 `;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t4] the learner peer stops with a fresh distillation then: the rested stop matches the snapshot, an empty frame: peer stop - fresh, rests 1`] = `
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t4] the learner term hook stops with a fresh distillation then: the rested stop matches the snapshot, an empty frame: learner stop - fresh, rests 1`] = `
 {
   "stderr": "",
   "stdout": "
@@ -246,7 +237,7 @@ exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhache
 }
 `;
 
-exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives when: [t5] set off runs, then rhachet re-derives the peers then: the derived term hooks match the snapshot: derived - a learner peer after set off 1`] = `[]`;
+exports[`learn.terms.hook.integration given: [case3] an enabled repo that rhachet re-syncs and derives (🔴 F14, reseed: .dream/v2026_11_26.reseed.rhachet-peer-narrow-drops-a-toggle-hook.md) when: [t5] set off runs, then rhachet re-derives the peers then: the derived term hooks match the snapshot: derived - a learner peer after set off 1`] = `[]`;
 
 exports[`learn.terms.hook.integration given: [case4] set on over a drifted file when: [t0] set on runs then: the stdout matches the snapshot: set on - updated, a hand copy replaced 1`] = `
 "🦉 so it is

@@ -6,6 +6,7 @@ import { given, then, useThen, when } from 'test-fns';
 
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import {
   genReviewByFixture,
   invokeReviewByRoleViaRhx,
@@ -165,7 +166,8 @@ describe('review.by.learner.acceptance', () => {
   // the ergonomic form — `rhx review.by --role learner` resolves the learner's OWN wrapper
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-wrapper] the clean `rhx review.by --role learner` form', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-wrapper] the clean `rhx review.by --role learner` form', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx resolves the learner-owned review.by wrapper',
       () => {
@@ -217,7 +219,8 @@ describe('review.by.learner.acceptance', () => {
   // all rubrics at once — the full learner review set
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-all] the learner review set on clean code', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-all] the learner review set on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by --role learner (no --for) runs both rubrics',
       () => {
@@ -290,7 +293,8 @@ describe('review.by.learner.acceptance', () => {
   // per-rubric via --for — the application rubric alone
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-app] --for term-application on clean code', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-app] --for term-application on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the application rubric runs',
       () => {
@@ -336,7 +340,8 @@ describe('review.by.learner.acceptance', () => {
   // per-rubric via --for — the aggregation rubric alone
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-agg] --for term-aggregation on clean code', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-agg] --for term-aggregation on clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] only the aggregation rubric runs',
       () => {
@@ -390,7 +395,8 @@ describe('review.by.learner.acceptance', () => {
   // calls itself deliberate invites the reviewer to excuse it. and with no docs at all, the
   // test brain cannot tie the three words to one concept, and answers `no issues found`.
 
-  given('[case-detect] --for term-application on a term-dirty file', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-detect] --for term-application on a term-dirty file', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] the application rubric detects a term violation',
       () => {

@@ -37,7 +37,7 @@ read, run `npm run build`.
 
 | case | why it still bites |
 |---|---|
-| two builds at once in one worktree | both stage into `dist.next/`. one's clean can delete the other's half-written stage, and that build fails. `dist/` still holds the last good swap |
+| 🔴 two builds at once in one worktree | both stage into one `dist.next/`, and their swaps interleave: one moves `dist/` aside, then its `mv dist.next dist` fails because a peer already took the stage. `dist/` is left ABSENT, and every hook fails closed until a rebuild. `npm run test:acceptance` builds first, so two acceptance runs at once are two builds at once |
 | a build that dies before the swap | `dist/` keeps the prior good build; the stale `dist.next/` is cleared by the next build |
 | a `dist/` removed by hand | that is the old wipe, by hand. rebuild |
 
@@ -51,9 +51,12 @@ names is ONE state: the role's links do not resolve.
 ## .the escape — if you still see the refusal
 
 ```sh
-./node_modules/.bin/rhachet roles link --role driver
-./node_modules/.bin/rhachet roles link --role learner
+npm run build                          # only if dist/ is absent
+npx rhachet roles link --role driver
+npx rhachet roles link --role learner
 ```
+
+⇒ a session whose every tool is refused cannot run these itself; a human runs them.
 
 ⇒ which role to relink is READ OFF the error, never guessed: `route.*.guard` is the driver's,
 `memory.guard` is the learner's. a subagent inherits the same hooks, so it cannot do this for you.
@@ -65,6 +68,7 @@ names is ONE state: the role's links do not resolve.
 | a hook refuses with `no skill … found in any linked role` | check `dist/` exists. absent → rebuild. present → relink |
 | the skill it names changes between tools | one state, many hook sets — never a tear-down in flight |
 | you would edit the build scripts | 🔴 keep every write in `dist.next/`. a step that writes to `dist/` reopens the window |
+| you would fan acceptance runs out to parallel agents in one worktree | 🔴 forbidden: each run builds, and concurrent builds leave `dist/` absent. run suites one at a time |
 | a type check reports names that plainly exist | 🟡 adjacent cause class: `tsc` read a file mid-write by a peer session. re-run it first |
 
 ## .enforcement

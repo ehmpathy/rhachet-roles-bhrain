@@ -3,7 +3,7 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+import { getAllRepoHookSites } from '@src/.test/getAllRepoHookSites';
 
 import { WHOAMI_TIMEOUT_MS } from '../brain/getCloneAddress';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
@@ -288,28 +288,18 @@ describe('mutateDriveBlockerState.integration', () => {
         () => {
           const budget = useBeforeAll(async () => {
             const repoRoot = await getRepoRootWithFallback({ from: __dirname });
-            const file = getRepoClaudeSettingsPath({ repoRoot });
             // .why guarded, verdict deferred = an absent or malformed settings file is a
             //    drift this case catches; a raw throw in `useBeforeAll` would kill the case
             //    before the row that names the repair (`rule.require.failloud`)
-            const settings = await fs
-              .readFile(file, 'utf-8')
-              .then(
-                (source) =>
-                  JSON.parse(source) as {
-                    hooks: Record<
-                      string,
-                      { hooks: { command: string; timeout?: number }[] }[]
-                    >;
-                  },
-              )
-              .catch(() => null);
-            const timeouts = Object.values(settings?.hooks ?? {})
-              .flat()
-              .flatMap((matcher) => matcher.hooks)
+            // .note = the sites span the settings and the dispatch manifest, where rhachet
+            //    1.54+ moves each role hook
+            const { file, sites, fault } = await getAllRepoHookSites({
+              repoRoot,
+            });
+            const timeouts = (sites ?? [])
               .filter((site) => site.command.includes('route.drive'))
-              .map((site) => site.timeout);
-            return { file, settings, timeouts };
+              .map((site) => site.timeoutSeconds);
+            return { file, fault, settings: sites, timeouts };
           });
 
           then('the settings declare at least one such site', () => {
@@ -321,6 +311,7 @@ describe('mutateDriveBlockerState.integration', () => {
                 'the claude hook settings could not be read or parsed',
                 {
                   expected: budget.file,
+                  fault: budget.fault,
                   hint: 'restore the repo settings layer (`rhx init --hooks` re-derives it). this case binds the lock acquire deadline to the `route.drive` hook timeouts declared there, so an absent file leaves the deadline unbound rather than merely untested',
                 },
               );

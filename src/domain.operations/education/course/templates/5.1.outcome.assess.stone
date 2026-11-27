@@ -1,0 +1,29 @@
+assess `$COURSE_SLUG`: did $ROLE move?
+ref: $COURSE_ROUTE/1.1.outcome.declare.yield.md · $COURSE_ROUTE/1.2.outcome.baseline.yield.md
+
+$ASSESS_BOOT_STEP
+
+dispatch a cold-booted $ROLE again, now with the new briefs and skills in its boot. hand it:
+- the same tasks as the baseline, in a sandbox
+- the held-back transfer task, in a scratch worktree of the real repo (never a checkout in the live tree, which drops its bind; discard the worktree after)
+
+grade each against its pass bar. do not coach.
+
+below the bar → return to the weakest phase (`2.2` for a gap in the canon, `3` for an untested
+claim, `4.1` for a brief the role did not reach for), then assess again:
+
+```sh
+rhx route.stone.set --stone 2.2.greats.read --as rewound
+```
+
+a rewind clears that stone and every later one, `6.exit` and the self-review promises
+included; their yields stay on disk, so revise each in place as you drive back through.
+
+emit into $COURSE_ROUTE/5.1.outcome.assess.yield.md:
+
+| task | result | note |
+|---|---|---|
+| t1 | passed | cited rule.require.idempotency-key-at-external-boundaries |
+
+score = 3/3
+transfer = passed

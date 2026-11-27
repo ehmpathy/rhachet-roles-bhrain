@@ -6,7 +6,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 import { promisify } from 'util';
 
-import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+import { getAllRepoHookSites } from '@src/.test/getAllRepoHookSites';
 
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asCloneAddress } from './asCloneAddress';
@@ -276,28 +276,18 @@ describe('getCloneAddress.integration', () => {
         () => {
           const budget = useBeforeAll(async () => {
             const repoRoot = await getRepoRootWithFallback({ from: __dirname });
-            const file = getRepoClaudeSettingsPath({ repoRoot });
             // .why GUARDED = an absent or malformed settings file is a drift this case
             //    catches; a raw ENOENT here would kill the case before the row that names
             //    the fix (`rule.require.failloud`)
-            const settings = await fs
-              .readFile(file, 'utf-8')
-              .then(
-                (source) =>
-                  JSON.parse(source) as {
-                    hooks: Record<
-                      string,
-                      { hooks: { command: string; timeout?: number }[] }[]
-                    >;
-                  },
-              )
-              .catch(() => null);
-            const timeouts = Object.values(settings?.hooks ?? {})
-              .flat()
-              .flatMap((matcher) => matcher.hooks)
+            // .note = the sites span the settings and the dispatch manifest, where rhachet
+            //    1.54+ moves each role hook
+            const { file, sites, fault } = await getAllRepoHookSites({
+              repoRoot,
+            });
+            const timeouts = (sites ?? [])
               .filter((site) => site.command.includes('route.drive'))
-              .map((site) => site.timeout);
-            return { file, settings, timeouts };
+              .map((site) => site.timeoutSeconds);
+            return { file, fault, settings: sites, timeouts };
           });
 
           then('the settings declare at least one such site', () => {
@@ -311,6 +301,7 @@ describe('getCloneAddress.integration', () => {
                 'the claude hook settings could not be read or parsed',
                 {
                   expected: budget.file,
+                  fault: budget.fault,
                   hint: 'restore the repo settings layer (`rhx init --hooks` re-derives it). this case binds WHOAMI_TIMEOUT_MS to the `route.drive` hook timeouts declared there, so an absent file leaves the probe cap unbound rather than merely untested',
                 },
               );

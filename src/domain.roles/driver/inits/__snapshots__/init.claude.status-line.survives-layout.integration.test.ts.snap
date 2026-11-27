@@ -111,6 +111,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case4] a re
    └─ boot.md
       └─ created — 1 role
 
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
+
 "
 `;
 
@@ -162,6 +166,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case4] a re
 ✨ 1 role(s) linked
 ✨ 1 role(s) initialized
 
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
+
 "
 `;
 
@@ -171,6 +179,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case4] a re
    ├─ subtractions
    │  └─ - bhrain/driver
    └─ untouched (0)
+
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
 
 "
 `;
@@ -235,6 +247,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
    └─ boot.md
       └─ created — 1 role
 
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
+
 "
 `;
 
@@ -288,6 +304,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
 
 ✨ 1 role(s) linked
 ✨ 1 role(s) initialized
+
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
 
 "
 `;
@@ -352,6 +372,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
    │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
    └─ boot.md
       └─ created — 1 role
+
+💡 tip
+   ├─ declare these roles in .agent/actors.yml, and \`rhx init\` reads them
+   └─ see https://github.com/ehmpathy/rhachet/blob/main/.agent/repo=.this/role=user/briefs/actors/howto.author-actors-yml.md
 
 "
 `;

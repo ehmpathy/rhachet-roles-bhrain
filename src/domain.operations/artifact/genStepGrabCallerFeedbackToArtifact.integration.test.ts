@@ -5,15 +5,15 @@ import { given, then, when } from 'test-fns';
 
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
-import { getContextOpenAI } from '@src/.test/getContextOpenAI';
 
 import { genStepGrabCallerFeedbackToArtifact } from './genStepGrabCallerFeedbackToArtifact';
 
 describe('genStepGrabCallerFeedbackToArtifact', () => {
+  // the step asks the caller (inquirer, mocked here) and calls no brain, so it needs no
+  // openai context; one would demand a key this test never spends
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
-    ...getContextOpenAI(),
   };
 
   const feedbackArt = genArtifactGitFile({

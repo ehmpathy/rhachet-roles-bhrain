@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import {
   execAsync,
@@ -26,7 +27,8 @@ const REPEATABLE_CONFIG = {
 } as const;
 
 describe('review.output-default.acceptance', () => {
-  given('[case1] mechanic codebase with review skill', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] mechanic codebase with review skill', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked without --output flag', () => {
       const res = useThen('invoke review skill without --output', async () => {
         // clone fixture to temp dir with git initialized
