@@ -4,7 +4,7 @@ import { given, then, useThen, when } from 'test-fns';
 import {
   INSTINCT_REPLY_LABELS,
   INSTINCT_SAMPLE_JUDGMENTS,
-} from './.test/instinctReplyLabels.fixture';
+} from './instinctReplyLabels.fixture';
 
 /**
  * .what = rescores the logged replay runs on the stated-basis criterion; no live ask is made
@@ -13,6 +13,8 @@ import {
  *
  * .note = a flag lands on a labeled claim by the `match` fragments of the labels fixture.
  *         a flag that lands on none is unjudged; a seeded sample of those carries hand judgments (INSTINCT_SAMPLE_JUDGMENTS)
+ * .note = a replay, not a test: its input is the local, gitignored `.log/` of 2026-11-26, absent in ci.
+ *         run by hand: npx jest --testRegex 'instinctFlagRateRescore\.replay\.ts$'
  */
 const LOG_DIR = '.log/role=mechanic/skill=git.repo.test/what=integration';
 const LOG_DAY = '2026-11-26'; // the replay runs: the stdout logs of that day that hold scored rows, in order

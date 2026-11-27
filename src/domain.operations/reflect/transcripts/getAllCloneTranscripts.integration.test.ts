@@ -75,9 +75,7 @@ describe('getAllCloneTranscripts', () => {
         actorDir: 'actor.via.hash=affc8cb5',
         slug: '-elsewhere',
         session: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
-        lines: [
-          asPromptLine({ at: '2026-11-04', text: 'other tree' }),
-        ],
+        lines: [asPromptLine({ at: '2026-11-04', text: 'other tree' })],
       });
       const home = path.join(repoRoot, '.home');
       fs.mkdirSync(home, { recursive: true });
