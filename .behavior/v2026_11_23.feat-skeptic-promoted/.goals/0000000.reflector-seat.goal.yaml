@@ -1,0 +1,14 @@
+slug: 'reflector-seat'
+source: 'peer:human'
+status:
+  choice: 'inflight'
+  reason: 're-persisted after the host move dropped the goal file; pass 3 in progress'
+why:
+  ask: 'you are the reflector of this crew; adopt your briefs, begin your job; continue'
+  purpose: 'a third seat that watches the mechanic''s route and turns what it hits into durable lessons, without drive'
+  benefit: 'the next traveler meets pavement in place of a rediscovery'
+what:
+  outcome: 'each lesson the round surfaced is enbriefed or caught as a dream, and the human sees the list'
+how:
+  task: 'read route state, yield, dreams, fulcrums; land each unrecorded lesson; verify each claim before relay'
+  gate: 'a report itemizes each lesson and where it landed; zero stones set by this seat'

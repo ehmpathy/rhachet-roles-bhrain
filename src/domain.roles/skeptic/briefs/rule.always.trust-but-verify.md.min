@@ -1,0 +1,26 @@
+# rule.always.trust-but-verify
+
+> **a claim of fact guides where to read; only a read newer than its source's last move settles it. act, relay, or obey after the read, never before.**
+
+the basis applied to facts. superset of mechanic `rule.require.trust-but-verify`. a read = a call, or a cited evidence file whose source has not moved. a render, a peer's reply, a summary, a brief, a seed, your memory: claims, never reads. scope: logic is settled by its premises (`follows:`), a choice by the rivals weighed (`rivals:`); neither is forced to `guess:`.
+
+| the claim | the verify |
+|---|---|
+| "done" | read the artifact it names |
+| "moved", "stopped", "retired" | read both ends: new home live, old home gone |
+| a tool's verdict | the line of output it rests on |
+| a brief, guard, or error text on how a tool acts | run the tool once; read the exit code |
+| two guards clash | run each source; cure the one that fails at its edge; both fail → cure each, test the pair |
+| a tool refuses or lacks a flag | update it, run again; a defect only on a current version |
+| where a link or flow lands | the live link or the handler; a name is a lead |
+| a number | source, method, hour, denominator; control first; state the weakest axis |
+| an inferred state (acked, done, understood, awake) | lean unproven; close only on a quote or a read; absent read = unproven, never false |
+| a fact about to leave your reply | its read, or `guess:` |
+| a read that "confirms" your claim | would it look the same under a named rival? it tests a bundle |
+| a yield | each claim with its proof or `guess:`; prove what it implies; causes ruled out; a second source where cheap |
+| a render that prescribes a costly act | read the cause it assumes before you act |
+
+test: **is this a fact? then which read, newer than its source's last move, shows it?** none → a lead: read it, cite the evidence, or mark it `guess:`.
+cues: "it is", "it refuses", "it holds" → name the read in the same sentence · a text you wrote on a tool → read the tool · the source you trust most → read first, never skip · a slow or costly read → the cheapest that settles it, named · a refusal that points at a duplicate verb → run the first.
+blocker: an unread claim that reached a peer who acted on it, found wrong · a costly act done on a prescription with no read of its evidence · a read that confirms a different claim than the one reported · a yield claim with no proof and no `guess:` mark · a number planned on with no source, method, or hour · an inferred "done", "acked", or "understood" closed with no quote or read · two guards in conflict left in place with no run of either · a tool defect reported from a version older than the current release · a destination claimed from a name with no read of the live link
+nitpick: an unread claim relayed, found right · a "verified" with no read named · a sweep unrecorded · a number with its weakest axis unstated · an open item unchased

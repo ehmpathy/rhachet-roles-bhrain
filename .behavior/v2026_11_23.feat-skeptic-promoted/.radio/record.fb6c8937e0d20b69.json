@@ -1,0 +1,19 @@
+{
+  "key": "fb6c8937e0d20b69",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrowser"
+  },
+  "exid": null,
+  "title": "fix(browser.start): headful start fails on a headless box under pnpm",
+  "description": "## .what\n\n`browser.start --mode HEADFUL` fails on a headless box under pnpm. three defects, one skill file (`dist/domain.roles/playwright/skills/browser.start.sh`):\n\n1. `npx playwright` runs from the caller's cwd. under pnpm the caller's root links no playwright bin, so the chromium lookup gets no output; with `pipefail` the empty grep exits 1 and the start dies at `CHROMIUM_VERSION=$(get_chromium_version_from_playwright)` (line 194).\n2. HEADFUL assumes a display. on a box with no `DISPLAY` / `WAYLAND_DISPLAY`, chrome cannot open a window.\n3. a headful chrome on a virtual display (no desktop session) aborts with a core dump (Trace/breakpoint trap), for the same sandbox reason the HEADLESS path already handles with `--no-sandbox --disable-dev-shm-usage`.\n\n## .fix\n\nproven via a pnpm patch in ehmpathy/rhachet-roles-bhrain, branch `beav/feat-skeptic-promoted`, file `patches/rhachet-roles-bhrowser@0.1.0.patch`:\n\n- look up the playwright cli from the skill's own package, via node's `require.resolve('playwright/cli.js', { paths: [skillDir] })`, where `skillDir = dirname(readlink -f BASH_SOURCE)`. fall back to `npx playwright`. append `|| true` to the version grep, so an empty match falls through to the extant any-cached-chrome fallback\n- `ensure_display_for_headful`: when HEADFUL and no display, start `Xvfb :99` (reuse a live one) and export `DISPLAY=:99`. when Xvfb is absent, exit 2 with a `ConstraintError` that names the fix (`apt-get install -y xvfb`, or `--mode HEADLESS`)\n- pass `HEADLESS_FLAGS` (`--no-sandbox --disable-dev-shm-usage`) to the HEADFUL launch too\n\n## .proof\n\n- before: `rhx browser.start --mode HEADFUL --session skeptic` → `MalfunctionError: command failed ... line: 194`\n- after all three: `📽️ browser.start ├─ mode: HEADFUL ├─ port: 9804 ├─ wsEndpoint: ws://localhost:9804/...` (2026-11-26)\n\n## .owed\n\n- an integration test for HEADFUL on a box with no display, with Xvfb present and absent\n- a test that the start works from a pnpm consumer root that links no playwright bin",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 50,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "44"
+}

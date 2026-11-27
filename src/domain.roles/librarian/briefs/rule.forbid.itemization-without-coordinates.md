@@ -111,6 +111,18 @@ you already know which number you want, which is the search the address was mean
 `case=F14.entoolment-ladder` parses as a second coordinate with no dimension — a bare position,
 which this rule forbids outright.
 
+### 🟡 pad a numeric ordinal to at least three digits
+
+```
+👎  case=F9-…   case=F14-…     # F14 sorts before F9; the order the ordinal holds is lost to a glob
+👍  case=F009-… case=F014-…    # a name sort is the sequence
+```
+
+the ordinal exists to keep the order the occurrence arose. an unpadded one keeps it only for a
+reader who parses the number: `ls`, a `Glob`, and a tree sort all put `F10` before `F9`. three
+digits hold a thousand entries before the next width, and a set that reaches it pads to four.
+cite the padded form wherever the id appears — a summary row, a `.see also`, a reply.
+
 ## .the cues — when → then
 
 | when… | then… |
@@ -192,6 +204,8 @@ ordinal, never to reconcile the three derivations**, and the path is now keyed o
 - an occurrence id that is a **bare ordinal** (`case=F14`) with no slug = **blocker** — the number
   keeps the sequence and carries no sense, so the path is computable only by someone who already
   knows the answer
+- a numeric ordinal padded to fewer than three digits (`case=F9-…`) = **blocker** — a name sort
+  no longer holds the sequence
 - a forbidden cell with no file = **blocker** — the invariant needs its coordinate home too
 - an itemization filed under a prose name (`catalog.md`, `register.md`, `fulcrums.md`) rather than
   `$kind.of=$concept._.md` = **blocker** — the concept it indexes must be in its address

@@ -19,8 +19,11 @@ import {
   getBrainAtomsByOpenRouter,
 } from 'rhachet-brains-openrouter';
 
+import { ConstraintError } from 'helpful-errors';
+
 // .note = relative, not `@src/`: jest's globalSetup loads this file without the moduleNameMapper
 import { BRAIN_DEFAULT_OF_REVIEW } from '../domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
+import { asTestBrainKeyName } from './asTestBrainKeyName';
 
 /**
  * .what = default brain for tests
@@ -94,6 +97,14 @@ const loadAllRepls = (): BrainRepl[] => {
 export const genTestBrainContext = async (input: {
   brain: string;
 }): Promise<ContextBrain<BrainChoice>> => {
+  // demand the brain's key; the setup sources keys leniently, so only a live brain refuses
+  const keyName = asTestBrainKeyName({ brain: input.brain });
+  if (!process.env[keyName])
+    throw new ConstraintError(`a live-brain test needs ${keyName}`, {
+      brain: input.brain,
+      hint: `rhx keyrack set --owner ehmpath --key ${keyName} --env test --vault <vault>`,
+    });
+
   const atoms = loadAllAtoms();
   const repls = loadAllRepls();
 

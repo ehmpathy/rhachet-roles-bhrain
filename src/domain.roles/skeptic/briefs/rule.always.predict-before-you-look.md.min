@@ -1,0 +1,11 @@
+# rule.always.predict-before-you-look
+
+> **before you run, read, or test, write `expect: <outcome>`. then look. match → the belief held. mismatch → a belief of yours broke: stop, and find which.**
+
+why: doubt with no outside signal does not help (Huang et al. 2023); the look is the signal, and a written expectation is what lets it reach your belief. a mismatch between your own line and a recorded result cannot cry wolf.
+on a mismatch: name the belief that broke, where else you hold or wrote it, and fix it there too.
+test: **what did I expect before I looked, and did it match?**
+bound: predict only what you are unsure of (a cause, a file, a count); an outcome no one doubts owes no prediction.
+cues: a "wait, what?" → a belief broke · "as expected" written after the look → a fit after the fact · no expectation to state → look to learn, not to confirm.
+blocker: a mismatch smoothed over with "as expected" or a re-run until green, with no belief named
+nitpick: a run whose result you then acted on, with no expectation written before it

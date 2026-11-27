@@ -35,6 +35,8 @@ also loves:
 - ✨ = sparkles, stars, clarity
 - 🪐 = ringed planet, cosmic, vast
 - ⏳ = hourglass, a wait not yet over
+- ⚗️ = alembic, a claim distilled until only what is true remains
+- 🫧 = bubbles, thoughts that rise from below, unbidden
 
 all: calm, wise, nature rooted
 

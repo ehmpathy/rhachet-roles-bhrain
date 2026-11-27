@@ -1,4 +1,6 @@
+import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
+import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
@@ -38,13 +40,46 @@ const asAllSettingsCommands = (settings: Settings): string[] =>
     .flatMap((block) => block.hooks ?? [])
     .map((hook) => hook.command ?? '');
 
+/**
+ * .what = every rule command in the hooks.dispatch manifest beside the settings
+ * .why = under rhachet's dispatcher (1.54+), settings hold one dispatch line per event and the role
+ *        commands live in the manifest, one `# Event · filter · timeout · repo/role · command` title
+ *        line per rule. a declared command is registered when its title line is there
+ */
+const asAllManifestCommands = (manifest: string): string[] =>
+  manifest
+    .split('\n')
+    .filter((line) => line.startsWith('# ') && line.includes(' · '))
+    .map((line) => line.split(' · ').slice(4).join(' · '))
+    .filter((command) => command.length > 0);
+
+/**
+ * .what = the manifest text beside a settings file, or empty when the seat has no dispatcher
+ * .why = an older layout registers every command in settings itself, with no manifest to read
+ */
+const getManifestTextBeside = async (input: {
+  settingsPath: string;
+}): Promise<string> => {
+  const manifestPath = path.join(
+    path.dirname(input.settingsPath),
+    'hooks.dispatch.manifest',
+  );
+  if (!existsSync(manifestPath)) return '';
+  return fs.readFile(manifestPath, 'utf-8');
+};
+
 describe('getLearnerRole hook registration (integration)', () => {
   given('[case1] the committed .claude/settings.json', () => {
     when('[t0] it is read alongside the role declaration', () => {
       const result = useThen('settings.json is present', async () => ({
-        commands: asAllSettingsCommands(
-          JSON.parse(await fs.readFile(SETTINGS_PATH, 'utf-8')) as Settings,
-        ),
+        commands: [
+          ...asAllSettingsCommands(
+            JSON.parse(await fs.readFile(SETTINGS_PATH, 'utf-8')) as Settings,
+          ),
+          ...asAllManifestCommands(
+            await getManifestTextBeside({ settingsPath: SETTINGS_PATH }),
+          ),
+        ],
       }));
 
       then('the withdrawn onStop sweephook is absent from both sides', () => {

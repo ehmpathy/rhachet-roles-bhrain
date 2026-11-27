@@ -35,6 +35,9 @@ one-glyph-per-role shape a reader scans by.
 | telepath | 🔮 the crystal ball | the concept transferred whole, without the words — the closest a glyph gets to telepathy |
 | thinker | 🪐 the ringed planet | cosmic, vast — the thinker's subject is the whole space of a problem |
 | reflector | 🌕 the full moon | illumination — a reflector shines back what was already there |
+| navigator | 🧭 the compass | a course set where no trail is cut — the path planned before it is walked |
+| skeptic | ⚗️ the alembic | verification — a claim distilled until only what is true remains, its own first |
+| subconscious | 🫧 the bubbles | instinct — thoughts that rise from below, unbidden, to flag what the main brain did not doubt |
 
 ⇒ **the test for this axis: does the glyph name what the role DOES?** the moai passes because the
 driver's whole subject is stones. a glyph picked for looks does not pass.

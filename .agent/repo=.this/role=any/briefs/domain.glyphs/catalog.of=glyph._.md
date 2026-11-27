@@ -85,6 +85,10 @@ present, never merely its address (`rule.require.inventory-for-enumerable-concep
 | 🪐 | `role` | thinker |
 | 🌕 | `role` | reflector |
 | 🔭 | `role` | researcher |
+| 🧭 | `role` | navigator |
+| ⚗️ | `role` | skeptic. base U+2697 is Neutral + VS16, the class `rule.forbid.width-ambiguous-glyphs` permits |
+| 🫧 | `role` | subconscious |
+| ❓ | — | the thinker's briefs use ❓ as prose markup on a question — decoration, no axis |
 | 🌾 | `phase` | the yield phase |
 | 🧠 | `rung` | rung 0, tribal knowledge |
 | 💧 | `rung` | rung 2, a fluid skill |

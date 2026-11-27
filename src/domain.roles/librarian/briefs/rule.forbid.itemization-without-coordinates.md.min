@@ -11,7 +11,7 @@ the kind (inventory, catalog, ejected example) does not change the name; both fi
 
 ```
 inventory.of=fulcrums._.md              catalog.of=archetype._.md
-inventory.of=fulcrums.case=F14-slug.md  catalog.of=archetype.kind=article.md
+inventory.of=fulcrums.case=F014-slug.md catalog.of=archetype.kind=article.md
 ```
 
 `example=$id` is the same form (`term=$x._.choice.example=$id`).
@@ -21,11 +21,11 @@ inventory.of=fulcrums.case=F14-slug.md  catalog.of=archetype.kind=article.md
 for occurrences (fulcrum, incident, review round) the dimension is `case`. an ordinal is not an id:
 
 ```
-👎  case=F14
-👍  case=F14-entoolment-ladder-is-fluid-rigid-solid
+👎  case=F14      case=F9-slug
+👍  case=F014-entoolment-ladder-is-fluid-rigid-solid
 ```
 
-join with a hyphen, never a dot (a dot is the segment separator).
+join with a hyphen, never a dot. pad a numeric ordinal to 3+ digits, so a name sort is the sequence.
 
 ## .the test
 
@@ -40,6 +40,6 @@ am i about to itemize an enumerable concept? yes → name is coordinates, both f
 | entries list dimensions in different order | fix one order |
 | a cell cannot exist | it still gets its file (the invariant) |
 
-blocker: entry not entirely `$dimension=$position` segments · bare position · summary with no entries · entries with no summary · inconsistent dimension order · ordinal prefixes · bare-ordinal `case=` · forbidden cell with no file · itemization under a prose name (`catalog.md`, `register.md`) · ejected member named by aught but a coordinate.
+blocker: entry not entirely `$dimension=$position` segments · bare position · summary with no entries · entries with no summary · inconsistent dimension order · ordinal prefixes · bare-ordinal `case=` · ordinal under 3 digits · forbidden cell with no file · itemization under a prose name (`catalog.md`, `register.md`) · ejected member named by aught but a coordinate.
 
 ⇒ `rule.require.summary-at-the-cluster-root` · `rule.require.inventory-for-enumerable-concepts`

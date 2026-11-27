@@ -102,6 +102,12 @@ always:
       # say-level: fires the moment a conversation read path is written or changed.
       # a faulted round's stdout rode whole into every later round's prompt
       - briefs/rule.forbid.verdictless-givens-whole-in-conversation.md
+      # say-level: fires the moment a seed is written or a role ports in with one. a symlink to
+      # the librarian's rule, which rides at ref in that role's seat for want of budget
+      - briefs/rule.forbid.seeds-outside-their-route.md
+      # say-level: fires the moment a hook, guard, or notice is written for any role.
+      # a check over reply words flagged honest replies as often as stale ones
+      - briefs/rule.forbid.checks-that-cry-wolf.md
 
       # domain.terms — the glossary rides as ONE index: every term by name, and the
       # formula that computes its path. the term files themselves stay out of the boot

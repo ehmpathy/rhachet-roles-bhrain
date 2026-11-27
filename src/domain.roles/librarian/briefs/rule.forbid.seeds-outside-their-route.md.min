@@ -1,0 +1,20 @@
+# rule.forbid.seeds-outside-their-route
+
+a seed (the wisher's words, verbatim) lives in its route's `.seeds/`, and only there. never in a role's `briefs/`, never in a package.
+
+```
+$route/.seeds/inventory.of=seeds._.md        # 👍 the only home
+src/domain.roles/$role/briefs/.seeds/…       # 👎 ships to every consumer
+```
+
+a brief teaches a concept; a seed records an event for one route. a shipped seed is a copy that drifts from its route, and a brief that cites `seed S$n` points past the package.
+
+| when… | then… |
+|---|---|
+| a role ports in with a `.seeds/` dir | move it into the promotion route's `.seeds/` |
+| a brief cites a seed by id or path | restate the claim; drop the citation |
+| a skill checks seeds inside a role | it checks the wrong home |
+
+blocker: a `.seeds/` dir under a role dir · a shipped brief that cites a seed · a seed with no route home.
+
+⇒ `rule.always.archive-the-wishers-words-verbatim` (driver) · `rule.forbid.verbatim-quotes-outside-seeds` (learner)

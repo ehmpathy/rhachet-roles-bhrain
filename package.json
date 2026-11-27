@@ -25,6 +25,7 @@
     "./cli/review._.cost": "./dist/contract/cli/review._.cost.js",
     "./cli/reflect": "./dist/contract/cli/reflect.js",
     "./cli/reflect.on.token.spend": "./dist/contract/cli/reflect.on.token.spend.js",
+    "./cli/reflect.on.transcripts": "./dist/contract/cli/reflect.on.transcripts.js",
     "./cli/research": "./dist/contract/cli/research.js",
     "./cli/goal": "./dist/contract/cli/goal.js",
     "./cli/memory": "./dist/contract/cli/memory.js",
@@ -53,7 +54,7 @@
     "build:clean": "npm run build:clean:tsc && npm run build:clean:bun",
     "build:compile:tsc": "tsc -p ./tsconfig.build.json --outDir dist.next && tsc-alias -p ./tsconfig.build.json --outDir dist.next",
     "build:compile": "npm run build:compile:tsc && npm run build:compile:bun --if-present",
-    "build:complete:dist": "rsync -a --copy-links --prune-empty-dirs --exclude='.test' --exclude='.route' --exclude='.scratch' --exclude='.behavior' --exclude='*.test.*' --include='*/' --include='briefs/**' --include='skills/**' --include='inits/**' --include='templates/**' --include='**/readme.md' --include='**/boot.yml' --include='**/keyrack.yml' --exclude='*' src/ dist.next/",
+    "build:complete:dist": "rsync -a --copy-links --prune-empty-dirs --exclude='.test' --exclude='.seeds' --exclude='.route' --exclude='.scratch' --exclude='.behavior' --exclude='*.test.*' --include='*/' --include='briefs/**' --include='skills/**' --include='inits/**' --include='templates/**' --include='**/readme.md' --include='**/boot.yml' --include='**/keyrack.yml' --exclude='*' src/ dist.next/",
     "build:complete:swap": "(chmod -R u+w dist.prev 2>/dev/null || true) && rm -rf dist.prev/ && ([ ! -d dist ] || mv dist dist.prev) && mv dist.next dist && (chmod -R u+w dist.prev 2>/dev/null || true) && rm -rf dist.prev/",
     "build:complete:repo": "npx rhachet repo introspect",
     "build:complete": "npm run build:complete:dist && npm run build:complete:swap && npm run build:complete:repo",
@@ -77,12 +78,12 @@
     "preversion": "npm run prepush",
     "postversion": "git push origin HEAD --tags --no-verify",
     "prepare:husky": "husky install && chmod ug+x .husky/*",
-    "prepare:rhachet": "npm run build && rhachet init --keys --hooks --roles mechanic behaver driver reviewer librarian ergonomist architect dispatcher learner",
+    "prepare:rhachet": "npm run build && rhachet init --keys --hooks --roles mechanic behaver driver reviewer librarian ergonomist architect dispatcher learner skeptic",
     "prepare": "if [ -e .git ] && [ -z $CI ]; then npm run prepare:husky && npm run prepare:rhachet; fi",
     "upgrade:rhachet": "rhachet upgrade"
   },
   "peerDependencies": {
-    "rhachet": ">=1.49.2",
+    "rhachet": ">=1.54.1",
     "rhachet-brains-openrouter": ">=0.1.3"
   },
   "dependencies": {
@@ -135,7 +136,7 @@
     "husky": "8.0.3",
     "jest": "30.2.0",
     "jest-snapshot": "30.2.0",
-    "rhachet": "1.51.0",
+    "rhachet": "1.54.1",
     "rhachet-brains-anthropic": "0.4.3",
     "rhachet-brains-fireworksai": "0.2.3",
     "rhachet-brains-openai": "0.3.1",
@@ -144,7 +145,7 @@
     "rhachet-roles-bhrain": "link:.",
     "rhachet-roles-bhrowser": "0.1.0",
     "rhachet-roles-bhuild": "0.24.0",
-    "rhachet-roles-ehmpathy": "1.42.0",
+    "rhachet-roles-ehmpathy": "1.43.0",
     "rhachet-roles-ghlitch": "0.4.0",
     "rhachet-roles-rhachet": "0.1.7",
     "test-fns": "1.15.7",
@@ -165,7 +166,9 @@
     ],
     "patchedDependencies": {
       "rhachet-brains-openrouter@0.1.4": "patches/rhachet-brains-openrouter@0.1.4.patch",
-      "test-fns@1.15.7": "patches/test-fns@1.15.7.patch"
+      "test-fns@1.15.7": "patches/test-fns@1.15.7.patch",
+      "rhachet-roles-bhrowser@0.1.0": "patches/rhachet-roles-bhrowser@0.1.0.patch",
+      "rhachet-brains-anthropic@0.4.3": "patches/rhachet-brains-anthropic@0.4.3.patch"
     }
   },
   "packageManager": "pnpm@10.24.0"

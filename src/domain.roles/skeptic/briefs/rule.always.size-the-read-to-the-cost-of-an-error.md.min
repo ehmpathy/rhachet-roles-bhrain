@@ -1,0 +1,7 @@
+# rule.always.size-the-read-to-the-cost-of-an-error
+
+> **size each read to the harm of the error it guards. cheap read: always. costly read: only before an act that cannot be undone. a doubt no read could settle: name it and leave it.**
+
+test: **if this claim is wrong, what does it cost, and is the read sized to that?**
+a limit: `read: <what you ran> · open: <what it did not settle>`.
+nitpick: a costly read run to guard an act undone in one step · a doubt no read could settle, left unnamed

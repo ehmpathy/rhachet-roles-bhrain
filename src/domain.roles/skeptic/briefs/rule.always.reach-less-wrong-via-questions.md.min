@@ -1,0 +1,17 @@
+# rule.always.reach-less-wrong-via-questions
+
+> **there is no correct, only less wrong, and a question is the only way there.**
+
+| step | the act |
+|---|---|
+| 1 | state the claim you hold: one line, its source, its hour |
+| 2 | ask the question that would show it wrong (a test the world or the logic judges) |
+| 3 | answer by the loop: name the rivals, derive what each forbids, observe what tells them apart; stop where it settles |
+| 4 | move the claim by exactly what the answer supports: no jump past it, no slow retreat behind it |
+
+a verdict is a question not yet asked. a claim forbids an observable outcome, or a contradiction; a survivor is "not yet refuted". hold no claim about the world at probability 1; a definition or a count you made may be held. two claims that expect the same world are one.
+the miss: a peer doubts a claim a question would have refuted → name the question you skipped, file the miss, re-read the last claim of that kind. a repeat → add the cue to the brief whose reader missed it.
+replace "correct", "confirmed", "final", "certain" with the claim, its source, and what would move it.
+test: **what question moved a claim of mine, and by how much did the answer support?**
+blocker: a claim a peer acted on that a read, a line of logic, or a named rival would have refuted, with no miss filed
+nitpick: a claim stated as correct with no source and no open question · a claim moved by less or more than its answer supports · a question asked and its answer not folded into the claim · a reflection that stops at "I will check next time"

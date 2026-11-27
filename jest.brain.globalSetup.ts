@@ -2,6 +2,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { keyrack } from 'rhachet/keyrack';
 
+import { asTestBrainKeyName } from './src/.test/asTestBrainKeyName';
 import { DEFAULT_TEST_BRAIN } from './src/.test/genTestBrainContext';
 import { sdkBrainTierPick } from './src/.test/sdkBrainTierPick';
 import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified';
@@ -20,7 +21,16 @@ import { setBrainTierPickQualified } from './src/.test/setBrainTierPickQualified
 // eslint-disable-next-line import/no-default-export
 export default async (): Promise<void> => {
   if (existsSync(join(process.cwd(), '.agent/keyrack.yml')))
-    keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });
+    keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'lenient' });
+
+  // no brain key, no probe: a keyless run holds only suites that call no model, and a
+  // live-brain test that runs anyway demands its key in genTestBrainContext
+  const keyName = asTestBrainKeyName({ brain: DEFAULT_TEST_BRAIN });
+  if (!process.env[keyName]) {
+    console.log(`🦉 brain tier pick: skipped (${keyName} not set)`);
+    return;
+  }
+
   const result = await setBrainTierPickQualified(
     { slugTest: DEFAULT_TEST_BRAIN },
     { sdk: sdkBrainTierPick },

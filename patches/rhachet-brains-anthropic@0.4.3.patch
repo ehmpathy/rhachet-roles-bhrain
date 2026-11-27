@@ -1,0 +1,213 @@
+diff --git a/dist/domain.operations/atoms/BrainAtom.config.d.ts b/dist/domain.operations/atoms/BrainAtom.config.d.ts
+index b1d88f31..b969206c 100644
+--- a/dist/domain.operations/atoms/BrainAtom.config.d.ts
++++ b/dist/domain.operations/atoms/BrainAtom.config.d.ts
+@@ -3,12 +3,12 @@ import type { BrainSpec } from 'rhachet';
+  * .what = anthropic model identifiers
+  * .why = type-safe model id specification
+  */
+-export type AnthropicBrainAtomModel = 'claude-3-5-haiku-20241022' | 'claude-haiku-4-5-20251001' | 'claude-sonnet-4-20250514' | 'claude-sonnet-4-5-20250929' | 'claude-opus-4-20250514' | 'claude-opus-4-5-20251101';
++export type AnthropicBrainAtomModel = 'claude-3-5-haiku-20241022' | 'claude-haiku-4-5-20251001' | 'claude-haiku-5-5' | 'claude-sonnet-4-20250514' | 'claude-sonnet-4-5-20250929' | 'claude-opus-4-20250514' | 'claude-opus-4-5-20251101';
+ /**
+  * .what = supported anthropic brain atom slugs
+  * .why = enables type-safe slug specification with model variants
+  */
+-export type AnthropicBrainAtomSlug = 'claude/haiku' | 'claude/haiku/v3.5' | 'claude/haiku/v4.5' | 'claude/sonnet' | 'claude/sonnet/v4' | 'claude/sonnet/v4.5' | 'claude/opus' | 'claude/opus/v4' | 'claude/opus/v4.5';
++export type AnthropicBrainAtomSlug = 'claude/haiku' | 'claude/haiku/v3.5' | 'claude/haiku/v4.5' | 'claude/haiku/v5.5' | 'claude/sonnet' | 'claude/sonnet/v4' | 'claude/sonnet/v4.5' | 'claude/opus' | 'claude/opus/v4' | 'claude/opus/v4.5';
+ /**
+  * .what = atom config type
+  * .why = shared type for model configs
+@@ -16,6 +16,15 @@ export type AnthropicBrainAtomSlug = 'claude/haiku' | 'claude/haiku/v3.5' | 'cla
+ export type BrainAtomConfig = {
+     model: AnthropicBrainAtomModel;
+     description: string;
++    /**
++     * .what = request shape choices, per model
++     * .why = a model that caches a short prefix (haiku 5.5: 512 tokens) earns a cache marker on its system prompt
++     */
++    request?: {
++        cache?: {
++            system?: boolean;
++        };
++    };
+     spec: BrainSpec;
+ };
+ /**
+diff --git a/dist/domain.operations/atoms/BrainAtom.config.js b/dist/domain.operations/atoms/BrainAtom.config.js
+index 070fb1b9..c0094ada 100644
+--- a/dist/domain.operations/atoms/BrainAtom.config.js
++++ b/dist/domain.operations/atoms/BrainAtom.config.js
+@@ -92,6 +92,46 @@ const CONFIG_HAIKU_V4_5 = {
+         },
+     },
+ };
++const CONFIG_HAIKU_V5_5 = {
++    model: 'claude-haiku-5-5',
++    description: 'claude haiku 5.5 - fastest and most cost-effective; 1M context',
++    // the system prompt is the shared prefix; mark it so repeat asks read it from cache
++    request: { cache: { system: true } },
++    spec: {
++        cost: {
++            time: {
++                // est; not yet measured. haiku-class speed, as 4.5
++                speed: { tokens: 100, per: { seconds: 1 } },
++                latency: { milliseconds: 500 },
++            },
++            cash: {
++                // src: https://platform.claude.com/docs/en/about-claude/pricing
++                // .note = the rate card for prompts of 100K tokens or fewer; above that, $0.50 / $2.50
++                per: 'token',
++                cache: {
++                    get: (0, iso_price_1.dividePrice)({ of: '$0.01', by: 1000000 }), // 0.1x input, cache read
++                    set: (0, iso_price_1.dividePrice)({ of: '$0.125', by: 1000000 }), // 1.25x input, cache write (5min)
++                },
++                input: (0, iso_price_1.dividePrice)({ of: '$0.10', by: 1000000 }), // $0.10/MTok input
++                output: (0, iso_price_1.dividePrice)({ of: '$0.50', by: 1000000 }), // $0.50/MTok output
++            },
++        },
++        gain: {
++            // src: https://platform.claude.com/docs/en/build-with-claude/context-windows
++            size: { context: { tokens: 1000000 } },
++            grades: {
++                // est; official scores not read. floor at the 4.5 grades it succeeds
++                swe: 73,
++                mmlu: 80,
++                humaneval: 88,
++            },
++            // est; knowledge cutoff not read
++            cutoff: '2025-04-01',
++            domain: 'ALL',
++            skills: { tooluse: true, vision: true },
++        },
++    },
++};
+ const CONFIG_SONNET_V4 = {
+     model: 'claude-sonnet-4-20250514',
+     description: 'claude sonnet 4 - balanced performance and capability',
+@@ -255,12 +295,13 @@ const CONFIG_OPUS_V4_5 = {
+  */
+ exports.CONFIG_BY_ATOM_SLUG = {
+     // aliases (reference concrete versions)
+-    'claude/haiku': CONFIG_HAIKU_V4_5,
++    'claude/haiku': CONFIG_HAIKU_V5_5,
+     'claude/sonnet': CONFIG_SONNET_V4_5,
+     'claude/opus': CONFIG_OPUS_V4_5,
+     // concrete versions
+     'claude/haiku/v3.5': CONFIG_HAIKU_V3_5,
+     'claude/haiku/v4.5': CONFIG_HAIKU_V4_5,
++    'claude/haiku/v5.5': CONFIG_HAIKU_V5_5,
+     'claude/sonnet/v4': CONFIG_SONNET_V4,
+     'claude/sonnet/v4.5': CONFIG_SONNET_V4_5,
+     'claude/opus/v4': CONFIG_OPUS_V4,
+diff --git a/dist/domain.operations/atoms/genBrainAtom.js b/dist/domain.operations/atoms/genBrainAtom.js
+index a325b34f..aecff781 100644
+--- a/dist/domain.operations/atoms/genBrainAtom.js
++++ b/dist/domain.operations/atoms/genBrainAtom.js
+@@ -89,7 +89,16 @@ const genBrainAtom = (input) => {
+                 model: config.model,
+                 max_tokens: 16384,
+                 betas: ['structured-outputs-2025-11-13'],
+-                system: systemPrompt,
++                // a model that opts in marks its system prompt as the cache prefix, so a repeat ask reads it at 0.1x
++                system: systemPrompt && config.request?.cache?.system
++                    ? [
++                        {
++                            type: 'text',
++                            text: systemPrompt,
++                            cache_control: { type: 'ephemeral' },
++                        },
++                    ]
++                    : systemPrompt,
+                 messages,
+                 ...(tools && { tools }),
+                 output_format: (0, zod_1.betaZodOutputFormat)(askInput.schema.output),
+diff --git a/dist/domain.operations/repls/BrainRepl.config.d.ts b/dist/domain.operations/repls/BrainRepl.config.d.ts
+index 265e0bc0..dfed42ae 100644
+--- a/dist/domain.operations/repls/BrainRepl.config.d.ts
++++ b/dist/domain.operations/repls/BrainRepl.config.d.ts
+@@ -3,7 +3,7 @@ import { type BrainAtomConfig } from '../atoms/BrainAtom.config';
+  * .what = supported claude code repl slugs
+  * .why = enables type-safe slug specification with model variants
+  */
+-export type AnthropicBrainReplSlug = 'claude/code' | 'claude/code/haiku' | 'claude/code/haiku/v4.5' | 'claude/code/sonnet' | 'claude/code/sonnet/v4' | 'claude/code/sonnet/v4.5' | 'claude/code/opus' | 'claude/code/opus/v4.5';
++export type AnthropicBrainReplSlug = 'claude/code' | 'claude/code/haiku' | 'claude/code/haiku/v4.5' | 'claude/code/haiku/v5.5' | 'claude/code/sonnet' | 'claude/code/sonnet/v4' | 'claude/code/sonnet/v4.5' | 'claude/code/opus' | 'claude/code/opus/v4.5';
+ /**
+  * .what = repl config by slug
+  * .why = maps repl slugs to atom configs (reuses specs from CONFIG_BY_ATOM_SLUG)
+diff --git a/dist/domain.operations/repls/BrainRepl.config.js b/dist/domain.operations/repls/BrainRepl.config.js
+index 9d61696a..32873963 100644
+--- a/dist/domain.operations/repls/BrainRepl.config.js
++++ b/dist/domain.operations/repls/BrainRepl.config.js
+@@ -10,6 +10,7 @@ exports.CONFIG_BY_REPL_SLUG = {
+     'claude/code': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/sonnet'],
+     'claude/code/haiku': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/haiku'],
+     'claude/code/haiku/v4.5': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/haiku/v4.5'],
++    'claude/code/haiku/v5.5': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/haiku/v5.5'],
+     'claude/code/sonnet': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/sonnet'],
+     'claude/code/sonnet/v4': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/sonnet/v4'],
+     'claude/code/sonnet/v4.5': BrainAtom_config_1.CONFIG_BY_ATOM_SLUG['claude/sonnet/v4.5'],
+diff --git a/dist/domain.operations/repls/genBrainRepl.js b/dist/domain.operations/repls/genBrainRepl.js
+index 9d0badbe..8564d534 100644
+--- a/dist/domain.operations/repls/genBrainRepl.js
++++ b/dist/domain.operations/repls/genBrainRepl.js
+@@ -25,6 +25,23 @@ const SDK_SPECIFIER = '@anthropic-ai/claude-agent-sdk';
+  *        just names the specifier.
+  */
+ const getOneClaudeAgentSdk = () => (0, importEsmSafe_1.importEsmSafe)({ specifier: SDK_SPECIFIER });
++/**
++ * .what = the consumer's own claude code executable, or undefined
++ * .why = the sdk's bundled cli lags the consumer's claude code: it may not know a newer model, and it
++ *        dies when its config watch cannot get an inotify handle (EMFILE). the consumer's claude code is
++ *        the client its ambient oauth login is for, so the child runs on it where it is installed
++ */
++const getClaudeCodeExecutable = () => {
++    try {
++        return require.resolve('@anthropic-ai/claude-code/bin/claude.exe', { paths: [process.cwd()] });
++    }
++    catch (error) {
++        // allowlist: not installed in the consumer → the sdk's bundled cli serves
++        if (error?.code === 'MODULE_NOT_FOUND')
++            return undefined;
++        throw error;
++    }
++};
+ /**
+  * .what = prefix for episode exids from this repo
+  * .why = identifies episodes created by anthropic claude-agent-sdk for tracking
+@@ -175,11 +192,16 @@ const invokeQuery = async (input) => {
+     // convert zod schema to json schema for native structured output
+     const jsonSchema = (0, asJsonSchema_1.asJsonSchema)({ schema: input.schema.output });
+     // build tool constraints based on mode
+-    const toolConstraints = input.mode === 'ask'
+-        ? { disallowedTools: [...TOOLS_DISALLOWED_FOR_ASK] }
+-        : { allowedTools: [...TOOLS_ALLOWED_FOR_ACT] };
++    // .note = an explicit `plugs.tools: []` asks for no tools at all: no tool definitions ride the prompt
++    const toolConstraints = Array.isArray(input.plugs?.tools) && input.plugs.tools.length === 0
++        ? { tools: [] }
++        : input.mode === 'ask'
++            ? { disallowedTools: [...TOOLS_DISALLOWED_FOR_ASK] }
++            : { allowedTools: [...TOOLS_ALLOWED_FOR_ACT] };
+     // lazily load the esm-only sdk at point of use, then invoke its query
+     const { query } = await getOneClaudeAgentSdk();
++    // keep the claude code child's stderr, so a child that exits names its cause
++    const childStderr = [];
+     const queryIterator = query({
+         prompt: promptText,
+         options: {
+@@ -190,10 +212,14 @@ const invokeQuery = async (input) => {
+                 type: 'json_schema',
+                 schema: jsonSchema,
+             },
++            stderr: (data) => childStderr.push(data),
++            pathToClaudeCodeExecutable: getClaudeCodeExecutable(),
+         },
+     });
+-    // extract final result from async iterator
+-    const queryResult = await extractResultFromQuery(queryIterator);
++    // extract final result from async iterator; a child fault carries its own stderr
++    const queryResult = await extractResultFromQuery(queryIterator).catch((error) => {
++        throw new helpful_errors_1.UnexpectedCodePathError(`claude code child failed: ${error instanceof Error ? error.message : String(error)}`, { model: input.model, stderr: childStderr.join('').slice(-4000) || null, cause: error });
++    });
+     // parse output via schema for runtime validation
+     const output = input.schema.output.parse(queryResult.output);
+     // compute metrics

@@ -1,4 +1,6 @@
 **/.claude/scheduled_tasks*
+**/asks.coverage.jsonl
+**/asks.inventory.jsonl
 *.bak.*
 *.local.json
 *.log

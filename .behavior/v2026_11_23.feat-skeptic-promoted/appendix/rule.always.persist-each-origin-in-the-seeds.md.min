@@ -1,0 +1,9 @@
+# rule.always.persist-each-origin-in-the-seeds
+
+> **every law of this role keeps its origin: the human's words, verbatim, in the `.seeds/` of the route that shaped it, each with the brief or skill that carries it. a lost origin gets asked for again.**
+
+applies the basis: a law with no origin asks to be trusted on its own say-so; trace it so a reader can doubt it against its source. peers: `rule.always.archive-the-wishers-words-verbatim` (bhrain); this adds a landed law per seed. the seed stays in the route, never the role (librarian `rule.forbid.seeds-outside-their-route`).
+move: catch the utterance the turn it is said (`.said`, `.settled`, `.landed`, its id) · a seed no brief carries owes one in the same pass · each `.landed` path exists in the role · a seed found later joins that turn.
+test: **for each law, can I name the human's words that asked for it, and the file that carries it?** no → search, then persist.
+enforcement: an utterance that shaped the role, left out = **blocker** · a seed with no landed path = **blocker** · a seed in the role, or a brief that cites one = **blocker** · a law with no origin named = **nitpick**.
+case: `….example=the-fifty-asks.md`

@@ -1,0 +1,19 @@
+{
+  "key": "4297c58e2a99acf1",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(run): args after -- must not override dispatch --role",
+  "description": "## what\n\nsince rhachet 1.54.1, `rhx <skill> --repo R --role A -- --role B` resolves the skill under role B. args after `--` belong to the skill, yet rhachet reads them as its own flags.\n\n## repro\n\n```\nrhx review.by --repo bhrain --role reviewer -- --role ghost\n✋ ConstraintError: no skill \"review.by\" found with --repo bhrain --role ghost\n[args] run,--skill,review.by,--repo,bhrain,--role,reviewer,--,--role,ghost\n```\n\non 1.51.0 the same call ran `review.by` from role=reviewer and passed `--role ghost` to the skill.\n\n## impact\n\n- every role wrapper that forwards `-- --role <target>` (the review.by pattern) breaks\n- ehmpathy/rhachet-roles-bhrain#855: `blackbox/review.by.dispatch.acceptance.test.ts` fails all 3 cases, the happy path included\n\n## shape of the fix\n\n- stop the dispatch parse at the first `--`; forward every arg after it to the skill as is\n- clamp: an acceptance case with `--role A -- --role B` that asserts the skill resolves under A and receives `--role B`",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 53,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "848"
+}

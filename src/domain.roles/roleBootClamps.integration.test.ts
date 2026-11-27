@@ -26,7 +26,7 @@ const yaml = require('js-yaml');
 
 // the roles whose briefs boot as condensed mins: beyond the budget, their cue lines, refs, and
 // min peers are clamped too
-const ROLES_CONDENSED = ['learner', 'driver', 'librarian'] as const;
+const ROLES_CONDENSED = ['learner', 'driver', 'librarian', 'skeptic'] as const;
 
 // the roles whose briefs boot whole: only the budget is clamped
 const ROLES_BUDGET_ONLY = [
@@ -56,6 +56,7 @@ const BUDGET_SET_BY_OWNER: Partial<Record<string, number>> = {
   driver: 10_000,
   librarian: 5_000,
   telepath: 7_000,
+  skeptic: 5_000,
 };
 
 // the cap no role may cross, in budget or in payload (#692): a role that needs more boots as its
@@ -68,6 +69,14 @@ const SAYS_REQUIRED: Record<(typeof ROLES_CONDENSED)[number], string[]> = {
   learner: ['learner/briefs/rule.always.entool-the-skills-you-touch.md.min'],
   driver: [],
   librarian: [],
+  // the basis (whose move carries #834; `skepticCarriesIssue834` pins the cite), its first
+  // application, and the forbid catalog, whose rows boot the two acts that give a self an
+  // outside signal (predictions-written-after-the-look, unmarked-claims)
+  skeptic: [
+    'skeptic/briefs/rule.always.trust-no-one-especially-not-yourself.md.min',
+    'skeptic/briefs/rule.always.trust-but-verify.md.min',
+    'skeptic/briefs/catalog.of=forbid._.md',
+  ],
 };
 
 const REPO_ROOT: string = path.join(__dirname, '..', '..');
@@ -523,6 +532,31 @@ const getAllMinsWithNoPeer = (input: { files: string[] }): string[] =>
         !isFileFound({ file: path.join(__dirname, asMdPathOfMin({ min })) }),
     );
 
+// the blocker items of one text: each `blocker:` line splits on ` · ` into items, and each item
+// is keyed by its first six words (a min may trim the tail of an item, never its head)
+// .why = a min joins several items under one `blocker:` mark, so a count of marks passes a min
+//        that drops an item; a match per item does not (F19)
+const asBlockerKeysOfText = (input: { text: string }): string[] =>
+  input.text
+    .split('\n')
+    .filter((line) => line.startsWith('blocker: '))
+    .flatMap((line) => line.slice('blocker: '.length).split(' · '))
+    .map((item) => item.trim().split(/\s+/).slice(0, 6).join(' '));
+
+// the blocker items of each booted min's `.md` that its min does not carry, as `file: key`
+const getAllBlockersDropped = (input: { files: string[] }): string[] =>
+  input.files
+    .filter((file) => file.endsWith('.md.min'))
+    .flatMap((min) => {
+      const minText = getOneTextOfFile({ file: path.join(__dirname, min) });
+      const mdText = getOneTextOfFile({
+        file: path.join(__dirname, asMdPathOfMin({ min })),
+      });
+      return asBlockerKeysOfText({ text: mdText })
+        .filter((key) => !minText.includes(key))
+        .map((key) => `${min}: ${key}`);
+    });
+
 // the one line each budgeted role's readme carries: the pointer from a booted cue to its argument
 const LINE_OF_MIN_CONVENTION =
   'each `X.md.min` here condenses the `X.md` beside it. read the `.md` for the argument.';
@@ -673,6 +707,15 @@ describe('roleBootClamps', () => {
             scene.emitted.says.some((file) => file.endsWith('.md.min')),
           ).toBe(true);
           expect(getAllMinsWithNoPeer({ files: scene.emitted.says })).toEqual(
+            [],
+          );
+        });
+
+        // .note = skeptic only: the other mins rephrase their items on purpose, so a head-phrase
+        //         match would flag a rephrase as a drop
+        then('no booted min drops a blocker item of its `.md`', () => {
+          if (slug !== 'skeptic') return;
+          expect(getAllBlockersDropped({ files: scene.emitted.says })).toEqual(
             [],
           );
         });

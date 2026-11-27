@@ -1,0 +1,69 @@
+diff --git a/dist/domain.roles/playwright/skills/browser.start.sh b/dist/domain.roles/playwright/skills/browser.start.sh
+index 40e05e53ae973cc3f61c8e87e0a9e5e04c6027a3..5544023818b79401f133e4f3677ba38e137d5926 100755
+--- a/dist/domain.roles/playwright/skills/browser.start.sh
++++ b/dist/domain.roles/playwright/skills/browser.start.sh
+@@ -174,11 +174,52 @@ handle_refresh_kill_prior() {
+ 
+ handle_refresh_kill_prior
+ 
+-# named transformer: extract chromium version from playwright dry-run
++# named transformer: find the playwright cli this package depends on
++# .why = `npx playwright` looks up a bin from the caller's cwd; under pnpm the caller's root links no
++#        playwright bin, so look it up from this skill's own package instead
++get_playwright_cli() {
++  local skill_dir
++  skill_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
++  node -e "try { process.stdout.write(require.resolve('playwright/cli.js', { paths: [process.argv[1]] })) } catch {}" "$skill_dir"
++}
++
++# named transformer: extract chromium version from the playwright cli
++# .why = an empty match must not abort the start under pipefail; find_chromium_binary falls back to any cached chrome
+ get_chromium_version_from_playwright() {
+-  npx playwright install chromium --dry-run 2>/dev/null | grep -oP 'chromium-\d+' | head -1
++  local cli
++  cli="$(get_playwright_cli)"
++  if [[ -n "$cli" ]]; then
++    node "$cli" install chromium --dry-run 2>/dev/null | grep -oP 'chromium-\d+' | head -1 || true
++    return 0
++  fi
++  npx playwright install chromium --dry-run 2>/dev/null | grep -oP 'chromium-\d+' | head -1 || true
++}
++
++# named orchestrator: give a HEADFUL start a display where the box has none
++# .why = a headful chrome on a box with no DISPLAY dies at launch; a virtual display (Xvfb) serves it
++ensure_display_for_headful() {
++  if [[ "$MODE" != "HEADFUL" ]]; then
++    return 0
++  fi
++  if [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" ]]; then
++    return 0
++  fi
++  if ! command -v Xvfb > /dev/null; then
++    echo "🦎 cold snap" >&2
++    echo "" >&2
++    echo "✋ ConstraintError: HEADFUL needs a display, and this box has none" >&2
++    echo "   hint: install a virtual display (sudo apt-get install -y xvfb), or use --mode HEADLESS" >&2
++    exit 2
++  fi
++  export DISPLAY=":99"
++  if ! pgrep -f "Xvfb $DISPLAY" > /dev/null; then
++    nohup Xvfb "$DISPLAY" -screen 0 1920x1080x24 > /dev/null 2>&1 &
++    sleep 1
++  fi
+ }
+ 
++ensure_display_for_headful
++
+ # named transformer: find chromium binary in playwright cache
+ find_chromium_binary() {
+   local version="$1"
+@@ -230,7 +271,8 @@ HEADLESS_FLAGS=(
+ if [[ "$MODE" == "HEADLESS" ]]; then
+   nohup "$CHROMIUM_BIN" --headless "${HEADLESS_FLAGS[@]}" "${CHROME_FLAGS[@]}" > /dev/null 2>&1 &
+ else
+-  nohup "$CHROMIUM_BIN" "${CHROME_FLAGS[@]}" > /dev/null 2>&1 &
++  # .why = a headful chrome on a virtual display (no desktop session) hits the same sandbox abort as headless
++  nohup "$CHROMIUM_BIN" "${HEADLESS_FLAGS[@]}" "${CHROME_FLAGS[@]}" > /dev/null 2>&1 &
+ fi
+ 
+ # wait for CDP to become ready via named orchestrator
