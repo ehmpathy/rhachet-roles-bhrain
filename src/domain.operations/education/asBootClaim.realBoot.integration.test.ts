@@ -5,6 +5,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 
 import { asBootClaim } from './asBootClaim';
 import { asBootSpecNames } from './asBootSpecNames';
+import { getOneRhachetBinPath } from './getOneRhachetBinPath';
 
 const ROLE_DIR = '.agent/repo=.this/role=probe';
 const BRIEFS_EXTANT = ['briefs/rule.require.a.md', 'briefs/rule.require.b.md'];
@@ -47,17 +48,8 @@ const genBootOfSpec = (input: { slug: string; spec: string | null }) => {
     writeFileSync(path.join(repoRoot, ROLE_DIR, 'boot.yml'), input.spec);
   const stdout = String(
     execFileSync(
-      'npx',
-      [
-        '--no-install',
-        'rhachet',
-        'roles',
-        'boot',
-        '--repo',
-        '.this',
-        '--role',
-        'probe',
-      ],
+      getOneRhachetBinPath(),
+      ['roles', 'boot', '--repo', '.this', '--role', 'probe'],
       { cwd: repoRoot, maxBuffer: 64 * 1024 * 1024 },
     ),
   );
