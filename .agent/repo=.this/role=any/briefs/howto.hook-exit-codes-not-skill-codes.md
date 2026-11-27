@@ -57,7 +57,29 @@ the code is consumed by a **claude-code hook**:
 - a flag of a hook escalation's `code: 3` as an exit-code-semantics violation = **false positive**.
 - a "fix" that sets a stop-hook escalation halt to `code: 2` = **blocker** (permaloop hazard).
 
+## .exit 0 is silent — a hook's stderr shows only on a nonzero exit
+
+rhachet's `bin/hooks.dispatch.sh` (read at 1.54.1, header `:18-28`, `:438`) fronts every hook rule:
+
+| a rule exits | the event | its stderr |
+|---|---|---|
+| `0` | proceeds | 🔴 dropped — a `💥` note printed on exit 0 reaches no one |
+| `2` | held (blocked) | shown, with a `🪝 … blocked by <rule>` line |
+| any other nonzero | proceeds — a crash, a non-block | shown |
+
+⇒ a hook that must **fail open, but loud** (it cannot judge, so it must not hold) exits `1` with a
+`💥 MalfunctionError:` line. exit 0 hides the fault; exit 2 wedges the session on the hook's own
+defect.
+
+🟡 **PreToolUse inverts this.** claude passes a tool call on every exit but 2, so a guard that
+fails open lets an unchecked call through. a PreToolUse guard whose bypass ships harm fails
+closed: exit 2 with `💥` (`rule.require.qualified-error-headers`, its PreToolUse exception).
+
+first seen in `rhachet-roles-bhrain/.behavior/v2026_11_23.feat-skeptic-promoted`, fulcrum F29:
+the skeptic's Stop checks passed their own faults at exit 0, so no `💥` note ever showed.
+
 ## .see also
 
 - `rule.require.exit-code-semantics` (mechanic) — the 0/1/2 contract for skill/cli codes
+- `rule.require.qualified-error-headers` (mechanic) — the PreToolUse exception
 - `stepRouteDrive.ts` — the escalation halts that use `code: 3` deliberately

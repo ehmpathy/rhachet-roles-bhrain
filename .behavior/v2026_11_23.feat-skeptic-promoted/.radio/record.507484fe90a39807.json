@@ -1,0 +1,19 @@
+{
+  "key": "507484fe90a39807",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrowser"
+  },
+  "exid": null,
+  "title": "fix(playwright): browser.start HEADFUL dumps core where the sandbox cannot init or no display exists",
+  "description": "## .what\n\n`browser.start --mode HEADFUL` dumps core on a host that restricts unprivileged user namespaces (Ubuntu\n24.04 default) and on a host with no display. it fails as a bare MalfunctionError at `:237`, with\nchromium's own stderr sent to /dev/null, so the cause is invisible.\n\n## .repro\n\n- host: kernel 6.8.0 (ubuntu), `/proc/sys/kernel/apparmor_restrict_unprivileged_userns` = `1`, a tty\n  session with `DISPLAY` empty\n- `rhx browser.start --mode HEADFUL --session x` → `Trace/breakpoint trap (core dumped)` at `:149`,\n  then `MalfunctionError: command failed · line: 237`\n- same, with an Xvfb display on `:99` and `DISPLAY=:99` → the same trap. so the display is not the\n  only gap\n\n## .root cause (read)\n\n- `browser.start.sh:220-227`: the skill's own comment says chrome aborts (core dumped) without\n  `--no-sandbox` and `--disable-dev-shm-usage`, and it passes them only in HEADLESS (`:231`). HEADFUL\n  (`:233`) passes neither\n- with `apparmor_restrict_unprivileged_userns=1`, chromium's namespace sandbox cannot init for an\n  unprivileged user, so HEADFUL traps where HEADLESS (with `--no-sandbox`) does not\n- the skill never checks `DISPLAY`, so a display-less host also traps with no hint\n\n## .the shape of the fix\n\n- HEADFUL takes the same sandbox flags when the sandbox cannot init (detect the userns restriction,\n  or try with the sandbox and fall back), and says which it chose\n- check `DISPLAY` / `WAYLAND_DISPLAY` before launch; absent → a ConstraintError that names the fix\n  (e.g. run under Xvfb, `xvfb-run`, or a display)\n- send chromium's stderr to a log file the error names, never /dev/null\n- clamps: a launch test under a restricted-userns host (or with the sandbox forced to fail), and one\n  with `DISPLAY` unset; red before, green after\n\n## .see also\n\n- #40 (the playwright lookup defect, same skill)",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 48,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "41"
+}

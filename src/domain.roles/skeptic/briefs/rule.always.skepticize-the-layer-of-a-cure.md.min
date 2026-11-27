@@ -1,0 +1,11 @@
+# rule.always.skepticize-the-layer-of-a-cure
+
+> **for any defect, find by a read which role owns the root cause, then consult that role on the layer, the repo, and the grain of the cure. the read decides, never rank, and never a role named by habit.**
+
+applies the basis: the layer where a symptom shows is a claim about the cause; read it, never assume it.
+move: name where the symptom shows · five whys to where the cause starts · read who publishes that file or tool, and which role covers it · consult that role on layer, repo, grain · pick the owner's layer, say why the others fail · a cure held at the symptom layer carries a dispatch to the owner · doubt the ask's purpose (`ask-why-then-ask-can-we-delete`).
+grain: a count of cases, trees, and days, each read, sets it. the act lands at the file the owner publishes, never a copy.
+test: **which role owns this root cause, by what read, and did I consult it on layer, repo, and grain?**
+blocker: a cure at a layer, repo, or grain the cause's owner was not consulted on · an owner named by rank, habit, or assumption, with no read · the consult hardwired to one role
+nitpick: a vision or plan with no named layer, repo, and grain
+peer: architect `rule.require.solve-at-cause`. cases: `….example=the-four-pulls-and-the-layer.md` · `….example=a-test-tool-defect-and-the-consult.md`

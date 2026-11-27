@@ -1,0 +1,19 @@
+{
+  "key": "f464cf6942534ea7",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrowser"
+  },
+  "exid": null,
+  "title": "fix(playwright): browser.start looks up playwright from the consumer cwd and dies before its own error",
+  "description": "## .what\n\n`browser.start` fails in a consumer repo that does not itself depend on playwright: it dies at\n`browser.start.sh:194` with a bare MalfunctionError, before its own \"chromium not found\"\nConstraintError at `:200`.\n\n## .repro\n\n- consumer: ehmpathy/rhachet-roles-bhrain, devDependency `rhachet-roles-bhrowser@0.1.0` (pnpm)\n- `npx rhachet roles link --repo bhrowser --role playwright`, then\n  `rhx browser.start --mode HEADFUL --session skeptic`\n- result: `MalfunctionError: command failed · line: 194 · command: CHROMIUM_VERSION=$(get_chromium_version_from_playwright) · exit_code: 1`\n\n## .root cause (read, not guessed)\n\n1. `browser.start.sh:179` runs `npx playwright install chromium --dry-run` from the consumer cwd.\n   pnpm keeps `playwright@1.60.0` in the store as bhrowser's own dependency\n   (`node_modules/.pnpm/playwright@1.60.0`), but links no `node_modules/.bin/playwright` at the\n   consumer root, so npx cannot find the version bhrowser declares. stderr goes to /dev/null, so\n   the cause is hidden.\n2. under `set -euo pipefail`, the empty output makes `grep -oP` exit 1, which kills the skill inside\n   the command substitution at `:194`; the clean ConstraintError and hint at `:200-202` never run.\n\nchromium builds are present in `~/.cache/ms-playwright` (chromium-1155, -1223, -1234); the binary is\nnot the gap.\n\n## .the shape of the fix\n\n- look up playwright from the package's own install, not the cwd: locate `playwright/cli` with the\n  skill's own dir as the root, and call the cli by that path\n- let a lookup miss reach the ConstraintError at `:200` (guard the substitution, then test the empty\n  value) and print what the playwright cli said\n- a clamp: an integration test in a temp consumer with bhrowser installed via pnpm and no root\n  playwright; red before, green after\n\n## .why it matters\n\nany pnpm consumer of bhrowser that does not also pin playwright at its root cannot start a browser.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 47,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "40"
+}

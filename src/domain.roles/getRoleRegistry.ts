@@ -8,6 +8,7 @@ import { ROLE_NAVIGATOR } from '@src/domain.roles/navigator/getNavigatorRole';
 import { ROLE_REFLECTOR } from '@src/domain.roles/reflector/getReflectorRole';
 import { ROLE_RESEARCHER } from '@src/domain.roles/researcher/getResearcherRole';
 import { ROLE_REVIEWER } from '@src/domain.roles/reviewer/getReviewerRole';
+import { ROLE_SKEPTIC } from '@src/domain.roles/skeptic/getSkepticRole';
 import { ROLE_TELEPATH } from '@src/domain.roles/telepath/getTelepathRole';
 import { ROLE_THINKER } from '@src/domain.roles/thinker/getThinkerRole';
 
@@ -30,6 +31,7 @@ export const getRoleRegistry = (): RoleRegistry =>
       ROLE_REFLECTOR,
       ROLE_RESEARCHER,
       ROLE_REVIEWER,
+      ROLE_SKEPTIC,
       ROLE_TELEPATH,
       ROLE_THINKER,
     ],

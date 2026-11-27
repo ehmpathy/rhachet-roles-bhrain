@@ -56,6 +56,9 @@ always:
       # would otherwise trim a cue to save tokens a path list had spent
       - briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md
     ref:
+      # where a seed lives. at ref here, at say for this repo's own seats via
+      # `.agent/repo=.this/role=any/briefs` (a symlink); the seat budget holds no room
+      - briefs/rule.forbid.seeds-outside-their-route.md
       # the concept articles — understood, never produced, so one Read away rather than booted
       - briefs/knowledge/kno401.actors.1.role.librarian.kind=article.md
       - briefs/knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations.md

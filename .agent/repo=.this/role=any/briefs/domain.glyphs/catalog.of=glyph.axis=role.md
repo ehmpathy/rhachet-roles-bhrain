@@ -19,6 +19,8 @@ the glyph names what the role does.
 | 🌕 | reflector | illumination — shine back what was already there |
 | 🔭 | researcher | far sight, truth seeker — what is not yet held |
 | 🧭 | navigator | a course set where no trail is cut — the path planned before it is walked |
+| ⚗️ | skeptic | the alembic — a claim distilled until only what is true remains, the skeptic's own first |
+| 🫧 | subconscious | the bubbles — instinct that rises from below, unbidden, and flags what the main brain did not doubt |
 
 ## 🟡 .📚 and 🔭 are one practice, split on one question
 

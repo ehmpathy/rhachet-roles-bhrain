@@ -39,14 +39,6 @@ export const ROLE_ACHIEVER: Role = Role.build({
           },
         },
       ],
-      // onTalk: accumulate asks as they arrive
-      onTalk: [
-        {
-          command:
-            './node_modules/.bin/rhx goal.triage.infer --when hook.onTalk',
-          timeout: 'PT5S',
-        },
-      ],
     },
   },
 });

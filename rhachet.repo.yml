@@ -64,6 +64,13 @@ roles:
       dirs: dist/domain.roles/reviewer/skills
     boot: dist/domain.roles/reviewer/boot.yml
     keyrack: dist/domain.roles/reviewer/keyrack.yml
+  - slug: skeptic
+    readme: dist/domain.roles/skeptic/readme.md
+    briefs:
+      dirs: dist/domain.roles/skeptic/briefs
+    skills:
+      dirs: []
+    boot: dist/domain.roles/skeptic/boot.yml
   - slug: telepath
     readme: dist/domain.roles/telepath/readme.md
     briefs:

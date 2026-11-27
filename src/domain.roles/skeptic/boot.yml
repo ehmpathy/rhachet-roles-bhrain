@@ -1,0 +1,94 @@
+budget:
+  # a cap, not a target. the figure, and the halt, come from
+  # `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
+  # each min carries only its cue; its argument sits in the `.md` beside it. never cut a cue to
+  # fit: a halt here means a min grew, so tighten its cue rows or move its argument out.
+  # the owner set 5_000 as the cap; never raise it past that. the role sits at the least
+  # multiple of 250 strictly above its seat payload, the clamp's own rule.
+  tokens: 5_000
+always:
+  briefs:
+    say:
+      # the persona, then the basis: every rule below applies trust-no-one
+      - briefs/im_a.skeptic.md
+      - briefs/rule.always.trust-no-one-especially-not-yourself.md
+      # its first application, scoped to facts: a fact moves work only after a read of its source
+      - briefs/rule.always.trust-but-verify.md
+      # how an answer is weighed against its rivals, and how a claim moves by it
+      - briefs/rule.always.weigh-a-read-by-what-it-rules-out.md
+      - briefs/rule.always.reach-less-wrong-via-questions.md
+      # questions, both ways: the read before one leaves, the need behind one that arrives
+      - briefs/rule.always.skeptic-questions-all-questions.md
+      - briefs/rule.always.question-the-need-behind-an-ask.md
+      # a claim from one case speaks for a whole; a requirement owes its why; a refuted claim owes its maker a word
+      - briefs/rule.always.test-a-claim-against-the-whole-it-speaks-for.md
+      - briefs/rule.always.ask-why-then-ask-can-we-delete.md
+      - briefs/rule.always.pushback-what-you-refute.md
+      # every forbid as one row: the shape a reviewer can point at; each rule one Read away
+      - briefs/catalog.of=forbid._.md
+    ref:
+      # two tactics that give a self a signal from outside itself; the persona's stance boots each as a cue
+      - briefs/rule.always.predict-before-you-look.md
+      - briefs/rule.always.send-no-claim-before-its-read.md
+      # the reads owed per kind of claim, and the #834 cases; trust-no-one boots its move and cites it
+      - briefs/rule.always.question-your-first-take.md
+      # each named by a stance line of `im_a.skeptic.md`, which boots its cue; the rule is one Read away
+      - briefs/rule.always.weigh-each-claim-with-one-burden.md
+      - briefs/rule.always.say-only-what-is-needed.md
+      - briefs/rule.always.size-the-read-to-the-cost-of-an-error.md
+      - briefs/rule.always.file-an-incident-for-a-defect-you-name-in-yourself.md
+      - briefs/rule.always.skepticize-the-layer-of-a-cure.md
+      # a narrower case of the limit grammar `read: · open:` that the persona boots
+      - briefs/rule.forbid.i-dont-know-answers.md
+      # fired by a shape of claim (a lesson, a cause, a superlative), each fetched when that shape appears
+      - briefs/rule.always.run-the-razors-before-a-claim.md
+      - briefs/rule.always.razor-the-foundation-from-the-application.md
+      # the canon the rules cite: fetched when a reader doubts a razor or a lesson
+      # the ground: the loop (conjecture, derive, observe), the warrant each answer carries, the limits of each
+      - briefs/define.skeptic.fundamentals.md
+      # the razor catalog: an index; each razor one Read away by the path formula it states
+      - briefs/catalog.of=razor._.md
+      - briefs/define.skeptic.lessons-from-the-greats.md
+      # read before you propose a mechanism for this role: each rejected one, and why
+      - briefs/define.skeptic.mechanisms-ruled-out.md
+      # the direction chosen: the subconscious instinct, and the durable record of skepticism
+      - briefs/define.skeptic.instinct-via-subconscious.md
+    not:
+      # each case file is named by its rule's `see also`, and its path is computable from the rule:
+      # <rule>.example=<slug>.md. a read on demand, never a boot
+      - briefs/*.example=*.md
+      # each razor is named by its catalog row, and its path is computable from it
+      - briefs/catalog.of=razor.shaves=*.md
+      # each forbid twin is named by its always rule's `forbid twin:` line; a reviewer globs
+      # `rule.*.md` on disk, so a twin reaches review whatever the boot lists
+      - briefs/rule.forbid.answers-to-the-words-not-the-need.md
+      - briefs/rule.forbid.claims-above-their-evidence.md
+      - briefs/rule.forbid.claims-stated-as-final.md
+      - briefs/rule.forbid.clauses-no-reader-acts-on.md
+      - briefs/rule.forbid.confirmations-that-rule-out-no-rival.md
+      - briefs/rule.forbid.cures-at-the-symptom-layer.md
+      - briefs/rule.forbid.defects-admitted-unrecorded.md
+      - briefs/rule.forbid.doubt-out-of-scale.md
+      - briefs/rule.forbid.facts-relayed-unread.md
+      - briefs/rule.forbid.first-thoughts-shipped-unquestioned.md
+      - briefs/rule.forbid.lessons-at-one-level.md
+      - briefs/rule.forbid.predictions-written-after-the-look.md
+      - briefs/rule.forbid.questions-the-asker-could-settle.md
+      - briefs/rule.forbid.requirements-kept-with-no-why.md
+      - briefs/rule.forbid.silent-refutations.md
+      - briefs/rule.forbid.uneven-burdens.md
+      - briefs/rule.forbid.unmarked-claims.md
+      # the razor forbids: each named by `run-the-razors-before-a-claim`, and fetched when its shape appears
+      - briefs/rule.forbid.cases-with-no-point.md
+      - briefs/rule.forbid.circular-definitions.md
+      - briefs/rule.forbid.claims-stuck-high.md
+      - briefs/rule.forbid.claims-with-no-evidence.md
+      - briefs/rule.forbid.counts-offered-as-outcomes.md
+      - briefs/rule.forbid.false-dichotomies.md
+      - briefs/rule.forbid.labels-given-a-will.md
+      - briefs/rule.forbid.motives-before-slips.md
+      - briefs/rule.forbid.numbers-with-no-class.md
+      - briefs/rule.forbid.oughts-from-an-is.md
+      - briefs/rule.forbid.part-whole-transfers-unchecked.md
+      - briefs/rule.forbid.single-causes-unweighed.md
+      - briefs/rule.forbid.unfalsifiable-claims.md

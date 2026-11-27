@@ -103,11 +103,14 @@ if (requiresTestDb) {
 }
 
 /**
- * .what = source credentials from keyrack for test env
+ * .what = source credentials from keyrack for test env, leniently
  * .why =
- *   - auto-inject keys into process.env
- *   - fail fast with helpful error if keyrack locked or keys absent
+ *   - auto-inject every granted key into process.env
+ *   - a suite that calls no model must run with no brain key set; a strict source refused
+ *     every suite at setup over keys most of them never read
+ * .note = a live-brain test still demands its key: `genTestBrainContext` fails fast with
+ *         the `rhx keyrack set` fix when the brain's key is absent (its integration clamp)
  */
 const keyrackYmlPath = join(process.cwd(), '.agent/keyrack.yml');
 if (existsSync(keyrackYmlPath))
-  keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });
+  keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'lenient' });

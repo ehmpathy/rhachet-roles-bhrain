@@ -126,9 +126,9 @@ produces
       └─ estimate: $0.3290
 
 🪵 logs
-   ├─ scope: .log/bhrain/review/2025-12-23T00-39-00-673Z/input.scope.json
-   ├─ metrics: .log/bhrain/review/2025-12-23T00-39-00-673Z/metrics.expected.json
-   └─ tokens: .log/bhrain/review/2025-12-23T00-39-00-673Z/tokens.expected.md
+   ├─ scope: .log/bhrain/review/2025-12-23/input.scope.json
+   ├─ metrics: .log/bhrain/review/2025-12-23/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2025-12-23/tokens.expected.md
 
 🦉 let's review!
    └─ elapsed: 85s ✓
@@ -147,8 +147,8 @@ produces
       └─ total: $0.5629
 
 🌊 output
-   ├─ logs: .log/bhrain/review/2025-12-23T00-39-00-673Z
-   └─ review: .review/bhrain/v2025-12-23T00-39-00-645Z/[feedback].[given].by_robot.md
+   ├─ logs: .log/bhrain/review/2025-12-23
+   └─ review: .review/bhrain/v2025-12-23/[feedback].[given].by_robot.md
 ```
 
 ## `run --repo bhrain --skill reflect`
@@ -192,9 +192,9 @@ produces
       └─ total: $0.2036
 
 🌊 output
-   ├─ draft: .draft/v2025-12-26T22-11-28-309Z
-   ├─ pure: .draft/v2025-12-26T22-11-28-309Z/pure
-   └─ sync: .draft/v2025-12-26T22-11-28-309Z/sync
+   ├─ draft: .draft/v2025-12-26
+   ├─ pure: .draft/v2025-12-26/pure
+   └─ sync: .draft/v2025-12-26/sync
 
 🪨 results
    ├─ created: 5
@@ -316,6 +316,8 @@ they wield:
 - 🔮 crystal ball — for telepaths — to transfer a concept whole, at the fewest words
 - 🪐 planet — for thinkers — to navigate through concept space, thoroughly
 - 🌕 full moon — for reflectors — to shine back what an experience already held, plainly
+- 🧭 compass — for navigators — to plan a course where no trail is cut, before it is walked
+- ❓ question — for skeptics — to trust a claim only after it is asked, their own first
 
 every glyph above is drawn from the owl's own palette, and each names what its role does. the
 register and the rule behind it live in `define.bhrain-repo-mascot`.

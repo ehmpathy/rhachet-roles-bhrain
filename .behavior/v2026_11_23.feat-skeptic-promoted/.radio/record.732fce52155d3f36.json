@@ -1,0 +1,19 @@
+{
+  "key": "732fce52155d3f36",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrowser"
+  },
+  "exid": null,
+  "title": "fix(playwright): browser.action imports --play unanchored; two briefs teach an export the tool rejects",
+  "description": "## .what\n\ntwo defects in `browser.action` (rhachet-roles-bhrowser@0.1.0) that each cost a failed run before a first playbook works.\n\n### 1. `--play` is imported as given, so the documented paths fail\n\n`skills/browser.action.ts:95`:\n\n```ts\nconst playbookModule = await import(args.playbook);\n```\n\nthe path is never anchored to the caller's cwd, so:\n\n| `--play` value | what `import()` does | result |\n|---|---|---|\n| `.play/permanent/x.play.ts` (the form the skill header and usage text show) | reads it as a bare package specifier | module not found |\n| `./.play/permanent/x.play.ts` | anchors it to the skill's own dir in `node_modules` | module not found |\n| `/abs/path/x.play.ts` | absolute | works |\n\nseen 2026-11-24 in rhachet-roles-bhrain. the skill header (`browser.action.sh:18-20`) and its usage error (`:70-71`) both teach the first form.\n\n**fix:** anchor the path to the cwd before import, e.g. `await import(new URL(args.playbook, pathToFileURL(process.cwd() + '/')).href)`. add an acceptance case per row above.\n\n### 2. two briefs teach an export the tool rejects\n\n`skills/browser.action.ts:96` requires `export const action = async ({ page, browser }) => …`, and its own hint says so.\n\nbut these briefs teach `export default async (page: Page, ctx: Context) => …`:\n\n- `briefs/skills/howto.browser-action-playbooks.md` — lines 34, 75, 116, 134, 172, 195, 232\n- `briefs/skills/rule.require.playbooks-over-adhoc.md` — line 60\n\na reader who follows the brief meets `playbook must export an action function`. other briefs (`verification/`, `spa/`, `debug/`, `auth/`) already show the right form, so the two disagree with their peers too.\n\n**fix:** rewrite the 8 sites to `export const action = async (input: { page: Page; browser: Browser }) => …`. a test that greps `briefs/**` for `export default async (page` would hold the fix.\n\n## .related\n\n- #40 — `browser.start` and the absent root playwright bin\n- #41 — HEADFUL passes no `--no-sandbox`",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 49,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "42"
+}

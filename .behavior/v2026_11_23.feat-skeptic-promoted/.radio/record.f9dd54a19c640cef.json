@@ -1,0 +1,19 @@
+{
+  "key": "f9dd54a19c640cef",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-anthropic"
+  },
+  "exid": null,
+  "title": "feat(atoms): register claude haiku 5.5 as the haiku tier, and cache the system prompt",
+  "description": "## .what\n\nregister claude haiku 5.5 (`claude-haiku-5-5`) and point the `claude/haiku` tier at it. mark the system prompt as the cache prefix, for models that opt in. make the claude code repl run on the consumer's own claude code, and name a child fault by its stderr.\n\n## .why\n\n- haiku 5.5 bills $0.10 / $0.50 per MTok (prompts up to 100K): a tenth of haiku 4.5. 1M context; 512-token cache minimum (4.5: 4096)\n- the atom sends `system` as a bare string. no request carries a `cache_control` marker, so every repeat ask pays its briefs at the full input rate\n- the repl spawns the agent sdk's bundled cli. that cli lags the consumer's claude code, and it died on `EMFILE` when its `.claude.json` watch found no inotify handle. the fault surfaced as a bare `exited with code 1`, with no cause\n- bhrain runs a per-turn instinct brain on the haiku repl, on the ambient oauth login; each gap above blocked or inflated it\n\n## .the fix, as patched downstream\n\n- `BrainAtom.config`: add `CONFIG_HAIKU_V5_5` (model `claude-haiku-5-5`; per MTok: cache get $0.01, cache set $0.125, input $0.10, output $0.50; context 1M). map `claude/haiku` and `claude/haiku/v5.5` to it. add the model and slug to the type unions\n- `BrainAtomConfig.request.cache.system`: an opt-in flag. when set, `genBrainAtom` sends `system: [{ type: 'text', text, cache_control: { type: 'ephemeral' } }]`\n- `BrainRepl.config`: add `claude/code/haiku/v5.5`\n- `genBrainRepl`: pass `pathToClaudeCodeExecutable` = the consumer's `@anthropic-ai/claude-code/bin/claude.exe`, looked up from `process.cwd()`; absent → undefined, and the sdk's bundled cli serves as before\n- `genBrainRepl`: collect the child's stderr via the sdk's `stderr` option; a failed query rethrows as `UnexpectedCodePathError('claude code child failed: …', { model, stderr })` with the last 4k chars\n- `genBrainRepl`: an explicit `plugs.tools: []` maps to the sdk's `tools: []` — no tool definitions ride the prompt. any other value keeps today's ask/act tool sets\n- the atom already sends no `budget_tokens`, `temperature`, `top_p`, `top_k`, or prefill. haiku 5.5 rejects each with a 400\n\n## .proven downstream\n\n- live, on the ambient claude code oauth (no api key), via `claude/code/haiku`: structured output parses; the second ask reads its prefix from cache\n- with the default ask tool set, the prefix was ~19.8k tokens ($0.0034 cold, $0.0019 warm). with `plugs.tools: []`, ~4.0k ($0.0007 cold, $0.0002 warm)\n\n## .open\n\n- the atom path (raw api) on 5.5 is unproven live: does it accept the beta `output_format` with the `structured-outputs-2025-11-13` header, or is the GA `output_config.format` owed?\n- the haiku episode-continuation guard (`config.model.includes('haiku')`) was written for 4.5. does 5.5 still need it?\n- speed, latency, grades, and cutoff in the 5.5 config are estimates, marked so\n- output runs 247–545 tokens for 15–132 chars of json; likely adaptive thought. no effort knob is exposed on the repl\n\n## .ref\n\n- downstream patch: ehmpathy/rhachet-roles-bhrain `patches/rhachet-brains-anthropic@0.4.3.patch`\n- clamps: `src/infra/brain/anthropicHaikuIsTheCachedInstinctBrain.test.ts` (unit, red without the patch) · `src/infra/brain/anthropicHaikuViaAmbientOauth.integration.test.ts` (live, ambient oauth)",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 51,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "49"
+}

@@ -1,0 +1,8 @@
+# rule.always.send-no-claim-before-its-read
+
+> **before a reply leaves you: list each claim a peer might act on, with its answer and mark (`read:` · `follows:` · `rivals:` · `guess:`). answer the one a peer would doubt first.**
+
+the act behind the purpose: the last moment you can be the first skeptic is before you send. to say a claim aloud makes it a claim again. a claim a peer doubts first anyway is a miss: name the question you skipped.
+test: **which claim of this reply would a peer doubt first, and did I answer it?**
+blocker: a claim a peer acted on, unanswered and unmarked, found wrong
+nitpick: a reply whose claim a peer would doubt first left unanswered with no mark

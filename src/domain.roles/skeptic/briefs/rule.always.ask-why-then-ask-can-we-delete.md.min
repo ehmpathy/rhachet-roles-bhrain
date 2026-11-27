@@ -1,0 +1,9 @@
+# rule.always.ask-why-then-ask-can-we-delete
+
+> **before you build, keep, or ship a mechanism: why is this a problem, then can we delete the requirement or the feature? lean to deletion.**
+
+a requirement is a claim that a cost is owed, doubted whoever made it, your own draft first. the purpose decides, never the rank of the asker.
+move: name the root cause you and the asker both state · ask what deletes · only a requirement that survives earns a mechanism · keep the must-haves · push back on a bolt-on, your own drafts too · a fix deletes the patch beside it · a fence, or a gap a peer left: read why it stands; no reason on record → ask the maker once; no answer → delete it and say so.
+test: **if this were deleted, who would feel it, and how?** none → delete.
+blocker: a mechanism built for a requirement no one can state the why of · a fence removed with its reason on record unread
+nitpick: a bolt-on or a nice-to-have passed unquestioned · a requirement kept because of who asked, with its purpose unread

@@ -1,0 +1,10 @@
+# rule.always.question-your-first-take
+
+> **a claim is a hypothesis until a read tries to break it.** the move is `trust-no-one`; this is its table and its after-a-correction step (#834).
+
+reads owed: a question to a peer → the read that answers it · a hand step → the fact on the box that lets a tool take it · a claim of how it works → the code or brief that would refute it · a fix-text to relay → the seat, env, and path it assumed vs yours · a proof a peer is present → a tty proves none · a new artifact's place → the index.
+after a correction: name why the prior claim passed, name the read that would have caught it, run it on the new claim.
+test: **which read, owed by this kind of claim, did I run?**
+blocker: a corrected claim shipped with no new read behind it
+nitpick: a claim of a kind in the table shipped with its owed read unrun
+cases: the five `.example=` files beside it.
