@@ -1,0 +1,16 @@
+aim at the greats of `$COURSE_SLUG`: the canon that closes the gap the baseline showed.
+ref: $COURSE_ROUTE/1.2.outcome.baseline.yield.md
+
+choose the canon before a search result chooses it for you. for each great:
+- who, and the work (book, paper, docs, talk)
+- why them: what makes this the canon of the domain, not a summary of it
+- which baseline failure it addresses
+
+prefer primary works by the practitioners who shaped the domain. a blog that summarizes a
+great is a pointer to the great, never the great.
+
+emit into $COURSE_ROUTE/2.1.greats.aim.yield.md, with this table:
+
+| great | work | why | addresses |
+|---|---|---|---|
+| helland | idempotence is not a medical condition | named the pattern | t1 |

@@ -5,7 +5,8 @@ import * as path from 'path';
 import { delRouteStatusLineCacheOrWarn } from '@src/domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn';
 
 import { asRouteBindFlagName } from './asRouteBindFlagName';
-import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
+import { asRouteRelative } from './asRouteRelative';
+import { getOneRouteBindFlagFound } from './getOneRouteBindFlagFound';
 
 /**
  * .what = binds a route to the current branch via flag file
@@ -39,35 +40,12 @@ const setRouteBindFlag = async (input: {
     throw new BadRequestError(`route directory does not exist: ${input.route}`);
   }
 
-  // scan for pre-bound flags for this branch
-  const { branch, flagFiles: flagFilesFound } = await getAllBindFlagsByBranch({
-    branch: null,
+  // the bind refusals (protected branch, another route bound); same route → idempotent
+  const routeRelative = asRouteRelative({ at: routeAbsolute });
+  const { branch, flagPath: flagPathFound } = await getOneRouteBindFlagFound({
+    route: input.route,
   });
-
-  // reject protected branches
-  const protectedBranches = ['main', 'master'];
-  if (protectedBranches.includes(branch))
-    throw new BadRequestError('cannot bind route on protected branch', {
-      branch,
-    });
-
-  // if found, check if same route or different
-  const routeRelative = path.relative(process.cwd(), routeAbsolute) || '.';
-  if (flagFilesFound.length > 0) {
-    const flagPathFound = flagFilesFound[0]!;
-    const routeDirFound =
-      path.relative(process.cwd(), path.dirname(path.dirname(flagPathFound))) ||
-      '.';
-
-    // same route → idempotent return
-    if (routeDirFound === routeRelative)
-      return { route: routeRelative, flagPath: flagPathFound };
-
-    // different route → error
-    throw new BadRequestError(
-      `already bound to ${routeDirFound}. use route.bind --del first`,
-    );
-  }
+  if (flagPathFound) return { route: routeRelative, flagPath: flagPathFound };
 
   // ensure .route/ directory found
   const routeStateDir = path.join(routeAbsolute, '.route');

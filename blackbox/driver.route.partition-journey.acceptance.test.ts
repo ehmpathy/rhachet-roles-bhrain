@@ -3,6 +3,8 @@ import * as path from 'path';
 import { UnexpectedCodePathError } from 'helpful-errors';
 import { given, then, useBeforeAll, useThen, useWhen, when } from 'test-fns';
 
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
+
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
@@ -265,7 +267,8 @@ const asRepairCommandFromStdout = (input: { stdout: string }): string => {
  *         of that step re-arrives on the same branch and asserts structure, never verdict
  */
 describe('driver.route.partition-journey.acceptance', () => {
-  given('[case1] a guarded stone whose lane overflows (arc A)', () => {
+  // a live brain (the [t6] split lane): runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] a guarded stone whose lane overflows (arc A)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = await genRepoOnBranch({ slug: 'route-partition-journey' });
       return { tempDir };
@@ -345,12 +348,14 @@ describe('driver.route.partition-journey.acceptance', () => {
         expect(result.given).toContain('or cut a subtree the rubric does not grade');
       });
 
+      // .note = unnamed snapshots: under the BRAIN_LIVE gate a skipped case orphans any named
+      //         snapshot key (`…: stdout 1`), so a keyless run reports it obsolete
       then('stdout matches snapshot', () => {
-        expect(asNormalized(result.invoked.stdout)).toMatchSnapshot('stdout');
+        expect(asNormalized(result.invoked.stdout)).toMatchSnapshot();
       });
 
       then('the given matches snapshot', () => {
-        expect(asNormalized(result.given)).toMatchSnapshot('given');
+        expect(asNormalized(result.given)).toMatchSnapshot();
       });
     });
 
@@ -445,7 +450,7 @@ describe('driver.route.partition-journey.acceptance', () => {
 
       then('the ack matches snapshot', () => {
         // every journey step is pinned (rule.require.snapshot-every-journey-step)
-        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot('absorbed');
+        expect(asNormalized(result.absorbed.stdout)).toMatchSnapshot();
       });
 
       then('the .taken sits beside the given', () => {
@@ -639,7 +644,8 @@ describe('driver.route.partition-journey.acceptance', () => {
     );
   });
 
-  given('[case2] a guarded stone whose lane fits (arc B)', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case2] a guarded stone whose lane fits (arc B)', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] the same small change is arrived at twice — once bare, once with a declared set',
       () => {

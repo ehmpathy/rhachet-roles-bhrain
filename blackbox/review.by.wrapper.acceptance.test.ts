@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import {
   asStderrMessageLine,
@@ -106,7 +107,8 @@ describe('review.by.wrapper.acceptance', () => {
   // wrapper happy path — LLM-backed (when.repeatably)
   // ─────────────────────────────────────────────────────────────────────────
 
-  given('[case-wrap2] the demo wrapper runs against clean code', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-wrap2] the demo wrapper runs against clean code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] rhx review.by --role demo (via the demo wrapper) runs',
       () => {

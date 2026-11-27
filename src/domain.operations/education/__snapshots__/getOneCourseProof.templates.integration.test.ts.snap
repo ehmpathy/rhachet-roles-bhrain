@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t0] a yield is absent then: it refuses, and names a drive or an edit in place: test-proof-absent 1`] = `
+"✋ ConstraintError: the yield of 5.1.outcome.assess is absent
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   └─ fix: edit $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md in place, in the shape 5.1.outcome.assess shows, then re-run"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t0] a yield is absent then: it renders as a student sees it at exit, as the snapshot shows 1`] = `
+"✋ ConstraintError: the yield of 5.1.outcome.assess is absent
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   └─ fix: edit $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md in place, in the shape 5.1.outcome.assess shows, then re-run"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t0] a yield is absent then: it renders as a student sees it at exit, as the snapshot shows: test-proof-absent-render 1`] = `
+"✋ ConstraintError: the yield of 5.1.outcome.assess is absent
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   └─ fix: edit $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md in place, in the shape 5.1.outcome.assess shows, then re-run"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t1] a yield lacks its table then: it refuses, and names the columns owed: test-proof-table 1`] = `
+"✋ ConstraintError: a course yield lacks the table the pedigree reads
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/3.practice.vitro.yield.md
+   ├─ columns expected
+   │  ├─ claim
+   │  └─ verdict
+   └─ fix: add a table with the header | claim | verdict |, as its stone shows"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t2] a yield lacks its score line then: it refuses, and names the line owed: test-proof-line 1`] = `
+"✋ ConstraintError: a course yield lacks its \`score = …\` line
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/1.2.outcome.baseline.yield.md
+   └─ fix: add a line \`score = …\`, as its stone shows"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t3] a score is no n/m then: it refuses: test-proof-score 1`] = `
+"✋ ConstraintError: a course yield holds a score that is no n/m
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/1.2.outcome.baseline.yield.md
+   ├─ value = banana
+   └─ fix: write the score as passed/total, e.g. \`score = 2/3\`"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t4] a claim holds a verdict the stone does not define then: it refuses, with the verdicts allowed: test-proof-verdict 1`] = `
+"✋ ConstraintError: a course yield holds an unknown verdict
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/3.practice.vitro.yield.md
+   ├─ value = partial
+   ├─ allowed
+   │  ├─ held
+   │  ├─ refuted
+   │  └─ untested
+   └─ fix: use one of: held, refuted, untested"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t5] an entool row cites an artifact never written then: it refuses, with the path named: test-proof-artifact 1`] = `
+"✋ ConstraintError: a course yield cites an artifact the role does not hold
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.2.entool.execute.yield.md
+   ├─ paths absent = .agent/repo=.this/role=mechanic/briefs/rule.require.idempotency-key-at-external-boundaries.md
+   ├─ dirs of role
+   │  ├─ .agent/repo=.this/role=mechanic/briefs
+   │  └─ .agent/repo=.this/role=mechanic/skills
+   └─ fix: write each artifact into the role dirs, or drop its row from the table"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t6] a role with a boot spec does not name the brief then: it refuses, and names the boot spec: test-proof-unbooted 1`] = `
+"✋ ConstraintError: a course yield cites a brief the boot spec does not name
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.2.entool.execute.yield.md
+   ├─ boot path = .agent/repo=.this/role=mechanic/boot.yml
+   ├─ briefs unbooted = .agent/repo=.this/role=mechanic/briefs/rule.require.idempotency-key-at-external-boundaries.md (say)
+   └─ fix: name each under always.briefs.<say|ref> in .agent/repo=.this/role=mechanic/boot.yml, as a path relative to .agent/repo=.this/role=mechanic"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t8] a linked mod adds a skill its spec does not name then: it refuses, since rhachet refuses such a mod: test-proof-skill-unnamed 1`] = `
+"✋ ConstraintError: a course yield cites a skill the mod boot spec does not name
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.2.entool.execute.yield.md
+   ├─ boot path = .agent/repo=.mods/role=mechanic/boot.yml
+   ├─ skills unnamed = .agent/repo=.mods/role=mechanic/skills/s.sh
+   └─ fix: name each under skills.<say|ref> in .agent/repo=.mods/role=mechanic/boot.yml, as a path relative to .agent/repo=.mods/role=mechanic; rhachet refuses a mod that adds a skill no say or ref names"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t9] the assess is below the bar then: a failed transfer refuses, and names the phase to return to: test-proof-transfer-failed 1`] = `
+"✋ ConstraintError: the assess is below the bar
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   ├─ score = 3/3
+   ├─ transfer = failed
+   └─ fix: return to the weakest phase (2.2 for a gap in the canon, 3 for an untested claim, 4.1 for a brief the role did not reach for): rhx route.stone.set --stone <phase> --as rewound, then drive back through and assess again"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t9] the assess is below the bar then: a task short of its bar refuses: test-proof-score-short 1`] = `
+"✋ ConstraintError: the assess is below the bar
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   ├─ score = 2/3
+   ├─ transfer = passed
+   └─ fix: return to the weakest phase (2.2 for a gap in the canon, 3 for an untested claim, 4.1 for a brief the role did not reach for): rhx route.stone.set --stone <phase> --as rewound, then drive back through and assess again"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t10] the outcome cannot show a move then: a baseline already at the bar refuses 1`] = `
+"✋ ConstraintError: the baseline already sits at the bar
+   ├─ baseline at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/1.2.outcome.baseline.yield.md
+   ├─ baseline = 3/3
+   └─ fix: a course closes a gap the baseline shows; pick tasks the role fails today, then drive back through: rhx route.stone.set --stone 1.1.outcome.declare --as rewound"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t10] the outcome cannot show a move then: a baseline already at the bar refuses: test-proof-baseline-full 1`] = `
+"✋ ConstraintError: the baseline already sits at the bar
+   ├─ baseline at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/1.2.outcome.baseline.yield.md
+   ├─ baseline = 3/3
+   └─ fix: a course closes a gap the baseline shows; pick tasks the role fails today, then drive back through: rhx route.stone.set --stone 1.1.outcome.declare --as rewound"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t10] the outcome cannot show a move then: an assess over a different task count refuses, with both scores named: test-proof-totals 1`] = `
+"✋ ConstraintError: the baseline and the assess score a different number of tasks
+   ├─ baseline at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/1.2.outcome.baseline.yield.md
+   ├─ assess at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/5.1.outcome.assess.yield.md
+   ├─ baseline = 1/3
+   ├─ after = 4/4
+   └─ fix: score the same task set at both stones; the assess reruns the baseline tasks, so its total matches"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t11] a blueprint row rests on a refuted claim then: it refuses, and names the row and the claim: test-proof-refuted 1`] = `
+"✋ ConstraintError: a blueprint row rests on a claim the practice did not hold
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.1.entool.blueprint.yield.md
+   ├─ faults = rule.require.idempotency-key-at-external-boundaries.md rests on k7 (refuted)
+   └─ fix: drop the claim from the row, or drop the row; a refuted claim stays out of the role. a claim not yet tested belongs in the vitro table first"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t12] a blueprint row cites a claim the practice never tested then: it refuses, and names the claim: test-proof-untested-id 1`] = `
+"✋ ConstraintError: a blueprint row rests on a claim the practice did not hold
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.1.entool.blueprint.yield.md
+   ├─ faults = rule.require.idempotency-key-at-external-boundaries.md rests on k2 (not in the vitro table)
+   └─ fix: drop the claim from the row, or drop the row; a refuted claim stays out of the role. a claim not yet tested belongs in the vitro table first"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case2] a course whose yields the reader must refuse when: [t13] the entool writes an artifact the blueprint did not plan then: it refuses, and names the path: test-proof-unplanned 1`] = `
+"✋ ConstraintError: a course yield writes an artifact the blueprint did not plan
+   ├─ at = $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.2.entool.execute.yield.md
+   ├─ paths unplanned = .agent/repo=.this/role=mechanic/briefs/rule.require.idempotency-key-at-external-boundaries.md
+   └─ fix: plan each in $REPO/.route/pursuit/2.courses.pursue.yield/course=1.idempotency/4.1.entool.blueprint.yield.md, with the held claims it rests on, or drop its row"
+`;
+
+exports[`getOneCourseProof, fed the course templates own examples given: [case3] a native role with no boot spec, and two briefs it held before the course when: [t2] the student writes a simple spec with the new brief at say then: it refuses: the extant briefs move from say to ref, as the snapshot shows 1`] = `
+"✋ ConstraintError: the boot spec moves briefs the role booted before the course
+   ├─ boot path = .agent/repo=.this/role=mechanic/boot.yml
+   ├─ briefs moved
+   │  ├─ briefs/rule.require.a.md (say → ref)
+   │  └─ briefs/rule.require.b.md (say → ref)
+   └─ fix: boot each as it booted before: in a simple spec, drop the \`say\` key and name new briefs under \`briefs.ref\`; in a subject spec, name each moved brief where it was. then re-run"
+`;

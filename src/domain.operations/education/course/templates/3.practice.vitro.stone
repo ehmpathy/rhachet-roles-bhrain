@@ -1,0 +1,20 @@
+practice `$COURSE_SLUG` in vitro: test each claim.
+ref: $COURSE_ROUTE/2.2.greats.read.yield.md
+
+in an isolated sandbox (a temp repo or a scratch worktree, never the live tree), build whole,
+varied tasks of graded difficulty that could refute each claim. run them. feedback on each run.
+
+give each claim one verdict:
+- held — a test could have refuted it, and did not
+- refuted — a test refuted it; it stays out of the role's boot
+- untested — no test ran
+
+a refuted or untested claim is not the end: return to `2.2.greats.read`, read again for what
+was missed, then retest here. stop when each claim holds, or is refuted with the evidence.
+
+emit into $COURSE_ROUTE/3.practice.vitro.yield.md, with this table:
+
+| claim | verdict | evidence |
+|---|---|---|
+| k1 natural-key upsert dedupes a replay | held | 3 replays, 1 row |
+| k7 backoff alone makes a write safe | refuted | 3 replays, 2 duplicate rows |

@@ -1,6 +1,8 @@
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import { given, then, useThen, when } from 'test-fns';
 
+import { getAllRepoHookSites } from '@src/.test/getAllRepoHookSites';
 import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
 
 import { ROLE_LEARNER } from './getLearnerRole';
@@ -41,11 +43,28 @@ const asAllSettingsCommands = (settings: Settings): string[] =>
 describe('getLearnerRole hook registration (integration)', () => {
   given('[case1] the committed .claude/settings.json', () => {
     when('[t0] it is read alongside the role declaration', () => {
-      const result = useThen('settings.json is present', async () => ({
-        commands: asAllSettingsCommands(
-          JSON.parse(await fs.readFile(SETTINGS_PATH, 'utf-8')) as Settings,
-        ),
-      }));
+      // the commands span the settings and the dispatch manifest, where rhachet 1.54+ moves
+      // each role hook behind one dispatcher per event
+      const result = useThen('settings.json is present', async () => {
+        const repoHooks = await getAllRepoHookSites({ repoRoot: REPO_ROOT });
+        if (repoHooks.sites === null)
+          throw new BadRequestError(
+            'the repo hook settings could not be read',
+            {
+              file: repoHooks.file,
+              fault: repoHooks.fault,
+              hint: 'restore the repo settings layer: `rhx init --hooks` re-derives it',
+            },
+          );
+        return {
+          commands: [
+            ...asAllSettingsCommands(
+              JSON.parse(await fs.readFile(SETTINGS_PATH, 'utf-8')) as Settings,
+            ),
+            ...repoHooks.sites.map((site) => site.command),
+          ],
+        };
+      });
 
       then('the withdrawn onStop sweephook is absent from both sides', () => {
         // the domain-term sweephook was withdrawn. the drift hazard runs BOTH ways:

@@ -25,4 +25,6 @@ every rung is a tool; they differ in imagine cost per use. `entool` names the cl
 - entool: you called a skill and finished by hand; you read its instructions to know what to run
 - fix: a skill is broken; a brief is outdated; you're tempted to work around
 
+`learn.*` keeps one lesson; `education.*` teaches a role a subject and proves it moved: `rhx education.pedigree get`
+
 > never forget a lesson hardwon. never leave a traveler without a path.

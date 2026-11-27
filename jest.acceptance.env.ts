@@ -4,6 +4,8 @@ import util from 'util';
 
 import { keyrack } from 'rhachet/keyrack';
 
+import { RUN_BRAIN_TEST } from './src/.test/utils/RUN_BRAIN_TEST';
+
 // every `when.repeatably` attempt checks the attempt-1 snapshot
 import './src/.test/withAttemptAgnosticSnapshots';
 
@@ -70,11 +72,13 @@ if (
   );
 
 /**
- * .what = source credentials from keyrack for test env
+ * .what = source credentials from keyrack for test env, on the live-brain tier only
  * .why =
  *   - auto-inject keys into process.env
  *   - fail fast with helpful error if keyrack locked or keys absent
+ *   - every env.test key is a live-brain key, so a keyless run asks for none
+ *     (bulletin live-brain-tests-three-tiers)
  */
 const keyrackYmlPath = join(process.cwd(), '.agent/keyrack.yml');
-if (existsSync(keyrackYmlPath))
+if (RUN_BRAIN_TEST && existsSync(keyrackYmlPath))
   keyrack.source({ env: 'test', owner: 'ehmpath', mode: 'strict' });

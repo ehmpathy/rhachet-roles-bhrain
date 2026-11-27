@@ -16,9 +16,9 @@ never a license to coin a synonym.
 
 | root | terms (each name below is `$name`, prefixed by its root) |
 |---|---|
-| `route` | route · appendix · archive · bind · fulcrum · stone · stone.entry · stone.passage |
+| `route` | route · appendix · archive · bind · bind.swap · fulcrum · stone · stone.entry · stone.passage |
 | `route.brain` | address · halt · halt.cause · inheritance |
-| `route.guard` | guard · rung · brain · brain.dispatch · brain.dispatch.claim · brain.effort · brain.switch · budget · budget.grant · budget.grant.refusal · budget.grant.warrant · concurrency · concurrency.group · level · level.pour · level.slot · level.wave |
+| `route.guard` | guard · rung · brain · brain.dispatch · brain.dispatch.claim · brain.effort · brain.switch · budget · budget.grant · budget.grant.refusal · budget.grant.warrant · concurrency · concurrency.group · judge · judge.criterion · level · level.pour · level.slot · level.wave |
 | `route.guard.review` | review · absorption · absorption.concede · absorption.concede.severity · absorption.dispute · clearance · contemplate · contemplate.absent · contemplate.stale · converse · feedback · forgive · given · given.concern · latest · malfunction · overrule · peer · peer.meter · retired · reviewer · spoken · taken · tallier · terminal · unreadable · vibe |
 | `review` | attribution · breadth · breakdown · cost · focus · meter · trace · scope · scope.locus · scope.partition · scope.polluter · scope.split · scope.target |
 | `review.grade` | grade · attribution.attributed · attribution.unattributed · cache.cold · cache.warm · honesty · honesty.metered · honesty.refused · honesty.unknown |
@@ -28,6 +28,8 @@ never a license to coin a synonym.
 | `externalize` | externalize · enbrief · enskill · entool · entrait · learn · pave |
 | `glossary` | glossary · domain-term · sweep · sweep.progress · sweep.progress.articulation |
 | `itemization` | catalog · census · coordinate · inventory · itemize |
+| `doc` | kernel · kernel.claim |
+| `education` | education · pedigree · pedigree.index · pedigree.stamp · pursuit · pursuit.ledger · pursuit.course · pursuit.course.exit · pursuit.course.greats · pursuit.course.proof · pursuit.course.vitro · pursuit.plot |
 | `git` | grove · tree |
 | `fs.error` | absence · denial |
 | `learn.terms.hook` | hook · drift · hold · reach · state · target · toggle |

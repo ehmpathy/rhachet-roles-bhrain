@@ -10,6 +10,7 @@ import {
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import { stepReview } from './stepReview';
 
@@ -30,55 +31,59 @@ describe('stepReview.caseBrain.deepseek-flash.case2', () => {
     brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] multiple chapters with the default test brain', () => {
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] stepReview on all chapters',
-      () => {
-        const outputPath = path.join(
-          os.tmpdir(),
-          'review-deepseek-flash-multi.md',
-        );
-        afterAll(async () => fs.rm(outputPath, { force: true }));
-
-        // single API call, result shared across assertions
-        const result = useThen('stepReview succeeds', async () => {
-          const res = await stepReview(
-            {
-              rules: '.agent/**/briefs/rules/*.md',
-              paths: 'chapters/*.md',
-              output: outputPath,
-              focus: 'push',
-              goal: 'representative',
-              cwd: ASSETS_PROSE,
-            },
-            { brain: scene.brain },
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case1] multiple chapters with the default test brain',
+    () => {
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview on all chapters',
+        () => {
+          const outputPath = path.join(
+            os.tmpdir(),
+            'review-deepseek-flash-multi.md',
           );
+          afterAll(async () => fs.rm(outputPath, { force: true }));
 
-          // log output for observability
-          logOutputHead({
-            label: 'deepseek-flash.multi.review',
-            output: res.review.formatted,
+          // single API call, result shared across assertions
+          const result = useThen('stepReview succeeds', async () => {
+            const res = await stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'chapters/*.md',
+                output: outputPath,
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_PROSE,
+              },
+              { brain: scene.brain },
+            );
+
+            // log output for observability
+            logOutputHead({
+              label: 'deepseek-flash.multi.review',
+              output: res.review.formatted,
+            });
+
+            return { result: res, outputPath };
           });
 
-          return { result: res, outputPath };
-        });
+          then('review covers all target files', async () => {
+            expect(result.result.metrics.files.targetsCount).toBe(3);
+          });
 
-        then('review covers all target files', async () => {
-          expect(result.result.metrics.files.targetsCount).toBe(3);
-        });
+          then('review is written to output path', async () => {
+            const content = await fs.readFile(result.outputPath, 'utf-8');
+            expect(content.length).toBeGreaterThan(0);
+          });
 
-        then('review is written to output path', async () => {
-          const content = await fs.readFile(result.outputPath, 'utf-8');
-          expect(content.length).toBeGreaterThan(0);
-        });
-
-        then('review contains blockers for dirty chapters', async () => {
-          // chapter2.md has gerund violations, so review should contain blockers
-          expect(result.result.review.formatted.toLowerCase()).toContain(
-            'blocker',
-          );
-        });
-      },
-    );
-  });
+          then('review contains blockers for dirty chapters', async () => {
+            // chapter2.md has gerund violations, so review should contain blockers
+            expect(result.result.review.formatted.toLowerCase()).toContain(
+              'blocker',
+            );
+          });
+        },
+      );
+    },
+  );
 });

@@ -1,0 +1,22 @@
+graduate: stamp the pedigree.
+
+```sh
+rhx education.pedigree set
+```
+
+it reads every course of this pursuit and writes one pedigree entry for $ROLE into
+$BRIEFS_DIR/education/, named in $BOOT_PATH.
+
+$GRADUATE_RENDER_STEP
+
+the guard also boots $ROLE as rhachet does. where its boot spec declares a `budget:`, a boot
+past it holds this stone: move a `say` entry to `ref`, or raise `budget.tokens` on purpose,
+then re-stamp.
+
+then pass this stone. it rests on the review that chose to graduate and the pedigree entry `set`
+wrote ($PEDIGREE_ENTRY); no yield file of its own is owed. until the entry stands, the guard's
+judge holds the stone and names `set`:
+
+```sh
+rhx route.stone.set --stone 4.graduate --as passed
+```

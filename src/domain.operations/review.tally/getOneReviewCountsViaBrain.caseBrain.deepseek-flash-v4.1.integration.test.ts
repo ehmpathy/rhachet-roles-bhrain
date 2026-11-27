@@ -8,6 +8,7 @@ import {
 } from '@src/.test/genTestBrainContext';
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 
 import { readFileSync } from 'node:fs';
@@ -80,33 +81,45 @@ const loadFixture = (input: { name: string }): string =>
 describe('getOneReviewCountsViaBrain.caseBrain.deepseek-flash-v4.1', () => {
   // ── synthetic, unambiguous cases (exact-pinned) ──────────────────────────
 
+  // keyless: empty content returns before any brain is asked, so this case needs no gate
   given('[case1] empty content — no verdict at all', () => {
-    when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
-      const result = useThen('it succeeds', async () =>
-        getOneReviewCountsViaBrain({ content: '' }, getOneRealSupply()),
-      );
+    when.repeatably(REPEATABLY_CONFIG)(
+      '[t0] short-circuited before the brain',
+      () => {
+        const result = useThen('it succeeds', async () =>
+          getOneReviewCountsViaBrain({ content: '' }, getOneRealSupply()),
+        );
 
-      then('it returns detected=false (no fabricated verdict)', () => {
-        expect(result.detected).toBe(false);
-      });
-    });
+        then('it returns detected=false (no fabricated verdict)', () => {
+          expect(result.detected).toBe(false);
+        });
+      },
+    );
   });
 
-  given('[case2] garbage content — no discernible verdict', () => {
-    const content = 'asdf qwer zxcv lorem ipsum dolor sit amet consectetur';
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case2] garbage content — no discernible verdict',
+    () => {
+      const content = 'asdf qwer zxcv lorem ipsum dolor sit amet consectetur';
 
-    when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
-      const result = useThen('it succeeds', async () =>
-        getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] tallied by the real brain',
+        () => {
+          const result = useThen('it succeeds', async () =>
+            getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
+          );
+
+          then('it returns detected=false', () => {
+            expect(result.detected).toBe(false);
+          });
+        },
       );
+    },
+  );
 
-      then('it returns detected=false', () => {
-        expect(result.detected).toBe(false);
-      });
-    });
-  });
-
-  given(
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
     '[case3] terse-but-genuine clean pass — the evidence-gate false-negative fence',
     () => {
       const content = 'lgtm — looks good, no issues, ship it';
@@ -137,88 +150,110 @@ describe('getOneReviewCountsViaBrain.caseBrain.deepseek-flash-v4.1', () => {
     },
   );
 
-  given('[case4] clean prose — reviewer reports no issues', () => {
-    const content =
-      'i reviewed the change carefully. everything looks correct, well-tested, and clear. no problems to report.';
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case4] clean prose — reviewer reports no issues',
+    () => {
+      const content =
+        'i reviewed the change carefully. everything looks correct, well-tested, and clear. no problems to report.';
 
-    when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
-      const result = useThen('it succeeds', async () =>
-        getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
-      );
-
-      then('it returns detected=true with 0 blockers, 0 nitpicks', () => {
-        expect(result.detected).toBe(true);
-        if (!result.detected)
-          throw new UnexpectedCodePathError(
-            'no count was detected where a verdict was expected',
-            {
-              hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
-            },
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] tallied by the real brain',
+        () => {
+          const result = useThen('it succeeds', async () =>
+            getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
-        expect(result.blockers).toBe(0);
-        expect(result.nitpicks).toBe(0);
-      });
-    });
-  });
 
-  given('[case5] prose with genuine must-fix + optional items', () => {
-    const content = `## summary
+          then('it returns detected=true with 0 blockers, 0 nitpicks', () => {
+            expect(result.detected).toBe(true);
+            if (!result.detected)
+              throw new UnexpectedCodePathError(
+                'no count was detected where a verdict was expected',
+                {
+                  hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
+                },
+              );
+            expect(result.blockers).toBe(0);
+            expect(result.nitpicks).toBe(0);
+          });
+        },
+      );
+    },
+  );
+
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case5] prose with genuine must-fix + optional items',
+    () => {
+      const content = `## summary
 
 i found two must-fix problems that block the change, and one optional
 suggestion to clean up later. the two problems must be resolved; the
 suggestion is advisory only.`;
 
-    when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
-      const result = useThen('it succeeds', async () =>
-        getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
-      );
-
-      then('it returns 2 blockers, 1 nitpick from the prose', () => {
-        expect(result.detected).toBe(true);
-        if (!result.detected)
-          throw new UnexpectedCodePathError(
-            'no count was detected where a verdict was expected',
-            {
-              hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
-            },
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] tallied by the real brain',
+        () => {
+          const result = useThen('it succeeds', async () =>
+            getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
-        expect(result.blockers).toBe(2);
-        expect(result.nitpicks).toBe(1);
-      });
-    });
-  });
 
-  given('[case6] mentioned-then-cleared — final verdict is clean', () => {
-    const content = `## review
+          then('it returns 2 blockers, 1 nitpick from the prose', () => {
+            expect(result.detected).toBe(true);
+            if (!result.detected)
+              throw new UnexpectedCodePathError(
+                'no count was detected where a verdict was expected',
+                {
+                  hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
+                },
+              );
+            expect(result.blockers).toBe(2);
+            expect(result.nitpicks).toBe(1);
+          });
+        },
+      );
+    },
+  );
+
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case6] mentioned-then-cleared — final verdict is clean',
+    () => {
+      const content = `## review
 
 at first i worried about two potential blockers around error handling and
 a race condition. after tracing the code, both are already handled correctly.
 final verdict: no outstanding issues. 0 blockers, 0 nitpicks.`;
 
-    when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
-      const result = useThen('it succeeds', async () =>
-        getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
-      );
-
-      then(
-        'it returns the FINAL 0/0, not the mentioned-in-passing numbers',
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] tallied by the real brain',
         () => {
-          expect(result.detected).toBe(true);
-          if (!result.detected)
-            throw new UnexpectedCodePathError(
-              'no count was detected where a verdict was expected',
-              {
-                hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
-              },
-            );
-          expect(result.blockers).toBe(0);
-          expect(result.nitpicks).toBe(0);
+          const result = useThen('it succeeds', async () =>
+            getOneReviewCountsViaBrain({ content }, getOneRealSupply()),
+          );
+
+          then(
+            'it returns the FINAL 0/0, not the mentioned-in-passing numbers',
+            () => {
+              expect(result.detected).toBe(true);
+              if (!result.detected)
+                throw new UnexpectedCodePathError(
+                  'no count was detected where a verdict was expected',
+                  {
+                    hint: 'read the review content this case feeds; a non-detection means the parse missed it or the brain abstained',
+                  },
+                );
+              expect(result.blockers).toBe(0);
+              expect(result.nitpicks).toBe(0);
+            },
+          );
         },
       );
-    });
-  });
+    },
+  );
 
-  given(
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
     '[case7] partial-numeric — one dimension numeric, the other prose',
     () => {
       const content = `## findings
@@ -255,7 +290,8 @@ could be clearer, and one comment is stale. both are optional.`;
     },
   );
 
-  given(
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
     '[case8] rubric-taxonomy — headed severity sections, no numeric line',
     () => {
       // shaped like this repo's own architect-role reviewers: headed markdown sections,
@@ -303,7 +339,8 @@ could be clearer, and one comment is stale. both are optional.`;
     },
   );
 
-  given(
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
     '[case9] large review about a small subject — reads the review, not the subject',
     () => {
       const content = `## review of a 10,000-line refactor
@@ -348,7 +385,8 @@ a rollback path. otherwise clean.`;
   ];
 
   for (const [index, fixture] of REAL_FIXTURES.entries()) {
-    given(
+    // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+    given.runIf(RUN_BRAIN_TEST)(
       `[case${10 + index}] ${fixture} — a real L3 reviewer that malfunctioned on this stone`,
       () => {
         const content = loadFixture({ name: fixture });

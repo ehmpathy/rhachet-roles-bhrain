@@ -7,6 +7,7 @@ import {
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
@@ -20,7 +21,10 @@ import { stepReflect } from './stepReflect';
  * .note = the brain is live, so the case runs `when.repeatably` (rule.require.repeatable-for-llm-tests):
  *         EVERY locally, so an intermittent defect surfaces where it is cheap to diagnose; SOME in CI
  */
-describe('stepReflect.casePriorRules.default', () => {
+// a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+const describeIfBrainTest = RUN_BRAIN_TEST ? describe : describe.skip;
+
+describeIfBrainTest('stepReflect.casePriorRules.default', () => {
   // increase timeout for brain invocations (5 minutes)
   jest.setTimeout(300000);
 

@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
 
 import {
@@ -399,7 +400,8 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = PASS — term-aggregation on clean generic code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
     when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
@@ -471,7 +473,8 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = PASS — term-application on clean term code → guard approves
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
     when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
@@ -544,7 +547,8 @@ describe('review.by.guard-peer.acceptance', () => {
   // verdict = FINDINGS — term-application on dirty terms → guard REJECTS
   // ───────────────────────────────────────────────────────────────────────────
 
-  given('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
     when(
       '[t0] the stone is passed → the peer bites, the guard rejects off a raw base review',
       () => {

@@ -1,0 +1,7 @@
+artifacts:
+  - $route/3.courses.review.yield.md
+  - $PEDIGREE_ENTRY
+
+judges:
+  - rhx education.pursuit judge --criterion pedigree-stamped --route $route
+  - rhx education.pursuit judge --criterion boot-within-budget --route $route

@@ -1,0 +1,21 @@
+pursue each plotted course, in order. ref: $PURSUIT_ROUTE/1.courses.plot.yield.md
+
+for the first plotted course that has not yet exited:
+
+```sh
+rhx education.pursuit.course init --course <slug>
+rhx route.drive
+```
+
+`education.pursuit.course init` opens the course as its own route under
+$PURSUIT_ROUTE/2.courses.pursue.yield/ and moves the bind to it. drive it to its last stone,
+`6.exit`, which moves the bind back here. then pursue the next course.
+
+once every plotted course has exited, pass this stone. its artifacts are the exits each course
+wrote (`2.courses.pursue.yield/*/6.exit.yield.md`); no yield file of its own is owed:
+
+```sh
+rhx route.stone.set --stone 2.courses.pursue --as passed
+```
+
+one course at a time: course k reads the briefs course k−1 landed as given.

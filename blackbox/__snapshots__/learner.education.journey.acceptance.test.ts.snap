@@ -1,0 +1,1028 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t0] a pursuit opens with --for, through the entry then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit
+
+🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency
+   ├─ role = mechanic (native)
+   │  ├─ briefs = .agent/repo=.this/role=mechanic/briefs
+   │  ├─ skills = .agent/repo=.this/role=mechanic/skills
+   │  └─ boot = .agent/repo=.this/role=mechanic/boot.yml (absent, so every brief boots at say)
+   ├─ courses seeded
+   │  └─ 1. idempotency
+   ├─ files = 8 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles mechanic,learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t1] a pursuit opens for a role the repo lacks then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: no role mechanik in this repo
+   ├─ role = mechanik
+   ├─ roles found
+   │  ├─ mechanic (native)
+   │  ├─ driver (linked, bhrain)
+   │  └─ learner (linked, bhrain)
+   └─ fix: did you mean --for mechanic?
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t2] a course is pushed once the plot is written then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit.course
+
+🦉 stillness before action
+
+📜 education.pursuit.course init
+   ├─ course = 1. idempotency
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency
+   ├─ files = 13 created, 0 kept
+   ├─ bound = the course (was .route/v$DATE.education.pursuit.mechanic.idempotency)
+   └─ next: rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t3] the pedigree is read for the role then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pedigree
+
+🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = mechanic (native)
+   ├─ pursuits graduated = 0
+   └─ next: rhx education.pursuit init --for <role> --slug <slug>
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t4] the course stones pass, and 6.exit is passed by hand then: each stream renders as the snapshot shows: stderr 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+   └─ ✋ blocked by constraints
+
+🪶 judge 1
+   └─ stdout
+      ├─
+      │
+      │  🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit.course
+      │
+      │  passed: false
+      │  reason: a course ends only by exit; run: rhx education.pursuit.course exit
+      │
+      └─
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t4] the course stones pass, and 6.exit is passed by hand then: each stream renders as the snapshot shows: stdout 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+   │
+   └─ ✗ judge.1 - blocked $ELAPSEDs
+
+🗿 route.stone.set
+   ├─ stone = 6.exit
+   ├─ passage = blocked
+   ├─ reason = a course ends only by exit; run: rhx education.pursuit.course exit
+   └─ guard
+      ├─ artifacts
+      └─ judges
+          └─ j1: rhx education.pursuit.course judge --criterion exited --route $route
+              ├─ finished $ELAPSEDs ✗
+              └─ reason: a course ends only by exit; run: rhx education.pursuit.course exit
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t5.1] the pursue stone is passed as its stone says, once the course exited then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+   │
+   └─ ✓ judge.1 - allowed $ELAPSEDs
+
+🗿 route.stone.set
+   ├─ stone = 2.courses.pursue
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/2.courses.pursue.yield/*/6.exit.yield.md
+   │  └─ judges
+   │      └─ j1: rhx education.pursuit judge --criterion courses-exited --route $route
+   │          └─ finished $ELAPSEDs ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t5.2] the graduate stone is passed before the pedigree is stamped then: each stream renders as the snapshot shows: stderr 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+   └─ ✋ blocked by constraints
+
+🪶 judge 1
+   └─ stdout
+      ├─
+      │
+      │  🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit
+      │
+      │  passed: false
+      │  reason: the pedigree entry is absent; run: rhx education.pedigree set
+      │
+      └─
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t5.2] the graduate stone is passed before the pedigree is stamped then: each stream renders as the snapshot shows: stdout 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+   │
+   ├─ ✗ judge.1 - blocked $ELAPSEDs
+   │
+   └─ ✓ judge.2 - allowed $ELAPSEDs
+
+🗿 route.stone.set
+   ├─ stone = 4.graduate
+   ├─ passage = blocked
+   ├─ reason = the pedigree entry is absent; run: rhx education.pedigree set
+   └─ guard
+      ├─ artifacts
+      │   ├─ $route/3.courses.review.yield.md
+      │   └─ .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+      └─ judges
+          ├─ j1: rhx education.pursuit judge --criterion pedigree-stamped --route $route
+          │   ├─ finished $ELAPSEDs ✗
+          │   └─ reason: the pedigree entry is absent; run: rhx education.pedigree set
+          └─ j2: rhx education.pursuit judge --criterion boot-within-budget --route $route
+              └─ finished $ELAPSEDs ✓
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t5] the course exits, through the entry then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit.course
+
+🦉 as leaves fall
+
+📜 education.pursuit.course exit
+   ├─ course = 1. idempotency
+   ├─ stones = all passed, exit recorded
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency
+   ├─ bound = the pursuit (was .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency)
+   └─ next: rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t6] the pedigree is stamped, then read then: each renders as the snapshot shows: pedigree get 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pedigree
+
+🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = mechanic (native)
+   └─ pursuit = v$DATE idempotency
+      └─ 1. idempotency
+         ├─ outcome = baseline 1/3 → after 3/3 · transfer task passed
+         ├─ greats = helland
+         ├─ claims = 1 held
+         └─ yields = 1 brief, 0 skills
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t6] the pedigree is stamped, then read then: each renders as the snapshot shows: pedigree set 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pedigree
+
+🦉 so it is
+
+📜 education.pedigree set
+   ├─ role = mechanic (native)
+   ├─ pursuit = v$DATE idempotency
+   ├─ courses
+   │  └─ 1. idempotency · baseline 1/3 → after 3/3
+   ├─ entry = .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+   ├─ index = .agent/repo=.this/role=mechanic/briefs/education/pedigree._.md
+   └─ boot = .agent/repo=.this/role=mechanic/boot.yml (absent, so every brief boots at say)
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t7] the graduate stone is passed as its stone says, once stamped then: it renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+   │
+   ├─ ✓ judge.1 - allowed $ELAPSEDs
+   │
+   └─ ✓ judge.2 - allowed $ELAPSEDs
+
+🗿 route.stone.set
+   ├─ stone = 4.graduate
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   ├─ $route/3.courses.review.yield.md
+   │  │   └─ .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+   │  └─ judges
+   │      ├─ j1: rhx education.pursuit judge --criterion pedigree-stamped --route $route
+   │      │   └─ finished $ELAPSEDs ✓
+   │      └─ j2: rhx education.pursuit judge --criterion boot-within-budget --route $route
+   │          └─ finished $ELAPSEDs ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t8] the graduated role boots, as rhachet boots it for a session then: the briefs this journey added boot whole, as the snapshot shows 1`] = `
+"<brief.say path=".agent/repo=.this/role=mechanic/briefs/education/pedigree._.md">
+# pedigree: mechanic
+
+every pursuit mechanic graduated, oldest first. each entry, beside this file, cites its courses, greats, and claims.
+
+| date | pursuit | courses | entry |
+|---|---|---|---|
+| v$DATE | idempotency | idempotency | \`pedigree.pursuit=v$DATE.idempotency.md\` |
+
+</brief.say>
+
+<brief.say path=".agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md">
+# pedigree: mechanic · v$DATE idempotency
+
+the courses mechanic took in this pursuit, in the order pursued. route: \`.route/v$DATE.education.pursuit.mechanic.idempotency\`
+
+## .courses
+
+| k | course | builds on | baseline | after | transfer | greats | held | refuted | untested | briefs | skills |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | idempotency | — | 1/3 | 3/3 | passed | helland | 1 | 0 | 0 | 1 | 0 |
+
+## .course=1.idempotency
+
+route: \`.route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency\`
+
+| claim | verdict |
+| --- | --- |
+| k1 upsert dedupes | held |
+
+| path | kind |
+| --- | --- |
+| .agent/repo=.this/role=mechanic/briefs/rule.require.natural-key-upsert.md | brief |
+
+</brief.say>
+
+<brief.say path=".agent/repo=.this/role=mechanic/briefs/rule.require.natural-key-upsert.md">
+# upsert on the natural key
+
+a write keyed on the natural key converges on retry; an insert on a fresh id duplicates.
+
+</brief.say>"
+`;
+
+exports[`learner education journey, via rhx given: [case1] a repo with the learner linked and a native mechanic when: [t9] the boot budget probe faults, as a boot spec rhachet cannot read makes it then: the header renders as the snapshot shows 1`] = `"💥 MalfunctionError: the boot budget probe failed"`;
+
+exports[`learner education journey, via rhx given: [case2] a repo with the learner linked, educated as a mod when: [t0] a pursuit opens for the linked learner then: the linked init renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit
+
+🦉 the path is clear
+
+📜 education.pursuit init
+   ├─ route = .route/v$DATE.education.pursuit.learner.idempotency
+   ├─ role = learner (linked)
+   │  ├─ briefs = .agent/repo=.mods/role=learner/briefs
+   │  ├─ skills = .agent/repo=.mods/role=learner/skills
+   │  └─ boot = .agent/repo=.mods/role=learner/boot.yml
+   ├─ courses seeded
+   │  └─ 1. idempotency
+   ├─ files = 9 created, 0 kept
+   ├─ bound = the pursuit
+   ├─ drive it as = rhx enroll claude --roles learner,driver,researcher
+   └─ next: state the aim in 0.wish.md, then rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case2] a repo with the learner linked, educated as a mod when: [t1] its course runs to exit, and the pedigree is stamped then: the stamp renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pedigree
+
+🦉 so it is
+
+📜 education.pedigree set
+   ├─ role = learner (linked)
+   ├─ pursuit = v$DATE idempotency
+   ├─ courses
+   │  └─ 1. idempotency · baseline 1/3 → after 3/3
+   ├─ entry = .agent/repo=.mods/role=learner/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+   ├─ index = .agent/repo=.mods/role=learner/briefs/education/pedigree._.md
+   └─ boot = .agent/repo=.mods/role=learner/boot.yml names both (index at say, entry at ref)
+"
+`;
+
+exports[`learner education journey, via rhx given: [case2] a repo with the learner linked, educated as a mod when: [t2] the mod holds a brief its boot spec never names, as case=8 walks it then: the refusal renders as the snapshot shows 1`] = `
+"✗ brain://repo=ambient/boot.md not written
+   ├─ ✋ ConstraintError: the mod of role=learner is refused: it holds briefs/rule.require.orphan-kernel.md, a path the role does not hold, and no say or ref names it
+   ├─ mod = .agent/repo=.mods/role=learner/
+   ├─ subject = briefs/rule.require.orphan-kernel.md
+   └─ fix = to shadow, move it to the held path; to add, say it in the mod boot.yml (always.briefs.say: [briefs/rule.require.orphan-kernel.md])
+"
+`;
+
+exports[`learner education journey, via rhx given: [case3] a pursuit whose review asks for a second course, as case=9 walks it when: [t0] the first course is pushed, driven, and popped then: the pop renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit.course
+
+🦉 as leaves fall
+
+📜 education.pursuit.course exit
+   ├─ course = 1. idempotency
+   ├─ stones = all passed, exit recorded
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency
+   ├─ bound = the pursuit (was .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency)
+   └─ next: rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case3] a pursuit whose review asks for a second course, as case=9 walks it when: [t1] the review asks for more courses: the plot grows, and pursue is rewound with its yield dropped then: the held pursue renders as the snapshot shows, each stream: stderr 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+   └─ ✋ blocked by constraints
+
+🪶 judge 1
+   └─ stdout
+      ├─
+      │
+      │  🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit
+      │
+      │  passed: false
+      │  reason: courses not yet exited: retries; run: rhx education.pursuit.course init --course retries
+      │
+      └─
+"
+`;
+
+exports[`learner education journey, via rhx given: [case3] a pursuit whose review asks for a second course, as case=9 walks it when: [t1] the review asks for more courses: the plot grows, and pursue is rewound with its yield dropped then: the held pursue renders as the snapshot shows, each stream: stdout 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+   │
+   └─ ✗ judge.1 - blocked $ELAPSEDs
+
+🗿 route.stone.set
+   ├─ stone = 2.courses.pursue
+   ├─ passage = blocked
+   ├─ reason = courses not yet exited: retries; run: rhx education.pursuit.course init --course retries
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/2.courses.pursue.yield/*/6.exit.yield.md
+      └─ judges
+          └─ j1: rhx education.pursuit judge --criterion courses-exited --route $route
+              ├─ finished $ELAPSEDs ✗
+              └─ reason: courses not yet exited: retries; run: rhx education.pursuit.course init --course retries
+"
+`;
+
+exports[`learner education journey, via rhx given: [case3] a pursuit whose review asks for a second course, as case=9 walks it when: [t2] the second course is pushed at the next ordinal, driven, and popped then: the push renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pursuit.course
+
+🦉 stillness before action
+
+📜 education.pursuit.course init
+   ├─ course = 2. retries
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=2.retries
+   ├─ files = 13 created, 0 kept
+   ├─ bound = the course (was .route/v$DATE.education.pursuit.mechanic.idempotency)
+   └─ next: rhx route.drive
+"
+`;
+
+exports[`learner education journey, via rhx given: [case3] a pursuit whose review asks for a second course, as case=9 walks it when: [t3] the review graduates, and the pedigree holds both courses then: the read renders as the snapshot shows 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=learner/skill=education.pedigree
+
+🦉 roots run deep
+
+📜 education.pedigree get
+   ├─ role = mechanic (native)
+   └─ pursuit = v$DATE idempotency
+      ├─ 1. idempotency
+      │  ├─ outcome = baseline 1/3 → after 3/3 · transfer task passed
+      │  ├─ greats = helland
+      │  ├─ claims = 1 held
+      │  └─ yields = 1 brief, 0 skills
+      └─ 2. retries (built on idempotency)
+         ├─ outcome = baseline 1/3 → after 3/3 · transfer task passed
+         ├─ greats = helland
+         ├─ claims = 1 held
+         └─ yields = 1 brief, 0 skills
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: 2.2.greats.read held 1 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.2.greats.read
+   └─ passage = blocked (review.self required)
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = has-cited-every-kernel-to-a-page-read
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  for each kernel in .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/2.2.greats.read.yield.md: name the page you read it on.
+   │  │    a kernel known only from a search summary or a secondhand blog is a pointer, not
+   │  │    evidence. relabel it, or read the source.
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 2.2.greats.read --as promised --that has-cited-every-kernel-to-a-page-read \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: 2.2.greats.read held 2 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.2.greats.read
+   └─ passage = blocked (review.self required)
+
+🌕 lets reflect
+   │
+   ├─ review.self 2/2
+   │  ├─ slug = has-tagged-claims-honestly
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  for each kernel tagged a claim: name the test that could refute it.
+   │  │    for each kernel not tagged a claim: confirm no test could refute it.
+   │  │    a claim no test could refute is a definition; a definition a test could refute is a claim.
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-tagged-claims-honestly.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 2.2.greats.read --as promised --that has-tagged-claims-honestly \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-tagged-claims-honestly.md
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: 4.1.entool.blueprint held 1 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 4.1.entool.blueprint
+   └─ passage = blocked (review.self required)
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = has-traced-every-yield-to-a-held-claim
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  for each planned brief and skill in .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/4.1.entool.blueprint.yield.md: name the held
+   │  │    claim it rests on, from .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/3.practice.vitro.yield.md. a yield that rests on a refuted
+   │  │    claim is a falsehood planted in the role; cut it. one that rests on an untested claim
+   │  │    says so in its own text.
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.4.1.entool.blueprint._.has-traced-every-yield-to-a-held-claim.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 4.1.entool.blueprint --as promised --that has-traced-every-yield-to-a-held-claim \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.4.1.entool.blueprint._.has-traced-every-yield-to-a-held-claim.md
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: 4.1.entool.blueprint held 2 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 4.1.entool.blueprint
+   └─ passage = blocked (review.self required)
+
+🌕 lets reflect
+   │
+   ├─ review.self 2/2
+   │  ├─ slug = has-traced-every-yield-to-an-outcome
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  for each planned brief and skill: name the outcome task it serves, from
+   │  │    .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/1.1.outcome.declare.yield.md. a yield that serves no task is boot mass the
+   │  │    role pays on every session; cut it, or name the task it serves.
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.4.1.entool.blueprint._.has-traced-every-yield-to-an-outcome.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 4.1.entool.blueprint --as promised --that has-traced-every-yield-to-an-outcome \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.4.1.entool.blueprint._.has-traced-every-yield-to-an-outcome.md
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: a hold, stderr 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+   └─ ✋ blocked by constraints
+
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: promise accepted, head 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.2.greats.read
+   └─ passage = progressed (review.self 1/2 promised)
+
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: every hold, the hasty promise refusal, and the accepted promise render as the snapshot shows: promise refused at once 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🍂 what is the rush?
+   ├─ ...
+   │
+   ├─ what does haste cost?
+   ├─ ...
+   │
+   ├─ does the self weigh more than the whole?
+   │  ├─ what you miss, they must find
+   │  ├─ minutes saved, hours spent
+   │  └─ your haste, their burden
+   │
+   ├─ each review is an opportunity
+   │  ├─ a chance to find a deeper truth
+   │  ├─ not one to squander
+   │  └─ no matter how repetitive
+   │
+   └─ trust the way
+      ├─ what calls for pause, calls for cause
+      └─ be true to the review 🍵
+
+🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 2.2.greats.read --as promised --that has-cited-every-kernel-to-a-page-read \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = has-cited-every-kernel-to-a-page-read
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  for each kernel in .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/2.2.greats.read.yield.md: name the page you read it on.
+   │  │    a kernel known only from a search summary or a secondhand blog is a pointer, not
+   │  │    evidence. relabel it, or read the source.
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 2.2.greats.read --as promised --that has-cited-every-kernel-to-a-page-read \\
+         --into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/review/self/for.2.2.greats.read._.has-cited-every-kernel-to-a-page-read.md
+"
+`;
+
+exports[`learner education journey, via rhx given: [case4] one course driven 1.1 → 5.2 through every real guard, as case=1 walks it when: [t0] each stone is passed through route.stone.set, each self-review promised when its guard holds then: the release of a self-reviewed stone renders as the snapshot shows: 2.2 passed 1`] = `
+"
+🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.set
+
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.2.greats.read
+   ├─ passage = allowed (artifacts only)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

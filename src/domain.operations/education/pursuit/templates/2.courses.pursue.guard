@@ -1,0 +1,5 @@
+artifacts:
+  - $route/2.courses.pursue.yield/*/6.exit.yield.md
+
+judges:
+  - rhx education.pursuit judge --criterion courses-exited --route $route

@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneEducationRole.integration given: [case3] an own role whose skills dirs are declared empty when: [t0] the role is looked up then: it refuses, names the empty key, and says an empty list holds no dir 1`] = `
+"✋ ConstraintError: role navigator in rhachet.repo.yml lacks a briefs dir, a skills dir, or a boot spec
+   ├─ slug = navigator
+   ├─ keys absent = skills.dirs
+   └─ fix: declare skills.dirs on the role's definition, then rebuild (npm run build), which regenerates rhachet.repo.yml from it; an empty list (\`[]\`) holds no dir, so a role with none has naught for a course to write into"
+`;

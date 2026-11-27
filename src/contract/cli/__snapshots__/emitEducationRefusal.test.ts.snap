@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitEducationRefusal given: [case1] a refusal with facts and a hint when: [t0] it is emitted then: it renders as the snapshot shows 1`] = `
+"✋ ConstraintError: no role mechanik in this repo
+   ├─ role = mechanik
+   ├─ roles found
+   │  ├─ mechanic (own)
+   │  └─ architect (linked, bhuild)
+   └─ fix: did you mean --for mechanic?"
+`;

@@ -1,0 +1,50 @@
+write what the blueprint planned into $ROLE.
+ref: $COURSE_ROUTE/4.1.entool.blueprint.yield.md
+
+- briefs → $BRIEFS_DIR
+- skills → $SKILLS_DIR
+- name each new brief in $BOOT_PATH, under `say` (fires on every boot) or `ref` (on demand),
+  as a path relative to the boot spec's own dir
+- a `.md.min` boots in its `.md`'s place: name and row the `.md` only, never the `.min`
+
+$ENTOOL_BOOT_NOTE
+
+- write in the mode the spec already uses; rhachet refuses a mod whose mode differs from its
+  role's. subject mode nests under `always:`:
+
+```yaml
+always:
+  briefs:
+    say:
+      - briefs/rule.require.idempotency-key-at-external-boundaries.md
+    ref:
+      - briefs/howto.replay-a-consumer-in-vitro.md
+  skills:
+    say:
+      - skills/replay.consumer.sh
+```
+
+  simple mode keeps `briefs:` and `skills:` at the top. in a role's own simple spec, an absent
+  `say` says every brief, so add only `ref`; never add a `say` key there, it would narrow the boot:
+
+```yaml
+briefs:
+  ref:
+    - briefs/howto.replay-a-consumer-in-vitro.md
+```
+
+- a mod (a linked role) claims only what it names: name every new brief and every new skill
+- each say line costs boot mass on every session; a role with a `budget:` refuses a boot past
+  it, so put depth at `ref` and keep `say` for what each session must hold
+
+$ENTOOL_RENDER_NOTE
+
+`education.pursuit.course exit` reads this table: each path must exist under the role's dirs,
+each brief must be booted where its row's `boot` cell says, and a linked role's mod must name
+each skill.
+
+emit into $COURSE_ROUTE/4.2.entool.execute.yield.md, with this table:
+
+| path | kind | boot |
+|---|---|---|
+| $BRIEFS_DIR/rule.require.idempotency-key-at-external-boundaries.md | brief | say |

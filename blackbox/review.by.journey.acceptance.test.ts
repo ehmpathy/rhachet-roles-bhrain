@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
@@ -30,7 +31,8 @@ const REPEATABLE_CONFIG = {
  *        boundary/error cases in review.by.acceptance.test.ts.
  */
 describe('review.by.journey.acceptance', () => {
-  given('[case17] journey: violation to fix to clean', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case17] journey: violation to fix to clean', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] dirty then fixed', () => {
       const journey = useThen('review.by reflects the fix', async () => {
         const cwd = await genReviewByFixture({

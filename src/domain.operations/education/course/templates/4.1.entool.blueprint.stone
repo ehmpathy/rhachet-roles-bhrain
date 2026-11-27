@@ -1,0 +1,24 @@
+blueprint what `$COURSE_SLUG` writes into $ROLE.
+ref: $COURSE_ROUTE/3.practice.vitro.yield.md · $COURSE_ROUTE/1.1.outcome.declare.yield.md
+
+plan each brief and skill:
+- each traces to a held claim, and to an outcome task it serves
+- a refuted claim is excluded; an untested claim is marked in the brief that leans on it
+- briefs follow the learner layout: `rule.$directive.$topic.md` + its `.md.min`, a `._.md`
+  root for a split subject, `define.$concept.md` for an argument
+- a step that repeats is a skill, not a brief (`philosophy.entoolment-is-the-pinnacle._`)
+- plan the boot mass: a `say` brief rides every session of $ROLE. where $BOOT_PATH declares a
+  `budget:`, a boot past it is refused, and `4.graduate` holds until it fits. say the cue,
+  ref the argument (`rule.prefer.rules-that-refout`)
+
+lands in: briefs → $BRIEFS_DIR · skills → $SKILLS_DIR · each add named in $BOOT_PATH
+
+`education.pursuit.course exit` reads this table: each id in `claims` must be a claim the
+`3.practice.vitro` table held or marked untested, never refuted; and `4.2` may write only a path
+this table plans.
+
+emit into $COURSE_ROUTE/4.1.entool.blueprint.yield.md, with this table:
+
+| path | kind | claims | serves |
+|---|---|---|---|
+| rule.require.idempotency-key-at-external-boundaries.md | brief | k1 | t1, t4 |

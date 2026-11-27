@@ -1,0 +1,17 @@
+artifacts:
+  - $route/4.1.entool.blueprint.yield.md
+
+reviews:
+  self:
+    - slug: has-traced-every-yield-to-a-held-claim
+      say: |
+        for each planned brief and skill in $COURSE_ROUTE/4.1.entool.blueprint.yield.md: name the held
+        claim it rests on, from $COURSE_ROUTE/3.practice.vitro.yield.md. a yield that rests on a refuted
+        claim is a falsehood planted in the role; cut it. one that rests on an untested claim
+        says so in its own text.
+
+    - slug: has-traced-every-yield-to-an-outcome
+      say: |
+        for each planned brief and skill: name the outcome task it serves, from
+        $COURSE_ROUTE/1.1.outcome.declare.yield.md. a yield that serves no task is boot mass the
+        role pays on every session; cut it, or name the task it serves.

@@ -20,6 +20,7 @@ import {
 import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 
 import { stepReview } from './stepReview';
 
@@ -101,14 +102,15 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *        creds: { keyrack: { owner: 'ehmpath', env: 'test' } },  // real credentials
  *      })
  *
- *    ⇒ the integration suite cannot even start without `keyrack: unlocked ehmpath/test`,
+ *    ⇒ under `BRAIN_LIVE=true` the suite cannot start without `keyrack: unlocked ehmpath/test`,
  *      and the 180s budget above exists precisely because *"the brain call alone
  *      routinely outlasts"* the 90s default. a mock would need neither.
  *
  * .why a CHEAP real brain rather than a premium one = `openrouter/deepseek/flash` is
- *        fast and low-cost, so the external contract is exercised on EVERY ci run rather
- *        than from behind a cost gate — which is what
- *        `rule.require.external-contract-integration-tests` asks for.
+ *        fast and low-cost, so the live tier (`BRAIN_LIVE=true`, bulletin
+ *        `live-brain-tests-three-tiers`) can run the real external contract often. each
+ *        brain-driven given carries `given.runIf(RUN_BRAIN_TEST)`; a keyless run skips it by
+ *        design and never fakes the provider.
  *
  * .note = `stepReview.caseBrain.claude-sonnet.integration.test.ts` is a SECOND, pricier
  *         suite pinned to one premium model. it is a model-specific extra, never this
@@ -362,28 +364,36 @@ describe('stepReview', () => {
     });
   });
 
-  given('[case4] output parent directory is inaccessible', () => {
-    when('[t0] stepReview is called with unwritable path', () => {
-      then('throws error about permission denied', async () => {
-        const error = await getError(
-          stepReview(
-            {
-              rules: '.agent/**/briefs/rules/*.md',
-              paths: 'src/*.ts',
-              output: '/nonexistent/parent/review.md',
-              focus: 'push',
-              goal: 'representative',
-              cwd: ASSETS_TYPESCRIPT,
-            },
-            { brain: scene.brain },
-          ),
-        );
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case4] output parent directory is inaccessible',
+    () => {
+      // the write of `--output` lands after the brain replies, so the case drives a brain
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview is called with unwritable path',
+        () => {
+          then('throws error about permission denied', async () => {
+            const error = await getError(
+              stepReview(
+                {
+                  rules: '.agent/**/briefs/rules/*.md',
+                  paths: 'src/*.ts',
+                  output: '/nonexistent/parent/review.md',
+                  focus: 'push',
+                  goal: 'representative',
+                  cwd: ASSETS_TYPESCRIPT,
+                },
+                { brain: scene.brain },
+              ),
+            );
 
-        expect(error).toBeDefined();
-        expect(error.message).toContain('EACCES');
-      });
-    });
-  });
+            expect(error).toBeDefined();
+            expect(error.message).toContain('EACCES');
+          });
+        },
+      );
+    },
+  );
 
   given('[case5] valid inputs with rules and paths - rule enumeration', () => {
     when('[t0] stepReview is called', () => {
@@ -587,6 +597,7 @@ describe('stepReview', () => {
     });
   });
 
+  // no brain: the fixture enumeration runs keyless, apart from the live-brain drives below
   given('[case9] prose-author example repo', () => {
     when('[t0] before any changes', () => {
       then('rules glob matches 2 prose style rules', async () => {
@@ -622,170 +633,186 @@ describe('stepReview', () => {
         expect(chapterFiles).toContain('chapters/chapter2.fixed.md');
       });
     });
-
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t1] stepReview on chapter2.fixed.md',
-      () => {
-        const outputPath = path.join(os.tmpdir(), 'prose-review-fixed.md');
-        afterAll(async () => fs.rm(outputPath, { force: true }));
-
-        // single API call, result shared across assertions
-        const result = useThen('stepReview succeeds', async () => {
-          const res = await stepReview(
-            {
-              rules: '.agent/**/briefs/rules/*.md',
-              paths: 'chapters/chapter2.fixed.md',
-              output: outputPath,
-              focus: 'push',
-              goal: 'representative',
-              cwd: ASSETS_PROSE,
-            },
-            { brain: scene.brain },
-          );
-
-          // log output for observability
-          logOutputHead({
-            label: 'prose.fixed.review',
-            output: res.review.formatted,
-          });
-
-          return res;
-        });
-
-        then('review contains no blockers', async () => {
-          expect(result.review.formatted).toBeDefined();
-          expect(result.review.formatted.toLowerCase()).not.toContain(
-            'blocker',
-          );
-        });
-
-        then('metrics.files shows correct counts', async () => {
-          expect(result.metrics.files.rulesCount).toBe(2);
-          expect(result.metrics.files.targetsCount).toBe(1);
-        });
-
-        then('metrics.expected contains token estimates', async () => {
-          expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
-          expect(
-            result.metrics.expected.tokens.contextWindowPercent,
-          ).toBeGreaterThan(0);
-          expect(result.metrics.expected.cost.estimate).toMatch(/^\$/);
-        });
-
-        then('metrics.realized contains real values', async () => {
-          expect(result.metrics.realized.tokens?.input).toEqual(
-            expect.any(Number),
-          );
-          expect(result.metrics.realized.tokens?.output).toEqual(
-            expect.any(Number),
-          );
-          expect(result.metrics.realized.cost?.total).toBeDefined();
-        });
-      },
-    );
-
-    when.repeatably(REPEATABLY_CONFIG)('[t2] stepReview on chapter2.md', () => {
-      const outputPath = path.join(os.tmpdir(), 'prose-review-unfixed.md');
-      afterAll(async () => fs.rm(outputPath, { force: true }));
-
-      // single API call, result shared across assertions
-      const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview(
-          {
-            rules: '.agent/**/briefs/rules/*.md',
-            paths: 'chapters/chapter2.md',
-            output: outputPath,
-            focus: 'push',
-            goal: 'representative',
-            cwd: ASSETS_PROSE,
-          },
-          { brain: scene.brain },
-        );
-
-        // log output for observability
-        logOutputHead({
-          label: 'prose.unfixed.review',
-          output: res.review.formatted,
-        });
-
-        return res;
-      });
-
-      then('review is defined and non-empty', async () => {
-        expect(result.review.formatted).toBeDefined();
-        expect(result.review.formatted.length).toBeGreaterThan(0);
-      });
-
-      then('review contains blockers for gerund violations', async () => {
-        expect(result.review.formatted.toLowerCase()).toContain('blocker');
-      });
-    });
   });
 
-  given('[case10] rules traversal through symlink via stepReview', () => {
-    // .what = tests that stepReview finds and uses rules through a symlink
-    // .why = wish requires proof of symlink fix 'via the review skill'
-    const ASSETS_SYMLINK = path.join(__dirname, '.test/assets');
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case9.1] prose-author example repo, reviewed',
+    () => {
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t1] stepReview on chapter2.fixed.md',
+        () => {
+          const outputPath = path.join(os.tmpdir(), 'prose-review-fixed.md');
+          afterAll(async () => fs.rm(outputPath, { force: true }));
 
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] stepReview with rules glob through symlink',
-      () => {
-        const outputPath = path.join(os.tmpdir(), 'symlink-rules-review.md');
-        afterAll(async () => fs.rm(outputPath, { force: true }));
-
-        // single API call, result shared across assertions
-        const result = useThen(
-          'stepReview succeeds with symlink rules',
-          async () => {
+          // single API call, result shared across assertions
+          const result = useThen('stepReview succeeds', async () => {
             const res = await stepReview(
               {
-                // rules path goes through symlink to example.repo/rules/
-                rules: 'example.symlink/via-symlink-rules/**/*.md',
-                // target file with violations from example.repo/src/
-                paths: 'example.repo/src/invalid.ts',
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'chapters/chapter2.fixed.md',
                 output: outputPath,
                 focus: 'push',
                 goal: 'representative',
-                cwd: ASSETS_SYMLINK,
+                cwd: ASSETS_PROSE,
               },
               { brain: scene.brain },
             );
 
             // log output for observability
             logOutputHead({
-              label: 'symlink.rules.review',
+              label: 'prose.fixed.review',
               output: res.review.formatted,
             });
 
             return res;
-          },
-        );
+          });
 
-        then('review completes without "rules not found" error', async () => {
-          expect(result.review.formatted).toBeDefined();
-          expect(result.review.formatted.length).toBeGreaterThan(0);
-        });
+          then('review contains no blockers', async () => {
+            expect(result.review.formatted).toBeDefined();
+            expect(result.review.formatted.toLowerCase()).not.toContain(
+              'blocker',
+            );
+          });
 
-        then('metrics show rules were found through symlink', async () => {
-          // 2 rules in example.repo/rules/ via symlink
-          expect(result.metrics.files.rulesCount).toBe(2);
-          // 1 target file
-          expect(result.metrics.files.targetsCount).toBe(1);
-        });
+          then('metrics.files shows correct counts', async () => {
+            expect(result.metrics.files.rulesCount).toBe(2);
+            expect(result.metrics.files.targetsCount).toBe(1);
+          });
 
-        then(
-          'review detects violations (rules applied correctly)',
-          async () => {
-            // invalid.ts has console.log and any type violations
-            // rules should detect these since symlink traversal works
+          then('metrics.expected contains token estimates', async () => {
+            expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
+            expect(
+              result.metrics.expected.tokens.contextWindowPercent,
+            ).toBeGreaterThan(0);
+            expect(result.metrics.expected.cost.estimate).toMatch(/^\$/);
+          });
+
+          then('metrics.realized contains real values', async () => {
+            expect(result.metrics.realized.tokens?.input).toEqual(
+              expect.any(Number),
+            );
+            expect(result.metrics.realized.tokens?.output).toEqual(
+              expect.any(Number),
+            );
+            expect(result.metrics.realized.cost?.total).toBeDefined();
+          });
+        },
+      );
+
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t2] stepReview on chapter2.md',
+        () => {
+          const outputPath = path.join(os.tmpdir(), 'prose-review-unfixed.md');
+          afterAll(async () => fs.rm(outputPath, { force: true }));
+
+          // single API call, result shared across assertions
+          const result = useThen('stepReview succeeds', async () => {
+            const res = await stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'chapters/chapter2.md',
+                output: outputPath,
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_PROSE,
+              },
+              { brain: scene.brain },
+            );
+
+            // log output for observability
+            logOutputHead({
+              label: 'prose.unfixed.review',
+              output: res.review.formatted,
+            });
+
+            return res;
+          });
+
+          then('review is defined and non-empty', async () => {
+            expect(result.review.formatted).toBeDefined();
+            expect(result.review.formatted.length).toBeGreaterThan(0);
+          });
+
+          then('review contains blockers for gerund violations', async () => {
             expect(result.review.formatted.toLowerCase()).toContain('blocker');
-          },
-        );
-      },
-    );
-  });
+          });
+        },
+      );
+    },
+  );
 
-  given(
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
+    '[case10] rules traversal through symlink via stepReview',
+    () => {
+      // .what = tests that stepReview finds and uses rules through a symlink
+      // .why = wish requires proof of symlink fix 'via the review skill'
+      const ASSETS_SYMLINK = path.join(__dirname, '.test/assets');
+
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview with rules glob through symlink',
+        () => {
+          const outputPath = path.join(os.tmpdir(), 'symlink-rules-review.md');
+          afterAll(async () => fs.rm(outputPath, { force: true }));
+
+          // single API call, result shared across assertions
+          const result = useThen(
+            'stepReview succeeds with symlink rules',
+            async () => {
+              const res = await stepReview(
+                {
+                  // rules path goes through symlink to example.repo/rules/
+                  rules: 'example.symlink/via-symlink-rules/**/*.md',
+                  // target file with violations from example.repo/src/
+                  paths: 'example.repo/src/invalid.ts',
+                  output: outputPath,
+                  focus: 'push',
+                  goal: 'representative',
+                  cwd: ASSETS_SYMLINK,
+                },
+                { brain: scene.brain },
+              );
+
+              // log output for observability
+              logOutputHead({
+                label: 'symlink.rules.review',
+                output: res.review.formatted,
+              });
+
+              return res;
+            },
+          );
+
+          then('review completes without "rules not found" error', async () => {
+            expect(result.review.formatted).toBeDefined();
+            expect(result.review.formatted.length).toBeGreaterThan(0);
+          });
+
+          then('metrics show rules were found through symlink', async () => {
+            // 2 rules in example.repo/rules/ via symlink
+            expect(result.metrics.files.rulesCount).toBe(2);
+            // 1 target file
+            expect(result.metrics.files.targetsCount).toBe(1);
+          });
+
+          then(
+            'review detects violations (rules applied correctly)',
+            async () => {
+              // invalid.ts has console.log and any type violations
+              // rules should detect these since symlink traversal works
+              expect(result.review.formatted.toLowerCase()).toContain(
+                'blocker',
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)(
     '[case11] --conversation threads prior-dialogue files into the prompt',
     () => {
       // .what = regression for the doubled-path read fault: a --conversation file

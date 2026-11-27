@@ -29,4 +29,4 @@ set -euo pipefail
 # a refusal is rendered and exits 2 inside the cli; aught that reaches this catch is a
 # malfunction, so it prints under the qualified header with its stack beneath for the debug,
 # and sets the exit code rather than exit at once, so a piped stderr drains whole
-exec node -e "import('rhachet-roles-bhrain/cli/learn.terms.hook').then(m => m.learnTermsHook()).catch((e) => { console.error('💥 MalfunctionError: ' + (e?.message ?? String(e))); if (e?.stack) console.error(String(e.stack).split('\n').map((line) => '   ' + line).join('\n')); process.exitCode = 1; })" -- "$@"
+exec node -e "import('rhachet-roles-bhrain/cli/learn.terms.hook').then(m => m.learnTermsHook()).catch((e) => { const msg = String(e?.message ?? e); console.error(msg.startsWith('💥 MalfunctionError:') ? msg : '💥 MalfunctionError: ' + msg); if (e?.stack) console.error(String(e.stack).split('\n').map((line) => '   ' + line).join('\n')); process.exitCode = 1; })" -- "$@"

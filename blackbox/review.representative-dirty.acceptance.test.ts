@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { logOutputHead } from '@src/.test/logOutputHead';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
@@ -26,7 +27,8 @@ const REPEATABLE_CONFIG = {
 } as const;
 
 describe('review.representative-dirty.acceptance', () => {
-  given('[case2] mechanic codebase with dirty code', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case2] mechanic codebase with dirty code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review skill on dirty.ts with goal=representative',
       () => {

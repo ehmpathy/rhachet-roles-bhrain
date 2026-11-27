@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { logOutputHead } from '@src/.test/logOutputHead';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
@@ -30,7 +31,8 @@ describe('review.refs-single.acceptance', () => {
    * usecase.1: pass single ref file to review skill
    * usecase.3: ref content is accessible to rules in review
    */
-  given('[case1] single ref file provided to review', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] single ref file provided to review', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to single file', () => {
       const res = useThen('invoke review skill with single ref', async () => {
         // clone fixture to temp dir

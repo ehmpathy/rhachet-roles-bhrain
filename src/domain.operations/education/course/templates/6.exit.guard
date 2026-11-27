@@ -1,0 +1,2 @@
+judges:
+  - rhx education.pursuit.course judge --criterion exited --route $route

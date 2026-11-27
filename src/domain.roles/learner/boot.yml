@@ -173,3 +173,7 @@ always:
       # consumer (hazard.published-brief-cannot-cite-the-repo-glossary). the
       # .agent/ copy is now a symlink to this file, so this repo's boot is unchanged
       - briefs/research.selfreview-effectiveness.md
+      # why an education course takes ten stones, each cited to the course-design canon.
+      # ref because it is read when a pursuit is planned or a stone is questioned, never
+      # on every boot; the course stones themselves carry the cue at the moment of use
+      - briefs/define.education.pursuit.course.shape.md

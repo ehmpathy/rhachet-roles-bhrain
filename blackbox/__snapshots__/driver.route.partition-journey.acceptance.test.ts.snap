@@ -34,7 +34,7 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 "
 `;
 
-exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t1] the driver arrives; the lane overflows then: stdout matches snapshot: stdout 1`] = `
+exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t1] the driver arrives; the lane overflows then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: xyzzy (l1, 0/9)
@@ -75,7 +75,7 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 "
 `;
 
-exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t1] the driver arrives; the lane overflows then: the given matches snapshot: given 1`] = `
+exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t1] the driver arrives; the lane overflows then: the given matches snapshot 1`] = `
 "├─ stdout
 │  ├─
 │  │
@@ -130,7 +130,7 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
    └─ exit code: 2 ✋"
 `;
 
-exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t2.1] the driver answers the overflowed lane then: the ack matches snapshot: absorbed 1`] = `
+exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t2.1] the driver answers the overflowed lane then: the ack matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
 🦉 absorbed: xyzzy

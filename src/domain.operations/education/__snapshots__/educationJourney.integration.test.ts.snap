@@ -1,0 +1,480 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t0] a course init runs before any pursuit then: it refuses, and names education.pursuit init 1`] = `
+"✋ ConstraintError: a course runs only within a pursuit
+   ├─ bound = (none)
+   └─ fix: open one first: rhx education.pursuit init --for <role> --slug <slug>"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t1.1] a pursuit opens for a role slug that is not kebab then: it refuses before any bind, and names the slug 1`] = `
+"✋ ConstraintError: a slug must be lowercase kebab
+   ├─ slugs bad = Mech_X
+   └─ fix: use only a-z, 0-9, and single hyphens, e.g. reliable-writes"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t1] a pursuit opens for an unknown role then: it refuses, with the roles found 1`] = `
+"✋ ConstraintError: no role ghost in this repo
+   ├─ role = ghost
+   ├─ roles found = mechanic (native)
+   └─ fix: pass --for as one of the roles found"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a course init for the exited course refuses 1`] = `
+"✋ ConstraintError: course idempotency has already exited
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: init the next plotted course, or pass 2.courses.pursue once every one has exited"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a course the plot never names is refused 1`] = `
+"✋ ConstraintError: course retries is not next in the plot
+   ├─ course = retries
+   └─ fix: courses run in plot order; run: rhx education.pursuit.course init --course idempotency"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a hand-written exit yield fakes no exit 1`] = `
+{
+  "verdictExit": {
+    "passed": false,
+    "reason": "stones not yet passed: 1.1.outcome.declare, 1.2.outcome.baseline, 2.1.greats.aim, 2.2.greats.read, 3.practice.vitro, 4.1.entool.blueprint, 4.2.entool.execute, 5.1.outcome.assess, 5.2.outcome.reflect; run: rhx route.drive",
+  },
+  "verdictPursue": {
+    "passed": false,
+    "reason": "courses not yet exited: idempotency; run: rhx education.pursuit.course init --course idempotency",
+  },
+}
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a hand-written exit yield fakes no exit, even once every prior stone passed 1`] = `
+{
+  "passed": false,
+  "reason": "a course ends only by exit; run: rhx education.pursuit.course exit",
+}
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a re-init on the day it graduated refuses, and keeps the record 1`] = `
+"✋ ConstraintError: pursuit idempotency already graduated today
+   ├─ route = .route/v$DATE.education.pursuit.mechanic.idempotency
+   └─ fix: read it via rhx education.pedigree get, or open a new pursuit under another --slug"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a re-run of init keeps every file 1`] = `
+"0.wish.md
+1.courses.plot.guard
+1.courses.plot.stone
+2.courses.pursue.guard
+2.courses.pursue.stone
+3.courses.review.stone
+4.graduate.guard
+4.graduate.stone"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a re-run of pursuit init inside the course refuses, and names exit 1`] = `
+"✋ ConstraintError: the branch is inside a course of this pursuit
+   ├─ bound = .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: drive the course to its exit, then the bind returns here: rhx education.pursuit.course exit"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a re-stamp converges: same files, no twin row 1`] = `
+"# pedigree: mechanic
+
+every pursuit mechanic graduated, oldest first. each entry, beside this file, cites its courses, greats, and claims.
+
+| date | pursuit | courses | entry |
+|---|---|---|---|
+| v$DATE | idempotency | idempotency | \`pedigree.pursuit=v$DATE.idempotency.md\` |
+"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a second course init inside the course refuses 1`] = `
+"✋ ConstraintError: already within a course; exit it first
+   ├─ bound = .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: finish its stones, then run: rhx education.pursuit.course exit"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: a second exit, from the pursuit, names the pursuit 1`] = `
+"✋ ConstraintError: exit runs only within a course
+   ├─ bound = .route/v$DATE.education.pursuit.mechanic.idempotency
+   └─ fix: the branch already stands on the pursuit; enter the next plotted course: rhx education.pursuit.course init --course <slug>, or drive on: rhx route.drive"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: course init pushes the bind into the course 1`] = `
+"declare the outcome of course 1, \`idempotency\`, before any read.
+ref: .route/v$DATE.education.pursuit.mechanic.idempotency/1.courses.plot.yield.md
+
+state what mechanic must be able to DO once this course ends, as assessment tasks:
+- whole, realistic tasks from the role's real work, never a quiz of facts
+- varied: 3 to 5 tasks that come at the subject from different sides
+- one task held back for \`5.1\` as the transfer task, run in a scratch worktree of the real repo, never a checkout in the live tree, which drops its bind
+- a pass bar per task: what an observer would check to call it passed
+
+why first: without a declared outcome, the read has no stop rule and the assess has no bar.
+see \`define.education.pursuit.course.shape\`.
+
+emit into .route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency/1.1.outcome.declare.yield.md, with this table:
+
+| task | does | pass bar | held back |
+|---|---|---|---|
+| t1 | replay one queue message three times | exactly one row persists | no |
+| t4 | add a stripe charge to the checkout flow | a retried call charges once | yes |
+"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: exit pops the bind back to the pursuit once the stones pass 1`] = `
+"# exit: course 1, idempotency
+
+- exited = $DATE
+- back to = .route/v$DATE.education.pursuit.mechanic.idempotency
+"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: exit refuses before the stones pass, and names them 1`] = `
+"✋ ConstraintError: a course exits only once its stones have passed
+   ├─ stones unpassed
+   │  ├─ 1.1.outcome.declare
+   │  ├─ 1.2.outcome.baseline
+   │  ├─ 2.1.greats.aim
+   │  ├─ 2.2.greats.read
+   │  ├─ 3.practice.vitro
+   │  ├─ 4.1.entool.blueprint
+   │  ├─ 4.2.entool.execute
+   │  ├─ 5.1.outcome.assess
+   │  └─ 5.2.outcome.reflect
+   └─ fix: drive each through its guard, then exit again: rhx route.drive"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: init opens the pursuit, slug from its one course, and binds it 1`] = `
+"0.wish.md
+1.courses.plot.guard
+1.courses.plot.stone
+2.courses.pursue.guard
+2.courses.pursue.stone
+3.courses.review.stone
+4.graduate.guard
+4.graduate.stone
+
+wish =
+
+# pursuit: idempotency, for role mechanic
+
+## .aim
+
+the director names what mechanic must be able to do once this pursuit graduates.
+
+(the director states the aim here, before \`1.courses.plot\`)
+
+## .courses seeded
+
+the courses the director named, in order; \`1.courses.plot\` settles the final plot:
+
+1. idempotency
+
+## .lands in
+
+- role kind = native
+- briefs = .agent/repo=.this/role=mechanic/briefs
+- skills = .agent/repo=.this/role=mechanic/skills
+- boot spec = .agent/repo=.this/role=mechanic/boot.yml
+"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: pedigree get reads the record back 1`] = `
+"[
+  {
+    "role": "mechanic",
+    "entries": [
+      {
+        "role": "mechanic",
+        "date": "$DATE",
+        "slug": "idempotency",
+        "route": ".route/v$DATE.education.pursuit.mechanic.idempotency",
+        "courses": [
+          {
+            "ordinal": 1,
+            "slug": "idempotency",
+            "buildsOn": [],
+            "baseline": "1/4",
+            "after": "4/4",
+            "transfer": "passed",
+            "greats": [
+              "helland",
+              "kleppmann"
+            ],
+            "claimsHeld": 1,
+            "claimsRefuted": 1,
+            "claimsUntested": 0,
+            "briefs": 1,
+            "skills": 0
+          }
+        ]
+      }
+    ]
+  }
+]"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: pedigree set stamps the entry, the index, and the boot spec 1`] = `
+"# pedigree: mechanic · v$DATE idempotency
+
+the courses mechanic took in this pursuit, in the order pursued. route: \`.route/v$DATE.education.pursuit.mechanic.idempotency\`
+
+## .courses
+
+| k | course | builds on | baseline | after | transfer | greats | held | refuted | untested | briefs | skills |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | idempotency | — | 1/4 | 4/4 | passed | helland · kleppmann | 1 | 1 | 0 | 1 | 0 |
+
+## .course=1.idempotency
+
+route: \`.route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency\`
+
+| claim | verdict |
+| --- | --- |
+| k1 natural-key upsert dedupes a replay | held |
+| k7 backoff alone makes a write safe | refuted |
+
+| path | kind |
+| --- | --- |
+| .agent/repo=.this/role=mechanic/briefs/rule.x.md | brief |
+
+--- boot.yml ---
+always:
+  briefs:
+    ref:
+      - briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+    say:
+      # identity
+      - briefs/im_a.mechanic.md
+      - briefs/rule.x.md
+      - briefs/education/pedigree._.md
+"
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: the exit judge refuses a hand pass before exit 1`] = `
+{
+  "passed": false,
+  "reason": "stones not yet passed: 1.1.outcome.declare, 1.2.outcome.baseline, 2.1.greats.aim, 2.2.greats.read, 3.practice.vitro, 4.1.entool.blueprint, 4.2.entool.execute, 5.1.outcome.assess, 5.2.outcome.reflect; run: rhx route.drive",
+}
+`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: the graduate guard holds once the stamp pushes the boot past its budget 1`] = `"the role's boot exceeds its declared budget (.agent/repo=.this/role=mechanic/boot.yml); move a say entry to ref, or raise budget.tokens deliberately, then re-stamp: rhx education.pedigree set"`;
+
+exports[`education journey given: [case1] a repo with a native mechanic, on a feature branch when: [t2] the journey runs: init → course → exit → pedigree then: the pursue judge holds while the course is open 1`] = `
+{
+  "passed": false,
+  "reason": "courses not yet exited: idempotency; run: rhx education.pursuit.course init --course idempotency",
+}
+`;
+
+exports[`education journey given: [case2] a branch that cannot take the bind when: [t0] init runs on main then: it refuses before any write 1`] = `
+"✋ ConstraintError: cannot bind route on protected branch
+   ├─ branch = main
+   └─ fix: bind from a feature branch: git checkout -b feat/<slug>"
+`;
+
+exports[`education journey given: [case2] a branch that cannot take the bind when: [t1] init runs while another route is bound then: it refuses before any write 1`] = `
+"✋ ConstraintError: the branch is already bound to .behavior/v$DATE.other
+   ├─ bound = .behavior/v$DATE.other
+   └─ fix: open this pursuit on a fresh branch (git checkout -b feat/<slug>), or finish the bound route first"
+`;
+
+exports[`education journey given: [case3] a linked role whose pedigree is stamped in its mod when: [t0] no render has reached the role then: the graduate judge holds, and names the render 1`] = `
+{
+  "passed": false,
+  "reason": "the pedigree entry is stamped in the mod, but no clean render has reached the role; run: rhx init --hooks, and clear any refusal it names",
+}
+`;
+
+exports[`education journey given: [case3] a linked role whose pedigree is stamped in its mod when: [t1] a clean render has put the entry in the role view then: the graduate judge passes 1`] = `
+{
+  "passed": true,
+  "reason": "the pedigree entry is stamped",
+}
+`;
+
+exports[`education journey given: [case4] a pursuit whose plot drops a course while it is open when: [t0] a course init runs before the plot is written then: it refuses, and names the plot stone to drive 1`] = `
+"✋ ConstraintError: the pursuit has no plot yet
+   ├─ course = idempotency
+   └─ fix: drive 1.courses.plot first, so its yield names the courses: rhx route.drive"
+`;
+
+exports[`education journey given: [case4] a pursuit whose plot drops a course while it is open when: [t1] the open second course is dropped from the plot then: the pursue judge holds on the stray, and pedigree set refuses alike 1`] = `
+"course retries is open, though the plot no longer names it; re-enter it and drive it to exit: rhx education.pursuit.course init --course retries
+
+✋ ConstraintError: a pursuit graduates only once every course has exited
+   ├─ courses open = .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=2.retries
+   └─ fix: re-enter it and drive it to 6.exit: rhx education.pursuit.course init --course retries"
+`;
+
+exports[`education journey given: [case5] a linked role with no mod yet, graduated end to end when: [t0] the pursuit runs to pedigree set then: init seeds the mod boot spec with its \`of:\`, and set names the pedigree in it 1`] = `
+"of: bhuild/architect
+briefs:
+  ref:
+    - briefs/education/pedigree.pursuit=v$DATE.boundaries.md
+  say:
+    - briefs/rule.x.md
+    - briefs/education/pedigree._.md
+"
+`;
+
+exports[`education journey given: [case6] a pedigree set whose --from leaves the repo when: [t0] --from names a path outside the repo then: it refuses before any read, and names the form 1`] = `
+"✋ ConstraintError: --from must name a route inside this repo
+   ├─ from = ../elsewhere/.route/v$DATE.education.pursuit.mechanic.x
+   └─ fix: pass --from .route/v$date.education.pursuit.$role.$slug"
+`;
+
+exports[`education journey given: [case7] a native role with no boot spec, graduated, then retaken when: [t0] the first pursuit graduates then: set writes the entry and index, names no boot spec, and the judge passes 1`] = `
+"entry = .agent/repo=.this/role=mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+boot = null
+
+# pedigree: mechanic · v$DATE idempotency
+
+the courses mechanic took in this pursuit, in the order pursued. route: \`.route/v$DATE.education.pursuit.mechanic.idempotency\`
+
+## .courses
+
+| k | course | builds on | baseline | after | transfer | greats | held | refuted | untested | briefs | skills |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | idempotency | — | 1/4 | 4/4 | passed | helland · kleppmann | 1 | 1 | 0 | 1 | 0 |
+
+## .course=1.idempotency
+
+route: \`.route/v$DATE.education.pursuit.mechanic.idempotency/2.courses.pursue.yield/course=1.idempotency\`
+
+| claim | verdict |
+| --- | --- |
+| k1 natural-key upsert dedupes a replay | held |
+| k7 backoff alone makes a write safe | refuted |
+
+| path | kind |
+| --- | --- |
+| .agent/repo=.this/role=mechanic/briefs/rule.x.md | brief |
+"
+`;
+
+exports[`education journey given: [case7] a native role with no boot spec, graduated, then retaken when: [t1] the graduation is dated earlier, and the slug is retaken then: a damaged peer entry refuses the stamp with naught written; once repaired, the pedigree holds both 1`] = `
+"✋ ConstraintError: a pedigree entry names no route
+   ├─ title = # pedigree: mechanic · v$DATE broken
+   └─ fix: repair the entry brief: its intro names the pursuit route in backticks
+
+# pedigree: mechanic
+
+every pursuit mechanic graduated, oldest first. each entry, beside this file, cites its courses, greats, and claims.
+
+| date | pursuit | courses | entry |
+|---|---|---|---|
+| v$DATE_PRIOR | idempotency | idempotency | \`pedigree.pursuit=v$DATE_PRIOR.idempotency.md\` |
+| v$DATE | idempotency | idempotency | \`pedigree.pursuit=v$DATE.idempotency.md\` |
+"
+`;
+
+exports[`education journey given: [case7] a native role with no boot spec, graduated, then retaken when: [t2] the entry stands but the index never got its row then: the graduate judge holds, and names the re-stamp 1`] = `"the pedigree index does not list the entry (.agent/repo=.this/role=mechanic/briefs/education/pedigree._.md); re-stamp: rhx education.pedigree set"`;
+
+exports[`education journey given: [case8] a pursuit whose plot has faults when: [t0] the plot names a slug in backticks then: the plot judge holds, and course init refuses with the fault named 1`] = `
+"the plot has faults: row 1: course \`\`idempotency\`\` is no lowercase kebab slug; repair .route/v$DATE.education.pursuit.mechanic.reliable-writes/1.courses.plot.yield.md
+
+✋ ConstraintError: the plot has faults
+   ├─ plot faults = row 1: course \`\`idempotency\`\` is no lowercase kebab slug
+   └─ fix: repair .route/v$DATE.education.pursuit.mechanic.reliable-writes/1.courses.plot.yield.md, then re-run"
+`;
+
+exports[`education journey given: [case8] a pursuit whose plot has faults when: [t1] the plot is repaired then: the plot judge passes 1`] = `"the plot names sound courses, in order"`;
+
+exports[`education journey given: [case9] a linked role whose published boot spec is in subject mode when: [t0] the pursuit runs to pedigree set then: the mod takes the role mode: \`always.briefs\` 1`] = `
+"of: bhuild/architect
+always:
+  briefs:
+    ref:
+      - briefs/education/pedigree.pursuit=v$DATE.boundaries.md
+    say:
+      - briefs/rule.x.md
+      - briefs/education/pedigree._.md
+"
+`;
+
+exports[`education journey given: [case9] a linked role whose published boot spec is in subject mode when: [t1] the mod is hand-written in the other mode then: the stamp refuses, and names the role mode 1`] = `
+"✋ ConstraintError: the boot spec is in simple mode, but its role's is in subject mode
+   ├─ at = .agent/repo=.mods/role=architect/boot.yml
+   └─ fix: rewrite it with \`always:\` sections, as the role does"
+`;
+
+exports[`education journey given: [case10] a repo that publishes its own role, graduated end to end when: [t0] the pursuit opens, its course exits, and set stamps then: every write lands in the role source, and every graduate judge passes 1`] = `
+"role = own · briefs = src/domain.roles/mechanic/briefs · boot = src/domain.roles/mechanic/boot.yml
+entry = src/domain.roles/mechanic/briefs/education/pedigree.pursuit=v$DATE.idempotency.md
+
+briefs:
+  say:
+    - briefs/im_a.mechanic.md
+    - briefs/rule.x.md
+    - briefs/education/pedigree._.md
+"
+`;
+
+exports[`education journey given: [case11] a linked role whose publisher shipped a pedigree, educated again here when: [t0] a pursuit here graduates the role, and its pedigree is read then: the mod index and the read hold the shipped row beside the new one 1`] = `
+"# pedigree: architect
+
+every pursuit architect graduated, oldest first. each entry, beside this file, cites its courses, greats, and claims.
+
+| date | pursuit | courses | entry |
+|---|---|---|---|
+| v$DATE | seams | seams | \`pedigree.pursuit=v$DATE.seams.md\` |
+| v$DATE | boundaries | boundaries | \`pedigree.pursuit=v$DATE.boundaries.md\` |
+"
+`;
+
+exports[`education journey given: [case12] a pursuit whose review asks for more courses, rewound as its stone says when: [t0] the pursue stone is rewound with --yield drop then: the stale review decision is archived, and every course route stands 1`] = `
+"affected = 2.courses.pursue, 3.courses.review, 4.graduate
+review yield = archived"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t0] pedigree set runs before any course is pursued then: it refuses, and names course init 1`] = `
+"✋ ConstraintError: a pursuit with no course cannot graduate
+   ├─ pursuit route = .route/v$DATE.education.pursuit.mechanic.reliable-writes
+   └─ fix: pursue a course first: rhx education.pursuit.course init --course <slug>"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t1] course init runs with a slug that is not kebab then: it refuses before any read, and names the slug 1`] = `
+"✋ ConstraintError: a course slug must be lowercase kebab
+   ├─ course = Retries_X
+   └─ fix: use only a-z, 0-9, and single hyphens, e.g. idempotency"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t2] the bind returns to the pursuit while the first course is open, and the second is inited then: it refuses, and names the open course to re-enter 1`] = `
+"✋ ConstraintError: a prior course has not exited
+   ├─ courses open = .route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency
+   └─ fix: courses run in order; re-enter the open one and drive it to exit: rhx education.pursuit.course init --course idempotency"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t3] the first course exits, and pedigree set runs while the second is still owed then: it refuses, and names the owed course 1`] = `
+"✋ ConstraintError: a pursuit graduates only once every plotted course has exited
+   ├─ courses owed = retries
+   └─ fix: pursue the next: rhx education.pursuit.course init --course retries"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t3] the first course exits, and pedigree set runs while the second is still owed then: it refuses, and names the owed course: re-enter of the open course 1`] = `
+"{
+  "route": ".route/v$DATE.education.pursuit.mechanic.reliable-writes/2.courses.pursue.yield/course=1.idempotency",
+  "ordinal": 1,
+  "created": [],
+  "kept": [
+    "1.1.outcome.declare.stone",
+    "1.2.outcome.baseline.stone",
+    "2.1.greats.aim.stone",
+    "2.2.greats.read.guard",
+    "2.2.greats.read.stone",
+    "3.practice.vitro.stone",
+    "4.1.entool.blueprint.guard",
+    "4.1.entool.blueprint.stone",
+    "4.2.entool.execute.stone",
+    "5.1.outcome.assess.stone",
+    "5.2.outcome.reflect.stone",
+    "6.exit.guard",
+    "6.exit.stone"
+  ]
+}"
+`;
+
+exports[`education journey given: [case13] a pursuit of two courses, walked through each refusal of course init and pedigree set when: [t4] the plot drops the second course, and course init asks for it then: it refuses, and names the plot to append to 1`] = `
+"✋ ConstraintError: the plot names no course left to pursue
+   ├─ course = retries
+   └─ fix: to add retries, append it to .route/v$DATE.education.pursuit.mechanic.reliable-writes/1.courses.plot.yield.md first"
+`;

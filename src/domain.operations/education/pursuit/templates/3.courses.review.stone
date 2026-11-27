@@ -1,0 +1,30 @@
+review the pursuit against its aim. ref: $PURSUIT_ROUTE/0.wish.md
+
+read each course's `5.1.outcome.assess` and `5.2.outcome.reflect` yields under
+$PURSUIT_ROUTE/2.courses.pursue.yield/. weigh what the courses proved against what the aim asks.
+
+emit into $PURSUIT_ROUTE/3.courses.review.yield.md:
+- per aim line: met by which course, with the evidence (outcome scores, transfer task)
+- each gap found, or `no gap remains`
+- the decision: more courses, or graduate
+
+then act on the decision:
+
+- **more courses** — a gap remains. append the courses that close it to
+  $PURSUIT_ROUTE/1.courses.plot.yield.md, then rewind the pursue stone with its yields
+  dropped, and pursue them:
+
+  ```sh
+  rhx route.stone.set --stone 2.courses.pursue --as rewound --yield drop
+  rhx route.drive
+  ```
+
+  `--yield drop` archives this stone's yield, so the old decision cannot pass the next review;
+  the course routes under 2.courses.pursue.yield/ stand. once the new courses exit, this stone
+  returns, and its yield is written fresh.
+
+- **graduate** — no gap remains. pass this stone; `4.graduate` stamps the pedigree:
+
+  ```sh
+  rhx route.stone.set --stone 3.courses.review --as passed
+  ```

@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 
+import { RUN_BRAIN_TEST } from '@src/.test/utils/RUN_BRAIN_TEST';
 import { logOutputHead } from '@src/.test/logOutputHead';
 import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
@@ -38,7 +39,8 @@ const GIT_ENV = {
 };
 
 describe('review.rules-only-default.acceptance', () => {
-  given('[case1] user specifies only --rules (default case)', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case1] user specifies only --rules (default case)', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with only --rules dirpath', () => {
       const res = useThen('invoke review skill with rules only', async () => {
         // clone fixture to temp dir with git initialized
@@ -148,7 +150,8 @@ describe('review.rules-only-default.acceptance', () => {
     });
   });
 
-  given('[case2] user excludes .behavior via negation pattern', () => {
+  // a live brain: runs only on BRAIN_LIVE=true (bulletin live-brain-tests-three-tiers)
+  given.runIf(RUN_BRAIN_TEST)('[case2] user excludes .behavior via negation pattern', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review with --diffs since-main --paths !.behavior/**', () => {
       const res = useThen('invoke review with exclusion pattern', async () => {
         // clone fixture to temp dir with git initialized
