@@ -106,7 +106,10 @@ describe('instinctFlagRateReplay', () => {
       (repl) => repl.slug === 'claude/code/haiku',
     )!;
     const replies: ReplyFixture[] = JSON.parse(
-      readFileSync('src/infra/brain/.test/instinctReplies.fixture.json', 'utf8'),
+      readFileSync(
+        'src/infra/brain/.test/instinctReplies.fixture.json',
+        'utf8',
+      ),
     );
     const briefs = BRIEF_SLUGS.map((slug) => ({
       get: async () => ({

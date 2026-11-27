@@ -2,10 +2,11 @@
 
 ## .what happened
 
-times of day landed in tracked files, and the husky timestamp hook let them through. two shapes slipped past:
+times of day landed in tracked files, and the husky timestamp hook let them through. three shapes slipped past:
 
 - **masked digit**: one digit swapped for `x`, e.g. `inbox: <date>T<hh>-<m>x-<ss>-<ms>Z`. a mask hides a digit, not the time; the hour and seconds still show
 - **dash time id**: a time with dashes, no colons: `<date>T<hh>-<mm>-<ss>-<ms>Z`, or the bare tail `<hh>-<mm>-<ss>-<ms>Z`
+- **compact stamp**: no dash, no colon: `<yyyymmdd>T<hhmmss>Z`, e.g. a browser snapshot dir name. it reached a pushed commit on this branch
 
 ## .why the hook missed them
 
@@ -25,6 +26,7 @@ search every repo, tracked files and git history, for:
 |---|---|
 | masked stamp | `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9x]{2}[-:]?[0-9x]{2}`, where the match holds an `x` |
 | dash time id | `(^\|[^0-9])[0-9x]{2}-[0-9x]{2}-[0-9x]{2}-[0-9]{3}Z` |
+| compact stamp | `(^\|[^0-9])[0-9]{8}T[0-9x]{4}([0-9x]{2})?Z?([^0-9x]\|$)` |
 | any stamp in code | the usual stamp regex, run on `.ts`, `.js`, `.sh` too |
 
 likeliest homes:
@@ -44,8 +46,9 @@ the hook is locked: `.husky/check.timestamps.lock.sh` halts any commit where the
 the hook owes:
 1. every clock slot accepts `[0-9x]`, so a masked digit still matches
 2. the dash time id is caught with or without a `T` or a date ahead of it
-3. no skip of `.ts`, `.js`, `.sh` — code holds stamps too (fixtures, log paths, doc headers)
-4. a test case per new shape (a masked stamp, a bare dash id, a stamp inside a `.ts`), each one fails the hook
+3. the compact stamp `<yyyymmdd>T<hhmm[ss]>Z` is caught (not yet in #845's body)
+4. no skip of `.ts`, `.js`, `.sh` — code holds stamps too (fixtures, log paths, doc headers)
+5. a test case per new shape (a masked stamp, a bare dash id, a compact stamp, a stamp inside a `.ts`), each one fails the hook
 
 ## .status
 

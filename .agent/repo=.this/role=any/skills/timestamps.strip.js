@@ -40,7 +40,9 @@ const STAMP = new RegExp(
   `(\\d{4}-\\d{2}-\\d{2})T${D}{2}[-:]?${D}{2}(?:[-:]?${D}{2})?(?:[.-]\\d{3})?Z?`,
   'g',
 );
-const TIME_ID = new RegExp(`(?<![0-9])${D}{2}-${D}{2}-${D}{2}-\\d{3}Z`, 'g');
+// the compact form, no dash and no colon (<yyyymmdd>T<hhmmss>Z); the date stays
+const STAMP_COMPACT = new RegExp(`(?<![0-9])(\\d{8})T${D}{4}(?:${D}{2})?Z?(?![0-9x])`, 'g');
+const TIME_ID =new RegExp(`(?<![0-9])${D}{2}-${D}{2}-${D}{2}-\\d{3}Z`, 'g');
 const MS_TAIL = /(?<=\s|^)-\d{3}Z\b/g;
 const CLOCK = /(?<![0-9:.])([01][0-9x]|2[0-3x]):[0-5x][0-9x](?::[0-5x][0-9x])?(?:Z|[+-]\d{2}:?\d{2})?(?![0-9x])/g;
 const CODE = /\.(ts|tsx|js|mjs|cjs|sh)$/;
@@ -53,6 +55,7 @@ for (const file of files) {
   if (text.includes('\u0000')) continue;
   const next = text
     .replace(STAMP, '$1')
+    .replace(STAMP_COMPACT, '$1')
     .replace(TIME_ID, '')
     .replace(MS_TAIL, '')
     .replace(CLOCK, '');
